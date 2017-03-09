@@ -1,5 +1,5 @@
 
-# Trane.io Non-blocking Database Conectivity (NDBC)
+# Non-blocking Database Conectivity (NDBC)
 
 [![Build Status](https://travis-ci.org/traneio/ndbc.svg?branch=master)](https://travis-ci.org/traneio/ndbc)
 [![Code Coverage](https://sonarqube.com/api/badges/measure?key=io.trane:ndbc&metric=coverage)](https://sonarqube.com/dashboard?id=io.trane%3Andbc)
