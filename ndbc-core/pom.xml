@@ -1,14 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>io.trane</groupId>
     <artifactId>ndbc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>ndbc-api</artifactId>
+  <artifactId>ndbc-core</artifactId>
   <packaging>jar</packaging>
 
-  <name>ndbc-api</name>
+  <name>ndbc-core</name>
 
   <dependencies>
     <dependency>
@@ -16,6 +17,11 @@
       <artifactId>junit</artifactId>
       <version>4.12</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.trane</groupId>
+      <artifactId>future-java</artifactId>
+      <version>0.1.0</version>
     </dependency>
   </dependencies>
 
