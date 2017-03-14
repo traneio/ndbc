@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -16,9 +15,9 @@ import io.trane.future.Promise;
 public interface Pool<T extends Pool.Item> {
 
   public interface Item {
-    void release();
+    Future<Void> release();
 
-    boolean validate();
+    Future<Boolean> validate();
   }
 
   public static <T extends Pool.Item> Pool<T> apply(Supplier<Future<T>> supplier, int maxSize, int maxWaiters,
@@ -52,43 +51,37 @@ class CachedPool<T extends Pool.Item> implements Pool<T> {
       return supplier.get().flatMap(i -> f.apply(i).ensure(() -> items.offer(i)));
   }
 
-  private Future<Void> scheduleValidation(Duration validationInterval) {
-    return Future.VOID.delayed(validationInterval.toMillis(), TimeUnit.MILLISECONDS, scheduler).flatMap(v -> {
+  private Future<Void> validateN(int n) {
+    if (n >= 0) {
+      final T item = items.poll();
+      if (item == null)
+        return Future.VOID;
+      else
+        // TODO logging
+        return item.validate().rescue(e -> Future.FALSE).flatMap(valid -> {
+          if (!valid)
+            return item.release().rescue(e -> Future.VOID);
+          else {
+            items.offer(item);
+            return Future.VOID;
+          }
+        }).flatMap(v -> validateN(n - 1));
+    } else
+      return Future.VOID;
+  }
 
-      int size = items.size();
+  private Future<Void> scheduleValidation(Duration validationInterval) {
+    return Future.VOID.delayed(validationInterval, scheduler).flatMap(v1 -> {
 
       long start = System.currentTimeMillis();
-
-      for (int i = 0; i < size; i++) {
-        T item = items.poll();
-        if (item == null)
-          break;
-        else {
-          boolean valid = false;
-          try {
-            valid = item.validate();
-          } catch (Exception e) {
-            valid = false;
-            // TODO logging
-          }
-          if (!valid)
-            try {
-              item.release();
-            } catch (Exception e) {
-              // TODO logging
-            }
-          else
-            items.offer(item);
-        }
-      }
-
-      long next = validationInterval.toMillis() - System.currentTimeMillis() - start;
-
-      if (next <= 0) {
-        // TODO logging
-        return scheduleValidation(validationInterval);
-      } else
-        return scheduleValidation(Duration.ofMillis(next));
+      return validateN(items.size()).flatMap(v2 -> {
+        long next = validationInterval.toMillis() - System.currentTimeMillis() - start;
+        if (next <= 0) {
+          // TODO logging
+          return scheduleValidation(validationInterval);
+        } else
+          return scheduleValidation(Duration.ofMillis(next));
+      });
     });
   }
 }
@@ -159,7 +152,6 @@ class BoundedPool<T extends Pool.Item> implements Pool<T> {
         public boolean tryAcquire() {
           return true;
         }
-
       };
     else
       return new Semaphore(permits);
