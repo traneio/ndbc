@@ -1,58 +1,47 @@
 package io.trane.ndbc.pool;
 
-import java.util.concurrent.CountDownLatch;
+import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Concurrently {
 
-  public static void apply(int threads, int times, Runnable run) {
-    apply(threads, times, run, () -> {
-    });
-  }
-
-  public static void apply(int threads, int times, Runnable run, Runnable checkInvariants) {
+  public static void apply(Duration howLong, Runnable run, Runnable checkInvariants) {
+    int threads = Runtime.getRuntime().availableProcessors() * 2;
     ExecutorService executor = Executors.newFixedThreadPool(threads);
-    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    CountDownLatch start = new CountDownLatch(1);
-    CountDownLatch done = new CountDownLatch(times);
-    AtomicReference<RuntimeException> error = new AtomicReference<>();
+    ExecutorService validator = Executors.newFixedThreadPool(1);
+    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+    AtomicBoolean stop = new AtomicBoolean(false);
+    AtomicReference<Throwable> error = new AtomicReference<>();
     try {
 
-      scheduler.scheduleAtFixedRate(() -> {
-        try {
-          checkInvariants.run();
-        } catch (RuntimeException e) {
-          error.set(e);
-        }
-      }, 1, 5, TimeUnit.MILLISECONDS);
-
-      for (int i = 0; i < times; i++) {
-        executor.submit(() -> {
+      validator.submit(() -> {
+        while (!stop.get())
           try {
-            start.await();
-          } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            checkInvariants.run();
+          } catch (Throwable e) {
+            error.set(e);
+            stop.set(true);
           }
-          run.run();
-          done.countDown();
-        });
-      }
+      });
+      
+      scheduler.schedule(() -> stop.set(true), howLong.toMillis(), TimeUnit.MILLISECONDS);
 
-      try {
-        start.countDown();
-        done.await();
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
+      while(!stop.get())
+        executor.submit(run);
+
+      executor.shutdownNow();
 
       if (error.get() != null)
-        throw error.get();
+        throw new RuntimeException(error.get());
+
     } finally {
       executor.shutdown();
+      validator.shutdown();
       scheduler.shutdown();
     }
   }

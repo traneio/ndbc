@@ -1,10 +1,9 @@
 package io.trane.ndbc.pool;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,14 +38,14 @@ public class PoolTest {
         Duration.ofMillis(Long.MAX_VALUE));
     AtomicInteger executing = new AtomicInteger();
 
-    Concurrently.apply(200, 10000, () -> {
+    Concurrently.apply(Duration.ofMillis(200), () -> {
       pool.apply(t -> {
         executing.incrementAndGet();
         return Promise.apply();
       });
+    }, () -> {
+      assertTrue(maxSize >= executing.get());
     });
-
-    assertEquals(maxSize, executing.get());
   }
 
   @Test
@@ -57,14 +56,53 @@ public class PoolTest {
     AtomicInteger executing = new AtomicInteger();
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
-    Concurrently.apply(200, 10000, () -> {
+    Concurrently.apply(Duration.ofMillis(200), () -> {
       pool.apply(t -> {
         executing.incrementAndGet();
         return Future.delay(Duration.ofMillis(1), scheduler).ensure(() -> executing.decrementAndGet());
       });
     }, () -> {
-      System.out.println("sdds");
-      assertEquals(maxSize, executing.get());
+      assertTrue(maxSize >= executing.get());
+    });
+  }
+  
+  @Test
+  public void maxWaiters() {
+    int maxSize = 100;
+    int maxWaiters = 60;
+    Pool<TestItem> pool = Pool.apply(() -> Future.value(new TestItem()), maxSize, maxWaiters,
+        Duration.ofMillis(Long.MAX_VALUE));
+    AtomicInteger executing = new AtomicInteger();
+    AtomicInteger rejected = new AtomicInteger();
+
+    for (int i = 0; i < 200; i++) 
+      pool.apply(t -> {
+        executing.incrementAndGet();
+        return Promise.apply();
+      }).onFailure(e -> rejected.incrementAndGet());
+
+    assertEquals(maxSize, executing.get());
+    assertEquals(40, rejected.get());
+  }
+  
+  @Test
+  public void maxWaitersConcurrentCreation() {
+    int maxSize = 100;
+    Pool<TestItem> pool = Pool.apply(() -> Future.value(new TestItem()), maxSize, Integer.MAX_VALUE,
+        Duration.ofMillis(Long.MAX_VALUE));
+    AtomicInteger started = new AtomicInteger();
+    AtomicInteger executing = new AtomicInteger();
+    AtomicInteger rejected = new AtomicInteger();
+    
+    Concurrently.apply(Duration.ofMillis(200), () -> {
+      started.incrementAndGet();
+      pool.apply(t -> {
+        executing.incrementAndGet();
+        return Promise.apply();
+      }).onFailure(e -> rejected.incrementAndGet());
+    }, () -> {
+      assertTrue(maxSize >= executing.get());
+      System.out.println(executing.get());
     });
   }
 

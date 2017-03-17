@@ -46,7 +46,7 @@ class CachedPool<T extends Pool.Item> implements Pool<T> {
   public <R> Future<R> apply(Function<T, Future<R>> f) {
     T item = items.poll();
     if (item != null)
-      return f.apply(item);
+      return f.apply(item).ensure(() -> items.offer(item));
     else
       return supplier.get().flatMap(i -> f.apply(i).ensure(() -> items.offer(i)));
   }
@@ -106,10 +106,10 @@ class BoundedPool<T extends Pool.Item> implements Pool<T> {
   @Override
   public <R> Future<R> apply(Function<T, Future<R>> f) {
     if (sizeSemaphore.tryAcquire())
-      return underlying.apply(f).ensure(() -> releaseOne());
+      return underlying.apply(f).ensure(this::releaseOne);
     else if (waitersSemaphore.tryAcquire()) {
       Waiter<T, R> p = new Waiter<>(f);
-      waiters.add(p);
+      waiters.offer(p);
       return p;
     } else
       return POOL_EXHAUSTED.unsafeCast();
@@ -134,7 +134,7 @@ class BoundedPool<T extends Pool.Item> implements Pool<T> {
     Waiter<T, ?> waiter = waiters.poll();
     if (waiter != null) {
       waitersSemaphore.release();
-      underlying.apply(waiter::apply).ensure(() -> releaseOne());
+      underlying.apply(waiter::apply).ensure(this::releaseOne);
     } else
       sizeSemaphore.release();
   };
