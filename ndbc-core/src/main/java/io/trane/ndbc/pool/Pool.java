@@ -12,7 +12,9 @@ import java.util.function.Supplier;
 import io.trane.future.Future;
 import io.trane.future.Promise;
 
-public interface Pool<T extends Pool.Item> {
+public class Pool<T extends Pool.Item> {
+
+  private static final Future<Object> POOL_EXHAUSTED = Future.exception(new RuntimeException("Pool exhausted"));
 
   public interface Item {
     Future<Void> release();
@@ -22,41 +24,58 @@ public interface Pool<T extends Pool.Item> {
 
   public static <T extends Pool.Item> Pool<T> apply(Supplier<Future<T>> supplier, int maxSize, int maxWaiters,
       Duration validationInterval) {
-    return new BoundedPool<>(new CachedPool<>(supplier, validationInterval), maxSize, maxWaiters);
+    return new Pool<>(supplier, maxSize, maxWaiters, validationInterval);
   }
-
-  public <R> Future<R> apply(Function<T, Future<R>> f);
-}
-
-class CachedPool<T extends Pool.Item> implements Pool<T> {
 
   private final Supplier<Future<T>> supplier;
-  private final ConcurrentLinkedQueue<T> items;
-  private final ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(1);
+  private final Semaphore sizeSemaphore;
+  private final Semaphore waitersSemaphore;
+  private final Queue<T> items;
+  private final Queue<Waiter<T, ?>> waiters;
 
-  public CachedPool(Supplier<Future<T>> supplier, Duration validationInterval) {
-    super();
+  private Pool(Supplier<Future<T>> supplier, int maxSize, int maxWaiters, Duration validationInterval) {
     this.supplier = supplier;
+    this.sizeSemaphore = semaphore(maxSize);
+    this.waitersSemaphore = semaphore(maxWaiters);
     this.items = new ConcurrentLinkedQueue<>();
+    this.waiters = new ConcurrentLinkedQueue<>();
     if (validationInterval.toMillis() != Long.MAX_VALUE)
-      scheduleValidation(validationInterval);
+      scheduleValidation(validationInterval, new ScheduledThreadPoolExecutor(1));
   }
 
-  @Override
   public <R> Future<R> apply(Function<T, Future<R>> f) {
-    T item = items.poll();
-    if (item != null)
-      return f.apply(item).ensure(() -> items.offer(item));
-    else
-      return supplier.get().flatMap(i -> f.apply(i).ensure(() -> items.offer(i)));
+    if (sizeSemaphore.tryAcquire()) {
+      T item = items.poll();
+      if (item != null)
+        return f.apply(item).ensure(() -> release(item));
+      else
+        return supplier.get().flatMap(i -> f.apply(i).ensure(() -> release(i)));
+    } else if (waitersSemaphore.tryAcquire()) {
+      Waiter<T, R> p = new Waiter<>(f);
+      waiters.offer(p);
+      return p;
+    } else
+      return POOL_EXHAUSTED.unsafeCast();
   }
+
+  private final void release(T item) {
+    Waiter<T, ?> waiter = waiters.poll();
+    if (waiter != null) {
+      waitersSemaphore.release();
+      waiter.apply(item).ensure(() -> release(item));
+    } else {
+      items.offer(item);
+      sizeSemaphore.release();
+    }
+  };
 
   private Future<Void> validateN(int n) {
-    if (n >= 0) {
+    if (n >= 0 && sizeSemaphore.tryAcquire()) {
       final T item = items.poll();
-      if (item == null)
+      if (item == null) {
+        sizeSemaphore.release();
         return Future.VOID;
-      else
+      } else
         // TODO logging
         return item.validate().rescue(e -> Future.FALSE).flatMap(valid -> {
           if (!valid)
@@ -65,54 +84,26 @@ class CachedPool<T extends Pool.Item> implements Pool<T> {
             items.offer(item);
             return Future.VOID;
           }
-        }).flatMap(v -> validateN(n - 1));
+        }).flatMap(v -> {
+          sizeSemaphore.release();
+          return validateN(n - 1);
+        });
     } else
       return Future.VOID;
   }
 
-  private Future<Void> scheduleValidation(Duration validationInterval) {
+  private Future<Void> scheduleValidation(Duration validationInterval, ScheduledExecutorService scheduler) {
     return Future.VOID.delayed(validationInterval, scheduler).flatMap(v1 -> {
-
       long start = System.currentTimeMillis();
       return validateN(items.size()).flatMap(v2 -> {
         long next = validationInterval.toMillis() - System.currentTimeMillis() - start;
         if (next <= 0) {
           // TODO logging
-          return scheduleValidation(validationInterval);
+          return scheduleValidation(validationInterval, scheduler);
         } else
-          return scheduleValidation(Duration.ofMillis(next));
+          return scheduleValidation(Duration.ofMillis(next), scheduler);
       });
     });
-  }
-}
-
-class BoundedPool<T extends Pool.Item> implements Pool<T> {
-
-  private static final Future<Object> POOL_EXHAUSTED = Future.exception(new RuntimeException("Pool exhausted"));
-
-  private final Pool<T> underlying;
-  private final Semaphore sizeSemaphore;
-  private final Semaphore waitersSemaphore;
-  private final Queue<Waiter<T, ?>> waiters;
-
-  public BoundedPool(Pool<T> underlying, int maxSize, int maxWaiters) {
-    super();
-    this.underlying = underlying;
-    this.sizeSemaphore = semaphore(maxSize);
-    this.waitersSemaphore = semaphore(maxWaiters);
-    this.waiters = new ConcurrentLinkedQueue<>();
-  }
-
-  @Override
-  public <R> Future<R> apply(Function<T, Future<R>> f) {
-    if (sizeSemaphore.tryAcquire())
-      return underlying.apply(f).ensure(this::releaseOne);
-    else if (waitersSemaphore.tryAcquire()) {
-      Waiter<T, R> p = new Waiter<>(f);
-      waiters.offer(p);
-      return p;
-    } else
-      return POOL_EXHAUSTED.unsafeCast();
   }
 
   private static class Waiter<T, R> extends Promise<R> {
@@ -129,15 +120,6 @@ class BoundedPool<T extends Pool.Item> implements Pool<T> {
       return this;
     }
   }
-
-  private final void releaseOne() {
-    Waiter<T, ?> waiter = waiters.poll();
-    if (waiter != null) {
-      waitersSemaphore.release();
-      underlying.apply(waiter::apply).ensure(this::releaseOne);
-    } else
-      sizeSemaphore.release();
-  };
 
   private Semaphore semaphore(int permits) {
     if (permits == Integer.MAX_VALUE)
