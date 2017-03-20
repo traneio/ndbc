@@ -44,12 +44,11 @@ public class Pool<T extends Pool.Item> {
   }
 
   public <R> Future<R> apply(Function<T, Future<R>> f) {
-    if (sizeSemaphore.tryAcquire()) {
-      T item = items.poll();
-      if (item != null)
-        return f.apply(item).ensure(() -> release(item));
-      else
-        return supplier.get().flatMap(i -> f.apply(i).ensure(() -> release(i)));
+    final T item = items.poll();
+    if (item != null)
+      return f.apply(item).ensure(() -> release(item));
+    else if (sizeSemaphore.tryAcquire()) {
+      return supplier.get().flatMap(i -> f.apply(i).ensure(() -> release(i)));
     } else if (waitersSemaphore.tryAcquire()) {
       Waiter<T, R> p = new Waiter<>(f);
       waiters.offer(p);
@@ -63,31 +62,26 @@ public class Pool<T extends Pool.Item> {
     if (waiter != null) {
       waitersSemaphore.release();
       waiter.apply(item).ensure(() -> release(item));
-    } else {
+    } else
       items.offer(item);
-      sizeSemaphore.release();
-    }
   };
 
   private Future<Void> validateN(int n) {
-    if (n >= 0 && sizeSemaphore.tryAcquire()) {
+    if (n >= 0) {
       final T item = items.poll();
       if (item == null) {
-        sizeSemaphore.release();
         return Future.VOID;
       } else
         // TODO logging
         return item.validate().rescue(e -> Future.FALSE).flatMap(valid -> {
-          if (!valid)
+          if (!valid) {
+            sizeSemaphore.release();
             return item.release().rescue(e -> Future.VOID);
-          else {
+          } else {
             items.offer(item);
             return Future.VOID;
           }
-        }).flatMap(v -> {
-          sizeSemaphore.release();
-          return validateN(n - 1);
-        });
+        }).flatMap(v -> validateN(n - 1));
     } else
       return Future.VOID;
   }
