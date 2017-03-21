@@ -12,31 +12,31 @@ import java.util.function.Supplier;
 import io.trane.future.Future;
 import io.trane.future.Promise;
 
-public class Pool<T extends Pool.Item> {
+public class Pool<T> {
 
   private static final Future<Object> POOL_EXHAUSTED = Future.exception(new RuntimeException("Pool exhausted"));
 
-  public interface Item {
-    Future<Void> release();
-
-    Future<Boolean> validate();
-  }
-
-  public static <T extends Pool.Item> Pool<T> apply(Supplier<Future<T>> supplier, int maxSize, int maxWaiters,
-      Duration validationInterval) {
-    return new Pool<>(supplier, maxSize, maxWaiters, validationInterval);
+  public static <T> Pool<T> apply(Supplier<Future<T>> supplier, Function<T, Future<Void>> release,
+      Function<T, Future<Boolean>> validate, int maxSize, int maxWaiters, Duration validationInterval) {
+    return new Pool<>(supplier, release, validate, maxSize, maxWaiters, validationInterval);
   }
 
   private final Supplier<Future<T>> supplier;
+  private final Function<T, Future<Void>> release;
+  private final Function<T, Future<Boolean>> validate;
   private final Semaphore sizeSemaphore;
   private final Semaphore waitersSemaphore;
   private final Queue<T> items;
   private final Queue<Waiter<T, ?>> waiters;
 
-  private Pool(Supplier<Future<T>> supplier, int maxSize, int maxWaiters, Duration validationInterval) {
+  private Pool(Supplier<Future<T>> supplier, Function<T, Future<Void>> release, Function<T, Future<Boolean>> validate,
+      int maxSize, int maxWaiters, Duration validationInterval) {
     this.supplier = supplier;
+    this.release = release;
+    this.validate = validate;
     this.sizeSemaphore = semaphore(maxSize);
     this.waitersSemaphore = semaphore(maxWaiters);
+    // TODO is this the best data structure?
     this.items = new ConcurrentLinkedQueue<>();
     this.waiters = new ConcurrentLinkedQueue<>();
     if (validationInterval.toMillis() != Long.MAX_VALUE)
@@ -47,9 +47,9 @@ public class Pool<T extends Pool.Item> {
     final T item = items.poll();
     if (item != null)
       return f.apply(item).ensure(() -> release(item));
-    else if (sizeSemaphore.tryAcquire()) {
+    else if (sizeSemaphore.tryAcquire())
       return supplier.get().flatMap(i -> f.apply(i).ensure(() -> release(i)));
-    } else if (waitersSemaphore.tryAcquire()) {
+    else if (waitersSemaphore.tryAcquire()) {
       Waiter<T, R> p = new Waiter<>(f);
       waiters.offer(p);
       return p;
@@ -66,18 +66,17 @@ public class Pool<T extends Pool.Item> {
       items.offer(item);
   };
 
-  private Future<Void> validateN(int n) {
+  private final Future<Void> validateN(int n) {
     if (n >= 0) {
       final T item = items.poll();
       if (item == null) {
         return Future.VOID;
       } else
         // TODO logging
-        return item.validate().rescue(e -> Future.FALSE).flatMap(valid -> {
-          if (!valid) {
-            sizeSemaphore.release();
-            return item.release().rescue(e -> Future.VOID);
-          } else {
+        return validate.apply(item).rescue(e -> Future.FALSE).flatMap(valid -> {
+          if (!valid)
+            return release.apply(item).rescue(e -> Future.VOID).ensure(() -> sizeSemaphore.release());
+          else {
             items.offer(item);
             return Future.VOID;
           }
