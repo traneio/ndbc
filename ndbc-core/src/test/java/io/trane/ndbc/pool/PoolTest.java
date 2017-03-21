@@ -18,8 +18,8 @@ public class PoolTest {
   @Test
   public void maxSize() {
     int maxSize = 100;
-    Pool<TestItem> pool = Pool.apply(() -> Future.value(new TestItem()), maxSize, Integer.MAX_VALUE,
-        Duration.ofMillis(Long.MAX_VALUE));
+    Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize,
+        Integer.MAX_VALUE, Duration.ofMillis(Long.MAX_VALUE));
     AtomicInteger executing = new AtomicInteger();
 
     for (int i = 0; i < maxSize * 3; i++)
@@ -34,8 +34,8 @@ public class PoolTest {
   @Test
   public void maxSizeConcurrentCreation() {
     int maxSize = 100;
-    Pool<TestItem> pool = Pool.apply(() -> Future.value(new TestItem()), maxSize, Integer.MAX_VALUE,
-        Duration.ofMillis(Long.MAX_VALUE));
+    Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize,
+        Integer.MAX_VALUE, Duration.ofMillis(Long.MAX_VALUE));
     AtomicInteger executing = new AtomicInteger();
 
     Concurrently.apply(Duration.ofMillis(200), () -> {
@@ -51,8 +51,8 @@ public class PoolTest {
   @Test
   public void maxSizeConcurrentUsage() {
     int maxSize = 100;
-    Pool<TestItem> pool = Pool.apply(() -> Future.value(new TestItem()), maxSize, Integer.MAX_VALUE,
-        Duration.ofMillis(Long.MAX_VALUE));
+    Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize,
+        Integer.MAX_VALUE, Duration.ofMillis(Long.MAX_VALUE));
     AtomicInteger executing = new AtomicInteger();
     ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
@@ -65,17 +65,17 @@ public class PoolTest {
       assertTrue(maxSize >= executing.get());
     });
   }
-  
+
   @Test
   public void maxWaiters() {
     int maxSize = 100;
     int maxWaiters = 60;
-    Pool<TestItem> pool = Pool.apply(() -> Future.value(new TestItem()), maxSize, maxWaiters,
+    Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize, maxWaiters,
         Duration.ofMillis(Long.MAX_VALUE));
     AtomicInteger executing = new AtomicInteger();
     AtomicInteger rejected = new AtomicInteger();
 
-    for (int i = 0; i < 200; i++) 
+    for (int i = 0; i < 200; i++)
       pool.apply(t -> {
         executing.incrementAndGet();
         return Promise.apply();
@@ -84,16 +84,17 @@ public class PoolTest {
     assertEquals(maxSize, executing.get());
     assertEquals(40, rejected.get());
   }
-  
+
   @Test
   public void maxWaitersConcurrentCreation() {
     int maxSize = 100;
-    Pool<TestItem> pool = Pool.apply(() -> Future.value(new TestItem()), maxSize, Integer.MAX_VALUE,
+    int maxWaiters = 60;
+    Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize, maxWaiters,
         Duration.ofMillis(Long.MAX_VALUE));
     AtomicInteger started = new AtomicInteger();
     AtomicInteger executing = new AtomicInteger();
     AtomicInteger rejected = new AtomicInteger();
-    
+
     Concurrently.apply(Duration.ofMillis(200), () -> {
       started.incrementAndGet();
       pool.apply(t -> {
@@ -106,16 +107,4 @@ public class PoolTest {
     });
   }
 
-}
-
-class TestItem implements Pool.Item {
-  @Override
-  public Future<Void> release() {
-    return Future.VOID;
-  }
-
-  @Override
-  public Future<Boolean> validate() {
-    return Future.TRUE;
-  }
 }
