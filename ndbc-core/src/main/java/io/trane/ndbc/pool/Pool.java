@@ -17,23 +17,23 @@ public class Pool<T> {
   private static final Future<Object> POOL_EXHAUSTED = Future.exception(new RuntimeException("Pool exhausted"));
 
   public static <T> Pool<T> apply(Supplier<Future<T>> supplier, Function<T, Future<Void>> release,
-      Function<T, Future<Boolean>> validate, int maxSize, int maxWaiters, Duration validationInterval) {
-    return new Pool<>(supplier, release, validate, maxSize, maxWaiters, validationInterval);
+      Function<T, Future<Boolean>> isValid, int maxSize, int maxWaiters, Duration validationInterval) {
+    return new Pool<>(supplier, release, isValid, maxSize, maxWaiters, validationInterval);
   }
 
   private final Supplier<Future<T>> supplier;
   private final Function<T, Future<Void>> release;
-  private final Function<T, Future<Boolean>> validate;
+  private final Function<T, Future<Boolean>> isValid;
   private final Semaphore sizeSemaphore;
   private final Semaphore waitersSemaphore;
   private final Queue<T> items;
   private final Queue<Waiter<T, ?>> waiters;
 
-  private Pool(Supplier<Future<T>> supplier, Function<T, Future<Void>> release, Function<T, Future<Boolean>> validate,
+  private Pool(Supplier<Future<T>> supplier, Function<T, Future<Void>> release, Function<T, Future<Boolean>> isValid,
       int maxSize, int maxWaiters, Duration validationInterval) {
     this.supplier = supplier;
     this.release = release;
-    this.validate = validate;
+    this.isValid = isValid;
     this.sizeSemaphore = semaphore(maxSize);
     this.waitersSemaphore = semaphore(maxWaiters);
     // TODO is this the best data structure?
@@ -73,7 +73,7 @@ public class Pool<T> {
         return Future.VOID;
       } else
         // TODO logging
-        return validate.apply(item).rescue(e -> Future.FALSE).flatMap(valid -> {
+        return isValid.apply(item).rescue(e -> Future.FALSE).flatMap(valid -> {
           if (!valid)
             return release.apply(item).rescue(e -> Future.VOID).ensure(() -> sizeSemaphore.release());
           else {
