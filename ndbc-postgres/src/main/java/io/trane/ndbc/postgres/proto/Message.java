@@ -1,4 +1,4 @@
-package io.trane.ndbc.proto;
+package io.trane.ndbc.postgres.proto;
 
 interface Message {
 
