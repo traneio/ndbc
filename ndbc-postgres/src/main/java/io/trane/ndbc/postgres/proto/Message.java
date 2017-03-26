@@ -18,6 +18,11 @@ interface Message {
       public boolean equals(Object obj) {
         return obj instanceof AuthenticationCleartextPassword;
       }
+
+      @Override
+      public String toString() {
+        return "AuthenticationCleartextPassword []";
+      }
     }
 
     /** Specifies that GSSAPI authentication is required. */
@@ -30,6 +35,11 @@ interface Message {
       @Override
       public boolean equals(Object obj) {
         return obj instanceof AuthenticationGSS;
+      }
+
+      @Override
+      public String toString() {
+        return "AuthenticationGSS []";
       }
     }
 
@@ -63,6 +73,11 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "AuthenticationGSSContinue [authenticationData=" + Arrays.toString(authenticationData) + "]";
+      }
     }
 
     /** Specifies that Kerberos V5 authentication is required. */
@@ -75,6 +90,11 @@ interface Message {
       @Override
       public boolean equals(Object obj) {
         return obj instanceof AuthenticationKerberosV5;
+      }
+
+      @Override
+      public String toString() {
+        return "AuthenticationKerberosV5 []";
       }
     }
 
@@ -108,6 +128,11 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "AuthenticationMD5Password [salt=" + Arrays.toString(salt) + "]";
+      }
     }
 
     /** Specifies that the authentication was successful. */
@@ -120,6 +145,11 @@ interface Message {
       @Override
       public boolean equals(Object obj) {
         return obj instanceof AuthenticationOk;
+      }
+
+      @Override
+      public String toString() {
+        return "AuthenticationOk []";
       }
     }
 
@@ -134,6 +164,11 @@ interface Message {
       public boolean equals(Object obj) {
         return obj instanceof AuthenticationSCMCredential;
       }
+
+      @Override
+      public String toString() {
+        return "AuthenticationSCMCredential []";
+      }
     }
 
     /** Specifies that SSPI authentication is required. */
@@ -147,6 +182,12 @@ interface Message {
       public boolean equals(Object obj) {
         return obj instanceof AuthenticationSSPI;
       }
+
+      @Override
+      public String toString() {
+        return "AuthenticationSSPI []";
+      }
+      
     }
   }
 
@@ -188,6 +229,11 @@ interface Message {
       if (secretKey != other.secretKey)
         return false;
       return true;
+    }
+
+    @Override
+    public String toString() {
+      return "BackendKeyData [processId=" + processId + ", secretKey=" + secretKey + "]";
     }
   }
 
@@ -274,6 +320,14 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "Bind [destinationPortalName=" + destinationPortalName + ", fields=" + Arrays.toString(fields)
+          + ", parameterFormatCodes=" + Arrays.toString(parameterFormatCodes) + ", resultColumnFormatCodes="
+          + Arrays.toString(resultColumnFormatCodes) + ", sourcePreparedStatementName=" + sourcePreparedStatementName
+          + "]";
+    }
   }
 
   static final class BindComplete implements BackendMessage {
@@ -285,6 +339,11 @@ interface Message {
     @Override
     public boolean equals(Object obj) {
       return obj instanceof BindComplete;
+    }
+
+    @Override
+    public String toString() {
+      return "BindComplete []";
     }
   }
 
@@ -324,6 +383,11 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "CancelRequest [processId=" + processId + ", secretKey=" + secretKey + "]";
+    }
   }
 
   /** Identifies the message as a Close command. */
@@ -355,6 +419,11 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "ClosePortal [name=" + name + "]";
+      }
     }
 
     static final class ClosePreparedStatement extends Close {
@@ -383,6 +452,11 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "ClosePreparedStatement [name=" + name + "]";
+      }
     }
 
     /** The name of the prepared statement or portal to close (an empty 
@@ -403,6 +477,11 @@ interface Message {
     @Override
     public boolean equals(Object obj) {
       return obj instanceof CloseComplete;
+    }
+
+    @Override
+    public String toString() {
+      return "CloseComplete []";
     }
   }
 
@@ -438,6 +517,11 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "CopyComplete [rows=" + rows + "]";
+      }
     }
 
     /** For a DELETE command, the tag is DELETE rows where rows is 
@@ -468,6 +552,11 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "DeleteComplete [rows=" + rows + "]";
+      }
     }
 
     /** For a FETCH command, the tag is FETCH rows where rows is the 
@@ -497,6 +586,11 @@ interface Message {
         if (rows != other.rows)
           return false;
         return true;
+      }
+
+      @Override
+      public String toString() {
+        return "FetchComplete [rows=" + rows + "]";
       }
     }
 
@@ -536,6 +630,11 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "InsertComplete [oid=" + oid + "]";
+      }
     }
 
     /** For a MOVE command, the tag is MOVE rows where rows is the 
@@ -565,6 +664,11 @@ interface Message {
         if (rows != other.rows)
           return false;
         return true;
+      }
+
+      @Override
+      public String toString() {
+        return "MoveComplete [rows=" + rows + "]";
       }
     }
 
@@ -596,6 +700,11 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "SelectorOrCreateTableAsCompleted [rows=" + rows + "]";
+      }
     }
 
     /** For an UPDATE command, the tag is UPDATE rows where rows is 
@@ -625,6 +734,11 @@ interface Message {
         if (rows != other.rows)
           return false;
         return true;
+      }
+
+      @Override
+      public String toString() {
+        return "UpdateComplete [rows=" + rows + "]";
       }
     }
 
@@ -669,6 +783,11 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "CopyBothResponse [columnFormatCodes=" + Arrays.toString(columnFormatCodes) + "]";
+    }
   }
 
   /** Identifies the message as COPY data. */
@@ -704,6 +823,11 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "CopyData [data=" + Arrays.toString(data) + "]";
+    }
   }
 
   /** Identifies the message as a COPY-complete indicator. */
@@ -717,6 +841,11 @@ interface Message {
     @Override
     public boolean equals(Object obj) {
       return obj instanceof CopyDone;
+    }
+
+    @Override
+    public String toString() {
+      return "CopyDone []";
     }
   }
 
@@ -752,6 +881,11 @@ interface Message {
       } else if (!errorMessage.equals(other.errorMessage))
         return false;
       return true;
+    }
+
+    @Override
+    public String toString() {
+      return "CopyFail [errorMessage=" + errorMessage + "]";
     }
   }
 
@@ -790,6 +924,11 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "CopyInResponse [columnFormatCodes=" + Arrays.toString(columnFormatCodes) + "]";
+    }
   }
 
   /** Identifies the message as a Start Copy Out response. 
@@ -826,6 +965,11 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "CopyOutResponse [columnFormatCodes=" + Arrays.toString(columnFormatCodes) + "]";
+    }
   }
 
   /** Identifies the message as a data row. */
@@ -858,6 +1002,11 @@ interface Message {
       if (!Arrays.equals(columns, other.columns))
         return false;
       return true;
+    }
+
+    @Override
+    public String toString() {
+      return "DataRow [columns=" + Arrays.toString(columns) + "]";
     }
   }
 
@@ -893,6 +1042,11 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "DescribePortal [name=" + name + "]";
+      }
     }
 
     static final class DescribePreparedStatement extends Describe {
@@ -924,6 +1078,11 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "DescribePreparedStatement [name=" + name + "]";
+      }
     }
 
     /** The name of the prepared statement or portal to describe 
@@ -948,6 +1107,11 @@ interface Message {
     @Override
     public boolean equals(Object obj) {
       return obj instanceof EmptyQueryResponse;
+    }
+
+    @Override
+    public String toString() {
+      return "EmptyQueryResponse []";
     }
   }
 
@@ -996,6 +1160,11 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "Field [type=" + type + ", value=" + value + "]";
+      }
     }
 
     /** The message body consists of one or more identified fields, followed 
@@ -1027,6 +1196,11 @@ interface Message {
       if (!Arrays.equals(fields, other.fields))
         return false;
       return true;
+    }
+
+    @Override
+    public String toString() {
+      return "ErrorResponse [fields=" + Arrays.toString(fields) + "]";
     }
   }
 
@@ -1072,6 +1246,11 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "Execute [maxNumberOfRows=" + maxNumberOfRows + ", portalName=" + portalName + "]";
+    }
   }
 
   /** Identifies the message as a Flush command. */
@@ -1085,6 +1264,11 @@ interface Message {
     @Override
     public boolean equals(Object obj) {
       return obj instanceof Flush;
+    }
+
+    @Override
+    public String toString() {
+      return "Flush []";
     }
   }
 
@@ -1155,6 +1339,12 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "FunctionCall [fields=" + Arrays.toString(fields) + ", formatCodes=" + Arrays.toString(formatCodes)
+          + ", functionResultFormatCode=" + functionResultFormatCode + ", id=" + id + "]";
+    }
   }
 
   /** Identifies the message as a function call result. */
@@ -1197,6 +1387,11 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "FunctionCallResponse [isNull=" + isNull + ", value=" + Arrays.toString(value) + "]";
+    }
   }
 
   /** Identifies the message as a no-data indicator. */
@@ -1209,6 +1404,11 @@ interface Message {
     @Override
     public boolean equals(Object obj) {
       return obj instanceof NoData;
+    }
+
+    @Override
+    public String toString() {
+      return "NoData []";
     }
   }
 
@@ -1248,6 +1448,11 @@ interface Message {
       if (!Arrays.equals(fields, other.fields))
         return false;
       return true;
+    }
+
+    @Override
+    public String toString() {
+      return "NoticeResponse [fields=" + Arrays.toString(fields) + "]";
     }
   }
 
@@ -1301,6 +1506,12 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "NotificationResponse [channelName=" + channelName + ", payload=" + payload + ", processID=" + processID
+          + "]";
+    }
   }
 
   /** Identifies the message as a parameter description */
@@ -1333,6 +1544,11 @@ interface Message {
       if (!Arrays.equals(parameterDataType, other.parameterDataType))
         return false;
       return true;
+    }
+
+    @Override
+    public String toString() {
+      return "ParameterDescription [parameterDataType=" + Arrays.toString(parameterDataType) + "]";
     }
   }
 
@@ -1378,6 +1594,11 @@ interface Message {
       } else if (!value.equals(other.value))
         return false;
       return true;
+    }
+
+    @Override
+    public String toString() {
+      return "ParameterStatus [name=" + name + ", value=" + value + "]";
     }
   }
 
@@ -1439,6 +1660,12 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "Parse [destinationName=" + destinationName + ", parameterTypes=" + Arrays.toString(parameterTypes)
+          + ", query=" + query + "]";
+    }
   }
 
   /** Identifies the message as a Parse-complete indicator. */
@@ -1451,6 +1678,11 @@ interface Message {
     @Override
     public boolean equals(Object obj) {
       return obj instanceof ParseComplete;
+    }
+
+    @Override
+    public String toString() {
+      return "ParseComplete []";
     }
   }
 
@@ -1491,6 +1723,11 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "PasswordMessage [password=" + password + "]";
+    }
   }
 
   /** Identifies the message as a portal-suspended indicator. Note this only appears 
@@ -1504,6 +1741,11 @@ interface Message {
     @Override
     public boolean equals(Object obj) {
       return obj instanceof PortalSuspended;
+    }
+
+    @Override
+    public String toString() {
+      return "PortalSuspended []";
     }
   }
 
@@ -1540,6 +1782,11 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "Query [string=" + string + "]";
+    }
   }
 
   /** Identifies the message type. ReadyForQuery is sent whenever the backend is ready 
@@ -1575,6 +1822,11 @@ interface Message {
       if (status != other.status)
         return false;
       return true;
+    }
+
+    @Override
+    public String toString() {
+      return "ReadyForQuery [status=" + status + "]";
     }
   }
 
@@ -1660,6 +1912,13 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "Field [attributeNumber=" + attributeNumber + ", dataType=" + dataType + ", dataTypeSize=" + dataTypeSize
+            + ", formatCode=" + formatCode + ", name=" + name + ", objectID=" + objectID + ", typeModifier="
+            + typeModifier + "]";
+      }
     }
 
     public final Field[] fields;
@@ -1689,6 +1948,11 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "RowDescription [fields=" + Arrays.toString(fields) + "]";
+    }
   }
 
   static final class SSLRequest implements FrontendMessage {
@@ -1700,6 +1964,11 @@ interface Message {
     @Override
     public boolean equals(Object obj) {
       return obj instanceof SSLRequest;
+    }
+
+    @Override
+    public String toString() {
+      return "SSLRequest []";
     }
   }
 
@@ -1747,6 +2016,11 @@ interface Message {
           return false;
         return true;
       }
+
+      @Override
+      public String toString() {
+        return "Parameter [name=" + name + ", value=" + value + "]";
+      }
     }
 
     /** The protocol version number is followed by one or more pairs of parameter name 
@@ -1790,6 +2064,11 @@ interface Message {
         return false;
       return true;
     }
+
+    @Override
+    public String toString() {
+      return "StartupMessage [parameters=" + Arrays.toString(parameters) + ", user=" + user + "]";
+    }
   }
 
   /** Identifies the message as a Sync command. */
@@ -1803,6 +2082,11 @@ interface Message {
     public boolean equals(Object obj) {
       return obj instanceof Sync;
     }
+
+    @Override
+    public String toString() {
+      return "Sync []";
+    }
   }
 
   /** Identifies the message as a termination. */
@@ -1815,6 +2099,11 @@ interface Message {
     @Override
     public boolean equals(Object obj) {
       return obj instanceof Terminate;
+    }
+
+    @Override
+    public String toString() {
+      return "Terminate []";
     }
   }
 }
