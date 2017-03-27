@@ -17,6 +17,19 @@ public interface PartialFunction<T, U> {
     };
   }
 
+  public static <T, U> PartialFunction<T, U> when(Class<T> cls, Function<T, U> apply) {
+    return new PartialFunction<T, U>() {
+      @SuppressWarnings("unchecked")
+      @Override
+      public U applyOrElse(T value, Supplier<U> fallback) {
+        if (cls.isInstance(value))
+          return apply.apply((T) value);
+        else
+          return fallback.get();
+      }
+    };
+  }
+
   public U applyOrElse(T value, Supplier<U> fallback);
 
   default public PartialFunction<T, U> when(Predicate<T> isDefinedAt, Function<T, U> apply) {
@@ -25,6 +38,19 @@ public interface PartialFunction<T, U> {
       public U applyOrElse(T value, Supplier<U> fallback) {
         if (isDefinedAt.test(value))
           return apply.apply(value);
+        else
+          return fallback.get();
+      }
+    });
+  }
+
+  default public <X extends T> PartialFunction<T, U> orElse(Class<X> cls, Function<X, U> apply) {
+    return orElse(new PartialFunction<T, U>() {
+      @SuppressWarnings("unchecked")
+      @Override
+      public U applyOrElse(T value, Supplier<U> fallback) {
+        if (cls.isInstance(value))
+          return apply.apply((X) value);
         else
           return fallback.get();
       }
