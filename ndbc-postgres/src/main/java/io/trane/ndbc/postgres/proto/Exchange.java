@@ -1,7 +1,5 @@
 package io.trane.ndbc.postgres.proto;
 
-import java.util.function.Function;
-
 import io.trane.future.Future;
 import io.trane.ndbc.postgres.proto.Message.BackendMessage;
 import io.trane.ndbc.postgres.proto.Message.FrontendMessage;
@@ -23,7 +21,7 @@ interface Exchange<T> {
     return apply();
   }
 
-  class ExchangeException extends RuntimeException {
+  static class ExchangeException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public ExchangeException(String message) {
@@ -43,7 +41,7 @@ interface Exchange<T> {
 
   Future<T> apply(Channel channel);
 
-  default public Exchange<Void> send(FrontendMessage msg) {
+  static Exchange<Void> send(FrontendMessage msg) {
     return new Exchange<Void>() {
       @Override
       public Future<Void> apply(Channel channel) {
@@ -52,7 +50,7 @@ interface Exchange<T> {
     };
   }
 
-  default public <R> Exchange<R> receive(PartialFunction<BackendMessage, Exchange<R>> f) {
+  public static <R> Exchange<R> receive(PartialFunction<BackendMessage, Exchange<R>> f) {
     return new Exchange<R>() {
       @Override
       public Future<R> apply(Channel channel) {
@@ -60,5 +58,13 @@ interface Exchange<T> {
             msg -> f.applyOrElse(msg, () -> Exchange.fail("Unexpected database message: " + msg)).apply(channel));
       }
     };
+  }
+
+  default public Exchange<Void> thenSend(FrontendMessage msg) {
+    return Exchange.send(msg);
+  }
+
+  default public <R> Exchange<R> thenReceive(PartialFunction<BackendMessage, Exchange<R>> f) {
+    return Exchange.receive(f);
   }
 }
