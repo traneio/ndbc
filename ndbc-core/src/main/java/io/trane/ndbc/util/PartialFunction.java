@@ -9,19 +9,14 @@ import java.util.function.Supplier;
 public interface PartialFunction<T, U> {
 
   public static <T, U> PartialFunction<T, U> apply() {
-    return new PartialFunction<T, U>() {
-      @Override
-      public U applyOrElse(T value, Supplier<U> fallback) {
-        return fallback.get();
-      }
-    };
+    return (value, fallback) -> fallback.get();
   }
-  
-  public static <T, U, X extends T> PartialFunction<T, U> when(Class<X> cls, Function<X, U> apply) {
+
+  public static <T, U, X extends T> PartialFunction<T, U> when(final Class<X> cls, final Function<X, U> apply) {
     return new PartialFunction<T, U>() {
       @SuppressWarnings("unchecked")
       @Override
-      public U applyOrElse(T value, Supplier<U> fallback) {
+      public U applyOrElse(final T value, final Supplier<U> fallback) {
         if (cls.isInstance(value))
           return apply.apply((X) value);
         else
@@ -32,23 +27,20 @@ public interface PartialFunction<T, U> {
 
   public U applyOrElse(T value, Supplier<U> fallback);
 
-  default public PartialFunction<T, U> orElse(Predicate<T> isDefinedAt, Function<T, U> apply) {
-    return orElse(new PartialFunction<T, U>() {
-      @Override
-      public U applyOrElse(T value, Supplier<U> fallback) {
-        if (isDefinedAt.test(value))
-          return apply.apply(value);
-        else
-          return fallback.get();
-      }
+  default public PartialFunction<T, U> orElse(final Predicate<T> isDefinedAt, final Function<T, U> apply) {
+    return orElse((value, fallback) -> {
+      if (isDefinedAt.test(value))
+        return apply.apply(value);
+      else
+        return fallback.get();
     });
   }
 
-  default public <X extends T> PartialFunction<T, U> orElse(Class<X> cls, Function<X, U> apply) {
+  default public <X extends T> PartialFunction<T, U> orElse(final Class<X> cls, final Function<X, U> apply) {
     return orElse(new PartialFunction<T, U>() {
       @SuppressWarnings("unchecked")
       @Override
-      public U applyOrElse(T value, Supplier<U> fallback) {
+      public U applyOrElse(final T value, final Supplier<U> fallback) {
         if (cls.isInstance(value))
           return apply.apply((X) value);
         else
@@ -57,13 +49,8 @@ public interface PartialFunction<T, U> {
     });
   }
 
-  default public PartialFunction<T, U> orElse(PartialFunction<T, U> pf) {
-    return new PartialFunction<T, U>() {
-      @Override
-      public U applyOrElse(T value, Supplier<U> fallback) {
-        return PartialFunction.this.applyOrElse(value, () -> pf.applyOrElse(value, fallback));
-      }
-    };
+  default public PartialFunction<T, U> orElse(final PartialFunction<? super T, U> pf) {
+    return (value, fallback) -> PartialFunction.this.applyOrElse(value, () -> pf.applyOrElse(value, fallback));
   }
 
   default public Function<T, Optional<U>> lift() {

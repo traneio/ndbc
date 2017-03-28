@@ -17,10 +17,10 @@ public class PoolTest {
 
   @Test
   public void maxSize() {
-    int maxSize = 100;
-    Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize,
+    final int maxSize = 100;
+    final Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize,
         Integer.MAX_VALUE, Duration.ofMillis(Long.MAX_VALUE));
-    AtomicInteger executing = new AtomicInteger();
+    final AtomicInteger executing = new AtomicInteger();
 
     for (int i = 0; i < maxSize * 3; i++)
       pool.apply(t -> {
@@ -33,10 +33,10 @@ public class PoolTest {
 
   @Test
   public void maxSizeConcurrentCreation() {
-    int maxSize = 100;
-    Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize,
+    final int maxSize = 100;
+    final Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize,
         Integer.MAX_VALUE, Duration.ofMillis(Long.MAX_VALUE));
-    AtomicInteger executing = new AtomicInteger();
+    final AtomicInteger executing = new AtomicInteger();
 
     Concurrently.apply(Duration.ofMillis(200), () -> {
       pool.apply(t -> {
@@ -50,11 +50,11 @@ public class PoolTest {
 
   @Test
   public void maxSizeConcurrentUsage() {
-    int maxSize = 100;
-    Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize,
+    final int maxSize = 100;
+    final Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize,
         Integer.MAX_VALUE, Duration.ofMillis(Long.MAX_VALUE));
-    AtomicInteger executing = new AtomicInteger();
-    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+    final AtomicInteger executing = new AtomicInteger();
+    final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
     Concurrently.apply(Duration.ofMillis(200), () -> {
       pool.apply(t -> {
@@ -68,12 +68,13 @@ public class PoolTest {
 
   @Test
   public void maxWaiters() {
-    int maxSize = 100;
-    int maxWaiters = 60;
-    Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize, maxWaiters,
+    final int maxSize = 100;
+    final int maxWaiters = 60;
+    final Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize,
+        maxWaiters,
         Duration.ofMillis(Long.MAX_VALUE));
-    AtomicInteger executing = new AtomicInteger();
-    AtomicInteger rejected = new AtomicInteger();
+    final AtomicInteger executing = new AtomicInteger();
+    final AtomicInteger rejected = new AtomicInteger();
 
     for (int i = 0; i < 200; i++)
       pool.apply(t -> {
@@ -87,13 +88,14 @@ public class PoolTest {
 
   @Test
   public void maxWaitersConcurrentCreation() {
-    int maxSize = 100;
-    int maxWaiters = 60;
-    Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize, maxWaiters,
+    final int maxSize = 100;
+    final int maxWaiters = 60;
+    final Pool<Integer> pool = Pool.apply(() -> Future.value(1), i -> Future.VOID, i -> Future.TRUE, maxSize,
+        maxWaiters,
         Duration.ofMillis(Long.MAX_VALUE));
-    AtomicInteger started = new AtomicInteger();
-    AtomicInteger executing = new AtomicInteger();
-    AtomicInteger rejected = new AtomicInteger();
+    final AtomicInteger started = new AtomicInteger();
+    final AtomicInteger executing = new AtomicInteger();
+    final AtomicInteger rejected = new AtomicInteger();
 
     Concurrently.apply(Duration.ofMillis(200), () -> {
       started.incrementAndGet();

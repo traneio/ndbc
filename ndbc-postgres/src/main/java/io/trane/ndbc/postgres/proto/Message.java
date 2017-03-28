@@ -2,10 +2,13 @@ package io.trane.ndbc.postgres.proto;
 
 import java.util.Arrays;
 
+import io.trane.ndbc.proto.ClientMessage;
+import io.trane.ndbc.proto.ServerMessage;
+
 interface Message {
 
   /** Identifies the message as an authentication request. */
-  interface AuthenticationRequest extends BackendMessage {
+  interface AuthenticationRequest extends ServerMessage {
 
     /** Specifies that a clear-text password is required. */
     static final class AuthenticationCleartextPassword implements AuthenticationRequest {
@@ -15,7 +18,7 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         return obj instanceof AuthenticationCleartextPassword;
       }
 
@@ -33,7 +36,7 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         return obj instanceof AuthenticationGSS;
       }
 
@@ -48,7 +51,7 @@ interface Message {
       /** GSSAPI or SSPI authentication data. */
       public final byte[] authenticationData;
 
-      public AuthenticationGSSContinue(byte[] authenticationData) {
+      public AuthenticationGSSContinue(final byte[] authenticationData) {
         this.authenticationData = authenticationData;
       }
 
@@ -61,14 +64,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof AuthenticationGSSContinue))
           return false;
-        AuthenticationGSSContinue other = (AuthenticationGSSContinue) obj;
+        final AuthenticationGSSContinue other = (AuthenticationGSSContinue) obj;
         if (!Arrays.equals(authenticationData, other.authenticationData))
           return false;
         return true;
@@ -88,7 +91,7 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         return obj instanceof AuthenticationKerberosV5;
       }
 
@@ -103,7 +106,7 @@ interface Message {
       /** The salt to use when encrypting the password. */
       public final byte[] salt;
 
-      public AuthenticationMD5Password(byte[] salt) {
+      public AuthenticationMD5Password(final byte[] salt) {
         this.salt = salt;
       }
 
@@ -116,14 +119,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof AuthenticationMD5Password))
           return false;
-        AuthenticationMD5Password other = (AuthenticationMD5Password) obj;
+        final AuthenticationMD5Password other = (AuthenticationMD5Password) obj;
         if (!Arrays.equals(salt, other.salt))
           return false;
         return true;
@@ -143,7 +146,7 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         return obj instanceof AuthenticationOk;
       }
 
@@ -161,7 +164,7 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         return obj instanceof AuthenticationSCMCredential;
       }
 
@@ -179,7 +182,7 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         return obj instanceof AuthenticationSSPI;
       }
 
@@ -187,21 +190,21 @@ interface Message {
       public String toString() {
         return "AuthenticationSSPI []";
       }
-      
+
     }
   }
 
-  /** Identifies the message as cancellation key data. The frontend 
-   * must save these values if it wishes to be able to issue CancelRequest 
+  /** Identifies the message as cancellation key data. The frontend
+   * must save these values if it wishes to be able to issue CancelRequest
    * messages later. */
-  static final class BackendKeyData implements BackendMessage {
+  static final class BackendKeyData implements ServerMessage {
     /** The process ID of this backend. */
     public final int processId;
 
     /** The secret key of this backend. */
     public final int secretKey;
 
-    public BackendKeyData(int processId, int secretKey) {
+    public BackendKeyData(final int processId, final int secretKey) {
       this.processId = processId;
       this.secretKey = secretKey;
     }
@@ -216,14 +219,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof BackendKeyData))
         return false;
-      BackendKeyData other = (BackendKeyData) obj;
+      final BackendKeyData other = (BackendKeyData) obj;
       if (processId != other.processId)
         return false;
       if (secretKey != other.secretKey)
@@ -237,43 +240,41 @@ interface Message {
     }
   }
 
-  interface BackendMessage extends Message {
-  }
-
   /** Identifies the message as a Bind command. */
-  static final class Bind implements FrontendMessage {
+  static final class Bind implements ClientMessage {
 
-    /** The name of the destination portal (an empty string selects 
+    /** The name of the destination portal (an empty string selects
      * the unnamed portal). */
     public final String destinationPortalName;
 
-    /** The number of parameter values that follow (possibly zero). This 
+    /** The number of parameter values that follow (possibly zero). This
      * must match the number of parameters needed by the query.
-     * Next, the following pair of fields appear for each parameter: 
-     * The value of the parameter, in the format indicated by the associated 
+     * Next, the following pair of fields appear for each parameter:
+     * The value of the parameter, in the format indicated by the associated
      * format code. n is the above length.*/
     public final byte[][] fields;
 
-    /** The number of parameter format codes that follow (denoted C below). 
-     * This can be zero to indicate that there are no parameters or that 
-     * the parameters all use the default format (text); or one, in which 
-     * case the specified format code is applied to all parameters; or it 
+    /** The number of parameter format codes that follow (denoted C below).
+     * This can be zero to indicate that there are no parameters or that
+     * the parameters all use the default format (text); or one, in which
+     * case the specified format code is applied to all parameters; or it
      * can equal the actual number of parameters.
-     * 
-     * The parameter format codes. Each must presently be zero (text) or 
+     *
+     * The parameter format codes. Each must presently be zero (text) or
      * one (binary). */
     public final short[] parameterFormatCodes;
 
-    /** The result-column format codes. Each must presently be zero (text) 
+    /** The result-column format codes. Each must presently be zero (text)
      * or one (binary). */
     public final short[] resultColumnFormatCodes;
 
-    /** The name of the source prepared statement (an empty string 
+    /** The name of the source prepared statement (an empty string
      * selects the unnamed prepared statement). */
     public final String sourcePreparedStatementName;
 
-    public Bind(String destinationPortalName, String sourcePreparedStatementName, short[] parameterFormatCodes,
-        byte[][] fields, short[] resultColumnFormatCodes) {
+    public Bind(final String destinationPortalName, final String sourcePreparedStatementName,
+        final short[] parameterFormatCodes,
+        final byte[][] fields, final short[] resultColumnFormatCodes) {
       this.destinationPortalName = destinationPortalName;
       this.sourcePreparedStatementName = sourcePreparedStatementName;
       this.parameterFormatCodes = parameterFormatCodes;
@@ -294,14 +295,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof Bind))
         return false;
-      Bind other = (Bind) obj;
+      final Bind other = (Bind) obj;
       if (destinationPortalName == null) {
         if (other.destinationPortalName != null)
           return false;
@@ -330,14 +331,14 @@ interface Message {
     }
   }
 
-  static final class BindComplete implements BackendMessage {
+  static final class BindComplete implements ServerMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       return obj instanceof BindComplete;
     }
 
@@ -347,14 +348,14 @@ interface Message {
     }
   }
 
-  static final class CancelRequest implements FrontendMessage {
+  static final class CancelRequest implements ClientMessage {
     /** The process ID of the target backend. */
     public final int processId;
 
     /** The secret key for the target backend. */
     public final int secretKey;
 
-    public CancelRequest(int processId, int secretKey) {
+    public CancelRequest(final int processId, final int secretKey) {
       this.processId = processId;
       this.secretKey = secretKey;
     }
@@ -369,14 +370,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof CancelRequest))
         return false;
-      CancelRequest other = (CancelRequest) obj;
+      final CancelRequest other = (CancelRequest) obj;
       if (processId != other.processId)
         return false;
       if (secretKey != other.secretKey)
@@ -391,13 +392,13 @@ interface Message {
   }
 
   /** Identifies the message as a Close command. */
-  static abstract class Close implements FrontendMessage {
+  static abstract class Close implements ClientMessage {
 
     static final class ClosePortal extends Close {
-      public ClosePortal(String name) {
+      public ClosePortal(final String name) {
         super(name);
       }
-      
+
       @Override
       public int hashCode() {
         final int prime = 31;
@@ -407,14 +408,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof ClosePortal))
           return false;
-        ClosePortal other = (ClosePortal) obj;
+        final ClosePortal other = (ClosePortal) obj;
         if (!name.equals(other.name))
           return false;
         return true;
@@ -427,10 +428,10 @@ interface Message {
     }
 
     static final class ClosePreparedStatement extends Close {
-      public ClosePreparedStatement(String name) {
+      public ClosePreparedStatement(final String name) {
         super(name);
       }
-      
+
       @Override
       public int hashCode() {
         final int prime = 31;
@@ -440,14 +441,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof ClosePreparedStatement))
           return false;
-        ClosePreparedStatement other = (ClosePreparedStatement) obj;
+        final ClosePreparedStatement other = (ClosePreparedStatement) obj;
         if (!name.equals(other.name))
           return false;
         return true;
@@ -459,23 +460,23 @@ interface Message {
       }
     }
 
-    /** The name of the prepared statement or portal to close (an empty 
+    /** The name of the prepared statement or portal to close (an empty
      * string selects the unnamed prepared statement or portal). */
     public final String name;
 
-    public Close(String name) {
+    public Close(final String name) {
       this.name = name;
     }
   }
 
-  static final class CloseComplete implements BackendMessage {
+  static final class CloseComplete implements ServerMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       return obj instanceof CloseComplete;
     }
 
@@ -486,16 +487,16 @@ interface Message {
   }
 
   /** Identifies the message as a command-completed response. */
-  static abstract class CommandComplete implements BackendMessage {
+  static abstract class CommandComplete implements ServerMessage {
 
-    /** For a COPY command, the tag is COPY rows where rows is the 
-     * number of rows copied. (Note: the row count appears only in 
+    /** For a COPY command, the tag is COPY rows where rows is the
+     * number of rows copied. (Note: the row count appears only in
      * PostgreSQL 8.2 and later.) */
     static final class CopyComplete extends CommandComplete {
-      public CopyComplete(int rows) {
+      public CopyComplete(final int rows) {
         super(rows);
       }
-      
+
       @Override
       public int hashCode() {
         final int prime = 31;
@@ -505,14 +506,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof CopyComplete))
           return false;
-        CopyComplete other = (CopyComplete) obj;
+        final CopyComplete other = (CopyComplete) obj;
         if (rows != other.rows)
           return false;
         return true;
@@ -524,13 +525,13 @@ interface Message {
       }
     }
 
-    /** For a DELETE command, the tag is DELETE rows where rows is 
+    /** For a DELETE command, the tag is DELETE rows where rows is
      * the number of rows deleted. */
     static final class DeleteComplete extends CommandComplete {
-      public DeleteComplete(int rows) {
+      public DeleteComplete(final int rows) {
         super(rows);
       }
-      
+
       @Override
       public int hashCode() {
         final int prime = 31;
@@ -540,14 +541,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof DeleteComplete))
           return false;
-        DeleteComplete other = (DeleteComplete) obj;
+        final DeleteComplete other = (DeleteComplete) obj;
         if (rows != other.rows)
           return false;
         return true;
@@ -559,13 +560,13 @@ interface Message {
       }
     }
 
-    /** For a FETCH command, the tag is FETCH rows where rows is the 
+    /** For a FETCH command, the tag is FETCH rows where rows is the
      * number of rows that have been retrieved from the cursor. */
     static final class FetchComplete extends CommandComplete {
-      public FetchComplete(int rows) {
+      public FetchComplete(final int rows) {
         super(rows);
       }
-      
+
       @Override
       public int hashCode() {
         final int prime = 31;
@@ -575,14 +576,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof FetchComplete))
           return false;
-        FetchComplete other = (FetchComplete) obj;
+        final FetchComplete other = (FetchComplete) obj;
         if (rows != other.rows)
           return false;
         return true;
@@ -594,18 +595,18 @@ interface Message {
       }
     }
 
-    /** For an INSERT command, the tag is INSERT oid rows, where 
-     * rows is the number of rows inserted. oid is the object ID 
-     * of the inserted row if rows is 1 and the target table has 
+    /** For an INSERT command, the tag is INSERT oid rows, where
+     * rows is the number of rows inserted. oid is the object ID
+     * of the inserted row if rows is 1 and the target table has
      * OIDs; otherwise oid is 0. */
     static final class InsertComplete extends CommandComplete {
       public final String oid;
 
-      public InsertComplete(int rows, String oid) {
+      public InsertComplete(final int rows, final String oid) {
         super(rows);
         this.oid = oid;
       }
-      
+
       @Override
       public int hashCode() {
         final int prime = 31;
@@ -616,14 +617,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof InsertComplete))
           return false;
-        InsertComplete other = (InsertComplete) obj;
+        final InsertComplete other = (InsertComplete) obj;
         if (rows != other.rows)
           return false;
         if (!(oid.equals(other.oid)))
@@ -637,13 +638,13 @@ interface Message {
       }
     }
 
-    /** For a MOVE command, the tag is MOVE rows where rows is the 
+    /** For a MOVE command, the tag is MOVE rows where rows is the
      * number of rows the cursor's position has been changed by. */
     static final class MoveComplete extends CommandComplete {
-      public MoveComplete(int rows) {
+      public MoveComplete(final int rows) {
         super(rows);
       }
-      
+
       @Override
       public int hashCode() {
         final int prime = 31;
@@ -653,14 +654,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof MoveComplete))
           return false;
-        MoveComplete other = (MoveComplete) obj;
+        final MoveComplete other = (MoveComplete) obj;
         if (rows != other.rows)
           return false;
         return true;
@@ -672,13 +673,13 @@ interface Message {
       }
     }
 
-    /** For a SELECT or CREATE TABLE AS command, the tag is SELECT 
+    /** For a SELECT or CREATE TABLE AS command, the tag is SELECT
      * rows where rows is the number of rows retrieved. */
     static final class SelectorOrCreateTableAsCompleted extends CommandComplete {
-      public SelectorOrCreateTableAsCompleted(int rows) {
+      public SelectorOrCreateTableAsCompleted(final int rows) {
         super(rows);
       }
-      
+
       @Override
       public int hashCode() {
         final int prime = 31;
@@ -688,14 +689,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof SelectorOrCreateTableAsCompleted))
           return false;
-        SelectorOrCreateTableAsCompleted other = (SelectorOrCreateTableAsCompleted) obj;
+        final SelectorOrCreateTableAsCompleted other = (SelectorOrCreateTableAsCompleted) obj;
         if (rows != other.rows)
           return false;
         return true;
@@ -707,13 +708,13 @@ interface Message {
       }
     }
 
-    /** For an UPDATE command, the tag is UPDATE rows where rows is 
+    /** For an UPDATE command, the tag is UPDATE rows where rows is
      * the number of rows updated. */
     static final class UpdateComplete extends CommandComplete {
-      public UpdateComplete(int rows) {
+      public UpdateComplete(final int rows) {
         super(rows);
       }
-      
+
       @Override
       public int hashCode() {
         final int prime = 31;
@@ -723,14 +724,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof UpdateComplete))
           return false;
-        UpdateComplete other = (UpdateComplete) obj;
+        final UpdateComplete other = (UpdateComplete) obj;
         if (rows != other.rows)
           return false;
         return true;
@@ -744,21 +745,21 @@ interface Message {
 
     public final int rows;
 
-    public CommandComplete(int rows) {
+    public CommandComplete(final int rows) {
       this.rows = rows;
     }
   }
 
-  /** Identifies the message as a Start Copy Both response. 
+  /** Identifies the message as a Start Copy Both response.
    * This message is used only for Streaming Replication. */
-  static final class CopyBothResponse implements BackendMessage {
+  static final class CopyBothResponse implements ServerMessage {
 
-    /** The format codes to be used for each column. Each must 
-     * presently be zero (text) or one (binary). All must be 
+    /** The format codes to be used for each column. Each must
+     * presently be zero (text) or one (binary). All must be
      * zero if the overall copy format is textual. */
     public final short[] columnFormatCodes;
 
-    public CopyBothResponse(short[] columnFormatCodes) {
+    public CopyBothResponse(final short[] columnFormatCodes) {
       this.columnFormatCodes = columnFormatCodes;
     }
 
@@ -771,14 +772,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof CopyBothResponse))
         return false;
-      CopyBothResponse other = (CopyBothResponse) obj;
+      final CopyBothResponse other = (CopyBothResponse) obj;
       if (!Arrays.equals(columnFormatCodes, other.columnFormatCodes))
         return false;
       return true;
@@ -791,14 +792,14 @@ interface Message {
   }
 
   /** Identifies the message as COPY data. */
-  static final class CopyData implements FrontendMessage, BackendMessage {
-    /** Data that forms part of a COPY data stream. Messages sent 
-     * from the backend will always correspond to single data rows, 
-     * but messages sent by frontends might divide the data stream 
+  static final class CopyData implements ClientMessage, ServerMessage {
+    /** Data that forms part of a COPY data stream. Messages sent
+     * from the backend will always correspond to single data rows,
+     * but messages sent by frontends might divide the data stream
      * arbitrarily. */
     public final byte[] data;
 
-    public CopyData(byte[] data) {
+    public CopyData(final byte[] data) {
       this.data = data;
     }
 
@@ -811,14 +812,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof CopyData))
         return false;
-      CopyData other = (CopyData) obj;
+      final CopyData other = (CopyData) obj;
       if (!Arrays.equals(data, other.data))
         return false;
       return true;
@@ -831,15 +832,15 @@ interface Message {
   }
 
   /** Identifies the message as a COPY-complete indicator. */
-  static final class CopyDone implements FrontendMessage, BackendMessage {
-    
+  static final class CopyDone implements ClientMessage, ServerMessage {
+
     @Override
     public int hashCode() {
       return getClass().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       return obj instanceof CopyDone;
     }
 
@@ -850,11 +851,11 @@ interface Message {
   }
 
   /** Identifies the message as a COPY-failure indicator. */
-  static final class CopyFail implements FrontendMessage {
+  static final class CopyFail implements ClientMessage {
     /** An error message to report as the cause of failure. */
     public final String errorMessage;
 
-    public CopyFail(String errorMessage) {
+    public CopyFail(final String errorMessage) {
       this.errorMessage = errorMessage;
     }
 
@@ -867,14 +868,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof CopyFail))
         return false;
-      CopyFail other = (CopyFail) obj;
+      final CopyFail other = (CopyFail) obj;
       if (errorMessage == null) {
         if (other.errorMessage != null)
           return false;
@@ -889,17 +890,17 @@ interface Message {
     }
   }
 
-  /** Identifies the message as a Start Copy In response. The 
-   * frontend must now send copy-in data (if not prepared to do 
+  /** Identifies the message as a Start Copy In response. The
+   * frontend must now send copy-in data (if not prepared to do
    * so, send a CopyFail message). */
-  static final class CopyInResponse implements BackendMessage {
+  static final class CopyInResponse implements ServerMessage {
 
-    /** The format codes to be used for each column. Each must 
-     * presently be zero (text) or one (binary). All must be zero 
+    /** The format codes to be used for each column. Each must
+     * presently be zero (text) or one (binary). All must be zero
      * if the overall copy format is textual. */
     public final short[] columnFormatCodes;
 
-    public CopyInResponse(short[] columnFormatCodes) {
+    public CopyInResponse(final short[] columnFormatCodes) {
       this.columnFormatCodes = columnFormatCodes;
     }
 
@@ -912,14 +913,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof CopyInResponse))
         return false;
-      CopyInResponse other = (CopyInResponse) obj;
+      final CopyInResponse other = (CopyInResponse) obj;
       if (!Arrays.equals(columnFormatCodes, other.columnFormatCodes))
         return false;
       return true;
@@ -931,16 +932,16 @@ interface Message {
     }
   }
 
-  /** Identifies the message as a Start Copy Out response. 
+  /** Identifies the message as a Start Copy Out response.
    * This message will be followed by copy-out data. */
-  static final class CopyOutResponse implements BackendMessage {
+  static final class CopyOutResponse implements ServerMessage {
 
-    /** The format codes to be used for each column. Each must 
-     * presently be zero (text) or one (binary). All must be 
+    /** The format codes to be used for each column. Each must
+     * presently be zero (text) or one (binary). All must be
      * zero if the overall copy format is textual. */
     public final short[] columnFormatCodes;
 
-    public CopyOutResponse(short[] columnFormatCodes) {
+    public CopyOutResponse(final short[] columnFormatCodes) {
       this.columnFormatCodes = columnFormatCodes;
     }
 
@@ -953,14 +954,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof CopyOutResponse))
         return false;
-      CopyOutResponse other = (CopyOutResponse) obj;
+      final CopyOutResponse other = (CopyOutResponse) obj;
       if (!Arrays.equals(columnFormatCodes, other.columnFormatCodes))
         return false;
       return true;
@@ -973,12 +974,12 @@ interface Message {
   }
 
   /** Identifies the message as a data row. */
-  static final class DataRow implements BackendMessage {
-    /** The value of the column, in the format indicated by the 
+  static final class DataRow implements ServerMessage {
+    /** The value of the column, in the format indicated by the
      * associated format code. n is the above length. */
     public final byte[] columns;
 
-    public DataRow(byte[] columns) {
+    public DataRow(final byte[] columns) {
       this.columns = columns;
     }
 
@@ -991,14 +992,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof DataRow))
         return false;
-      DataRow other = (DataRow) obj;
+      final DataRow other = (DataRow) obj;
       if (!Arrays.equals(columns, other.columns))
         return false;
       return true;
@@ -1011,13 +1012,13 @@ interface Message {
   }
 
   /** Identifies the message as a Describe command. */
-  static abstract class Describe implements FrontendMessage {
+  static abstract class Describe implements ClientMessage {
 
     static final class DescribePortal extends Describe {
-      public DescribePortal(String name) {
+      public DescribePortal(final String name) {
         super(name);
       }
-      
+
       @Override
       public int hashCode() {
         final int prime = 31;
@@ -1027,14 +1028,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof DescribePortal))
           return false;
-        DescribePortal other = (DescribePortal) obj;
+        final DescribePortal other = (DescribePortal) obj;
         if (name == null) {
           if (other.name != null)
             return false;
@@ -1050,10 +1051,10 @@ interface Message {
     }
 
     static final class DescribePreparedStatement extends Describe {
-      public DescribePreparedStatement(String name) {
+      public DescribePreparedStatement(final String name) {
         super(name);
       }
-      
+
       @Override
       public int hashCode() {
         final int prime = 31;
@@ -1063,14 +1064,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof DescribePreparedStatement))
           return false;
-        DescribePreparedStatement other = (DescribePreparedStatement) obj;
+        final DescribePreparedStatement other = (DescribePreparedStatement) obj;
         if (name == null) {
           if (other.name != null)
             return false;
@@ -1085,27 +1086,27 @@ interface Message {
       }
     }
 
-    /** The name of the prepared statement or portal to describe 
-     * (an empty string selects the unnamed prepared statement 
+    /** The name of the prepared statement or portal to describe
+     * (an empty string selects the unnamed prepared statement
      * or portal). */
     public final String name;
 
-    public Describe(String name) {
+    public Describe(final String name) {
       this.name = name;
     }
   }
 
-  /** Identifies the message as a response to an empty query string. 
+  /** Identifies the message as a response to an empty query string.
    * (This substitutes for CommandComplete.) */
-  static final class EmptyQueryResponse implements BackendMessage {
-    
+  static final class EmptyQueryResponse implements ServerMessage {
+
     @Override
     public int hashCode() {
       return getClass().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       return obj instanceof EmptyQueryResponse;
     }
 
@@ -1116,19 +1117,19 @@ interface Message {
   }
 
   /** Identifies the message as an error. */
-  static final class ErrorResponse implements BackendMessage {
+  static final class ErrorResponse implements ServerMessage {
     static final class Field {
-      /** A code identifying the field type; if zero, this is the message 
-       * terminator and no string follows. The presently defined field 
-       * types are listed in Section 51.6. Since more field types might 
-       * be added in future, frontends should silently ignore fields of 
+      /** A code identifying the field type; if zero, this is the message
+       * terminator and no string follows. The presently defined field
+       * types are listed in Section 51.6. Since more field types might
+       * be added in future, frontends should silently ignore fields of
        * unrecognized type. */
       public final char type;
 
       /** The field value. */
       public final String value;
 
-      public Field(char type, String value) {
+      public Field(final char type, final String value) {
         this.type = type;
         this.value = value;
       }
@@ -1143,14 +1144,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof Field))
           return false;
-        Field other = (Field) obj;
+        final Field other = (Field) obj;
         if (type != other.type)
           return false;
         if (value == null) {
@@ -1167,12 +1168,12 @@ interface Message {
       }
     }
 
-    /** The message body consists of one or more identified fields, followed 
-     * by a zero byte as a terminator. Fields can appear in any order. For 
+    /** The message body consists of one or more identified fields, followed
+     * by a zero byte as a terminator. Fields can appear in any order. For
      * each field there is the following: */
     public final Field[] fields;
 
-    public ErrorResponse(Field[] fields) {
+    public ErrorResponse(final Field[] fields) {
       this.fields = fields;
     }
 
@@ -1185,14 +1186,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof ErrorResponse))
         return false;
-      ErrorResponse other = (ErrorResponse) obj;
+      final ErrorResponse other = (ErrorResponse) obj;
       if (!Arrays.equals(fields, other.fields))
         return false;
       return true;
@@ -1205,16 +1206,16 @@ interface Message {
   }
 
   /** Identifies the message as an Execute command. */
-  static final class Execute implements FrontendMessage {
-    /** Maximum number of rows to return, if portal contains a query that returns 
+  static final class Execute implements ClientMessage {
+    /** Maximum number of rows to return, if portal contains a query that returns
      * rows (ignored otherwise). Zero denotes "no limit". */
     public final int maxNumberOfRows;
 
-    /** The name of the portal to execute (an empty string selects the unnamed 
+    /** The name of the portal to execute (an empty string selects the unnamed
      * portal). */
     public final String portalName;
 
-    public Execute(String portalName, int maxNumberOfRows) {
+    public Execute(final String portalName, final int maxNumberOfRows) {
       this.portalName = portalName;
       this.maxNumberOfRows = maxNumberOfRows;
     }
@@ -1229,14 +1230,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof Execute))
         return false;
-      Execute other = (Execute) obj;
+      final Execute other = (Execute) obj;
       if (maxNumberOfRows != other.maxNumberOfRows)
         return false;
       if (portalName == null) {
@@ -1254,15 +1255,15 @@ interface Message {
   }
 
   /** Identifies the message as a Flush command. */
-  static final class Flush implements FrontendMessage {
-    
+  static final class Flush implements ClientMessage {
+
     @Override
     public int hashCode() {
       return getClass().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       return obj instanceof Flush;
     }
 
@@ -1272,37 +1273,35 @@ interface Message {
     }
   }
 
-  interface FrontendMessage extends Message {
-  }
-
   /** Identifies the message as a function call. */
-  static final class FunctionCall implements FrontendMessage {
+  static final class FunctionCall implements ClientMessage {
 
-    /** The length of the argument value, in bytes (this count does not include itself). 
-     * Can be zero. As a special case, -1 indicates a NULL argument value. No value 
+    /** The length of the argument value, in bytes (this count does not include itself).
+     * Can be zero. As a special case, -1 indicates a NULL argument value. No value
      * bytes follow in the NULL case.
-     * The value of the argument, in the format indicated by the associated format code. 
+     * The value of the argument, in the format indicated by the associated format code.
      * n is the above length.
      *  */
     public final byte[][] fields;
 
-    /** The number of argument format codes that follow (denoted C below). This 
-     * can be zero to indicate that there are no arguments or that the arguments 
-     * all use the default format (text); or one, in which case the specified 
-     * format code is applied to all arguments; or it can equal the actual number 
+    /** The number of argument format codes that follow (denoted C below). This
+     * can be zero to indicate that there are no arguments or that the arguments
+     * all use the default format (text); or one, in which case the specified
+     * format code is applied to all arguments; or it can equal the actual number
      * of arguments.
      * The argument format codes. Each must presently be zero (text) or one (binary).
      *  */
     public final short[] formatCodes;
 
-    /** The format code for the function result. Must presently be zero (text) or 
+    /** The format code for the function result. Must presently be zero (text) or
      * one (binary). */
     public final short functionResultFormatCode;
 
     /** Specifies the object ID of the function to call. */
     public final int id;
 
-    public FunctionCall(int id, short[] formatCodes, byte[][] fields, short functionResultFormatCode) {
+    public FunctionCall(final int id, final short[] formatCodes, final byte[][] fields,
+        final short functionResultFormatCode) {
       this.id = id;
       this.formatCodes = formatCodes;
       this.fields = fields;
@@ -1321,14 +1320,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof FunctionCall))
         return false;
-      FunctionCall other = (FunctionCall) obj;
+      final FunctionCall other = (FunctionCall) obj;
       if (!Arrays.deepEquals(fields, other.fields))
         return false;
       if (!Arrays.equals(formatCodes, other.formatCodes))
@@ -1348,17 +1347,17 @@ interface Message {
   }
 
   /** Identifies the message as a function call result. */
-  static final class FunctionCallResponse implements BackendMessage {
-    /** The length of the function result value, in bytes (this count does not include 
-     * itself). Can be zero. As a special case, -1 indicates a NULL function result. 
+  static final class FunctionCallResponse implements ServerMessage {
+    /** The length of the function result value, in bytes (this count does not include
+     * itself). Can be zero. As a special case, -1 indicates a NULL function result.
      * No value bytes follow in the NULL case. */
     public final boolean isNull;
 
-    /** The value of the function result, in the format indicated by the associated 
+    /** The value of the function result, in the format indicated by the associated
      * format code. n is the above length. */
     public final byte[] value;
 
-    public FunctionCallResponse(boolean isNull, byte[] value) {
+    public FunctionCallResponse(final boolean isNull, final byte[] value) {
       this.isNull = isNull;
       this.value = value;
     }
@@ -1373,14 +1372,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof FunctionCallResponse))
         return false;
-      FunctionCallResponse other = (FunctionCallResponse) obj;
+      final FunctionCallResponse other = (FunctionCallResponse) obj;
       if (isNull != other.isNull)
         return false;
       if (!Arrays.equals(value, other.value))
@@ -1395,14 +1394,14 @@ interface Message {
   }
 
   /** Identifies the message as a no-data indicator. */
-  static final class NoData implements BackendMessage {
+  static final class NoData implements ServerMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       return obj instanceof NoData;
     }
 
@@ -1413,18 +1412,18 @@ interface Message {
   }
 
   /** Identifies the message as a notice. */
-  static final class NoticeResponse implements BackendMessage {
-    /** The message body consists of one or more identified fields, followed by a 
-     * zero byte as a terminator. Fields can appear in any order. For each field 
-     * there is the following: 
-     * A code identifying the field type; if zero, this is the message terminator 
-     * and no string follows. The presently defined field types are listed in 
-     * Section 51.6. Since more field types might be added in future, frontends 
+  static final class NoticeResponse implements ServerMessage {
+    /** The message body consists of one or more identified fields, followed by a
+     * zero byte as a terminator. Fields can appear in any order. For each field
+     * there is the following:
+     * A code identifying the field type; if zero, this is the message terminator
+     * and no string follows. The presently defined field types are listed in
+     * Section 51.6. Since more field types might be added in future, frontends
      * should silently ignore fields of unrecognized type.
      * */
     public final String[] fields;
 
-    public NoticeResponse(String[] fields) {
+    public NoticeResponse(final String[] fields) {
       this.fields = fields;
     }
 
@@ -1437,14 +1436,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof NoticeResponse))
         return false;
-      NoticeResponse other = (NoticeResponse) obj;
+      final NoticeResponse other = (NoticeResponse) obj;
       if (!Arrays.equals(fields, other.fields))
         return false;
       return true;
@@ -1457,7 +1456,7 @@ interface Message {
   }
 
   /** Identifies the message as a notification response. */
-  static final class NotificationResponse implements BackendMessage {
+  static final class NotificationResponse implements ServerMessage {
     /** The name of the channel that the notify has been raised on. */
     public final String channelName;
 
@@ -1467,7 +1466,7 @@ interface Message {
     /** The process ID of the notifying backend process. */
     public final int processID;
 
-    public NotificationResponse(int processID, String channelName, String payload) {
+    public NotificationResponse(final int processID, final String channelName, final String payload) {
       this.processID = processID;
       this.channelName = channelName;
       this.payload = payload;
@@ -1484,14 +1483,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof NotificationResponse))
         return false;
-      NotificationResponse other = (NotificationResponse) obj;
+      final NotificationResponse other = (NotificationResponse) obj;
       if (channelName == null) {
         if (other.channelName != null)
           return false;
@@ -1515,12 +1514,12 @@ interface Message {
   }
 
   /** Identifies the message as a parameter description */
-  static final class ParameterDescription implements BackendMessage {
-    /** Then, for each parameter, there is the following: 
+  static final class ParameterDescription implements ServerMessage {
+    /** Then, for each parameter, there is the following:
      * Specifies the object ID of the parameter data type. */
     public final int[] parameterDataType;
 
-    public ParameterDescription(int[] parameterDataType) {
+    public ParameterDescription(final int[] parameterDataType) {
       this.parameterDataType = parameterDataType;
     }
 
@@ -1533,14 +1532,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof ParameterDescription))
         return false;
-      ParameterDescription other = (ParameterDescription) obj;
+      final ParameterDescription other = (ParameterDescription) obj;
       if (!Arrays.equals(parameterDataType, other.parameterDataType))
         return false;
       return true;
@@ -1553,14 +1552,14 @@ interface Message {
   }
 
   /** Identifies the message as a run-time parameter status report. */
-  static final class ParameterStatus implements BackendMessage {
+  static final class ParameterStatus implements ServerMessage {
     /** The name of the run-time parameter being reported. */
     public final String name;
 
     /** The current value of the parameter. */
     public final String value;
 
-    public ParameterStatus(String name, String value) {
+    public ParameterStatus(final String name, final String value) {
       this.name = name;
       this.value = value;
     }
@@ -1575,14 +1574,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof ParameterStatus))
         return false;
-      ParameterStatus other = (ParameterStatus) obj;
+      final ParameterStatus other = (ParameterStatus) obj;
       if (name == null) {
         if (other.name != null)
           return false;
@@ -1603,17 +1602,17 @@ interface Message {
   }
 
   /** Identifies the message as a Parse command. */
-  static final class Parse implements FrontendMessage {
-    /** The name of the destination prepared statement (an empty 
+  static final class Parse implements ClientMessage {
+    /** The name of the destination prepared statement (an empty
      * string selects the unnamed prepared statement). */
     public final String destinationName;
 
-    /** The number of parameter data types specified (can be zero). 
-     * Note that this is not an indication of the number of parameters 
-     * that might appear in the query string, only the number that the 
-     * frontend wants to prespecify types for. 
+    /** The number of parameter data types specified (can be zero).
+     * Note that this is not an indication of the number of parameters
+     * that might appear in the query string, only the number that the
+     * frontend wants to prespecify types for.
      * Then, for each parameter, there is the following:
-     * Specifies the object ID of the parameter data type. Placing a 
+     * Specifies the object ID of the parameter data type. Placing a
      * zero here is equivalent to leaving the type unspecified.
      * */
     public final int[] parameterTypes;
@@ -1621,7 +1620,7 @@ interface Message {
     /** The query string to be parsed. */
     public final String query;
 
-    public Parse(String destinationName, String query, int[] parameterTypes) {
+    public Parse(final String destinationName, final String query, final int[] parameterTypes) {
       this.destinationName = destinationName;
       this.query = query;
       this.parameterTypes = parameterTypes;
@@ -1638,14 +1637,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof Parse))
         return false;
-      Parse other = (Parse) obj;
+      final Parse other = (Parse) obj;
       if (destinationName == null) {
         if (other.destinationName != null)
           return false;
@@ -1669,14 +1668,14 @@ interface Message {
   }
 
   /** Identifies the message as a Parse-complete indicator. */
-  static final class ParseComplete implements BackendMessage {
+  static final class ParseComplete implements ServerMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       return obj instanceof ParseComplete;
     }
 
@@ -1686,16 +1685,16 @@ interface Message {
     }
   }
 
-  /** Identifies the message as a password response. Note that this is also 
-   * used for GSSAPI and SSPI response messages (which is really a design error, 
-   * since the contained data is not a null-terminated string in that case, 
+  /** Identifies the message as a password response. Note that this is also
+   * used for GSSAPI and SSPI response messages (which is really a design error,
+   * since the contained data is not a null-terminated string in that case,
    * but can be arbitrary binary data). */
-  static final class PasswordMessage implements FrontendMessage {
+  static final class PasswordMessage implements ClientMessage {
 
     /** The password (encrypted, if requested). */
     public final String password;
 
-    public PasswordMessage(String password) {
+    public PasswordMessage(final String password) {
       this.password = password;
     }
 
@@ -1708,14 +1707,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof PasswordMessage))
         return false;
-      PasswordMessage other = (PasswordMessage) obj;
+      final PasswordMessage other = (PasswordMessage) obj;
       if (password == null) {
         if (other.password != null)
           return false;
@@ -1730,16 +1729,16 @@ interface Message {
     }
   }
 
-  /** Identifies the message as a portal-suspended indicator. Note this only appears 
+  /** Identifies the message as a portal-suspended indicator. Note this only appears
    * if an Execute message's row-count limit was reached. */
-  static final class PortalSuspended implements BackendMessage {
+  static final class PortalSuspended implements ServerMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       return obj instanceof PortalSuspended;
     }
 
@@ -1750,11 +1749,11 @@ interface Message {
   }
 
   /** Identifies the message as a simple query. */
-  static final class Query implements FrontendMessage {
+  static final class Query implements ClientMessage {
     /** The query string itself. */
     public final String string;
 
-    public Query(String string) {
+    public Query(final String string) {
       this.string = string;
     }
 
@@ -1767,14 +1766,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof Query))
         return false;
-      Query other = (Query) obj;
+      final Query other = (Query) obj;
       if (string == null) {
         if (other.string != null)
           return false;
@@ -1789,16 +1788,16 @@ interface Message {
     }
   }
 
-  /** Identifies the message type. ReadyForQuery is sent whenever the backend is ready 
+  /** Identifies the message type. ReadyForQuery is sent whenever the backend is ready
    * for a new query cycle. */
-  static final class ReadyForQuery implements BackendMessage {
+  static final class ReadyForQuery implements ServerMessage {
 
-    /** Current backend transaction status indicator. Possible values are 'I' if idle 
-     * (not in a transaction block); 'T' if in a transaction block; or 'E' if in a 
+    /** Current backend transaction status indicator. Possible values are 'I' if idle
+     * (not in a transaction block); 'T' if in a transaction block; or 'E' if in a
      * failed transaction block (queries will be rejected until block is ended). */
     public final char status;
 
-    public ReadyForQuery(char status) {
+    public ReadyForQuery(final char status) {
       this.status = status;
     }
 
@@ -1811,14 +1810,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof ReadyForQuery))
         return false;
-      ReadyForQuery other = (ReadyForQuery) obj;
+      final ReadyForQuery other = (ReadyForQuery) obj;
       if (status != other.status)
         return false;
       return true;
@@ -1830,37 +1829,38 @@ interface Message {
     }
   }
 
-  static final class RowDescription implements BackendMessage {
+  static final class RowDescription implements ServerMessage {
     static final class Field {
-      /** If the field can be identified as a column of a specific table, the attribute 
+      /** If the field can be identified as a column of a specific table, the attribute
        * number of the column; otherwise zero. */
       public final short attributeNumber;
 
       /** The object ID of the field's data type. */
       public final int dataType;
 
-      /** The data type size (see pg_type.typlen). Note that negative values denote 
+      /** The data type size (see pg_type.typlen). Note that negative values denote
        * variable-width types. */
       public final short dataTypeSize;
 
-      /** The format code being used for the field. Currently will be zero (text) or one 
-       * (binary). In a RowDescription returned from the statement variant of Describe, 
+      /** The format code being used for the field. Currently will be zero (text) or one
+       * (binary). In a RowDescription returned from the statement variant of Describe,
        * the format code is not yet known and will always be zero. */
       public final short formatCode;
 
       /** The field name. */
       public final String name;
 
-      /** If the field can be identified as a column of a specific table, the object 
+      /** If the field can be identified as a column of a specific table, the object
        * ID of the table; otherwise zero. */
       public final int objectID;
 
-      /** The type modifier (see pg_attribute.atttypmod). The meaning of the modifier is 
+      /** The type modifier (see pg_attribute.atttypmod). The meaning of the modifier is
        * type-specific. */
       public final int typeModifier;
 
-      public Field(String name, int objectID, short attributeNumber, int dataType, short dataTypeSize, int typeModifier,
-          short formatCode) {
+      public Field(final String name, final int objectID, final short attributeNumber, final int dataType,
+          final short dataTypeSize, final int typeModifier,
+          final short formatCode) {
         this.name = name;
         this.objectID = objectID;
         this.attributeNumber = attributeNumber;
@@ -1885,14 +1885,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof Field))
           return false;
-        Field other = (Field) obj;
+        final Field other = (Field) obj;
         if (attributeNumber != other.attributeNumber)
           return false;
         if (dataType != other.dataType)
@@ -1923,7 +1923,7 @@ interface Message {
 
     public final Field[] fields;
 
-    public RowDescription(Field[] fields) {
+    public RowDescription(final Field[] fields) {
       this.fields = fields;
     }
 
@@ -1936,14 +1936,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof RowDescription))
         return false;
-      RowDescription other = (RowDescription) obj;
+      final RowDescription other = (RowDescription) obj;
       if (!Arrays.equals(fields, other.fields))
         return false;
       return true;
@@ -1955,14 +1955,14 @@ interface Message {
     }
   }
 
-  static final class SSLRequest implements FrontendMessage {
+  static final class SSLRequest implements ClientMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       return obj instanceof SSLRequest;
     }
 
@@ -1972,7 +1972,7 @@ interface Message {
     }
   }
 
-  static final class StartupMessage implements FrontendMessage {
+  static final class StartupMessage implements ClientMessage {
 
     static final class Parameter {
       /** The parameter name. */
@@ -1981,7 +1981,7 @@ interface Message {
       /** The parameter value. */
       public final String value;
 
-      public Parameter(String name, String value) {
+      public Parameter(final String name, final String value) {
         this.name = name;
         this.value = value;
       }
@@ -1996,14 +1996,14 @@ interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof Parameter))
           return false;
-        Parameter other = (Parameter) obj;
+        final Parameter other = (Parameter) obj;
         if (name == null) {
           if (other.name != null)
             return false;
@@ -2023,16 +2023,16 @@ interface Message {
       }
     }
 
-    /** The protocol version number is followed by one or more pairs of parameter name 
-     * and value strings. A zero byte is required as a terminator after the last 
-     * name/value pair. Parameters can appear in any order. user is required, others 
+    /** The protocol version number is followed by one or more pairs of parameter name
+     * and value strings. A zero byte is required as a terminator after the last
+     * name/value pair. Parameters can appear in any order. user is required, others
      * are optional. Each parameter is specified as: */
     public final Parameter[] parameters;
 
     /** The database user name to connect as. Required; there is no default. */
     public final String user;
 
-    public StartupMessage(String user, Parameter[] parameters) {
+    public StartupMessage(final String user, final Parameter[] parameters) {
       this.user = user;
       this.parameters = parameters;
     }
@@ -2047,14 +2047,14 @@ interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (!(obj instanceof StartupMessage))
         return false;
-      StartupMessage other = (StartupMessage) obj;
+      final StartupMessage other = (StartupMessage) obj;
       if (!Arrays.equals(parameters, other.parameters))
         return false;
       if (user == null) {
@@ -2072,14 +2072,14 @@ interface Message {
   }
 
   /** Identifies the message as a Sync command. */
-  static final class Sync implements FrontendMessage {
+  static final class Sync implements ClientMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       return obj instanceof Sync;
     }
 
@@ -2090,14 +2090,14 @@ interface Message {
   }
 
   /** Identifies the message as a termination. */
-  static final class Terminate implements FrontendMessage {
+  static final class Terminate implements ClientMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       return obj instanceof Terminate;
     }
 

@@ -16,8 +16,9 @@ public class Pool<T> {
 
   private static final Future<Object> POOL_EXHAUSTED = Future.exception(new RuntimeException("Pool exhausted"));
 
-  public static <T> Pool<T> apply(Supplier<Future<T>> supplier, Function<T, Future<Void>> release,
-      Function<T, Future<Boolean>> isValid, int maxSize, int maxWaiters, Duration validationInterval) {
+  public static <T> Pool<T> apply(final Supplier<Future<T>> supplier, final Function<T, Future<Void>> release,
+      final Function<T, Future<Boolean>> isValid, final int maxSize, final int maxWaiters,
+      final Duration validationInterval) {
     return new Pool<>(supplier, release, isValid, maxSize, maxWaiters, validationInterval);
   }
 
@@ -29,8 +30,9 @@ public class Pool<T> {
   private final Queue<T> items;
   private final Queue<Waiter<T, ?>> waiters;
 
-  private Pool(Supplier<Future<T>> supplier, Function<T, Future<Void>> release, Function<T, Future<Boolean>> isValid,
-      int maxSize, int maxWaiters, Duration validationInterval) {
+  private Pool(final Supplier<Future<T>> supplier, final Function<T, Future<Void>> release,
+      final Function<T, Future<Boolean>> isValid,
+      final int maxSize, final int maxWaiters, final Duration validationInterval) {
     this.supplier = supplier;
     this.release = release;
     this.isValid = isValid;
@@ -43,22 +45,22 @@ public class Pool<T> {
       scheduleValidation(validationInterval, new ScheduledThreadPoolExecutor(1));
   }
 
-  public <R> Future<R> apply(Function<T, Future<R>> f) {
+  public <R> Future<R> apply(final Function<T, Future<R>> f) {
     final T item = items.poll();
     if (item != null)
       return f.apply(item).ensure(() -> release(item));
     else if (sizeSemaphore.tryAcquire())
       return supplier.get().flatMap(i -> f.apply(i).ensure(() -> release(i)));
     else if (waitersSemaphore.tryAcquire()) {
-      Waiter<T, R> p = new Waiter<>(f);
+      final Waiter<T, R> p = new Waiter<>(f);
       waiters.offer(p);
       return p;
     } else
       return POOL_EXHAUSTED.unsafeCast();
   }
 
-  private final void release(T item) {
-    Waiter<T, ?> waiter = waiters.poll();
+  private final void release(final T item) {
+    final Waiter<T, ?> waiter = waiters.poll();
     if (waiter != null) {
       waitersSemaphore.release();
       waiter.apply(item).ensure(() -> release(item));
@@ -66,7 +68,7 @@ public class Pool<T> {
       items.offer(item);
   };
 
-  private final Future<Void> validateN(int n) {
+  private final Future<Void> validateN(final int n) {
     if (n >= 0) {
       final T item = items.poll();
       if (item == null) {
@@ -85,11 +87,11 @@ public class Pool<T> {
       return Future.VOID;
   }
 
-  private Future<Void> scheduleValidation(Duration validationInterval, ScheduledExecutorService scheduler) {
+  private Future<Void> scheduleValidation(final Duration validationInterval, final ScheduledExecutorService scheduler) {
     return Future.VOID.delayed(validationInterval, scheduler).flatMap(v1 -> {
-      long start = System.currentTimeMillis();
+      final long start = System.currentTimeMillis();
       return validateN(items.size()).flatMap(v2 -> {
-        long next = validationInterval.toMillis() - System.currentTimeMillis() - start;
+        final long next = validationInterval.toMillis() - System.currentTimeMillis() - start;
         if (next <= 0) {
           // TODO logging
           return scheduleValidation(validationInterval, scheduler);
@@ -103,18 +105,18 @@ public class Pool<T> {
 
     private final Function<T, Future<R>> f;
 
-    public Waiter(Function<T, Future<R>> f) {
+    public Waiter(final Function<T, Future<R>> f) {
       super();
       this.f = f;
     }
 
-    public Waiter<T, R> apply(T value) {
+    public Waiter<T, R> apply(final T value) {
       become(f.apply(value));
       return this;
     }
   }
 
-  private Semaphore semaphore(int permits) {
+  private Semaphore semaphore(final int permits) {
     if (permits == Integer.MAX_VALUE)
       return new Semaphore(permits) {
         private static final long serialVersionUID = 1L;
