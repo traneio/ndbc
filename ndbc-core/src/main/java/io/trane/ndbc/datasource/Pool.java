@@ -1,4 +1,4 @@
-package io.trane.ndbc.pool;
+package io.trane.ndbc.datasource;
 
 import java.time.Duration;
 import java.util.Queue;
@@ -48,7 +48,7 @@ public class Pool<T> {
   public <R> Future<R> apply(final Function<T, Future<R>> f) {
     final T item = items.poll();
     if (item != null)
-      return f.apply(item).ensure(() -> release(item));
+      return Future.flatApply(() -> f.apply(item)).ensure(() -> release(item));
     else if (sizeSemaphore.tryAcquire())
       return supplier.get().flatMap(i -> f.apply(i).ensure(() -> release(i)));
     else if (waitersSemaphore.tryAcquire()) {

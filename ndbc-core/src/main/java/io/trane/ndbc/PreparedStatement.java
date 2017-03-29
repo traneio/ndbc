@@ -1,7 +1,6 @@
 package io.trane.ndbc;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class PreparedStatement {
 
@@ -14,26 +13,37 @@ public class PreparedStatement {
     this.params = params;
   }
 
-  private static interface Param {
+  public static interface Param {
   }
 
-  private static interface IntParam extends Param {
+  public static interface IntParam extends Param {
     int value();
   }
 
-  public PreparedStatement bind(int value) {
-    return bind(new IntParam() {
+  public PreparedStatement setInt(int position, int value) {
+    return setParam(position, new IntParam() {
       public int value() {
         return value;
       }
     });
   }
 
-  private PreparedStatement bind(Param param) {
-    int oldLength = params.length;
-    Param[] newParams = Arrays.copyOf(params, oldLength + 1);
-    newParams[oldLength] = param;
-    return new PreparedStatement(string, newParams);
+  public static interface StringParam extends Param {
+    String value();
   }
 
+  public PreparedStatement setString(int position, String value) {
+    return setParam(position, new StringParam() {
+      public String value() {
+        return value;
+      }
+    });
+  }
+
+  public PreparedStatement setParam(int position, Param param) {
+    int newLength = position >= params.length ? position + 1 : params.length;
+    Param[] newParams = Arrays.copyOf(params, newLength);
+    newParams[position] = param;
+    return new PreparedStatement(string, newParams);
+  }
 }

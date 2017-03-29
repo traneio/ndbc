@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import io.trane.future.Future;
 import io.trane.future.Promise;
+import io.trane.ndbc.datasource.Pool;
 
 public class PoolTest {
 
