@@ -5,7 +5,7 @@ import java.util.Arrays;
 import io.trane.ndbc.proto.ClientMessage;
 import io.trane.ndbc.proto.ServerMessage;
 
-interface Message {
+public interface Message {
 
   /** Identifies the message as an authentication request. */
   interface AuthenticationRequest extends ServerMessage {

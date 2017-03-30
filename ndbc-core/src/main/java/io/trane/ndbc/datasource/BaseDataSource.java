@@ -48,12 +48,11 @@ public class BaseDataSource<T extends Connection> implements DataSource {
     else
       return pool.apply(c -> {
         currentTransation.set(Optional.of(c));
-        return Future.flatApply(supplier).ensure(() -> currentTransation.set(Optional.empty()));
+        return c.withTransaction(supplier).ensure(() -> currentTransation.set(Optional.empty()));
       });
   }
 
   private final <R> Future<R> apply(Function<T, Future<R>> f) {
-    return currentTransation.get().map(f)
-        .orElseGet(() -> pool.apply(f));
+    return currentTransation.get().map(f).orElseGet(() -> pool.apply(f));
   }
 }
