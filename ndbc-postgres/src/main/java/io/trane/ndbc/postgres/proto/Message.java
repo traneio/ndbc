@@ -7,6 +7,12 @@ import io.trane.ndbc.proto.ServerMessage;
 
 public interface Message {
 
+  interface ServerMessage extends io.trane.ndbc.proto.ServerMessage, Message {
+  }
+
+  interface ClientMessage extends io.trane.ndbc.proto.ClientMessage, Message {
+  }
+
   /** Identifies the message as an authentication request. */
   interface AuthenticationRequest extends ServerMessage {
 
@@ -492,7 +498,7 @@ public interface Message {
     /** For a COPY command, the tag is COPY rows where rows is the
      * number of rows copied. (Note: the row count appears only in
      * PostgreSQL 8.2 and later.) */
-    static final class CopyComplete extends CommandComplete {
+    public static final class CopyComplete extends CommandComplete {
       public CopyComplete(final int rows) {
         super(rows);
       }
@@ -527,7 +533,7 @@ public interface Message {
 
     /** For a DELETE command, the tag is DELETE rows where rows is
      * the number of rows deleted. */
-    static final class DeleteComplete extends CommandComplete {
+    public static final class DeleteComplete extends CommandComplete {
       public DeleteComplete(final int rows) {
         super(rows);
       }
@@ -562,7 +568,7 @@ public interface Message {
 
     /** For a FETCH command, the tag is FETCH rows where rows is the
      * number of rows that have been retrieved from the cursor. */
-    static final class FetchComplete extends CommandComplete {
+    public static final class FetchComplete extends CommandComplete {
       public FetchComplete(final int rows) {
         super(rows);
       }
@@ -599,10 +605,10 @@ public interface Message {
      * rows is the number of rows inserted. oid is the object ID
      * of the inserted row if rows is 1 and the target table has
      * OIDs; otherwise oid is 0. */
-    static final class InsertComplete extends CommandComplete {
-      public final String oid;
+    public static final class InsertComplete extends CommandComplete {
+      public final int oid;
 
-      public InsertComplete(final int rows, final String oid) {
+      public InsertComplete(final int rows, final int oid) {
         super(rows);
         this.oid = oid;
       }
@@ -612,7 +618,7 @@ public interface Message {
         final int prime = 31;
         int result = 1;
         result = prime * result + rows;
-        result = prime * result + ((oid == null) ? 0 : oid.hashCode());
+        result = prime * result + oid;
         return result;
       }
 
@@ -627,7 +633,7 @@ public interface Message {
         final InsertComplete other = (InsertComplete) obj;
         if (rows != other.rows)
           return false;
-        if (!(oid.equals(other.oid)))
+        if (oid != other.oid)
           return false;
         return true;
       }
@@ -640,7 +646,7 @@ public interface Message {
 
     /** For a MOVE command, the tag is MOVE rows where rows is the
      * number of rows the cursor's position has been changed by. */
-    static final class MoveComplete extends CommandComplete {
+    public static final class MoveComplete extends CommandComplete {
       public MoveComplete(final int rows) {
         super(rows);
       }
@@ -675,8 +681,8 @@ public interface Message {
 
     /** For a SELECT or CREATE TABLE AS command, the tag is SELECT
      * rows where rows is the number of rows retrieved. */
-    static final class SelectorOrCreateTableAsCompleted extends CommandComplete {
-      public SelectorOrCreateTableAsCompleted(final int rows) {
+    public static final class SelectorOrCreateTableAsComplete extends CommandComplete {
+      public SelectorOrCreateTableAsComplete(final int rows) {
         super(rows);
       }
 
@@ -694,9 +700,9 @@ public interface Message {
           return true;
         if (obj == null)
           return false;
-        if (!(obj instanceof SelectorOrCreateTableAsCompleted))
+        if (!(obj instanceof SelectorOrCreateTableAsComplete))
           return false;
-        final SelectorOrCreateTableAsCompleted other = (SelectorOrCreateTableAsCompleted) obj;
+        final SelectorOrCreateTableAsComplete other = (SelectorOrCreateTableAsComplete) obj;
         if (rows != other.rows)
           return false;
         return true;
@@ -710,7 +716,7 @@ public interface Message {
 
     /** For an UPDATE command, the tag is UPDATE rows where rows is
      * the number of rows updated. */
-    static final class UpdateComplete extends CommandComplete {
+    public static final class UpdateComplete extends CommandComplete {
       public UpdateComplete(final int rows) {
         super(rows);
       }
