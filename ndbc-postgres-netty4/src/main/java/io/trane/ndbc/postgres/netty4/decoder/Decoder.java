@@ -2,27 +2,34 @@ package io.trane.ndbc.postgres.netty4.decoder;
 
 import java.nio.charset.Charset;
 import java.util.List;
-
+import static io.trane.ndbc.postgres.netty4.decoder.Read.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.trane.ndbc.postgres.proto.Message;
-import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
+import io.trane.ndbc.postgres.proto.Message.*;
 import io.trane.ndbc.postgres.proto.Message.BindComplete;
 import io.trane.ndbc.postgres.proto.Message.CloseComplete;
 
 public class Decoder extends ByteToMessageDecoder {
 
+  private final Charset charset;
+
   private final AuthenticationRequestDecoder authenticationRequestDecoder;
   private final CommandCompleteDecoder commandCompleteDecoder;
+  private final DataRowDecoder dataRowDecoder;
 
   private final BindComplete bindComplete = new BindComplete();
   private final CloseComplete closeComplete = new CloseComplete();
+  private final CopyDone copyDone = new CopyDone();
+  private final EmptyQueryResponse emptyQueryResponse = new EmptyQueryResponse();
 
   public Decoder(Charset charset) {
     super();
+    this.charset = charset;
     this.authenticationRequestDecoder = new AuthenticationRequestDecoder();
     this.commandCompleteDecoder = new CommandCompleteDecoder(charset);
+    this.dataRowDecoder = new DataRowDecoder();
   }
 
   @Override
@@ -51,7 +58,25 @@ public class Decoder extends ByteToMessageDecoder {
       return closeComplete;
     case 'C':
       return commandCompleteDecoder.decode(buf);
+    case 'd':
+      return new CopyData(bytes(buf));
+    case 'c':
+      return copyDone;
+    case 'G':
+      return notImplemented(CopyInResponse.class);
+    case 'H':
+      return notImplemented(CopyOutResponse.class);
+    case 'W':
+      return notImplemented(CopyBothResponse.class);
+    case 'D':
+      return dataRowDecoder.decode(buf);
+    case 'I':
+      return emptyQueryResponse;
     }
     return null;
+  }
+
+  private Message notImplemented(Class<?> cls) {
+    throw new UnsupportedOperationException("Decoder not implemented for class: " + cls);
   }
 }

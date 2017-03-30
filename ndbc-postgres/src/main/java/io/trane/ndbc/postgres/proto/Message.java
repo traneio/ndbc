@@ -17,7 +17,7 @@ public interface Message {
   interface AuthenticationRequest extends ServerMessage {
 
     /** Specifies that a clear-text password is required. */
-    static final class AuthenticationCleartextPassword implements AuthenticationRequest {
+    public static final class AuthenticationCleartextPassword implements AuthenticationRequest {
       @Override
       public int hashCode() {
         return getClass().hashCode();
@@ -35,7 +35,7 @@ public interface Message {
     }
 
     /** Specifies that GSSAPI authentication is required. */
-    static final class AuthenticationGSS implements AuthenticationRequest {
+    public static final class AuthenticationGSS implements AuthenticationRequest {
       @Override
       public int hashCode() {
         return getClass().hashCode();
@@ -53,7 +53,7 @@ public interface Message {
     }
 
     /** Specifies that this message contains GSSAPI or SSPI data. */
-    static final class AuthenticationGSSContinue implements AuthenticationRequest {
+    public static final class AuthenticationGSSContinue implements AuthenticationRequest {
       /** GSSAPI or SSPI authentication data. */
       public final byte[] authenticationData;
 
@@ -90,7 +90,7 @@ public interface Message {
     }
 
     /** Specifies that Kerberos V5 authentication is required. */
-    static final class AuthenticationKerberosV5 implements AuthenticationRequest {
+    public static final class AuthenticationKerberosV5 implements AuthenticationRequest {
       @Override
       public int hashCode() {
         return getClass().hashCode();
@@ -108,7 +108,7 @@ public interface Message {
     }
 
     /** Specifies that an MD5-encrypted password is required. */
-    static final class AuthenticationMD5Password implements AuthenticationRequest {
+    public static final class AuthenticationMD5Password implements AuthenticationRequest {
       /** The salt to use when encrypting the password. */
       public final byte[] salt;
 
@@ -145,7 +145,7 @@ public interface Message {
     }
 
     /** Specifies that the authentication was successful. */
-    static final class AuthenticationOk implements AuthenticationRequest {
+    public static final class AuthenticationOk implements AuthenticationRequest {
       @Override
       public int hashCode() {
         return getClass().hashCode();
@@ -163,7 +163,7 @@ public interface Message {
     }
 
     /** Specifies that an SCM credentials message is required. */
-    static final class AuthenticationSCMCredential implements AuthenticationRequest {
+    public static final class AuthenticationSCMCredential implements AuthenticationRequest {
       @Override
       public int hashCode() {
         return getClass().hashCode();
@@ -181,7 +181,7 @@ public interface Message {
     }
 
     /** Specifies that SSPI authentication is required. */
-    static final class AuthenticationSSPI implements AuthenticationRequest {
+    public static final class AuthenticationSSPI implements AuthenticationRequest {
       @Override
       public int hashCode() {
         return getClass().hashCode();
@@ -203,7 +203,7 @@ public interface Message {
   /** Identifies the message as cancellation key data. The frontend
    * must save these values if it wishes to be able to issue CancelRequest
    * messages later. */
-  static final class BackendKeyData implements ServerMessage {
+  public static final class BackendKeyData implements ServerMessage {
     /** The process ID of this backend. */
     public final int processId;
 
@@ -247,7 +247,7 @@ public interface Message {
   }
 
   /** Identifies the message as a Bind command. */
-  static final class Bind implements ClientMessage {
+  public static final class Bind implements ClientMessage {
 
     /** The name of the destination portal (an empty string selects
      * the unnamed portal). */
@@ -337,7 +337,7 @@ public interface Message {
     }
   }
 
-  static final class BindComplete implements ServerMessage {
+  public static final class BindComplete implements ServerMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
@@ -354,7 +354,7 @@ public interface Message {
     }
   }
 
-  static final class CancelRequest implements ClientMessage {
+  public static final class CancelRequest implements ClientMessage {
     /** The process ID of the target backend. */
     public final int processId;
 
@@ -398,9 +398,9 @@ public interface Message {
   }
 
   /** Identifies the message as a Close command. */
-  static abstract class Close implements ClientMessage {
+  public static abstract class Close implements ClientMessage {
 
-    static final class ClosePortal extends Close {
+    public static final class ClosePortal extends Close {
       public ClosePortal(final String name) {
         super(name);
       }
@@ -433,7 +433,7 @@ public interface Message {
       }
     }
 
-    static final class ClosePreparedStatement extends Close {
+    public static final class ClosePreparedStatement extends Close {
       public ClosePreparedStatement(final String name) {
         super(name);
       }
@@ -475,7 +475,7 @@ public interface Message {
     }
   }
 
-  static final class CloseComplete implements ServerMessage {
+  public static final class CloseComplete implements ServerMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
@@ -493,7 +493,7 @@ public interface Message {
   }
 
   /** Identifies the message as a command-completed response. */
-  static abstract class CommandComplete implements ServerMessage {
+  public static abstract class CommandComplete implements ServerMessage {
 
     /** For a COPY command, the tag is COPY rows where rows is the
      * number of rows copied. (Note: the row count appears only in
@@ -758,7 +758,7 @@ public interface Message {
 
   /** Identifies the message as a Start Copy Both response.
    * This message is used only for Streaming Replication. */
-  static final class CopyBothResponse implements ServerMessage {
+  public static final class CopyBothResponse implements ServerMessage {
 
     /** The format codes to be used for each column. Each must
      * presently be zero (text) or one (binary). All must be
@@ -798,7 +798,7 @@ public interface Message {
   }
 
   /** Identifies the message as COPY data. */
-  static final class CopyData implements ClientMessage, ServerMessage {
+  public static final class CopyData implements ClientMessage, ServerMessage {
     /** Data that forms part of a COPY data stream. Messages sent
      * from the backend will always correspond to single data rows,
      * but messages sent by frontends might divide the data stream
@@ -838,7 +838,7 @@ public interface Message {
   }
 
   /** Identifies the message as a COPY-complete indicator. */
-  static final class CopyDone implements ClientMessage, ServerMessage {
+  public static final class CopyDone implements ClientMessage, ServerMessage {
 
     @Override
     public int hashCode() {
@@ -857,7 +857,7 @@ public interface Message {
   }
 
   /** Identifies the message as a COPY-failure indicator. */
-  static final class CopyFail implements ClientMessage {
+  public static final class CopyFail implements ClientMessage {
     /** An error message to report as the cause of failure. */
     public final String errorMessage;
 
@@ -899,7 +899,7 @@ public interface Message {
   /** Identifies the message as a Start Copy In response. The
    * frontend must now send copy-in data (if not prepared to do
    * so, send a CopyFail message). */
-  static final class CopyInResponse implements ServerMessage {
+  public static final class CopyInResponse implements ServerMessage {
 
     /** The format codes to be used for each column. Each must
      * presently be zero (text) or one (binary). All must be zero
@@ -940,7 +940,7 @@ public interface Message {
 
   /** Identifies the message as a Start Copy Out response.
    * This message will be followed by copy-out data. */
-  static final class CopyOutResponse implements ServerMessage {
+  public static final class CopyOutResponse implements ServerMessage {
 
     /** The format codes to be used for each column. Each must
      * presently be zero (text) or one (binary). All must be
@@ -980,20 +980,20 @@ public interface Message {
   }
 
   /** Identifies the message as a data row. */
-  static final class DataRow implements ServerMessage {
+  public static final class DataRow implements ServerMessage {
     /** The value of the column, in the format indicated by the
      * associated format code. n is the above length. */
-    public final byte[] columns;
+    public final byte[][] values;
 
-    public DataRow(final byte[] columns) {
-      this.columns = columns;
+    public DataRow(final byte[][] values) {
+      this.values = values;
     }
 
     @Override
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + Arrays.hashCode(columns);
+      result = prime * result + Arrays.hashCode(values);
       return result;
     }
 
@@ -1006,21 +1006,21 @@ public interface Message {
       if (!(obj instanceof DataRow))
         return false;
       final DataRow other = (DataRow) obj;
-      if (!Arrays.equals(columns, other.columns))
+      if (!Arrays.equals(values, other.values))
         return false;
       return true;
     }
 
     @Override
     public String toString() {
-      return "DataRow [columns=" + Arrays.toString(columns) + "]";
+      return "DataRow [values=" + Arrays.toString(values) + "]";
     }
   }
 
   /** Identifies the message as a Describe command. */
-  static abstract class Describe implements ClientMessage {
+  public static abstract class Describe implements ClientMessage {
 
-    static final class DescribePortal extends Describe {
+    public static final class DescribePortal extends Describe {
       public DescribePortal(final String name) {
         super(name);
       }
@@ -1056,7 +1056,7 @@ public interface Message {
       }
     }
 
-    static final class DescribePreparedStatement extends Describe {
+    public static final class DescribePreparedStatement extends Describe {
       public DescribePreparedStatement(final String name) {
         super(name);
       }
@@ -1104,7 +1104,7 @@ public interface Message {
 
   /** Identifies the message as a response to an empty query string.
    * (This substitutes for CommandComplete.) */
-  static final class EmptyQueryResponse implements ServerMessage {
+  public static final class EmptyQueryResponse implements ServerMessage {
 
     @Override
     public int hashCode() {
@@ -1123,8 +1123,8 @@ public interface Message {
   }
 
   /** Identifies the message as an error. */
-  static final class ErrorResponse implements ServerMessage {
-    static final class Field {
+  public static final class ErrorResponse implements ServerMessage {
+    public static final class Field {
       /** A code identifying the field type; if zero, this is the message
        * terminator and no string follows. The presently defined field
        * types are listed in Section 51.6. Since more field types might
@@ -1212,7 +1212,7 @@ public interface Message {
   }
 
   /** Identifies the message as an Execute command. */
-  static final class Execute implements ClientMessage {
+  public static final class Execute implements ClientMessage {
     /** Maximum number of rows to return, if portal contains a query that returns
      * rows (ignored otherwise). Zero denotes "no limit". */
     public final int maxNumberOfRows;
@@ -1261,7 +1261,7 @@ public interface Message {
   }
 
   /** Identifies the message as a Flush command. */
-  static final class Flush implements ClientMessage {
+  public static final class Flush implements ClientMessage {
 
     @Override
     public int hashCode() {
@@ -1280,7 +1280,7 @@ public interface Message {
   }
 
   /** Identifies the message as a function call. */
-  static final class FunctionCall implements ClientMessage {
+  public static final class FunctionCall implements ClientMessage {
 
     /** The length of the argument value, in bytes (this count does not include itself).
      * Can be zero. As a special case, -1 indicates a NULL argument value. No value
@@ -1353,7 +1353,7 @@ public interface Message {
   }
 
   /** Identifies the message as a function call result. */
-  static final class FunctionCallResponse implements ServerMessage {
+  public static final class FunctionCallResponse implements ServerMessage {
     /** The length of the function result value, in bytes (this count does not include
      * itself). Can be zero. As a special case, -1 indicates a NULL function result.
      * No value bytes follow in the NULL case. */
@@ -1400,7 +1400,7 @@ public interface Message {
   }
 
   /** Identifies the message as a no-data indicator. */
-  static final class NoData implements ServerMessage {
+  public static final class NoData implements ServerMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
@@ -1418,7 +1418,7 @@ public interface Message {
   }
 
   /** Identifies the message as a notice. */
-  static final class NoticeResponse implements ServerMessage {
+  public static final class NoticeResponse implements ServerMessage {
     /** The message body consists of one or more identified fields, followed by a
      * zero byte as a terminator. Fields can appear in any order. For each field
      * there is the following:
@@ -1462,7 +1462,7 @@ public interface Message {
   }
 
   /** Identifies the message as a notification response. */
-  static final class NotificationResponse implements ServerMessage {
+  public static final class NotificationResponse implements ServerMessage {
     /** The name of the channel that the notify has been raised on. */
     public final String channelName;
 
@@ -1520,7 +1520,7 @@ public interface Message {
   }
 
   /** Identifies the message as a parameter description */
-  static final class ParameterDescription implements ServerMessage {
+  public static final class ParameterDescription implements ServerMessage {
     /** Then, for each parameter, there is the following:
      * Specifies the object ID of the parameter data type. */
     public final int[] parameterDataType;
@@ -1558,7 +1558,7 @@ public interface Message {
   }
 
   /** Identifies the message as a run-time parameter status report. */
-  static final class ParameterStatus implements ServerMessage {
+  public static final class ParameterStatus implements ServerMessage {
     /** The name of the run-time parameter being reported. */
     public final String name;
 
@@ -1608,7 +1608,7 @@ public interface Message {
   }
 
   /** Identifies the message as a Parse command. */
-  static final class Parse implements ClientMessage {
+  public static final class Parse implements ClientMessage {
     /** The name of the destination prepared statement (an empty
      * string selects the unnamed prepared statement). */
     public final String destinationName;
@@ -1674,7 +1674,7 @@ public interface Message {
   }
 
   /** Identifies the message as a Parse-complete indicator. */
-  static final class ParseComplete implements ServerMessage {
+  public static final class ParseComplete implements ServerMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
@@ -1695,7 +1695,7 @@ public interface Message {
    * used for GSSAPI and SSPI response messages (which is really a design error,
    * since the contained data is not a null-terminated string in that case,
    * but can be arbitrary binary data). */
-  static final class PasswordMessage implements ClientMessage {
+  public static final class PasswordMessage implements ClientMessage {
 
     /** The password (encrypted, if requested). */
     public final String password;
@@ -1737,7 +1737,7 @@ public interface Message {
 
   /** Identifies the message as a portal-suspended indicator. Note this only appears
    * if an Execute message's row-count limit was reached. */
-  static final class PortalSuspended implements ServerMessage {
+  public static final class PortalSuspended implements ServerMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
@@ -1755,7 +1755,7 @@ public interface Message {
   }
 
   /** Identifies the message as a simple query. */
-  static final class Query implements ClientMessage {
+  public static final class Query implements ClientMessage {
     /** The query string itself. */
     public final String string;
 
@@ -1796,7 +1796,7 @@ public interface Message {
 
   /** Identifies the message type. ReadyForQuery is sent whenever the backend is ready
    * for a new query cycle. */
-  static final class ReadyForQuery implements ServerMessage {
+  public static final class ReadyForQuery implements ServerMessage {
 
     /** Current backend transaction status indicator. Possible values are 'I' if idle
      * (not in a transaction block); 'T' if in a transaction block; or 'E' if in a
@@ -1835,8 +1835,8 @@ public interface Message {
     }
   }
 
-  static final class RowDescription implements ServerMessage {
-    static final class Field {
+  public static final class RowDescription implements ServerMessage {
+    public static final class Field {
       /** If the field can be identified as a column of a specific table, the attribute
        * number of the column; otherwise zero. */
       public final short attributeNumber;
@@ -1961,7 +1961,7 @@ public interface Message {
     }
   }
 
-  static final class SSLRequest implements ClientMessage {
+  public static final class SSLRequest implements ClientMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
@@ -1978,9 +1978,9 @@ public interface Message {
     }
   }
 
-  static final class StartupMessage implements ClientMessage {
+  public static final class StartupMessage implements ClientMessage {
 
-    static final class Parameter {
+    public static final class Parameter {
       /** The parameter name. */
       public final String name;
 
@@ -2078,7 +2078,7 @@ public interface Message {
   }
 
   /** Identifies the message as a Sync command. */
-  static final class Sync implements ClientMessage {
+  public static final class Sync implements ClientMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();
@@ -2096,7 +2096,7 @@ public interface Message {
   }
 
   /** Identifies the message as a termination. */
-  static final class Terminate implements ClientMessage {
+  public static final class Terminate implements ClientMessage {
     @Override
     public int hashCode() {
       return getClass().hashCode();

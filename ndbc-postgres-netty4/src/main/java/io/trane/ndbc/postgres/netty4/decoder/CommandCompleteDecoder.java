@@ -1,5 +1,6 @@
 package io.trane.ndbc.postgres.netty4.decoder;
 
+import static io.trane.ndbc.postgres.netty4.decoder.Read.*;
 import java.nio.charset.Charset;
 
 import io.netty.buffer.ByteBuf;
@@ -17,7 +18,7 @@ public class CommandCompleteDecoder {
   }
 
   public CommandComplete decode(ByteBuf buf) {
-    String string = readString(buf);
+    String string = string(charset, buf);
     String[] words = string.split(" ");
     switch (words[0]) {
     case "INSERT":
@@ -37,12 +38,5 @@ public class CommandCompleteDecoder {
     default:
       throw new IllegalStateException("Invalid command complete string: " + string);
     }
-  }
-
-  private String readString(ByteBuf buf) {
-    byte[] b = new byte[buf.readableBytes()];
-    buf.readBytes(b);
-    String string = new String(b, charset);
-    return string;
   }
 }
