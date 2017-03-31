@@ -2,9 +2,6 @@ package io.trane.ndbc.postgres.proto;
 
 import java.util.Arrays;
 
-import io.trane.ndbc.proto.ClientMessage;
-import io.trane.ndbc.proto.ServerMessage;
-
 public interface Message {
 
   interface ServerMessage extends io.trane.ndbc.proto.ServerMessage, Message {
@@ -1122,20 +1119,24 @@ public interface Message {
     }
   }
 
-  /** Identifies the message as an error. */
-  public static final class ErrorResponse implements ServerMessage {
+  public static abstract class InfoResponse implements ServerMessage {
     public static final class Field {
+
+      public static enum Type {
+        Unknown, Severity, Code, Message, Detail, Hint, Position, InternalPosition, InternalQuery, Where, SchemaName, TableName, ColumnName, DataTypeName, ConstraintName, File, Line, Routine
+      }
+
       /** A code identifying the field type; if zero, this is the message
        * terminator and no string follows. The presently defined field
        * types are listed in Section 51.6. Since more field types might
        * be added in future, frontends should silently ignore fields of
        * unrecognized type. */
-      public final char type;
+      public final Type type;
 
       /** The field value. */
       public final String value;
 
-      public Field(final char type, final String value) {
+      public Field(final Type type, final String value) {
         this.type = type;
         this.value = value;
       }
@@ -1144,7 +1145,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + type;
+        result = prime * result + type.hashCode();
         result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
       }
@@ -1179,35 +1180,76 @@ public interface Message {
      * each field there is the following: */
     public final Field[] fields;
 
-    public ErrorResponse(final Field[] fields) {
+    public InfoResponse(final Field[] fields) {
       this.fields = fields;
     }
 
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + Arrays.hashCode(fields);
-      return result;
-    }
+    public static class ErrorResponse extends InfoResponse {
 
-    @Override
-    public boolean equals(final Object obj) {
-      if (this == obj)
+      public ErrorResponse(Field[] fields) {
+        super(fields);
+      }
+
+      @Override
+      public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(fields);
+        return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+        if (this == obj)
+          return true;
+        if (obj == null)
+          return false;
+        if (!(obj instanceof ErrorResponse))
+          return false;
+        ErrorResponse other = (ErrorResponse) obj;
+        if (!Arrays.equals(fields, other.fields))
+          return false;
         return true;
-      if (obj == null)
-        return false;
-      if (!(obj instanceof ErrorResponse))
-        return false;
-      final ErrorResponse other = (ErrorResponse) obj;
-      if (!Arrays.equals(fields, other.fields))
-        return false;
-      return true;
+      }
+
+      @Override
+      public String toString() {
+        return "ErrorResponse [fields=" + Arrays.toString(fields) + "]";
+      }
     }
 
-    @Override
-    public String toString() {
-      return "ErrorResponse [fields=" + Arrays.toString(fields) + "]";
+    public static class NoticeResponse extends InfoResponse {
+
+      public NoticeResponse(Field[] fields) {
+        super(fields);
+      }
+
+      @Override
+      public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(fields);
+        return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+        if (this == obj)
+          return true;
+        if (obj == null)
+          return false;
+        if (!(obj instanceof ErrorResponse))
+          return false;
+        ErrorResponse other = (ErrorResponse) obj;
+        if (!Arrays.equals(fields, other.fields))
+          return false;
+        return true;
+      }
+
+      @Override
+      public String toString() {
+        return "ErrorResponse [fields=" + Arrays.toString(fields) + "]";
+      }
     }
   }
 
@@ -1414,50 +1456,6 @@ public interface Message {
     @Override
     public String toString() {
       return "NoData []";
-    }
-  }
-
-  /** Identifies the message as a notice. */
-  public static final class NoticeResponse implements ServerMessage {
-    /** The message body consists of one or more identified fields, followed by a
-     * zero byte as a terminator. Fields can appear in any order. For each field
-     * there is the following:
-     * A code identifying the field type; if zero, this is the message terminator
-     * and no string follows. The presently defined field types are listed in
-     * Section 51.6. Since more field types might be added in future, frontends
-     * should silently ignore fields of unrecognized type.
-     * */
-    public final String[] fields;
-
-    public NoticeResponse(final String[] fields) {
-      this.fields = fields;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + Arrays.hashCode(fields);
-      return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (!(obj instanceof NoticeResponse))
-        return false;
-      final NoticeResponse other = (NoticeResponse) obj;
-      if (!Arrays.equals(fields, other.fields))
-        return false;
-      return true;
-    }
-
-    @Override
-    public String toString() {
-      return "NoticeResponse [fields=" + Arrays.toString(fields) + "]";
     }
   }
 

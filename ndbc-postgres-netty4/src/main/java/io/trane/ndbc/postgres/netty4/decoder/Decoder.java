@@ -18,11 +18,13 @@ public class Decoder extends ByteToMessageDecoder {
   private final AuthenticationRequestDecoder authenticationRequestDecoder;
   private final CommandCompleteDecoder commandCompleteDecoder;
   private final DataRowDecoder dataRowDecoder;
+  private final InfoResponseFieldsDecoder infoResponseFieldsDecoder;
 
   private final BindComplete bindComplete = new BindComplete();
   private final CloseComplete closeComplete = new CloseComplete();
   private final CopyDone copyDone = new CopyDone();
   private final EmptyQueryResponse emptyQueryResponse = new EmptyQueryResponse();
+  private final NoData noData = new NoData();
 
   public Decoder(Charset charset) {
     super();
@@ -30,6 +32,7 @@ public class Decoder extends ByteToMessageDecoder {
     this.authenticationRequestDecoder = new AuthenticationRequestDecoder();
     this.commandCompleteDecoder = new CommandCompleteDecoder(charset);
     this.dataRowDecoder = new DataRowDecoder();
+    this.infoResponseFieldsDecoder = new InfoResponseFieldsDecoder(charset);
   }
 
   @Override
@@ -72,6 +75,14 @@ public class Decoder extends ByteToMessageDecoder {
       return dataRowDecoder.decode(buf);
     case 'I':
       return emptyQueryResponse;
+    case 'B':
+      return new InfoResponse.ErrorResponse(infoResponseFieldsDecoder.decode(buf));
+    case 'V':
+      return notImplemented(FunctionCallResponse.class);
+    case 'n':
+      return noData;
+    case 'N':
+      return new InfoResponse.NoticeResponse(infoResponseFieldsDecoder.decode(buf));
     }
     return null;
   }
