@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 
 import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest;
 import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
-import io.trane.ndbc.postgres.proto.Message.ErrorResponse;
-import io.trane.ndbc.postgres.proto.Message.NoticeResponse;
+import io.trane.ndbc.postgres.proto.Message.InfoResponse.ErrorResponse;
+import io.trane.ndbc.postgres.proto.Message.InfoResponse.NoticeResponse;
 import io.trane.ndbc.postgres.proto.Message.ParameterStatus;
 import io.trane.ndbc.postgres.proto.Message.PasswordMessage;
 import io.trane.ndbc.postgres.proto.Message.ReadyForQuery;

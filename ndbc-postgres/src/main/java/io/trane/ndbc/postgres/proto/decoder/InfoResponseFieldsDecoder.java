@@ -1,31 +1,20 @@
-package io.trane.ndbc.postgres.netty4.decoder;
+package io.trane.ndbc.postgres.proto.decoder;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import static io.trane.ndbc.postgres.netty4.decoder.Read.*;
-import io.netty.buffer.ByteBuf;
+
 import io.trane.ndbc.postgres.proto.Message.InfoResponse;
+import io.trane.ndbc.proto.BufferReader;
 
 public class InfoResponseFieldsDecoder {
 
-  private final Charset charset;
   private final InfoResponse.Field[] emptyFieldArray = new InfoResponse.Field[0];
 
-  public InfoResponseFieldsDecoder(Charset charset) {
-    super();
-    this.charset = charset;
-  }
-
-  public final InfoResponse.Field[] decode(ByteBuf buf) {
+  public final InfoResponse.Field[] decode(BufferReader b) {
     List<InfoResponse.Field> fields = new ArrayList<>();
     byte type;
-    while ((type = buf.readByte()) != 0) {
-      int stringSize = buf.bytesBefore((byte) 0);
-      String message = string(charset, buf, stringSize);
-      fields.add(new InfoResponse.Field(toTypeEnum(type), message));
-      buf.skipBytes(1); // skip 0
-    }
+    while ((type = b.readByte()) != 0)
+      fields.add(new InfoResponse.Field(toTypeEnum(type), b.readCString()));
     return fields.toArray(emptyFieldArray);
   }
 

@@ -1,24 +1,21 @@
-package io.trane.ndbc.postgres.netty4.decoder;
+package io.trane.ndbc.postgres.proto.decoder;
 
-import static io.trane.ndbc.postgres.netty4.decoder.Read.*;
-import java.nio.charset.Charset;
-
-import io.netty.buffer.ByteBuf;
-import io.trane.ndbc.postgres.proto.Message.CommandComplete;
-import io.trane.ndbc.postgres.proto.Message.CommandComplete.*;
 import static java.lang.Integer.parseInt;
+
+import io.trane.ndbc.postgres.proto.Message.CommandComplete;
+import io.trane.ndbc.postgres.proto.Message.CommandComplete.CopyComplete;
+import io.trane.ndbc.postgres.proto.Message.CommandComplete.DeleteComplete;
+import io.trane.ndbc.postgres.proto.Message.CommandComplete.FetchComplete;
+import io.trane.ndbc.postgres.proto.Message.CommandComplete.InsertComplete;
+import io.trane.ndbc.postgres.proto.Message.CommandComplete.MoveComplete;
+import io.trane.ndbc.postgres.proto.Message.CommandComplete.SelectorOrCreateTableAsComplete;
+import io.trane.ndbc.postgres.proto.Message.CommandComplete.UpdateComplete;
+import io.trane.ndbc.proto.BufferReader;
 
 public class CommandCompleteDecoder {
 
-  private final Charset charset;
-
-  public CommandCompleteDecoder(Charset charset) {
-    super();
-    this.charset = charset;
-  }
-
-  public CommandComplete decode(ByteBuf buf) {
-    String string = string(charset, buf);
+  public CommandComplete decode(BufferReader b) {
+    String string = b.readCString();
     String[] words = string.split(" ");
     switch (words[0]) {
     case "INSERT":
