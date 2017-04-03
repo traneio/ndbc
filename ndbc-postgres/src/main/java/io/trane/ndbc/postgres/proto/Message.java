@@ -1799,9 +1799,9 @@ public interface Message {
     /** Current backend transaction status indicator. Possible values are 'I' if idle
      * (not in a transaction block); 'T' if in a transaction block; or 'E' if in a
      * failed transaction block (queries will be rejected until block is ended). */
-    public final char status;
+    public final byte status;
 
-    public ReadyForQuery(final char status) {
+    public ReadyForQuery(final byte status) {
       this.status = status;
     }
 

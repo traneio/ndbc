@@ -1,10 +1,10 @@
-package io.trane.ndbc.postgres.proto.decoder;
+package io.trane.ndbc.postgres.decoder;
 
 import java.util.Optional;
 
 import io.trane.ndbc.postgres.proto.Message;
 import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
-import io.trane.ndbc.postgres.proto.Message.BindComplete;
+import io.trane.ndbc.postgres.proto.Message.*;
 import io.trane.ndbc.postgres.proto.Message.CloseComplete;
 import io.trane.ndbc.postgres.proto.Message.CopyBothResponse;
 import io.trane.ndbc.postgres.proto.Message.CopyData;
@@ -24,12 +24,15 @@ public class Decoder {
   private final CommandCompleteDecoder commandCompleteDecoder;
   private final DataRowDecoder dataRowDecoder;
   private final InfoResponseFieldsDecoder infoResponseFieldsDecoder;
+  private final RowDescriptionDecoder rowDescriptionDecoder;
 
   private final BindComplete bindComplete = new BindComplete();
   private final CloseComplete closeComplete = new CloseComplete();
   private final CopyDone copyDone = new CopyDone();
   private final EmptyQueryResponse emptyQueryResponse = new EmptyQueryResponse();
   private final NoData noData = new NoData();
+  private final ParseComplete parseComplete = new ParseComplete();
+  private final PortalSuspended portalSuspended = new PortalSuspended();
 
   public Decoder() {
     super();
@@ -37,6 +40,7 @@ public class Decoder {
     this.commandCompleteDecoder = new CommandCompleteDecoder();
     this.dataRowDecoder = new DataRowDecoder();
     this.infoResponseFieldsDecoder = new InfoResponseFieldsDecoder();
+    this.rowDescriptionDecoder = new RowDescriptionDecoder();
   }
 
   public Optional<Message> decode(BufferReader b) throws Exception {
@@ -53,7 +57,6 @@ public class Decoder {
 
   private final Message decode(byte tpe, BufferReader b) {
     switch (tpe) {
-
     case 'R':
       return authenticationRequestDecoder.decode(b);
     case 'K':
@@ -89,9 +92,20 @@ public class Decoder {
     case 'A':
       return new NotificationResponse(b.readInt(), b.readCString(), b.readCString());
     case 't':
-
+      return new ParameterDescription(b.readInts(b.readShort()));
+    case 'S':
+      return new ParameterStatus(b.readCString(), b.readCString());
+    case '1':
+      return parseComplete;
+    case 's':
+      return portalSuspended;
+    case 'Z':
+      return new ReadyForQuery(b.readByte());
+    case 'T':
+      return rowDescriptionDecoder.decode(b);
+    default:
+      throw new IllegalStateException("Invalid server message type: " + tpe);
     }
-    return null;
   }
 
   private Message notImplemented(Class<?> cls) {

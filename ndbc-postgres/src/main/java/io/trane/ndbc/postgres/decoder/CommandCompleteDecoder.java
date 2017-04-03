@@ -1,4 +1,4 @@
-package io.trane.ndbc.postgres.proto.decoder;
+package io.trane.ndbc.postgres.decoder;
 
 import static java.lang.Integer.parseInt;
 
@@ -12,7 +12,7 @@ import io.trane.ndbc.postgres.proto.Message.CommandComplete.SelectorOrCreateTabl
 import io.trane.ndbc.postgres.proto.Message.CommandComplete.UpdateComplete;
 import io.trane.ndbc.proto.BufferReader;
 
-public class CommandCompleteDecoder {
+class CommandCompleteDecoder {
 
   public CommandComplete decode(BufferReader b) {
     String string = b.readCString();

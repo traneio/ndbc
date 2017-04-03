@@ -1,4 +1,4 @@
-package io.trane.ndbc.postgres.proto;
+package io.trane.ndbc.postgres.util;
 
 /**
  * From postgre's JDBC driver:
@@ -8,7 +8,7 @@ package io.trane.ndbc.postgres.proto;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-class MD5Digest {
+public class MD5Digest {
   private MD5Digest() {
   }
 

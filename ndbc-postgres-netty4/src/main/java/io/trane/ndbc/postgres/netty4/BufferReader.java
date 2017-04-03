@@ -74,9 +74,35 @@ public class BufferReader implements io.trane.ndbc.proto.BufferReader {
     bb.readBytes(bytes);
     return bytes;
   }
-  
+
   @Override
   public BufferReader readSlice(int length) {
     return new BufferReader(charset, bb.readSlice(length));
+  }
+
+  @Override
+  public int[] readInts() {
+    return readInts(bb.readableBytes() / 4);
+  }
+
+  @Override
+  public int[] readInts(int length) {
+    int[] ints = new int[length];
+    for (int i = 0; i < length; i++)
+      ints[i] = bb.readInt();
+    return ints;
+  }
+
+  @Override
+  public short[] readShorts() {
+    return readShorts(bb.readableBytes() / 2);
+  }
+
+  @Override
+  public short[] readShorts(int length) {
+    short[] shorts = new short[length];
+    for (int i = 0; i < length; i++)
+      shorts[i] = bb.readShort();
+    return shorts;
   }
 }

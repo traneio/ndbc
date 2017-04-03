@@ -1,4 +1,4 @@
-package io.trane.ndbc.postgres.proto.decoder;
+package io.trane.ndbc.postgres.decoder;
 
 import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest;
 import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest.AuthenticationCleartextPassword;

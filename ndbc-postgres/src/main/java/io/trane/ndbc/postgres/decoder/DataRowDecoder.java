@@ -1,9 +1,9 @@
-package io.trane.ndbc.postgres.proto.decoder;
+package io.trane.ndbc.postgres.decoder;
 
 import io.trane.ndbc.postgres.proto.Message.DataRow;
 import io.trane.ndbc.proto.BufferReader;;
 
-public class DataRowDecoder {
+class DataRowDecoder {
 
   public DataRow decode(BufferReader b) {
     short columns = b.readShort();
