@@ -13,5 +13,4 @@ public class RowDescriptionDecoder {
           b.readInt(), b.readShort());
     return new RowDescription(fields);
   }
-
 }
