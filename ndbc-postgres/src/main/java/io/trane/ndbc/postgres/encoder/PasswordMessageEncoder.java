@@ -7,6 +7,7 @@ public class PasswordMessageEncoder {
 
   public final void encode(PasswordMessage msg, BufferWriter b) {
     b.writeChar('p');
+    b.writeInt(0);
     b.writeCString(msg.password);
     b.writeLength(1);
   }

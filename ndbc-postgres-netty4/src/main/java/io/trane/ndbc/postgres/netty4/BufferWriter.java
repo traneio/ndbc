@@ -27,7 +27,7 @@ public class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
 
   @Override
   public void writeChar(char c) {
-    b.writeChar(c);
+    b.writeByte(c);
   }
 
   @Override
@@ -65,7 +65,7 @@ public class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
 
   @Override
   public void writeLength(int position) {
-    int length = b.writerIndex();
+    int length = b.writerIndex() - position;
     b.markWriterIndex();
     b.writerIndex(position);
     b.writeInt(length);
