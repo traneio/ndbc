@@ -1,15 +1,17 @@
 package io.trane.ndbc;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class PreparedStatement {
 
-  private final String string;
+  private final String query;
   private final Param[] params;
 
-  protected PreparedStatement(String string, Param[] params) {
+  protected PreparedStatement(String query, Param[] params) {
     super();
-    this.string = string;
+    this.query = query;
     this.params = params;
   }
 
@@ -44,6 +46,14 @@ public class PreparedStatement {
     int newLength = position >= params.length ? position + 1 : params.length;
     Param[] newParams = Arrays.copyOf(params, newLength);
     newParams[position] = param;
-    return new PreparedStatement(string, newParams);
+    return new PreparedStatement(query, newParams);
+  }
+
+  public String getQuery() {
+    return query;
+  }
+
+  public List<Param> getParams() {
+    return Collections.unmodifiableList(Arrays.asList(params));
   }
 }

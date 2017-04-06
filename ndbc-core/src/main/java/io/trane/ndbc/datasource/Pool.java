@@ -18,9 +18,8 @@ public class Pool<T extends Connection> {
   private static final Future<Object> POOL_EXHAUSTED = Future.exception(new RuntimeException("Pool exhausted"));
 
   public static <T extends Connection> Pool<T> apply(final Supplier<Future<T>> supplier, final int maxSize,
-      final int maxWaiters,
-      final Duration validationInterval) {
-    return new Pool<>(supplier, maxSize, maxWaiters, validationInterval);
+      final int maxWaiters, final Duration validationInterval, final ScheduledExecutorService scheduler) {
+    return new Pool<>(supplier, maxSize, maxWaiters, validationInterval, scheduler);
   }
 
   private final Supplier<Future<T>> supplier;
@@ -30,7 +29,7 @@ public class Pool<T extends Connection> {
   private final Queue<Waiter<T, ?>> waiters;
 
   private Pool(final Supplier<Future<T>> supplier, final int maxSize, final int maxWaiters,
-      final Duration validationInterval) {
+      final Duration validationInterval, final ScheduledExecutorService scheduler) {
     this.supplier = supplier;
     this.sizeSemaphore = semaphore(maxSize);
     this.waitersSemaphore = semaphore(maxWaiters);
@@ -38,7 +37,7 @@ public class Pool<T extends Connection> {
     this.items = new ConcurrentLinkedQueue<>();
     this.waiters = new ConcurrentLinkedQueue<>();
     if (validationInterval.toMillis() != Long.MAX_VALUE)
-      scheduleValidation(validationInterval, new ScheduledThreadPoolExecutor(1));
+      scheduleValidation(validationInterval, scheduler);
   }
 
   public <R> Future<R> apply(final Function<T, Future<R>> f) {

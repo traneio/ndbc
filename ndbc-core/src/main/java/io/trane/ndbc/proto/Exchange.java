@@ -1,5 +1,7 @@
 package io.trane.ndbc.proto;
 
+import java.util.function.Function;
+
 import io.trane.future.Future;
 import io.trane.ndbc.util.PartialFunction;
 
@@ -41,6 +43,14 @@ public interface Exchange<T> {
   }
 
   Future<T> run(Channel channel);
+
+  default public <R> Exchange<R> map(final Function<T, R> f) {
+    return channel -> run(channel).map(f::apply);
+  }
+  
+  default public <R> Exchange<R> flatMap(final Function<T, Exchange<R>> f) {
+    return channel -> run(channel).flatMap(v -> f.apply(v).run(channel));
+  }
 
   default public <R> Exchange<R> then(final Exchange<R> ex) {
     return channel -> run(channel).flatMap(v -> ex.run(channel));

@@ -1,5 +1,6 @@
 package io.trane.ndbc.postgres.netty4;
 
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.function.Supplier;
 
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -17,6 +18,7 @@ public class DataSourceSupplier implements Supplier<DataSource<Connection>> {
 
   private final Config config;
   private final Supplier<Future<Channel>> channelSupplier;
+  private final Startup startup = new Startup();
 
   public DataSourceSupplier(Config config) {
     this.config = config;
@@ -27,12 +29,13 @@ public class DataSourceSupplier implements Supplier<DataSource<Connection>> {
 
   private final Supplier<Future<Connection>> createConnection() {
     return () -> channelSupplier.get()
-        .flatMap(channel -> Startup.apply(config.charset, config.user, config.password, config.database).run(channel)
+        .flatMap(channel -> startup.apply(config.charset, config.user, config.password, config.database).run(channel)
             .map(backendKeyData -> new Connection(channel, backendKeyData)));
   }
 
   private Pool<Connection> createPool() {
-    return Pool.apply(createConnection(), config.poolMaxSize, config.poolMaxWaiters, config.poolValidationInterval);
+    return Pool.apply(createConnection(), config.poolMaxSize, config.poolMaxWaiters, config.poolValidationInterval,
+        new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("pool-scheduler", true)));
   }
 
   @Override
