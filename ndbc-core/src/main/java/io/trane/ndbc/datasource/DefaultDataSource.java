@@ -6,16 +6,17 @@ import java.util.function.Supplier;
 
 import io.trane.future.Future;
 import io.trane.future.Local;
+import io.trane.ndbc.Connection;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.ResultSet;
 
-public class BaseDataSource<T extends Connection> implements DataSource {
+public class DefaultDataSource<C extends Connection> implements DataSource<C> {
 
-  private final Pool<T> pool;
-  private final Local<T> currentTransation;
+  private final Pool<C> pool;
+  private final Local<C> currentTransation;
 
-  public BaseDataSource(Pool<T> pool) {
+  public DefaultDataSource(Pool<C> pool) {
     super();
     this.pool = pool;
     this.currentTransation = Local.apply();
@@ -23,22 +24,22 @@ public class BaseDataSource<T extends Connection> implements DataSource {
 
   @Override
   public Future<ResultSet> query(String query) {
-    return apply(c -> c.query(query));
+    return withConnection(c -> c.query(query));
   }
 
   @Override
   public Future<Integer> execute(String statement) {
-    return apply(c -> c.execute(statement));
+    return withConnection(c -> c.execute(statement));
   }
 
   @Override
   public Future<ResultSet> query(PreparedStatement query) {
-    return apply(c -> c.query(query));
+    return withConnection(c -> c.query(query));
   }
 
   @Override
   public Future<Integer> execute(PreparedStatement statement) {
-    return apply(c -> c.execute(statement));
+    return withConnection(c -> c.execute(statement));
   }
 
   @Override
@@ -52,7 +53,8 @@ public class BaseDataSource<T extends Connection> implements DataSource {
       });
   }
 
-  private final <R> Future<R> apply(Function<T, Future<R>> f) {
+  @Override
+  public final <R> Future<R> withConnection(Function<C, Future<R>> f) {
     return currentTransation.get().map(f).orElseGet(() -> pool.apply(f));
   }
 }

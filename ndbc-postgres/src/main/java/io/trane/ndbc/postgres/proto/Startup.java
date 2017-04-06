@@ -25,8 +25,7 @@ public class Startup {
   private static final Logger log = Logger.getLogger(Startup.class.getName());
 
   public static Exchange<Optional<BackendKeyData>> apply(final Charset charset, final String user,
-      final Optional<String> database,
-      final Optional<String> password) {
+      final Optional<String> password, final Optional<String> database) {
     return Exchange
         .send(startupMessage(charset, user, database))
         .thenReceive(

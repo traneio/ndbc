@@ -1,7 +1,21 @@
 package io.trane.ndbc.postgres.encoder;
 
-import io.trane.ndbc.postgres.proto.Message;
-import io.trane.ndbc.postgres.proto.Message.*;
+import io.trane.ndbc.postgres.proto.Message.Bind;
+import io.trane.ndbc.postgres.proto.Message.CancelRequest;
+import io.trane.ndbc.postgres.proto.Message.Close;
+import io.trane.ndbc.postgres.proto.Message.CopyData;
+import io.trane.ndbc.postgres.proto.Message.CopyDone;
+import io.trane.ndbc.postgres.proto.Message.CopyFail;
+import io.trane.ndbc.postgres.proto.Message.Describe;
+import io.trane.ndbc.postgres.proto.Message.Execute;
+import io.trane.ndbc.postgres.proto.Message.Flush;
+import io.trane.ndbc.postgres.proto.Message.FunctionCall;
+import io.trane.ndbc.postgres.proto.Message.Parse;
+import io.trane.ndbc.postgres.proto.Message.PasswordMessage;
+import io.trane.ndbc.postgres.proto.Message.SSLRequest;
+import io.trane.ndbc.postgres.proto.Message.StartupMessage;
+import io.trane.ndbc.postgres.proto.Message.Sync;
+import io.trane.ndbc.postgres.proto.Message.Terminate;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.proto.ClientMessage;
 
@@ -19,7 +33,7 @@ public class Encoder {
   private final SyncEncoder syncEncoder = new SyncEncoder();
   private final TerminateEncoder terminateEncoder = new TerminateEncoder();
 
-  public final void encode(Message msg, BufferWriter b) {
+  public final void encode(ClientMessage msg, BufferWriter b) {
     if (msg instanceof Bind)
       bindEncoder.encode((Bind) msg, b);
     else if (msg instanceof CancelRequest)

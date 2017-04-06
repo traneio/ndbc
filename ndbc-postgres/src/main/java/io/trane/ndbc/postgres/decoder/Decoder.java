@@ -45,12 +45,15 @@ public class Decoder {
 
   public Optional<Message> decode(BufferReader b) throws Exception {
     if (b.readableBytes() >= 5) {
+      b.markReaderIndex();
       byte tpe = b.readByte();
       int length = b.readInt() - 4;
       if (b.readableBytes() >= length)
         return Optional.of(decode(tpe, b.readSlice(length)));
-      else
+      else {
+        b.resetReaderIndex();
         return Optional.empty();
+      }
     } else
       return Optional.empty();
   }
@@ -81,7 +84,7 @@ public class Decoder {
       return dataRowDecoder.decode(b);
     case 'I':
       return emptyQueryResponse;
-    case 'B':
+    case 'E':
       return new InfoResponse.ErrorResponse(infoResponseFieldsDecoder.decode(b));
     case 'V':
       return notImplemented(FunctionCallResponse.class);
@@ -104,7 +107,7 @@ public class Decoder {
     case 'T':
       return rowDescriptionDecoder.decode(b);
     default:
-      throw new IllegalStateException("Invalid server message type: " + tpe);
+      throw new IllegalStateException("Invalid server message type: " + (char) tpe);
     }
   }
 

@@ -105,4 +105,14 @@ public class BufferReader implements io.trane.ndbc.proto.BufferReader {
       shorts[i] = bb.readShort();
     return shorts;
   }
+
+  @Override
+  public void markReaderIndex() {
+    bb.markReaderIndex();
+  }
+
+  @Override
+  public void resetReaderIndex() {
+    bb.resetReaderIndex();
+  }
 }

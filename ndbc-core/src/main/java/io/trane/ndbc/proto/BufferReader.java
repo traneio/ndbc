@@ -31,4 +31,8 @@ public interface BufferReader {
   short[] readShorts(int length);
 
   BufferReader readSlice(int length);
+
+  void markReaderIndex();
+
+  void resetReaderIndex();
 }

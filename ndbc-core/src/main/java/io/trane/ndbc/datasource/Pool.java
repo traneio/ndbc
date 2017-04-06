@@ -11,31 +11,27 @@ import java.util.function.Supplier;
 
 import io.trane.future.Future;
 import io.trane.future.Promise;
+import io.trane.ndbc.Connection;
 
-public class Pool<T> {
+public class Pool<T extends Connection> {
 
   private static final Future<Object> POOL_EXHAUSTED = Future.exception(new RuntimeException("Pool exhausted"));
 
-  public static <T> Pool<T> apply(final Supplier<Future<T>> supplier, final Function<T, Future<Void>> release,
-      final Function<T, Future<Boolean>> isValid, final int maxSize, final int maxWaiters,
+  public static <T extends Connection> Pool<T> apply(final Supplier<Future<T>> supplier, final int maxSize,
+      final int maxWaiters,
       final Duration validationInterval) {
-    return new Pool<>(supplier, release, isValid, maxSize, maxWaiters, validationInterval);
+    return new Pool<>(supplier, maxSize, maxWaiters, validationInterval);
   }
 
   private final Supplier<Future<T>> supplier;
-  private final Function<T, Future<Void>> release;
-  private final Function<T, Future<Boolean>> isValid;
   private final Semaphore sizeSemaphore;
   private final Semaphore waitersSemaphore;
   private final Queue<T> items;
   private final Queue<Waiter<T, ?>> waiters;
 
-  private Pool(final Supplier<Future<T>> supplier, final Function<T, Future<Void>> release,
-      final Function<T, Future<Boolean>> isValid,
-      final int maxSize, final int maxWaiters, final Duration validationInterval) {
+  private Pool(final Supplier<Future<T>> supplier, final int maxSize, final int maxWaiters,
+      final Duration validationInterval) {
     this.supplier = supplier;
-    this.release = release;
-    this.isValid = isValid;
     this.sizeSemaphore = semaphore(maxSize);
     this.waitersSemaphore = semaphore(maxWaiters);
     // TODO is this the best data structure?
@@ -75,9 +71,9 @@ public class Pool<T> {
         return Future.VOID;
       } else
         // TODO logging
-        return isValid.apply(item).rescue(e -> Future.FALSE).flatMap(valid -> {
+        return item.isValid().rescue(e -> Future.FALSE).flatMap(valid -> {
           if (!valid)
-            return release.apply(item).rescue(e -> Future.VOID).ensure(() -> sizeSemaphore.release());
+            return item.close().rescue(e -> Future.VOID).ensure(() -> sizeSemaphore.release());
           else {
             items.offer(item);
             return Future.VOID;

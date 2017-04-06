@@ -6,7 +6,9 @@ import io.trane.ndbc.proto.BufferWriter;
 public class StartupMessageEncoder {
 
   public final void encode(StartupMessage msg, BufferWriter b) {
-    b.writeInt(196608);
+    b.writeInt(0);
+    b.writeShort((short) 3);
+    b.writeShort((short) 0);
 
     b.writeCString("user");
     b.writeCString(msg.user);
