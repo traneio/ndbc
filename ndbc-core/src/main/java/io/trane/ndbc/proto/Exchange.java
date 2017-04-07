@@ -1,12 +1,17 @@
 package io.trane.ndbc.proto;
 
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 import io.trane.future.Future;
 import io.trane.ndbc.util.PartialFunction;
 
 @FunctionalInterface
 public interface Exchange<T> {
+
+  static Logger log = Logger.getLogger(Exchange.class.getName());
+
+  static Exchange<Void> VOID = value(null);
 
   static class ExchangeException extends RuntimeException {
     private static final long serialVersionUID = 1L;
@@ -25,13 +30,25 @@ public interface Exchange<T> {
   }
 
   static <R> Exchange<R> fail(final String error) {
-    final Future<Void> result = Future.exception(new ExchangeException(error));
+    return fail(new ExchangeException(error));
+  }
+
+  static <R> Exchange<R> fail(final Throwable ex) {
+    final Future<Void> result = Future.exception(ex);
     return channel -> result.unsafeCast();
   }
 
   static <R> Exchange<R> receive(final PartialFunction<ServerMessage, Exchange<R>> f) {
     return channel -> channel.receive().flatMap(
-        msg -> f.applyOrElse(msg, () -> Exchange.fail("Unexpected database message: " + msg)).run(channel));
+        msg -> {
+          if (msg.isNotice()) {
+            log.info(msg.toString());
+            return receive(f).run(channel);
+          } else if (msg.isError())
+            return Future.exception(new Exception(msg.toString()));
+          else
+            return f.applyOrElse(msg, () -> Exchange.fail("Unexpected database message: " + msg)).run(channel);
+        });
   }
 
   static Exchange<Void> send(final ClientMessage msg) {
@@ -47,9 +64,17 @@ public interface Exchange<T> {
   default public <R> Exchange<R> map(final Function<T, R> f) {
     return channel -> run(channel).map(f::apply);
   }
-  
+
   default public <R> Exchange<R> flatMap(final Function<T, Exchange<R>> f) {
     return channel -> run(channel).flatMap(v -> f.apply(v).run(channel));
+  }
+
+  default public Exchange<T> rescue(final Function<Throwable, Exchange<T>> f) {
+    return channel -> run(channel).rescue(t -> f.apply(t).run(channel));
+  }
+
+  default public Exchange<T> onFailure(final Function<Throwable, Exchange<?>> e) {
+    return channel -> run(channel).rescue(ex -> e.apply(ex).run(channel).flatMap(v -> Future.exception(ex)));
   }
 
   default public <R> Exchange<R> then(final Exchange<R> ex) {
@@ -58,6 +83,11 @@ public interface Exchange<T> {
 
   default public <R> Exchange<R> thenReceive(final PartialFunction<ServerMessage, Exchange<R>> f) {
     return then(Exchange.receive(f));
+  }
+
+  default public Exchange<T> thenWaitFor(final PartialFunction<ServerMessage, Exchange<Void>> f) {
+    return rescue(ex -> Exchange.receive(f).flatMap(v -> Exchange.fail(ex)))
+        .flatMap(r -> Exchange.receive(f).map(v -> r));
   }
 
   default public <R> Exchange<R> thenFail(final String error) {

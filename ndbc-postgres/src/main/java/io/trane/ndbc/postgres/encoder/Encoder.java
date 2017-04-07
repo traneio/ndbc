@@ -1,5 +1,7 @@
 package io.trane.ndbc.postgres.encoder;
 
+import java.util.logging.Logger;
+
 import io.trane.ndbc.postgres.proto.Message.Bind;
 import io.trane.ndbc.postgres.proto.Message.CancelRequest;
 import io.trane.ndbc.postgres.proto.Message.Close;
@@ -12,6 +14,7 @@ import io.trane.ndbc.postgres.proto.Message.Flush;
 import io.trane.ndbc.postgres.proto.Message.FunctionCall;
 import io.trane.ndbc.postgres.proto.Message.Parse;
 import io.trane.ndbc.postgres.proto.Message.PasswordMessage;
+import io.trane.ndbc.postgres.proto.Message.Query;
 import io.trane.ndbc.postgres.proto.Message.SSLRequest;
 import io.trane.ndbc.postgres.proto.Message.StartupMessage;
 import io.trane.ndbc.postgres.proto.Message.Sync;
@@ -21,6 +24,8 @@ import io.trane.ndbc.proto.ClientMessage;
 
 public class Encoder {
 
+  private static final Logger log = Logger.getLogger(Encoder.class.getName());
+
   private final BindEncoder bindEncoder = new BindEncoder();
   private final CancelRequestEncoder cancelRequestEncoder = new CancelRequestEncoder();
   private final CloseEncoder closeEncoder = new CloseEncoder();
@@ -28,6 +33,7 @@ public class Encoder {
   private final ExecuteEncoder executeEncoder = new ExecuteEncoder();
   private final FlushEncoder flushEncoder = new FlushEncoder();
   private final ParseEncoder parseEncoder = new ParseEncoder();
+  private final QueryEncoder queryEncoder = new QueryEncoder();
   private final PasswordMessageEncoder passwordMessageEncoder = new PasswordMessageEncoder();
   private final StartupMessageEncoder startupMessageEncoder = new StartupMessageEncoder();
   private final SyncEncoder syncEncoder = new SyncEncoder();
@@ -56,6 +62,8 @@ public class Encoder {
       notImplemented(FunctionCall.class);
     else if (msg instanceof Parse)
       parseEncoder.encode((Parse) msg, b);
+    else if (msg instanceof Query)
+      queryEncoder.encode((Query) msg, b);
     else if (msg instanceof PasswordMessage)
       passwordMessageEncoder.encode((PasswordMessage) msg, b);
     else if (msg instanceof SSLRequest)
@@ -67,7 +75,7 @@ public class Encoder {
     else if (msg instanceof Terminate)
       terminateEncoder.encode((Flush) msg, b);
     else
-      throw new IllegalStateException("Invalid client message: " + msg);
+      log.severe("Invalid client message: " + msg);
   }
 
   private void notImplemented(Class<? extends ClientMessage> cls) {

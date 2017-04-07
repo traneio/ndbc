@@ -9,20 +9,16 @@ import java.util.logging.Logger;
 
 import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest;
 import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
-import io.trane.ndbc.postgres.proto.Message.InfoResponse.ErrorResponse;
-import io.trane.ndbc.postgres.proto.Message.InfoResponse.NoticeResponse;
-import io.trane.ndbc.postgres.util.MD5Digest;
 import io.trane.ndbc.postgres.proto.Message.ParameterStatus;
 import io.trane.ndbc.postgres.proto.Message.PasswordMessage;
 import io.trane.ndbc.postgres.proto.Message.ReadyForQuery;
 import io.trane.ndbc.postgres.proto.Message.StartupMessage;
+import io.trane.ndbc.postgres.util.MD5Digest;
 import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.util.PartialFunction;
 
 public class Startup {
-
-  private final Logger log = Logger.getLogger(Startup.class.getName());
 
   public Exchange<Optional<BackendKeyData>> apply(final Charset charset, final String user,
       final Optional<String> password, final Optional<String> database) {
@@ -32,17 +28,13 @@ public class Startup {
             authenticationOk
                 .orElse(clearTextPasswordAuthentication(password))
                 .orElse(md5PasswordAuthentication(charset, user, password))
-                .orElse(unsupportedAuthentication)
-                .orElse(errorResponse()))
-        .then(waitForBackendStartup(Optional.empty()));
+                .orElse(unsupportedAuthentication))
+        .then(waitForBackendStartup(Optional.empty()))
+        .onFailure(ex -> Exchange.close());
   }
 
   private final PartialFunction<ServerMessage, Exchange<Void>> authenticationOk = PartialFunction
       .when(AuthenticationRequest.AuthenticationOk.class, msg -> Exchange.done());
-
-  private final <T> PartialFunction<ServerMessage, Exchange<T>> errorResponse() {
-    return PartialFunction.when(ErrorResponse.class, msg -> Exchange.close().thenFail(msg.toString()));
-  }
 
   private final PartialFunction<ServerMessage, Exchange<Void>> clearTextPasswordAuthentication(
       final Optional<String> password) {
@@ -61,19 +53,14 @@ public class Startup {
 
   private final PartialFunction<ServerMessage, Exchange<Void>> unsupportedAuthentication = PartialFunction.when(
       AuthenticationRequest.class,
-      msg -> Exchange.fail("Database authentication method not supported by ndbc: " + msg));
+      msg -> Exchange.close().thenFail("Database authentication method not supported by ndbc: " + msg));
 
   private final Exchange<Optional<BackendKeyData>> waitForBackendStartup(
       final Optional<BackendKeyData> backendKeyData) {
     return Exchange.receive(PartialFunction.<ServerMessage, Exchange<Optional<BackendKeyData>>>apply()
-        .orElse(errorResponse())
         .orElse(BackendKeyData.class, msg -> waitForBackendStartup(Optional.of(msg)))
         .orElse(ParameterStatus.class, msg -> waitForBackendStartup(backendKeyData))
-        .orElse(ReadyForQuery.class, msg -> Exchange.value(backendKeyData))
-        .orElse(NoticeResponse.class, msg -> {
-          log.info(msg.toString());
-          return waitForBackendStartup(backendKeyData);
-        }));
+        .orElse(ReadyForQuery.class, msg -> Exchange.value(backendKeyData)));
   }
 
   private final Exchange<Void> withRequiredPassword(final Optional<String> password,

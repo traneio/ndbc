@@ -7,6 +7,7 @@ public class QueryEncoder {
 
   public final void encode(Query msg, BufferWriter b) {
     b.writeChar('Q');
+    b.writeInt(0);
     b.writeCString(msg.string);
     b.writeLength(1);
   }
