@@ -18,7 +18,7 @@ import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.util.PartialFunction;
 
-public class Startup {
+public class StartupExchange {
 
   public Exchange<Optional<BackendKeyData>> apply(final Charset charset, final String user,
       final Optional<String> password, final Optional<String> database) {

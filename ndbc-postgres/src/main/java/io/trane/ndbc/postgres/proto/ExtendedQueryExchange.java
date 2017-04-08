@@ -14,7 +14,7 @@ import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.util.PartialFunction;
 
-public class ExtendedQuery {
+public class ExtendedQueryExchange {
 
   public Exchange<ResultSet> apply(PreparedStatement ps) {
     return prepare(ps.getQuery()).flatMap(id -> {

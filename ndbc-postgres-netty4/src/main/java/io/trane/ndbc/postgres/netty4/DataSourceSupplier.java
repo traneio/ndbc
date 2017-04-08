@@ -10,15 +10,16 @@ import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.datasource.DefaultDataSource;
 import io.trane.ndbc.datasource.Pool;
+import io.trane.ndbc.postgres.Connection;
 import io.trane.ndbc.postgres.decoder.Decoder;
 import io.trane.ndbc.postgres.encoder.Encoder;
-import io.trane.ndbc.postgres.proto.Startup;
+import io.trane.ndbc.postgres.proto.StartupExchange;
 
 public class DataSourceSupplier implements Supplier<DataSource<Connection>> {
 
   private final Config config;
   private final Supplier<Future<Channel>> channelSupplier;
-  private final Startup startup = new Startup();
+  private final StartupExchange startup = new StartupExchange();
 
   public DataSourceSupplier(Config config) {
     this.config = config;
@@ -30,7 +31,7 @@ public class DataSourceSupplier implements Supplier<DataSource<Connection>> {
   private final Supplier<Future<Connection>> createConnection() {
     return () -> channelSupplier.get()
         .flatMap(channel -> startup.apply(config.charset, config.user, config.password, config.database).run(channel)
-            .map(backendKeyData -> new Connection(channel, backendKeyData)));
+            .map(backendKeyData -> new Connection(config.charset, channel, backendKeyData)));
   }
 
   private Pool<Connection> createPool() {
