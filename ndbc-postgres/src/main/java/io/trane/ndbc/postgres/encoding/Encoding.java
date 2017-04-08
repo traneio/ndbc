@@ -1,7 +1,5 @@
 package io.trane.ndbc.postgres.encoding;
 
-import java.nio.charset.Charset;
-
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
 

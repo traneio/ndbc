@@ -28,7 +28,7 @@ class PostgresRow implements io.trane.ndbc.Row {
       RowDescription.Field field = fields[i];
       positions.put(field.name, i);
       // TODO Type
-      columns[i] = new Column(null, Format.values()[field.formatCode], values[i]);
+      columns[i] = new Column(null, Format.fromCode(field.formatCode), values[i]);
     }
 
     return new PostgresRow(positions, columns);
