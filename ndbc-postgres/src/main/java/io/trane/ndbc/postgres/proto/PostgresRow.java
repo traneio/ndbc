@@ -1,21 +1,21 @@
 package io.trane.ndbc.postgres.proto;
 
-import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import io.trane.ndbc.Type;
+import io.trane.ndbc.postgres.encoding.Encodings;
+import io.trane.ndbc.postgres.encoding.Format;
 import io.trane.ndbc.postgres.proto.Message.DataRow;
 import io.trane.ndbc.postgres.proto.Message.RowDescription;
+import io.trane.ndbc.proto.BufferReader;
 
 class PostgresRow implements io.trane.ndbc.Row {
 
-  protected static PostgresRow apply(Charset charset, RowDescription desc, DataRow data) {
+  protected static PostgresRow apply(RowDescription desc, DataRow data) {
 
     RowDescription.Field[] fields = desc.fields;
-    byte[][] values = data.values;
+    BufferReader[] values = data.values;
 
     int length = fields.length;
     if (length != values.length)
@@ -28,7 +28,7 @@ class PostgresRow implements io.trane.ndbc.Row {
       RowDescription.Field field = fields[i];
       positions.put(field.name, i);
       // TODO Type
-      columns[i] = new Column(charset, null, Format.values()[field.formatCode], values[i]);
+      columns[i] = new Column(null, Format.values()[field.formatCode], values[i]);
     }
 
     return new PostgresRow(positions, columns);
@@ -84,17 +84,15 @@ class PostgresRow implements io.trane.ndbc.Row {
 
 class Column {
 
-  private final Charset charset;
   private final Type type;
   private final Format format;
-  private final byte[] data;
+  private final BufferReader reader;
 
-  public Column(Charset charset, Type type, Format format, byte[] data) {
+  public Column(Type type, Format format, BufferReader reader) {
     super();
-    this.charset = charset;
     this.type = type;
     this.format = format;
-    this.data = data;
+    this.reader = reader;
   }
 
   public Type getType() {
@@ -102,10 +100,10 @@ class Column {
   }
 
   public String getString() {
-    return new String(data, charset);
+    return Encodings.stringEncoding.decode(format, reader);
   }
 
   public int getInt() {
-    return Integer.parseInt(getString());
+    return Encodings.intEncoding.decode(format, reader);
   }
 }

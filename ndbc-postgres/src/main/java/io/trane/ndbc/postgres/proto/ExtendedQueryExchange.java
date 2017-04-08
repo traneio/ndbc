@@ -9,7 +9,6 @@ import io.trane.ndbc.ResultSet;
 import io.trane.ndbc.postgres.proto.Message.InfoResponse.ErrorResponse;
 import io.trane.ndbc.postgres.proto.Message.Parse;
 import io.trane.ndbc.postgres.proto.Message.ParseComplete;
-import io.trane.ndbc.postgres.proto.Message.Bind;
 import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.util.PartialFunction;

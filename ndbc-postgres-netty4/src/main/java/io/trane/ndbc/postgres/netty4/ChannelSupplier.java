@@ -17,20 +17,20 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.trane.future.Future;
 import io.trane.future.Promise;
-import io.trane.ndbc.postgres.decoder.Decoder;
-import io.trane.ndbc.postgres.encoder.Encoder;
+import io.trane.ndbc.postgres.proto.parser.Parser;
+import io.trane.ndbc.postgres.proto.serializer.Serializer;
 import io.trane.ndbc.proto.ClientMessage;
 
 public class ChannelSupplier implements Supplier<Future<Channel>> {
 
-  private final Encoder encoder;
-  private final Decoder decoder;
+  private final Serializer encoder;
+  private final Parser decoder;
   private final EventLoopGroup eventLoopGroup;
   private final String host;
   private final int port;
   private final Charset charset;
 
-  public ChannelSupplier(Charset charset, Encoder encoder, Decoder decoder, EventLoopGroup eventLoopGroup, String host,
+  public ChannelSupplier(Charset charset, Serializer encoder, Parser decoder, EventLoopGroup eventLoopGroup, String host,
       int port) {
     super();
     this.charset = charset;

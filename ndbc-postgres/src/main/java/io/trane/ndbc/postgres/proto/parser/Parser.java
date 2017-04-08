@@ -1,4 +1,4 @@
-package io.trane.ndbc.postgres.decoder;
+package io.trane.ndbc.postgres.proto.parser;
 
 import java.util.Optional;
 
@@ -18,13 +18,13 @@ import io.trane.ndbc.postgres.proto.Message.NoData;
 import io.trane.ndbc.postgres.proto.Message.NotificationResponse;
 import io.trane.ndbc.proto.BufferReader;
 
-public class Decoder {
+public class Parser {
 
-  private final AuthenticationRequestDecoder authenticationRequestDecoder;
-  private final CommandCompleteDecoder commandCompleteDecoder;
-  private final DataRowDecoder dataRowDecoder;
-  private final InfoResponseFieldsDecoder infoResponseFieldsDecoder;
-  private final RowDescriptionDecoder rowDescriptionDecoder;
+  private final AuthenticationRequestParser authenticationRequestDecoder;
+  private final CommandCompleteParser commandCompleteDecoder;
+  private final DataRowParser dataRowDecoder;
+  private final InfoResponseFieldsParser infoResponseFieldsDecoder;
+  private final RowDescriptionParser rowDescriptionDecoder;
 
   private final BindComplete bindComplete = new BindComplete();
   private final CloseComplete closeComplete = new CloseComplete();
@@ -34,13 +34,13 @@ public class Decoder {
   private final ParseComplete parseComplete = new ParseComplete();
   private final PortalSuspended portalSuspended = new PortalSuspended();
 
-  public Decoder() {
+  public Parser() {
     super();
-    this.authenticationRequestDecoder = new AuthenticationRequestDecoder();
-    this.commandCompleteDecoder = new CommandCompleteDecoder();
-    this.dataRowDecoder = new DataRowDecoder();
-    this.infoResponseFieldsDecoder = new InfoResponseFieldsDecoder();
-    this.rowDescriptionDecoder = new RowDescriptionDecoder();
+    this.authenticationRequestDecoder = new AuthenticationRequestParser();
+    this.commandCompleteDecoder = new CommandCompleteParser();
+    this.dataRowDecoder = new DataRowParser();
+    this.infoResponseFieldsDecoder = new InfoResponseFieldsParser();
+    this.rowDescriptionDecoder = new RowDescriptionParser();
   }
 
   public Optional<Message> decode(BufferReader b) throws Exception {

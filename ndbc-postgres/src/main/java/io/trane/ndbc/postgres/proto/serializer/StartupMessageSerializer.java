@@ -1,9 +1,9 @@
-package io.trane.ndbc.postgres.encoder;
+package io.trane.ndbc.postgres.proto.serializer;
 
 import io.trane.ndbc.postgres.proto.Message.StartupMessage;
 import io.trane.ndbc.proto.BufferWriter;
 
-public class StartupMessageEncoder {
+public class StartupMessageSerializer {
 
   public final void encode(StartupMessage msg, BufferWriter b) {
     b.writeInt(0);

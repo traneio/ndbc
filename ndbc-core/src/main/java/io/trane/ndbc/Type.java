@@ -1,5 +1,5 @@
 package io.trane.ndbc;
 
-public interface Type {
-
+public enum Type {
+  INT, STRING
 }

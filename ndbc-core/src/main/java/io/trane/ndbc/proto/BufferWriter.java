@@ -13,7 +13,7 @@ public interface BufferWriter {
   void writeCString(String s);
 
   void writeString(String s);
-
+  
   void writeBytes(byte[] b);
 
   void writeInts(int[] i);

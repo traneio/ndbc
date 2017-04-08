@@ -1,9 +1,9 @@
-package io.trane.ndbc.postgres.encoder;
+package io.trane.ndbc.postgres.proto.serializer;
 
 import io.trane.ndbc.postgres.proto.Message.Parse;
 import io.trane.ndbc.proto.BufferWriter;
 
-public class ParseEncoder {
+public class ParseSerializer {
 
   public final void encode(Parse msg, BufferWriter b) {
     b.writeChar('P');

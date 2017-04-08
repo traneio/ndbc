@@ -1,9 +1,9 @@
-package io.trane.ndbc.postgres.encoder;
+package io.trane.ndbc.postgres.proto.serializer;
 
 import io.trane.ndbc.postgres.proto.Message.Bind;
 import io.trane.ndbc.proto.BufferWriter;
 
-public class BindEncoder {
+public class BindSerializer {
 
   public final void encode(Bind msg, BufferWriter b) {
     b.writeByte((byte) 'B');

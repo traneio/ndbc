@@ -40,7 +40,7 @@ public class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
     writeString(s);
     b.writeByte(0);
   }
-
+  
   @Override
   public void writeString(String s) {
     b.writeBytes(s.getBytes(charset));

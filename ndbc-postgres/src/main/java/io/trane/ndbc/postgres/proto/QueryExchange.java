@@ -1,6 +1,5 @@
 package io.trane.ndbc.postgres.proto;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +18,7 @@ import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.util.PartialFunction;
 
 public abstract class QueryExchange {
-
+  
   private final ResultSet emptyResultSet = new ResultSet() {
     @Override
     public Iterator<Row> iterator() {
@@ -46,9 +45,9 @@ public abstract class QueryExchange {
   protected final PartialFunction<ServerMessage, Exchange<Void>> readyForQuery = PartialFunction.when(
       ReadyForQuery.class, msg -> Exchange.VOID);
 
-  protected final Exchange<ResultSet> readQueryResult(Charset charset) {
+  protected final Exchange<ResultSet> readQueryResult() {
     return Exchange.receive(rowDescription).flatMap(desc -> gatherDataRows(new ArrayList<>())
-        .map(rows -> toResultSet(charset, desc, rows))
+        .map(rows -> toResultSet(desc, rows))
         .thenWaitFor(readyForQuery));
   }
 
@@ -61,9 +60,9 @@ public abstract class QueryExchange {
         }));
   }
 
-  private final ResultSet toResultSet(Charset charset, RowDescription desc, List<DataRow> dataRows) {
+  private final ResultSet toResultSet(RowDescription desc, List<DataRow> dataRows) {
     final List<io.trane.ndbc.Row> rows = dataRows.stream()
-        .map(data -> PostgresRow.apply(charset, desc, data))
+        .map(data -> PostgresRow.apply(desc, data))
         .collect(Collectors.toList());
     return new ResultSet() {
       @Override

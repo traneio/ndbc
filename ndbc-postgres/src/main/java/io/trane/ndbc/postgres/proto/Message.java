@@ -2,6 +2,8 @@ package io.trane.ndbc.postgres.proto;
 
 import java.util.Arrays;
 
+import io.trane.ndbc.proto.BufferReader;
+
 public interface Message {
 
   interface ServerMessage extends io.trane.ndbc.proto.ServerMessage, Message {
@@ -980,9 +982,9 @@ public interface Message {
   public static final class DataRow implements ServerMessage {
     /** The value of the column, in the format indicated by the
      * associated format code. n is the above length. */
-    public final byte[][] values;
+    public final BufferReader[] values;
 
-    public DataRow(final byte[][] values) {
+    public DataRow(final BufferReader[] values) {
       this.values = values;
     }
 

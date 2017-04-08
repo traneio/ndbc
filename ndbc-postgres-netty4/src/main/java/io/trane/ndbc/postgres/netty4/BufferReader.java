@@ -32,7 +32,7 @@ public class BufferReader implements io.trane.ndbc.proto.BufferReader {
     bb.skipBytes(1); // skip 0
     return string;
   }
-
+  
   @Override
   public String readCString(int length) {
     String string = readString(length);
@@ -104,6 +104,11 @@ public class BufferReader implements io.trane.ndbc.proto.BufferReader {
     for (int i = 0; i < length; i++)
       shorts[i] = bb.readShort();
     return shorts;
+  }
+  
+  @Override
+  public void retain() {
+    bb.retain();
   }
 
   @Override

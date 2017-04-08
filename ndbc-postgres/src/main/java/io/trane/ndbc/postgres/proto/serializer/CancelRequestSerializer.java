@@ -1,9 +1,9 @@
-package io.trane.ndbc.postgres.encoder;
+package io.trane.ndbc.postgres.proto.serializer;
 
 import io.trane.ndbc.postgres.proto.Message.CancelRequest;
 import io.trane.ndbc.proto.BufferWriter;
 
-public class CancelRequestEncoder {
+public class CancelRequestSerializer {
 
   public final void encode(CancelRequest msg, BufferWriter b) {
     b.writeInt(80877102);

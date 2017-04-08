@@ -1,9 +1,9 @@
-package io.trane.ndbc.postgres.encoder;
+package io.trane.ndbc.postgres.proto.serializer;
 
 import io.trane.ndbc.postgres.proto.Message.Execute;
 import io.trane.ndbc.proto.BufferWriter;
 
-public class ExecuteEncoder {
+public class ExecuteSerializer {
 
   public final void encode(Execute msg, BufferWriter b) {
     b.writeChar('E');

@@ -1,4 +1,4 @@
-package io.trane.ndbc.postgres.decoder;
+package io.trane.ndbc.postgres.proto.parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import io.trane.ndbc.postgres.proto.Message.InfoResponse;
 import io.trane.ndbc.proto.BufferReader;
 
-class InfoResponseFieldsDecoder {
+class InfoResponseFieldsParser {
 
   private final InfoResponse.Field[] emptyFieldArray = new InfoResponse.Field[0];
 

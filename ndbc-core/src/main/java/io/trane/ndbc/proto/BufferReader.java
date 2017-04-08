@@ -13,7 +13,7 @@ public interface BufferReader {
   String readCString();
 
   String readCString(int length);
-
+  
   String readString();
 
   String readString(int length);
@@ -35,4 +35,6 @@ public interface BufferReader {
   void markReaderIndex();
 
   void resetReaderIndex();
+
+  void retain();
 }

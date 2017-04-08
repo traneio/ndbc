@@ -1,4 +1,4 @@
-package io.trane.ndbc.postgres.encoder;
+package io.trane.ndbc.postgres.proto.serializer;
 
 import java.util.logging.Logger;
 
@@ -22,22 +22,22 @@ import io.trane.ndbc.postgres.proto.Message.Terminate;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.proto.ClientMessage;
 
-public class Encoder {
+public class Serializer {
 
-  private static final Logger log = Logger.getLogger(Encoder.class.getName());
+  private static final Logger log = Logger.getLogger(Serializer.class.getName());
 
-  private final BindEncoder bindEncoder = new BindEncoder();
-  private final CancelRequestEncoder cancelRequestEncoder = new CancelRequestEncoder();
-  private final CloseEncoder closeEncoder = new CloseEncoder();
-  private final DescribeEncoder describeEncoder = new DescribeEncoder();
-  private final ExecuteEncoder executeEncoder = new ExecuteEncoder();
-  private final FlushEncoder flushEncoder = new FlushEncoder();
-  private final ParseEncoder parseEncoder = new ParseEncoder();
-  private final QueryEncoder queryEncoder = new QueryEncoder();
-  private final PasswordMessageEncoder passwordMessageEncoder = new PasswordMessageEncoder();
-  private final StartupMessageEncoder startupMessageEncoder = new StartupMessageEncoder();
-  private final SyncEncoder syncEncoder = new SyncEncoder();
-  private final TerminateEncoder terminateEncoder = new TerminateEncoder();
+  private final BindSerializer bindEncoder = new BindSerializer();
+  private final CancelRequestSerializer cancelRequestEncoder = new CancelRequestSerializer();
+  private final CloseSerializer closeEncoder = new CloseSerializer();
+  private final DescribeSerializer describeEncoder = new DescribeSerializer();
+  private final ExecuteSerializer executeEncoder = new ExecuteSerializer();
+  private final FlushSerializer flushEncoder = new FlushSerializer();
+  private final ParseSerializer parseEncoder = new ParseSerializer();
+  private final QuerySerializer queryEncoder = new QuerySerializer();
+  private final PasswordMessageSerializer passwordMessageEncoder = new PasswordMessageSerializer();
+  private final StartupMessageSerializer startupMessageEncoder = new StartupMessageSerializer();
+  private final SyncSerializer syncEncoder = new SyncSerializer();
+  private final TerminateSerializer terminateEncoder = new TerminateSerializer();
 
   public final void encode(ClientMessage msg, BufferWriter b) {
     if (msg instanceof Bind)
@@ -56,7 +56,7 @@ public class Encoder {
       describeEncoder.encode((Describe) msg, b);
     else if (msg instanceof Execute)
       executeEncoder.encode((Execute) msg, b);
-    else if (msg instanceof FlushEncoder)
+    else if (msg instanceof FlushSerializer)
       flushEncoder.encode((Flush) msg, b);
     else if (msg instanceof FunctionCall)
       notImplemented(FunctionCall.class);

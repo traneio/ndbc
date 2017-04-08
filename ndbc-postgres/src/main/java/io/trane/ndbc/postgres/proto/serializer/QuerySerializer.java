@@ -1,9 +1,9 @@
-package io.trane.ndbc.postgres.encoder;
+package io.trane.ndbc.postgres.proto.serializer;
 
 import io.trane.ndbc.postgres.proto.Message.Query;
 import io.trane.ndbc.proto.BufferWriter;
 
-public class QueryEncoder {
+public class QuerySerializer {
 
   public final void encode(Query msg, BufferWriter b) {
     b.writeChar('Q');

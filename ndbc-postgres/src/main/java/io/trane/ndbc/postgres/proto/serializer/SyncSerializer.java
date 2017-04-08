@@ -1,9 +1,9 @@
-package io.trane.ndbc.postgres.encoder;
+package io.trane.ndbc.postgres.proto.serializer;
 
 import io.trane.ndbc.postgres.proto.Message.Flush;
 import io.trane.ndbc.proto.BufferWriter;
 
-public class SyncEncoder {
+public class SyncSerializer {
 
   public final void encode(Flush msg, BufferWriter b) {
     b.writeChar('S');

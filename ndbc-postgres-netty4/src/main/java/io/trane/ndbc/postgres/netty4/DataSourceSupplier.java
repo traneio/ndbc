@@ -11,9 +11,9 @@ import io.trane.ndbc.DataSource;
 import io.trane.ndbc.datasource.DefaultDataSource;
 import io.trane.ndbc.datasource.Pool;
 import io.trane.ndbc.postgres.Connection;
-import io.trane.ndbc.postgres.decoder.Decoder;
-import io.trane.ndbc.postgres.encoder.Encoder;
 import io.trane.ndbc.postgres.proto.StartupExchange;
+import io.trane.ndbc.postgres.proto.parser.Parser;
+import io.trane.ndbc.postgres.proto.serializer.Serializer;
 
 public class DataSourceSupplier implements Supplier<DataSource<Connection>> {
 
@@ -23,7 +23,7 @@ public class DataSourceSupplier implements Supplier<DataSource<Connection>> {
 
   public DataSourceSupplier(Config config) {
     this.config = config;
-    this.channelSupplier = new ChannelSupplier(config.charset, new Encoder(), new Decoder(),
+    this.channelSupplier = new ChannelSupplier(config.charset, new Serializer(), new Parser(),
         new NioEventLoopGroup(0, new DefaultThreadFactory("ndbc-netty4", true)), config.host,
         config.port);
   }
@@ -31,7 +31,7 @@ public class DataSourceSupplier implements Supplier<DataSource<Connection>> {
   private final Supplier<Future<Connection>> createConnection() {
     return () -> channelSupplier.get()
         .flatMap(channel -> startup.apply(config.charset, config.user, config.password, config.database).run(channel)
-            .map(backendKeyData -> new Connection(config.charset, channel, backendKeyData)));
+            .map(backendKeyData -> new Connection(channel, backendKeyData)));
   }
 
   private Pool<Connection> createPool() {
