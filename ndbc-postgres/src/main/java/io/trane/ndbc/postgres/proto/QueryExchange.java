@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import io.trane.ndbc.ResultSet;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.postgres.encoding.ValueEncoding;
 import io.trane.ndbc.postgres.proto.Message.CommandComplete;
 import io.trane.ndbc.postgres.proto.Message.DataRow;
 import io.trane.ndbc.postgres.proto.Message.EmptyQueryResponse;
@@ -18,7 +19,14 @@ import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.util.PartialFunction;
 
 public abstract class QueryExchange {
+
+  protected final ValueEncoding encoding;
   
+  public QueryExchange(ValueEncoding encoding) {
+    super();
+    this.encoding = encoding;
+  }
+
   private final ResultSet emptyResultSet = new ResultSet() {
     @Override
     public Iterator<Row> iterator() {
@@ -62,7 +70,7 @@ public abstract class QueryExchange {
 
   private final ResultSet toResultSet(RowDescription desc, List<DataRow> dataRows) {
     final List<io.trane.ndbc.Row> rows = dataRows.stream()
-        .map(data -> PostgresRow.apply(desc, data))
+        .map(data -> PostgresRow.apply(encoding, desc, data))
         .collect(Collectors.toList());
     return new ResultSet() {
       @Override

@@ -1,9 +1,19 @@
 package io.trane.ndbc.postgres.proto.serializer;
 
+import io.trane.ndbc.Value;
+import io.trane.ndbc.postgres.encoding.Format;
+import io.trane.ndbc.postgres.encoding.ValueEncoding;
 import io.trane.ndbc.postgres.proto.Message.Bind;
 import io.trane.ndbc.proto.BufferWriter;
 
 public class BindSerializer {
+
+  private final ValueEncoding encoding;
+
+  public BindSerializer(ValueEncoding encoding) {
+    super();
+    this.encoding = encoding;
+  }
 
   public final void encode(Bind msg, BufferWriter b) {
     b.writeByte((byte) 'B');
@@ -13,12 +23,14 @@ public class BindSerializer {
     for (short code : msg.parameterFormatCodes)
       b.writeShort(code);
     b.writeShort((short) msg.fields.length);
-    for (byte[] field : msg.fields)
+    for (Value<?> field : msg.fields)
       if (field == null)
         b.writeInt(-1);
       else {
-        b.writeInt(field.length);
-        b.writeBytes(field);
+        int lengthPosition = b.writerIndex();
+        b.writeInt(0);
+        encoding.encode(Format.BINARY, field, b);
+        b.writeLength(lengthPosition);
       }
     b.writeShort((short) msg.resultColumnFormatCodes.length);
     for (short code : msg.resultColumnFormatCodes)

@@ -25,27 +25,48 @@ import io.trane.ndbc.proto.ClientMessage;
 public class Serializer {
 
   private static final Logger log = Logger.getLogger(Serializer.class.getName());
+  
+  private final BindSerializer bindSerializer;
+  private final CancelRequestSerializer cancelRequestSerializer;
+  private final CloseSerializer closeSerializer;
+  private final DescribeSerializer describeSerializer;
+  private final ExecuteSerializer executeSerializer;
+  private final FlushSerializer flushSerializer;
+  private final ParseSerializer parseSerializer;
+  private final QuerySerializer querySerializer;
+  private final PasswordMessageSerializer passwordMessageSerializer;
+  private final StartupMessageSerializer startupMessageSerializer;
+  private final SyncSerializer syncSerializer;
+  private final TerminateSerializer terminateSerializer;
+  
 
-  private final BindSerializer bindEncoder = new BindSerializer();
-  private final CancelRequestSerializer cancelRequestEncoder = new CancelRequestSerializer();
-  private final CloseSerializer closeEncoder = new CloseSerializer();
-  private final DescribeSerializer describeEncoder = new DescribeSerializer();
-  private final ExecuteSerializer executeEncoder = new ExecuteSerializer();
-  private final FlushSerializer flushEncoder = new FlushSerializer();
-  private final ParseSerializer parseEncoder = new ParseSerializer();
-  private final QuerySerializer queryEncoder = new QuerySerializer();
-  private final PasswordMessageSerializer passwordMessageEncoder = new PasswordMessageSerializer();
-  private final StartupMessageSerializer startupMessageEncoder = new StartupMessageSerializer();
-  private final SyncSerializer syncEncoder = new SyncSerializer();
-  private final TerminateSerializer terminateEncoder = new TerminateSerializer();
+  public Serializer(BindSerializer bindSerializer, CancelRequestSerializer cancelRequestSerializer,
+      CloseSerializer closeSerializer, DescribeSerializer describeSerializer, ExecuteSerializer executeSerializer,
+      FlushSerializer flushSerializer, ParseSerializer parseSerializer, QuerySerializer querySerializer,
+      PasswordMessageSerializer passwordMessageSerializer, StartupMessageSerializer startupMessageSerializer,
+      SyncSerializer syncSerializer, TerminateSerializer terminateSerializer) {
+    super();
+    this.bindSerializer = bindSerializer;
+    this.cancelRequestSerializer = cancelRequestSerializer;
+    this.closeSerializer = closeSerializer;
+    this.describeSerializer = describeSerializer;
+    this.executeSerializer = executeSerializer;
+    this.flushSerializer = flushSerializer;
+    this.parseSerializer = parseSerializer;
+    this.querySerializer = querySerializer;
+    this.passwordMessageSerializer = passwordMessageSerializer;
+    this.startupMessageSerializer = startupMessageSerializer;
+    this.syncSerializer = syncSerializer;
+    this.terminateSerializer = terminateSerializer;
+  }
 
   public final void encode(ClientMessage msg, BufferWriter b) {
     if (msg instanceof Bind)
-      bindEncoder.encode((Bind) msg, b);
+      bindSerializer.encode((Bind) msg, b);
     else if (msg instanceof CancelRequest)
-      cancelRequestEncoder.encode((CancelRequest) msg, b);
+      cancelRequestSerializer.encode((CancelRequest) msg, b);
     else if (msg instanceof Close)
-      closeEncoder.encode((Close) msg, b);
+      closeSerializer.encode((Close) msg, b);
     else if (msg instanceof CopyData)
       notImplemented(CopyData.class);
     else if (msg instanceof CopyDone)
@@ -53,27 +74,27 @@ public class Serializer {
     else if (msg instanceof CopyFail)
       notImplemented(CopyFail.class);
     else if (msg instanceof Describe)
-      describeEncoder.encode((Describe) msg, b);
+      describeSerializer.encode((Describe) msg, b);
     else if (msg instanceof Execute)
-      executeEncoder.encode((Execute) msg, b);
+      executeSerializer.encode((Execute) msg, b);
     else if (msg instanceof FlushSerializer)
-      flushEncoder.encode((Flush) msg, b);
+      flushSerializer.encode((Flush) msg, b);
     else if (msg instanceof FunctionCall)
       notImplemented(FunctionCall.class);
     else if (msg instanceof Parse)
-      parseEncoder.encode((Parse) msg, b);
+      parseSerializer.encode((Parse) msg, b);
     else if (msg instanceof Query)
-      queryEncoder.encode((Query) msg, b);
+      querySerializer.encode((Query) msg, b);
     else if (msg instanceof PasswordMessage)
-      passwordMessageEncoder.encode((PasswordMessage) msg, b);
+      passwordMessageSerializer.encode((PasswordMessage) msg, b);
     else if (msg instanceof SSLRequest)
       notImplemented(SSLRequest.class);
     else if (msg instanceof StartupMessage)
-      startupMessageEncoder.encode((StartupMessage) msg, b);
+      startupMessageSerializer.encode((StartupMessage) msg, b);
     else if (msg instanceof Sync)
-      syncEncoder.encode((Flush) msg, b);
+      syncSerializer.encode((Flush) msg, b);
     else if (msg instanceof Terminate)
-      terminateEncoder.encode((Flush) msg, b);
+      terminateSerializer.encode((Flush) msg, b);
     else
       log.severe("Invalid client message: " + msg);
   }

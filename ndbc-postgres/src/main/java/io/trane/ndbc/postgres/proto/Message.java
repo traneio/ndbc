@@ -2,6 +2,7 @@ package io.trane.ndbc.postgres.proto;
 
 import java.util.Arrays;
 
+import io.trane.ndbc.Value;
 import io.trane.ndbc.proto.BufferReader;
 
 public interface Message {
@@ -257,7 +258,7 @@ public interface Message {
      * Next, the following pair of fields appear for each parameter:
      * The value of the parameter, in the format indicated by the associated
      * format code. n is the above length.*/
-    public final byte[][] fields;
+    public final Value<?>[] fields;
 
     /** The number of parameter format codes that follow (denoted C below).
      * This can be zero to indicate that there are no parameters or that
@@ -279,7 +280,7 @@ public interface Message {
 
     public Bind(final String destinationPortalName, final String sourcePreparedStatementName,
         final short[] parameterFormatCodes,
-        final byte[][] fields, final short[] resultColumnFormatCodes) {
+        final Value<?>[] fields, final short[] resultColumnFormatCodes) {
       this.destinationPortalName = destinationPortalName;
       this.sourcePreparedStatementName = sourcePreparedStatementName;
       this.parameterFormatCodes = parameterFormatCodes;

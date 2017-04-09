@@ -62,6 +62,11 @@ public class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
     for (short i : a)
       b.writeShort(i);
   }
+  
+  @Override
+  public int writerIndex() {
+    return b.writerIndex();
+  }
 
   @Override
   public void writeLength(int position) {

@@ -7,44 +7,25 @@ import java.util.List;
 public class PreparedStatement {
 
   private final String query;
-  private final Param[] params;
+  private final Value<?>[] params;
 
-  protected PreparedStatement(String query, Param[] params) {
+  protected PreparedStatement(String query, Value<?>[] params) {
     super();
     this.query = query;
     this.params = params;
   }
 
-  public static interface Param {
-  }
-
-  public static interface IntParam extends Param {
-    int value();
-  }
-
   public PreparedStatement setInt(int position, int value) {
-    return setParam(position, new IntParam() {
-      public int value() {
-        return value;
-      }
-    });
-  }
-
-  public static interface StringParam extends Param {
-    String value();
+    return setValue(position, new Value.IntegerValue(value));
   }
 
   public PreparedStatement setString(int position, String value) {
-    return setParam(position, new StringParam() {
-      public String value() {
-        return value;
-      }
-    });
+    return setValue(position, new Value.StringValue(value));
   }
 
-  public PreparedStatement setParam(int position, Param param) {
+  public PreparedStatement setValue(int position, Value<?> param) {
     int newLength = position >= params.length ? position + 1 : params.length;
-    Param[] newParams = Arrays.copyOf(params, newLength);
+    Value<?>[] newParams = Arrays.copyOf(params, newLength);
     newParams[position] = param;
     return new PreparedStatement(query, newParams);
   }
@@ -53,7 +34,7 @@ public class PreparedStatement {
     return query;
   }
 
-  public List<Param> getParams() {
+  public List<Value<?>> getValues() {
     return Collections.unmodifiableList(Arrays.asList(params));
   }
 }
