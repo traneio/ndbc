@@ -37,4 +37,6 @@ public interface BufferReader {
   void resetReaderIndex();
 
   void retain();
+
+  void release();
 }

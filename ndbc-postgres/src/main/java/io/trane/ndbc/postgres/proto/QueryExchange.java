@@ -58,7 +58,9 @@ public abstract class QueryExchange {
     for (int i = 0; i < length; i++) {
       RowDescription.Field field = fields[i];
       positions.put(field.name, i);
-      columns[i] = encoding.decode(field.dataType, Format.fromCode(field.formatCode), values[i]);
+      BufferReader reader = values[i];
+      columns[i] = encoding.decode(field.dataType, Format.fromCode(field.formatCode), reader);
+      reader.release();
     }
 
     return new Row(positions, columns);

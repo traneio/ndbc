@@ -110,6 +110,11 @@ public class BufferReader implements io.trane.ndbc.proto.BufferReader {
   public void retain() {
     bb.retain();
   }
+  
+  @Override
+  public void release() {
+    bb.release();
+  }
 
   @Override
   public void markReaderIndex() {
