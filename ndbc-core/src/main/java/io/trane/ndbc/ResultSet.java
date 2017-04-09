@@ -1,5 +1,18 @@
 package io.trane.ndbc;
 
-public interface ResultSet extends Iterable<Row> {
+import java.util.Iterator;
 
+public final class ResultSet implements Iterable<Row> {
+
+  private final Iterator<Row> iterator;
+
+  public ResultSet(Iterator<Row> iterator) {
+    super();
+    this.iterator = iterator;
+  }
+
+  @Override
+  public Iterator<Row> iterator() {
+    return iterator;
+  }
 }

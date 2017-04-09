@@ -2,8 +2,8 @@ package io.trane.ndbc.postgres.proto;
 
 import java.util.Arrays;
 
-import io.trane.ndbc.Value;
 import io.trane.ndbc.proto.BufferReader;
+import io.trane.ndbc.value.Value;
 
 public interface Message {
 

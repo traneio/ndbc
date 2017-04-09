@@ -1,10 +1,10 @@
 package io.trane.ndbc.postgres.encoding;
 
-import io.trane.ndbc.Value;
-import io.trane.ndbc.Value.IntegerValue;
-import io.trane.ndbc.Value.StringValue;
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
+import io.trane.ndbc.value.IntegerValue;
+import io.trane.ndbc.value.StringValue;
+import io.trane.ndbc.value.Value;
 
 public class ValueEncoding {
 
@@ -21,15 +21,18 @@ public class ValueEncoding {
   }
 
   public Value<?> decode(int type, Format format, BufferReader reader) {
-    switch (type) {
-    case Oid.TEXT:
-    case Oid.VARCHAR:
-    case Oid.BPCHAR:
-      return new StringValue(stringEncoding.decode(format, reader));
-    case Oid.INT2:
-      return new IntegerValue(integerEncoding.decode(format, reader));
-    }
-    throw new IllegalStateException("Can't decode type: " + type);
+    if (reader == null)
+      return Value.NULL;
+    else 
+      switch (type) {
+      case Oid.TEXT:
+      case Oid.VARCHAR:
+      case Oid.BPCHAR:
+        return new StringValue(stringEncoding.decode(format, reader));
+      case Oid.INT2:
+        return new IntegerValue(integerEncoding.decode(format, reader));
+      default:
+        throw new IllegalStateException("Can't decode type: " + type);
+      }
   }
-
 }

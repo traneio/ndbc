@@ -6,13 +6,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.ResultSet;
-import io.trane.ndbc.Value;
 import io.trane.ndbc.postgres.encoding.Format;
 import io.trane.ndbc.postgres.encoding.ValueEncoding;
 import io.trane.ndbc.postgres.proto.Message.Bind;
 import io.trane.ndbc.postgres.proto.Message.Parse;
 import io.trane.ndbc.postgres.proto.Message.ParseComplete;
 import io.trane.ndbc.proto.Exchange;
+import io.trane.ndbc.value.Value;
 
 public class ExtendedQueryExchange extends QueryExchange {
 

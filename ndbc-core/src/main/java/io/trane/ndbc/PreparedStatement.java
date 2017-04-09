@@ -4,6 +4,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import io.trane.ndbc.value.IntegerValue;
+import io.trane.ndbc.value.StringValue;
+import io.trane.ndbc.value.Value;
+
 public class PreparedStatement {
 
   private final String query;
@@ -15,12 +19,12 @@ public class PreparedStatement {
     this.params = params;
   }
 
-  public PreparedStatement setInt(int position, int value) {
-    return setValue(position, new Value.IntegerValue(value));
+  public PreparedStatement setInteger(int position, Integer value) {
+    return setValue(position, value == null ? Value.NULL : new IntegerValue(value));
   }
 
   public PreparedStatement setString(int position, String value) {
-    return setValue(position, new Value.StringValue(value));
+    return setValue(position, value == null ? Value.NULL : new StringValue(value));
   }
 
   public PreparedStatement setValue(int position, Value<?> param) {

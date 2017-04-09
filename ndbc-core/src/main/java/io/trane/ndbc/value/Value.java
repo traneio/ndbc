@@ -1,6 +1,8 @@
-package io.trane.ndbc;
+package io.trane.ndbc.value;
 
 public abstract class Value<T> {
+
+  public static final NullValue NULL = new NullValue();
 
   private final T value;
 
@@ -14,36 +16,19 @@ public abstract class Value<T> {
   }
 
   public String getString() {
-    return value == null ? null : value.toString();
+    return value.toString();
   }
 
   public Integer getInteger() {
     return cantRead("Integer");
   }
 
+  public boolean isNull() {
+    return false;
+  }
+
   private <U> U cantRead(String type) {
-    throw new UnsupportedOperationException("Can't read " + toString() + "as " + type);
-  }
-
-  public static class StringValue extends Value<String> {
-    public StringValue(String value) {
-      super(value);
-    }
-
-    @Override
-    public String getString() {
-      return super.value;
-    }
-  }
-
-  public static class IntegerValue extends Value<Integer> {
-    public IntegerValue(Integer value) {
-      super(value);
-    }
-
-    public Integer getInteger() {
-      return super.value;
-    }
+    throw new UnsupportedOperationException("Can't read " + get() + "as " + type);
   }
 
   @Override

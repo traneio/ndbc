@@ -1,10 +1,10 @@
 package io.trane.ndbc.postgres.proto.serializer;
 
-import io.trane.ndbc.Value;
 import io.trane.ndbc.postgres.encoding.Format;
 import io.trane.ndbc.postgres.encoding.ValueEncoding;
 import io.trane.ndbc.postgres.proto.Message.Bind;
 import io.trane.ndbc.proto.BufferWriter;
+import io.trane.ndbc.value.Value;
 
 public class BindSerializer {
 

@@ -1,7 +1,5 @@
 package io.trane.ndbc.postgres.encoding;
 
-import java.lang.reflect.Field;
-
 /**
  * Copied from postgres jdbc driver: https://raw.githubusercontent.com/pgjdbc/pgjdbc/8be516d47ece60b7aeba5a9474b5cac1d538a04a/pgjdbc/src/main/java/org/postgresql/core/Oid.java
  * Provides constants for well-known backend OIDs for the types we commonly use.
@@ -68,44 +66,4 @@ public class Oid {
   public static final int JSON_ARRAY = 199;
   public static final int REF_CURSOR = 1790;
   public static final int REF_CURSOR_ARRAY = 2201;
-
-  /**
-   * Returns the name of the oid as string.
-   *
-   * @param oid The oid to convert to name.
-   * @return The name of the oid or {@code "<unknown>"} if oid no constant for oid value has been
-   *         defined.
-   */
-  public static String toString(int oid) {
-    try {
-      Field[] fields = Oid.class.getFields();
-      for (Field field : fields) {
-        if (field.getInt(null) == oid) {
-          return field.getName();
-        }
-      }
-    } catch (IllegalAccessException e) {
-      // never happens
-    }
-    return "<unknown:" + oid + ">";
-  }
-
-  public static int valueOf(String oid) {
-    try {
-      return (int) Long.parseLong(oid);
-    } catch (NumberFormatException ex) {
-    }
-    try {
-      oid = oid.toUpperCase();
-      Field[] fields = Oid.class.getFields();
-      for (Field field : fields) {
-        if (field.getName().toUpperCase().equals(oid)) {
-          return field.getInt(null);
-        }
-      }
-    } catch (IllegalAccessException e) {
-      // never happens
-    }
-    throw new IllegalArgumentException("Invalid oid: " + oid);
-  }
 }
