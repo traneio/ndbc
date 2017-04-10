@@ -93,9 +93,10 @@ public interface Exchange<T> {
     return flatMap(value -> Exchange.receive(PartialFunction.when(cls, msg -> Exchange.value(value))));
   }
 
-  default public Exchange<T> thenWaitFor(final PartialFunction<ServerMessage, Exchange<Void>> f) {
-    return rescue(ex -> Exchange.receive(f).flatMap(v -> Exchange.fail(ex)))
-        .flatMap(r -> Exchange.receive(f).map(v -> r));
+  default public Exchange<T> thenWaitFor(final Class<? extends ServerMessage> cls) {
+    PartialFunction<ServerMessage, Exchange<Void>> pf = PartialFunction.when(cls, msg -> Exchange.VOID);
+    return rescue(ex -> Exchange.receive(pf).flatMap(v -> Exchange.fail(ex)))
+        .flatMap(r -> Exchange.receive(pf).map(v -> r));
   }
 
   default public <R> Exchange<R> thenFail(final String error) {

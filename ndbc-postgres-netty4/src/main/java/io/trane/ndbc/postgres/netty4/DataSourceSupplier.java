@@ -12,8 +12,11 @@ import io.trane.ndbc.datasource.DefaultDataSource;
 import io.trane.ndbc.datasource.Pool;
 import io.trane.ndbc.postgres.Connection;
 import io.trane.ndbc.postgres.encoding.ValueEncoding;
-import io.trane.ndbc.postgres.proto.ExecuteExchange;
+import io.trane.ndbc.postgres.proto.SimpleExecuteExchange;
+import io.trane.ndbc.postgres.proto.ExtendedExchange;
+import io.trane.ndbc.postgres.proto.ExtendedExecuteExchange;
 import io.trane.ndbc.postgres.proto.ExtendedQueryExchange;
+import io.trane.ndbc.postgres.proto.QueryResultExchange;
 import io.trane.ndbc.postgres.proto.SimpleQueryExchange;
 import io.trane.ndbc.postgres.proto.StartupExchange;
 import io.trane.ndbc.postgres.proto.parser.Parser;
@@ -53,10 +56,13 @@ public class DataSourceSupplier implements Supplier<DataSource<Connection>> {
   }
 
   private final Supplier<Future<Connection>> createConnection() {
+    QueryResultExchange queryResultExchange = new QueryResultExchange(encoding);
+    ExtendedExchange extendedExchange = new ExtendedExchange();
     return () -> channelSupplier.get()
         .flatMap(channel -> startup.apply(config.charset, config.user, config.password, config.database).run(channel)
-            .map(backendKeyData -> new Connection(channel, backendKeyData, new SimpleQueryExchange(encoding),
-                new ExecuteExchange(), new ExtendedQueryExchange(encoding))));
+            .map(backendKeyData -> new Connection(channel, backendKeyData, new SimpleQueryExchange(queryResultExchange),
+                new SimpleExecuteExchange(), new ExtendedQueryExchange(queryResultExchange, extendedExchange),
+                new ExtendedExecuteExchange(extendedExchange))));
   }
 
   private Pool<Connection> createPool() {
