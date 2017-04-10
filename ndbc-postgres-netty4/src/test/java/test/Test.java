@@ -7,8 +7,10 @@ import java.util.Optional;
 
 import io.trane.future.CheckedFutureException;
 import io.trane.ndbc.Config;
+import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.ResultSet;
+import io.trane.ndbc.postgres.Connection;
 import io.trane.ndbc.postgres.netty4.DataSourceSupplier;
 
 public class Test {
@@ -25,7 +27,11 @@ public class Test {
     DataSourceSupplier sup = new DataSourceSupplier(config);
     PreparedStatement ps = PreparedStatement.create("select * from test");
 //        .setString(0, null);
-    ResultSet r = sup.get().query(ps).get(Duration.ofDays(1));
+    DataSource<Connection> ds = sup.get();
+    ResultSet r = ds.query(ps).get(Duration.ofDays(1));
+    System.out.println(r.iterator().next().getString("s"));
+    
+    r = ds.query(ps).get(Duration.ofDays(1));
     System.out.println(r.iterator().next().getString("s"));
   }
 

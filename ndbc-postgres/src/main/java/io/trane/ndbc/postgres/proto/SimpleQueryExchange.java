@@ -13,6 +13,7 @@ public class SimpleQueryExchange extends QueryExchange {
 
   public Exchange<ResultSet> apply(String query) {
     return Exchange.send(new Query(query))
-        .then(readQueryResult());
+        .then(readQueryResult())
+        .thenWaitFor(readyForQuery);
   }
 }

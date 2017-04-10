@@ -77,8 +77,7 @@ public abstract class QueryExchange {
 
   protected final Exchange<ResultSet> readQueryResult() {
     return Exchange.receive(rowDescription).flatMap(desc -> gatherDataRows(new ArrayList<>())
-        .map(rows -> toResultSet(desc, rows))
-        .thenWaitFor(readyForQuery));
+        .map(rows -> toResultSet(desc, rows)));
   }
 
   private final Exchange<List<DataRow>> gatherDataRows(List<DataRow> rows) {

@@ -9,8 +9,12 @@ import io.trane.ndbc.ResultSet;
 import io.trane.ndbc.postgres.encoding.Format;
 import io.trane.ndbc.postgres.encoding.ValueEncoding;
 import io.trane.ndbc.postgres.proto.Message.Bind;
+import io.trane.ndbc.postgres.proto.Message.BindComplete;
+import io.trane.ndbc.postgres.proto.Message.Close;
+import io.trane.ndbc.postgres.proto.Message.CloseComplete;
 import io.trane.ndbc.postgres.proto.Message.Describe;
 import io.trane.ndbc.postgres.proto.Message.Execute;
+import io.trane.ndbc.postgres.proto.Message.Flush;
 import io.trane.ndbc.postgres.proto.Message.Parse;
 import io.trane.ndbc.postgres.proto.Message.ParseComplete;
 import io.trane.ndbc.postgres.proto.Message.Sync;
@@ -26,6 +30,7 @@ public class ExtendedQueryExchange extends QueryExchange {
   private final short[] binary = { Format.BINARY.getCode() };
   private final Value<?>[] emptyValues = new Value<?>[0];
   private final Sync sync = new Sync();
+  private final Flush flush = new Flush();
   private final Set<Integer> prepared = new HashSet<>();
   private final int[] emptyParams = new int[0];
 
@@ -34,8 +39,12 @@ public class ExtendedQueryExchange extends QueryExchange {
         .send(new Bind(id, id, binary, ps.getValues().toArray(emptyValues), binary))
         .thenSend(new Describe.DescribePortal(id))
         .thenSend(new Execute(id, 0))
+        .thenSend(new Close.ClosePortal(id))
+        .thenSend(flush)
         .thenSend(sync))
-            .then(readQueryResult());
+            .thenReceive(BindComplete.class)
+            .then(readQueryResult())
+            .thenReceive(CloseComplete.class);
   }
 
   private final <T> Exchange<T> withParsing(String query, Function<String, Exchange<T>> f) {

@@ -77,7 +77,7 @@ public class Serializer {
       describeSerializer.encode((Describe) msg, b);
     else if (msg instanceof Execute)
       executeSerializer.encode((Execute) msg, b);
-    else if (msg instanceof FlushSerializer)
+    else if (msg instanceof Flush)
       flushSerializer.encode((Flush) msg, b);
     else if (msg instanceof FunctionCall)
       notImplemented(FunctionCall.class);

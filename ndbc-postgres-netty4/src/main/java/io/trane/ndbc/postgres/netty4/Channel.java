@@ -44,7 +44,6 @@ public class Channel extends SimpleChannelInboundHandler<ServerMessage> implemen
 
   @Override
   public Future<ServerMessage> receive() {
-    System.out.println("waiting for server message");
     return ctx.flatMap(c -> {
       Promise<ServerMessage> p = Promise.apply();
       if (nextMessagePromise.compareAndSet(Optional.empty(), Optional.of(p))) {
