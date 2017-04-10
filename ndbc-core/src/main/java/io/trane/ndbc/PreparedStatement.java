@@ -10,10 +10,16 @@ import io.trane.ndbc.value.Value;
 
 public class PreparedStatement {
 
+  private static final Value<?>[] emptyValues = new Value<?>[0];
+
+  public static PreparedStatement create(String query) {
+    return new PreparedStatement(query, emptyValues);
+  }
+
   private final String query;
   private final Value<?>[] params;
 
-  protected PreparedStatement(String query, Value<?>[] params) {
+  private PreparedStatement(String query, Value<?>[] params) {
     super();
     this.query = query;
     this.params = params;
@@ -25,6 +31,10 @@ public class PreparedStatement {
 
   public PreparedStatement setString(int position, String value) {
     return setValue(position, value == null ? Value.NULL : new StringValue(value));
+  }
+
+  public PreparedStatement setNull(int position) {
+    return setValue(position, Value.NULL);
   }
 
   public PreparedStatement setValue(int position, Value<?> param) {

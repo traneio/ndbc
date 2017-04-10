@@ -9,7 +9,6 @@ public class SimpleQueryExchange extends QueryExchange {
 
   public SimpleQueryExchange(ValueEncoding encoding) {
     super(encoding);
-    // TODO Auto-generated constructor stub
   }
 
   public Exchange<ResultSet> apply(String query) {

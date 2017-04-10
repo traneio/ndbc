@@ -7,6 +7,8 @@ public class ExecuteSerializer {
 
   public final void encode(Execute msg, BufferWriter b) {
     b.writeChar('E');
+    b.writeInt(0);
+    
     b.writeCString(msg.portalName);
     b.writeInt(msg.maxNumberOfRows);
     b.writeLength(1);

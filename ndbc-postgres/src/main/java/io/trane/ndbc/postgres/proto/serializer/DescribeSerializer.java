@@ -7,6 +7,7 @@ public class DescribeSerializer {
 
   public final void encode(Describe msg, BufferWriter b) {
     b.writeChar('D');
+    b.writeInt(0);
 
     if (msg instanceof Describe.DescribePreparedStatement)
       b.writeChar('S');

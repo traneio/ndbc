@@ -7,6 +7,7 @@ public class CloseSerializer {
 
   public final void encode(Close msg, BufferWriter b) {
     b.writeChar('C');
+    b.writeInt(0);
 
     if (msg instanceof Close.ClosePreparedStatement)
       b.writeChar('S');

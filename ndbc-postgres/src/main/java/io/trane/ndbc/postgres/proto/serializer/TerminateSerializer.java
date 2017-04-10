@@ -7,6 +7,7 @@ public class TerminateSerializer {
 
   public final void encode(Flush msg, BufferWriter b) {
     b.writeChar('X');
+    b.writeInt(0);
     b.writeLength(1);
   }
 }

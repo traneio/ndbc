@@ -6,6 +6,7 @@ import io.trane.ndbc.proto.BufferWriter;
 public class CancelRequestSerializer {
 
   public final void encode(CancelRequest msg, BufferWriter b) {
+    b.writeInt(0);
     b.writeInt(80877102);
     b.writeInt(msg.processId);
     b.writeInt(msg.secretKey);

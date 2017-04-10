@@ -7,6 +7,7 @@ public class ParseSerializer {
 
   public final void encode(Parse msg, BufferWriter b) {
     b.writeChar('P');
+    b.writeInt(0);
 
     b.writeCString(msg.destinationName);
     b.writeCString(msg.query);

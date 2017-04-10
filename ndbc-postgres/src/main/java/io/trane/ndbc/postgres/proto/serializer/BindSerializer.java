@@ -16,26 +16,40 @@ public class BindSerializer {
   }
 
   public final void encode(Bind msg, BufferWriter b) {
-    b.writeByte((byte) 'B');
+    b.writeChar('B');
+    b.writeInt(0);
+
     b.writeCString(msg.destinationPortalName);
     b.writeCString(msg.sourcePreparedStatementName);
+
     b.writeShort((short) msg.parameterFormatCodes.length);
     for (short code : msg.parameterFormatCodes)
       b.writeShort(code);
+
     b.writeShort((short) msg.fields.length);
-    for (Value<?> field : msg.fields)
-      if (field == null)
+    for (int i = 0; i < msg.fields.length; i++) {
+      Value<?> field = msg.fields[i];
+      if (field.isNull())
         b.writeInt(-1);
       else {
         int lengthPosition = b.writerIndex();
         b.writeInt(0);
-        encoding.encode(Format.BINARY, field, b);
+        encoding.encode(format(msg, i), field, b);
         b.writeLength(lengthPosition);
       }
+    }
+
     b.writeShort((short) msg.resultColumnFormatCodes.length);
     for (short code : msg.resultColumnFormatCodes)
       b.writeShort(code);
+
     b.writeLength(1);
   }
 
+  private Format format(Bind msg, int index) {
+    if (msg.parameterFormatCodes.length == 1)
+      return Format.fromCode(msg.parameterFormatCodes[0]);
+    else
+      return Format.fromCode(msg.parameterFormatCodes[index]);
+  }
 }

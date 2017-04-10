@@ -7,6 +7,7 @@ public class FlushSerializer {
 
   public final void encode(Flush msg, BufferWriter b) {
     b.writeChar('F');
+    b.writeInt(0);
     b.writeLength(1);
   }
 }

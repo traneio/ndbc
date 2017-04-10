@@ -7,6 +7,7 @@ public class SyncSerializer {
 
   public final void encode(Flush msg, BufferWriter b) {
     b.writeChar('S');
+    b.writeInt(0);
     b.writeLength(1);
   }
 }

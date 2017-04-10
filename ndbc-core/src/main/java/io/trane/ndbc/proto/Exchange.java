@@ -47,7 +47,7 @@ public interface Exchange<T> {
           } else if (msg.isError())
             return Future.exception(new Exception(msg.toString()));
           else
-            return f.applyOrElse(msg, () -> Exchange.fail("Unexpected database message: " + msg)).run(channel);
+            return f.applyOrElse(msg, () -> Exchange.fail("Unexpected server message: " + msg)).run(channel);
         });
   }
 
@@ -75,6 +75,10 @@ public interface Exchange<T> {
 
   default public Exchange<T> onFailure(final Function<Throwable, Exchange<?>> e) {
     return channel -> run(channel).rescue(ex -> e.apply(ex).run(channel).flatMap(v -> Future.exception(ex)));
+  }
+
+  default public Exchange<T> onSuccess(final Function<T, Exchange<?>> f) {
+    return channel -> run(channel).flatMap(v -> f.apply(v).run(channel).map(ign -> v));
   }
 
   default public <R> Exchange<R> then(final Exchange<R> ex) {
