@@ -7,16 +7,16 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.trane.future.Future;
 import io.trane.ndbc.Config;
+import io.trane.ndbc.Connection;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.datasource.DefaultDataSource;
 import io.trane.ndbc.datasource.Pool;
-import io.trane.ndbc.postgres.Connection;
 import io.trane.ndbc.postgres.encoding.ValueEncoding;
-import io.trane.ndbc.postgres.proto.SimpleExecuteExchange;
 import io.trane.ndbc.postgres.proto.ExtendedExchange;
 import io.trane.ndbc.postgres.proto.ExtendedExecuteExchange;
 import io.trane.ndbc.postgres.proto.ExtendedQueryExchange;
 import io.trane.ndbc.postgres.proto.QueryResultExchange;
+import io.trane.ndbc.postgres.proto.SimpleExecuteExchange;
 import io.trane.ndbc.postgres.proto.SimpleQueryExchange;
 import io.trane.ndbc.postgres.proto.StartupExchange;
 import io.trane.ndbc.postgres.proto.parser.Parser;
@@ -34,7 +34,7 @@ import io.trane.ndbc.postgres.proto.serializer.StartupMessageSerializer;
 import io.trane.ndbc.postgres.proto.serializer.SyncSerializer;
 import io.trane.ndbc.postgres.proto.serializer.TerminateSerializer;
 
-public class DataSourceSupplier implements Supplier<DataSource<Connection>> {
+public class DataSourceSupplier implements Supplier<DataSource> {
 
   private final Config config;
   private final Supplier<Future<Channel>> channelSupplier;
@@ -60,7 +60,7 @@ public class DataSourceSupplier implements Supplier<DataSource<Connection>> {
     ExtendedExchange extendedExchange = new ExtendedExchange();
     return () -> channelSupplier.get()
         .flatMap(channel -> startup.apply(config.charset, config.user, config.password, config.database).run(channel)
-            .map(backendKeyData -> new Connection(channel, backendKeyData, new SimpleQueryExchange(queryResultExchange),
+            .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, backendKeyData, new SimpleQueryExchange(queryResultExchange),
                 new SimpleExecuteExchange(), new ExtendedQueryExchange(queryResultExchange, extendedExchange),
                 new ExtendedExecuteExchange(extendedExchange))));
   }
@@ -71,7 +71,7 @@ public class DataSourceSupplier implements Supplier<DataSource<Connection>> {
   }
 
   @Override
-  public DataSource<Connection> get() {
-    return new DefaultDataSource<>(createPool());
+  public DataSource get() {
+    return new DefaultDataSource(createPool());
   }
 }

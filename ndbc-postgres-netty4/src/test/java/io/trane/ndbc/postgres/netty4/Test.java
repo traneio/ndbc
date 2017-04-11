@@ -1,4 +1,4 @@
-package test;
+package io.trane.ndbc.postgres.netty4;
 
 import java.nio.charset.Charset;
 import java.sql.SQLException;
@@ -21,18 +21,18 @@ public class Test {
   }
 
   private static void trane() throws CheckedFutureException {
-    Config config = new Config(Charset.forName("UTF-8"), "postgres",
+    Config config = new Config("io.trane.ndbc.postgres.netty4.DataSourceSupplier",
+        Charset.forName("UTF-8"), "postgres",
         Optional.of("postgres"), Optional.of("postgres"),
         "localhost", 5432, 10, 10, Duration.ofDays(1));
-    DataSourceSupplier sup = new DataSourceSupplier(config);
-    PreparedStatement ps = PreparedStatement.create("delete from test");
-//        .setString(0, "s");
-    DataSource<Connection> ds = sup.get();
-    Integer i = ds.execute(ps).get(Duration.ofDays(1));
-    System.out.println(i);
-    
-//    r = ds.query(ps).get(Duration.ofDays(1));
-//    System.out.println(r.iterator().next().getString("s"));
+    DataSource ds = DataSource.create(config);
+    PreparedStatement ps = PreparedStatement.create("select * from test");
+    // .setString(0, "s");
+    ResultSet i = ds.query(ps).get(Duration.ofDays(1));
+    System.out.println(i.iterator().next().getString(0));
+
+    // r = ds.query(ps).get(Duration.ofDays(1));
+    // System.out.println(r.iterator().next().getString("s"));
   }
 
   // private static void jbdc() throws SQLException {
