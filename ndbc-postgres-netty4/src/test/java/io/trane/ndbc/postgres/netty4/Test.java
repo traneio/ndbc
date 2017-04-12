@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.Properties;
 
 import io.trane.future.CheckedFutureException;
 import io.trane.ndbc.Config;
@@ -21,11 +22,12 @@ public class Test {
   }
 
   private static void trane() throws CheckedFutureException {
-    Config config = new Config("io.trane.ndbc.postgres.netty4.DataSourceSupplier",
-        Charset.forName("UTF-8"), "postgres",
-        Optional.of("postgres"), Optional.of("postgres"),
-        "localhost", 5432, 10, 10, Duration.ofDays(1));
-    DataSource ds = DataSource.create(config);
+    Properties properties = new Properties();
+    properties.setProperty("ds.dataSourceSupplierClass", "io.trane.ndbc.postgres.netty4.DataSourceSupplier");
+    properties.setProperty("ds.user", "postgres");
+    properties.setProperty("ds.password", "postgres");
+    properties.setProperty("ds.host", "localhost");
+    DataSource ds = DataSource.fromProperties("ds", properties);
     PreparedStatement ps = PreparedStatement.create("select * from test");
     // .setString(0, "s");
     ResultSet i = ds.query(ps).get(Duration.ofDays(1));
