@@ -1,18 +1,19 @@
 package io.trane.ndbc;
 
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 public final class ResultSet implements Iterable<Row> {
 
-  private final Iterator<Row> iterator;
+  private final Stream<Row> stream;
 
-  public ResultSet(Iterator<Row> iterator) {
+  public ResultSet(Stream<Row> rows) {
     super();
-    this.iterator = iterator;
+    this.stream = rows;
   }
 
   @Override
   public Iterator<Row> iterator() {
-    return iterator;
+    return stream.iterator();
   }
 }

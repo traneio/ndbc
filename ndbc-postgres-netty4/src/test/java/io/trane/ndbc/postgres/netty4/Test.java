@@ -1,18 +1,13 @@
 package io.trane.ndbc.postgres.netty4;
 
-import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.time.Duration;
-import java.util.Optional;
 import java.util.Properties;
 
 import io.trane.future.CheckedFutureException;
-import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.ResultSet;
-import io.trane.ndbc.postgres.Connection;
-import io.trane.ndbc.postgres.netty4.DataSourceSupplier;
 
 public class Test {
 

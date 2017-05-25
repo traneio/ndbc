@@ -200,9 +200,10 @@ public interface Message {
     }
   }
 
-  /** Identifies the message as cancellation key data. The frontend
-   * must save these values if it wishes to be able to issue CancelRequest
-   * messages later. */
+  /**
+   * Identifies the message as cancellation key data. The frontend must save
+   * these values if it wishes to be able to issue CancelRequest messages later.
+   */
   public static final class BackendKeyData implements ServerMessage {
     /** The process ID of this backend. */
     public final int processId;
@@ -249,33 +250,43 @@ public interface Message {
   /** Identifies the message as a Bind command. */
   public static final class Bind implements ClientMessage {
 
-    /** The name of the destination portal (an empty string selects
-     * the unnamed portal). */
+    /**
+     * The name of the destination portal (an empty string selects the unnamed
+     * portal).
+     */
     public final String destinationPortalName;
 
-    /** The number of parameter values that follow (possibly zero). This
-     * must match the number of parameters needed by the query.
-     * Next, the following pair of fields appear for each parameter:
-     * The value of the parameter, in the format indicated by the associated
-     * format code. n is the above length.*/
+    /**
+     * The number of parameter values that follow (possibly zero). This must
+     * match the number of parameters needed by the query. Next, the following
+     * pair of fields appear for each parameter: The value of the parameter, in
+     * the format indicated by the associated format code. n is the above
+     * length.
+     */
     public final Value<?>[] fields;
 
-    /** The number of parameter format codes that follow (denoted C below).
-     * This can be zero to indicate that there are no parameters or that
-     * the parameters all use the default format (text); or one, in which
-     * case the specified format code is applied to all parameters; or it
-     * can equal the actual number of parameters.
+    /**
+     * The number of parameter format codes that follow (denoted C below). This
+     * can be zero to indicate that there are no parameters or that the
+     * parameters all use the default format (text); or one, in which case the
+     * specified format code is applied to all parameters; or it can equal the
+     * actual number of parameters.
      *
-     * The parameter format codes. Each must presently be zero (text) or
-     * one (binary). */
+     * The parameter format codes. Each must presently be zero (text) or one
+     * (binary).
+     */
     public final short[] parameterFormatCodes;
 
-    /** The result-column format codes. Each must presently be zero (text)
-     * or one (binary). */
+    /**
+     * The result-column format codes. Each must presently be zero (text) or one
+     * (binary).
+     */
     public final short[] resultColumnFormatCodes;
 
-    /** The name of the source prepared statement (an empty string
-     * selects the unnamed prepared statement). */
+    /**
+     * The name of the source prepared statement (an empty string selects the
+     * unnamed prepared statement).
+     */
     public final String sourcePreparedStatementName;
 
     public Bind(final String destinationPortalName, final String sourcePreparedStatementName,
@@ -466,8 +477,10 @@ public interface Message {
       }
     }
 
-    /** The name of the prepared statement or portal to close (an empty
-     * string selects the unnamed prepared statement or portal). */
+    /**
+     * The name of the prepared statement or portal to close (an empty string
+     * selects the unnamed prepared statement or portal).
+     */
     public final String name;
 
     public Close(final String name) {
@@ -495,9 +508,10 @@ public interface Message {
   /** Identifies the message as a command-completed response. */
   public static abstract class CommandComplete implements ServerMessage {
 
-    /** For a COPY command, the tag is COPY rows where rows is the
-     * number of rows copied. (Note: the row count appears only in
-     * PostgreSQL 8.2 and later.) */
+    /**
+     * For a COPY command, the tag is COPY rows where rows is the number of rows
+     * copied. (Note: the row count appears only in PostgreSQL 8.2 and later.)
+     */
     public static final class CopyComplete extends CommandComplete {
       public CopyComplete(final int rows) {
         super(rows);
@@ -531,8 +545,10 @@ public interface Message {
       }
     }
 
-    /** For a DELETE command, the tag is DELETE rows where rows is
-     * the number of rows deleted. */
+    /**
+     * For a DELETE command, the tag is DELETE rows where rows is the number of
+     * rows deleted.
+     */
     public static final class DeleteComplete extends CommandComplete {
       public DeleteComplete(final int rows) {
         super(rows);
@@ -566,8 +582,10 @@ public interface Message {
       }
     }
 
-    /** For a FETCH command, the tag is FETCH rows where rows is the
-     * number of rows that have been retrieved from the cursor. */
+    /**
+     * For a FETCH command, the tag is FETCH rows where rows is the number of
+     * rows that have been retrieved from the cursor.
+     */
     public static final class FetchComplete extends CommandComplete {
       public FetchComplete(final int rows) {
         super(rows);
@@ -601,10 +619,11 @@ public interface Message {
       }
     }
 
-    /** For an INSERT command, the tag is INSERT oid rows, where
-     * rows is the number of rows inserted. oid is the object ID
-     * of the inserted row if rows is 1 and the target table has
-     * OIDs; otherwise oid is 0. */
+    /**
+     * For an INSERT command, the tag is INSERT oid rows, where rows is the
+     * number of rows inserted. oid is the object ID of the inserted row if rows
+     * is 1 and the target table has OIDs; otherwise oid is 0.
+     */
     public static final class InsertComplete extends CommandComplete {
       public final int oid;
 
@@ -640,12 +659,14 @@ public interface Message {
 
       @Override
       public String toString() {
-        return "InsertComplete [oid=" + oid + "]";
+        return "InsertComplete [rows=" + rows + ", oid=" + oid + "]";
       }
     }
 
-    /** For a MOVE command, the tag is MOVE rows where rows is the
-     * number of rows the cursor's position has been changed by. */
+    /**
+     * For a MOVE command, the tag is MOVE rows where rows is the number of rows
+     * the cursor's position has been changed by.
+     */
     public static final class MoveComplete extends CommandComplete {
       public MoveComplete(final int rows) {
         super(rows);
@@ -679,8 +700,10 @@ public interface Message {
       }
     }
 
-    /** For a SELECT or CREATE TABLE AS command, the tag is SELECT
-     * rows where rows is the number of rows retrieved. */
+    /**
+     * For a SELECT or CREATE TABLE AS command, the tag is SELECT rows where
+     * rows is the number of rows retrieved.
+     */
     public static final class SelectorOrCreateTableAsComplete extends CommandComplete {
       public SelectorOrCreateTableAsComplete(final int rows) {
         super(rows);
@@ -714,8 +737,10 @@ public interface Message {
       }
     }
 
-    /** For an UPDATE command, the tag is UPDATE rows where rows is
-     * the number of rows updated. */
+    /**
+     * For an UPDATE command, the tag is UPDATE rows where rows is the number of
+     * rows updated.
+     */
     public static final class UpdateComplete extends CommandComplete {
       public UpdateComplete(final int rows) {
         super(rows);
@@ -749,6 +774,48 @@ public interface Message {
       }
     }
 
+    public static final class UnknownCommandComplete extends CommandComplete {
+      public final String tag;
+
+      public UnknownCommandComplete(final int rows, final String tag) {
+        super(rows);
+        this.tag = tag;
+      }
+
+      @Override
+      public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + rows;
+        result = prime * result + ((tag == null) ? 0 : tag.hashCode());
+        return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+        if (this == obj)
+          return true;
+        if (obj == null)
+          return false;
+        if (getClass() != obj.getClass())
+          return false;
+        UnknownCommandComplete other = (UnknownCommandComplete) obj;
+        if (tag == null) {
+          if (other.tag != null)
+            return false;
+        } else if (rows != other.rows)
+          return false;
+        else if (!tag.equals(other.tag))
+          return false;
+        return true;
+      }
+
+      @Override
+      public String toString() {
+        return "UnknownCommandComplete [rows=" + rows + ", tag=" + tag + "]";
+      }
+    }
+
     public final int rows;
 
     public CommandComplete(final int rows) {
@@ -756,13 +823,17 @@ public interface Message {
     }
   }
 
-  /** Identifies the message as a Start Copy Both response.
-   * This message is used only for Streaming Replication. */
+  /**
+   * Identifies the message as a Start Copy Both response. This message is used
+   * only for Streaming Replication.
+   */
   public static final class CopyBothResponse implements ServerMessage {
 
-    /** The format codes to be used for each column. Each must
-     * presently be zero (text) or one (binary). All must be
-     * zero if the overall copy format is textual. */
+    /**
+     * The format codes to be used for each column. Each must presently be zero
+     * (text) or one (binary). All must be zero if the overall copy format is
+     * textual.
+     */
     public final short[] columnFormatCodes;
 
     public CopyBothResponse(final short[] columnFormatCodes) {
@@ -799,10 +870,11 @@ public interface Message {
 
   /** Identifies the message as COPY data. */
   public static final class CopyData implements ClientMessage, ServerMessage {
-    /** Data that forms part of a COPY data stream. Messages sent
-     * from the backend will always correspond to single data rows,
-     * but messages sent by frontends might divide the data stream
-     * arbitrarily. */
+    /**
+     * Data that forms part of a COPY data stream. Messages sent from the
+     * backend will always correspond to single data rows, but messages sent by
+     * frontends might divide the data stream arbitrarily.
+     */
     public final byte[] data;
 
     public CopyData(final byte[] data) {
@@ -896,14 +968,17 @@ public interface Message {
     }
   }
 
-  /** Identifies the message as a Start Copy In response. The
-   * frontend must now send copy-in data (if not prepared to do
-   * so, send a CopyFail message). */
+  /**
+   * Identifies the message as a Start Copy In response. The frontend must now
+   * send copy-in data (if not prepared to do so, send a CopyFail message).
+   */
   public static final class CopyInResponse implements ServerMessage {
 
-    /** The format codes to be used for each column. Each must
-     * presently be zero (text) or one (binary). All must be zero
-     * if the overall copy format is textual. */
+    /**
+     * The format codes to be used for each column. Each must presently be zero
+     * (text) or one (binary). All must be zero if the overall copy format is
+     * textual.
+     */
     public final short[] columnFormatCodes;
 
     public CopyInResponse(final short[] columnFormatCodes) {
@@ -938,13 +1013,17 @@ public interface Message {
     }
   }
 
-  /** Identifies the message as a Start Copy Out response.
-   * This message will be followed by copy-out data. */
+  /**
+   * Identifies the message as a Start Copy Out response. This message will be
+   * followed by copy-out data.
+   */
   public static final class CopyOutResponse implements ServerMessage {
 
-    /** The format codes to be used for each column. Each must
-     * presently be zero (text) or one (binary). All must be
-     * zero if the overall copy format is textual. */
+    /**
+     * The format codes to be used for each column. Each must presently be zero
+     * (text) or one (binary). All must be zero if the overall copy format is
+     * textual.
+     */
     public final short[] columnFormatCodes;
 
     public CopyOutResponse(final short[] columnFormatCodes) {
@@ -981,8 +1060,10 @@ public interface Message {
 
   /** Identifies the message as a data row. */
   public static final class DataRow implements ServerMessage {
-    /** The value of the column, in the format indicated by the
-     * associated format code. n is the above length. */
+    /**
+     * The value of the column, in the format indicated by the associated format
+     * code. n is the above length.
+     */
     public final BufferReader[] values;
 
     public DataRow(final BufferReader[] values) {
@@ -1092,9 +1173,10 @@ public interface Message {
       }
     }
 
-    /** The name of the prepared statement or portal to describe
-     * (an empty string selects the unnamed prepared statement
-     * or portal). */
+    /**
+     * The name of the prepared statement or portal to describe (an empty string
+     * selects the unnamed prepared statement or portal).
+     */
     public final String name;
 
     public Describe(final String name) {
@@ -1102,8 +1184,10 @@ public interface Message {
     }
   }
 
-  /** Identifies the message as a response to an empty query string.
-   * (This substitutes for CommandComplete.) */
+  /**
+   * Identifies the message as a response to an empty query string. (This
+   * substitutes for CommandComplete.)
+   */
   public static final class EmptyQueryResponse implements ServerMessage {
 
     @Override
@@ -1129,11 +1213,12 @@ public interface Message {
         Unknown, Severity, Code, Message, Detail, Hint, Position, InternalPosition, InternalQuery, Where, SchemaName, TableName, ColumnName, DataTypeName, ConstraintName, File, Line, Routine
       }
 
-      /** A code identifying the field type; if zero, this is the message
-       * terminator and no string follows. The presently defined field
-       * types are listed in Section 51.6. Since more field types might
-       * be added in future, frontends should silently ignore fields of
-       * unrecognized type. */
+      /**
+       * A code identifying the field type; if zero, this is the message
+       * terminator and no string follows. The presently defined field types are
+       * listed in Section 51.6. Since more field types might be added in
+       * future, frontends should silently ignore fields of unrecognized type.
+       */
       public final Type type;
 
       /** The field value. */
@@ -1178,9 +1263,11 @@ public interface Message {
       }
     }
 
-    /** The message body consists of one or more identified fields, followed
-     * by a zero byte as a terminator. Fields can appear in any order. For
-     * each field there is the following: */
+    /**
+     * The message body consists of one or more identified fields, followed by a
+     * zero byte as a terminator. Fields can appear in any order. For each field
+     * there is the following:
+     */
     public final Field[] fields;
 
     public InfoResponse(final Field[] fields) {
@@ -1231,6 +1318,11 @@ public interface Message {
       public NoticeResponse(Field[] fields) {
         super(fields);
       }
+      
+      @Override
+      public boolean isNotice() {
+        return true;
+      }
 
       @Override
       public int hashCode() {
@@ -1256,26 +1348,30 @@ public interface Message {
 
       @Override
       public String toString() {
-        return "ErrorResponse [fields=" + Arrays.toString(fields) + "]";
+        return "NoticeResponse [fields=" + Arrays.toString(fields) + "]";
       }
     }
   }
 
   /** Identifies the message as an Execute command. */
   public static final class Execute implements ClientMessage {
-    /** Maximum number of rows to return, if portal contains a query that returns
-     * rows (ignored otherwise). Zero denotes "no limit". */
+    /**
+     * Maximum number of rows to return, if portal contains a query that returns
+     * rows (ignored otherwise). Zero denotes "no limit".
+     */
     public final int maxNumberOfRows;
 
-    /** The name of the portal to execute (an empty string selects the unnamed
-     * portal). */
+    /**
+     * The name of the portal to execute (an empty string selects the unnamed
+     * portal).
+     */
     public final String portalName;
 
     public Execute(final String portalName, final int maxNumberOfRows) {
       this.portalName = portalName;
       this.maxNumberOfRows = maxNumberOfRows;
     }
-
+    
     @Override
     public int hashCode() {
       final int prime = 31;
@@ -1332,25 +1428,29 @@ public interface Message {
   /** Identifies the message as a function call. */
   public static final class FunctionCall implements ClientMessage {
 
-    /** The length of the argument value, in bytes (this count does not include itself).
-     * Can be zero. As a special case, -1 indicates a NULL argument value. No value
-     * bytes follow in the NULL case.
-     * The value of the argument, in the format indicated by the associated format code.
-     * n is the above length.
-     *  */
+    /**
+     * The length of the argument value, in bytes (this count does not include
+     * itself). Can be zero. As a special case, -1 indicates a NULL argument
+     * value. No value bytes follow in the NULL case. The value of the argument,
+     * in the format indicated by the associated format code. n is the above
+     * length.
+     */
     public final byte[][] fields;
 
-    /** The number of argument format codes that follow (denoted C below). This
+    /**
+     * The number of argument format codes that follow (denoted C below). This
      * can be zero to indicate that there are no arguments or that the arguments
      * all use the default format (text); or one, in which case the specified
-     * format code is applied to all arguments; or it can equal the actual number
-     * of arguments.
-     * The argument format codes. Each must presently be zero (text) or one (binary).
-     *  */
+     * format code is applied to all arguments; or it can equal the actual
+     * number of arguments. The argument format codes. Each must presently be
+     * zero (text) or one (binary).
+     */
     public final short[] formatCodes;
 
-    /** The format code for the function result. Must presently be zero (text) or
-     * one (binary). */
+    /**
+     * The format code for the function result. Must presently be zero (text) or
+     * one (binary).
+     */
     public final short functionResultFormatCode;
 
     /** Specifies the object ID of the function to call. */
@@ -1404,13 +1504,17 @@ public interface Message {
 
   /** Identifies the message as a function call result. */
   public static final class FunctionCallResponse implements ServerMessage {
-    /** The length of the function result value, in bytes (this count does not include
-     * itself). Can be zero. As a special case, -1 indicates a NULL function result.
-     * No value bytes follow in the NULL case. */
+    /**
+     * The length of the function result value, in bytes (this count does not
+     * include itself). Can be zero. As a special case, -1 indicates a NULL
+     * function result. No value bytes follow in the NULL case.
+     */
     public final boolean isNull;
 
-    /** The value of the function result, in the format indicated by the associated
-     * format code. n is the above length. */
+    /**
+     * The value of the function result, in the format indicated by the
+     * associated format code. n is the above length.
+     */
     public final byte[] value;
 
     public FunctionCallResponse(final boolean isNull, final byte[] value) {
@@ -1532,8 +1636,10 @@ public interface Message {
 
   /** Identifies the message as a parameter description */
   public static final class ParameterDescription implements ServerMessage {
-    /** Then, for each parameter, there is the following:
-     * Specifies the object ID of the parameter data type. */
+    /**
+     * Then, for each parameter, there is the following: Specifies the object ID
+     * of the parameter data type.
+     */
     public final int[] parameterDataType;
 
     public ParameterDescription(final int[] parameterDataType) {
@@ -1620,18 +1726,20 @@ public interface Message {
 
   /** Identifies the message as a Parse command. */
   public static final class Parse implements ClientMessage {
-    /** The name of the destination prepared statement (an empty
-     * string selects the unnamed prepared statement). */
+    /**
+     * The name of the destination prepared statement (an empty string selects
+     * the unnamed prepared statement).
+     */
     public final String destinationName;
 
-    /** The number of parameter data types specified (can be zero).
-     * Note that this is not an indication of the number of parameters
-     * that might appear in the query string, only the number that the
-     * frontend wants to prespecify types for.
-     * Then, for each parameter, there is the following:
-     * Specifies the object ID of the parameter data type. Placing a
-     * zero here is equivalent to leaving the type unspecified.
-     * */
+    /**
+     * The number of parameter data types specified (can be zero). Note that
+     * this is not an indication of the number of parameters that might appear
+     * in the query string, only the number that the frontend wants to
+     * prespecify types for. Then, for each parameter, there is the following:
+     * Specifies the object ID of the parameter data type. Placing a zero here
+     * is equivalent to leaving the type unspecified.
+     */
     public final int[] parameterTypes;
 
     /** The query string to be parsed. */
@@ -1702,10 +1810,12 @@ public interface Message {
     }
   }
 
-  /** Identifies the message as a password response. Note that this is also
-   * used for GSSAPI and SSPI response messages (which is really a design error,
-   * since the contained data is not a null-terminated string in that case,
-   * but can be arbitrary binary data). */
+  /**
+   * Identifies the message as a password response. Note that this is also used
+   * for GSSAPI and SSPI response messages (which is really a design error,
+   * since the contained data is not a null-terminated string in that case, but
+   * can be arbitrary binary data).
+   */
   public static final class PasswordMessage implements ClientMessage {
 
     /** The password (encrypted, if requested). */
@@ -1746,8 +1856,10 @@ public interface Message {
     }
   }
 
-  /** Identifies the message as a portal-suspended indicator. Note this only appears
-   * if an Execute message's row-count limit was reached. */
+  /**
+   * Identifies the message as a portal-suspended indicator. Note this only
+   * appears if an Execute message's row-count limit was reached.
+   */
   public static final class PortalSuspended implements ServerMessage {
     @Override
     public int hashCode() {
@@ -1805,13 +1917,18 @@ public interface Message {
     }
   }
 
-  /** Identifies the message type. ReadyForQuery is sent whenever the backend is ready
-   * for a new query cycle. */
+  /**
+   * Identifies the message type. ReadyForQuery is sent whenever the backend is
+   * ready for a new query cycle.
+   */
   public static final class ReadyForQuery implements ServerMessage {
 
-    /** Current backend transaction status indicator. Possible values are 'I' if idle
-     * (not in a transaction block); 'T' if in a transaction block; or 'E' if in a
-     * failed transaction block (queries will be rejected until block is ended). */
+    /**
+     * Current backend transaction status indicator. Possible values are 'I' if
+     * idle (not in a transaction block); 'T' if in a transaction block; or 'E'
+     * if in a failed transaction block (queries will be rejected until block is
+     * ended).
+     */
     public final byte status;
 
     public ReadyForQuery(final byte status) {
@@ -1848,31 +1965,42 @@ public interface Message {
 
   public static final class RowDescription implements ServerMessage {
     public static final class Field {
-      /** If the field can be identified as a column of a specific table, the attribute
-       * number of the column; otherwise zero. */
+      /**
+       * If the field can be identified as a column of a specific table, the
+       * attribute number of the column; otherwise zero.
+       */
       public final short attributeNumber;
 
       /** The object ID of the field's data type. */
       public final int dataType;
 
-      /** The data type size (see pg_type.typlen). Note that negative values denote
-       * variable-width types. */
+      /**
+       * The data type size (see pg_type.typlen). Note that negative values
+       * denote variable-width types.
+       */
       public final short dataTypeSize;
 
-      /** The format code being used for the field. Currently will be zero (text) or one
-       * (binary). In a RowDescription returned from the statement variant of Describe,
-       * the format code is not yet known and will always be zero. */
+      /**
+       * The format code being used for the field. Currently will be zero (text)
+       * or one (binary). In a RowDescription returned from the statement
+       * variant of Describe, the format code is not yet known and will always
+       * be zero.
+       */
       public final short formatCode;
 
       /** The field name. */
       public final String name;
 
-      /** If the field can be identified as a column of a specific table, the object
-       * ID of the table; otherwise zero. */
+      /**
+       * If the field can be identified as a column of a specific table, the
+       * object ID of the table; otherwise zero.
+       */
       public final int objectID;
 
-      /** The type modifier (see pg_attribute.atttypmod). The meaning of the modifier is
-       * type-specific. */
+      /**
+       * The type modifier (see pg_attribute.atttypmod). The meaning of the
+       * modifier is type-specific.
+       */
       public final int typeModifier;
 
       public Field(final String name, final int objectID, final short attributeNumber, final int dataType,
@@ -2040,10 +2168,12 @@ public interface Message {
       }
     }
 
-    /** The protocol version number is followed by one or more pairs of parameter name
-     * and value strings. A zero byte is required as a terminator after the last
-     * name/value pair. Parameters can appear in any order. user is required, others
-     * are optional. Each parameter is specified as: */
+    /**
+     * The protocol version number is followed by one or more pairs of parameter
+     * name and value strings. A zero byte is required as a terminator after the
+     * last name/value pair. Parameters can appear in any order. user is
+     * required, others are optional. Each parameter is specified as:
+     */
     public final Parameter[] parameters;
 
     /** The database user name to connect as. Required; there is no default. */

@@ -35,7 +35,7 @@ public class BindSerializer {
         int lengthPosition = b.writerIndex();
         b.writeInt(0);
         encoding.encode(format(msg, i), field, b);
-        b.writeLength(lengthPosition);
+        b.writeLengthNoSelf(lengthPosition);
       }
     }
 

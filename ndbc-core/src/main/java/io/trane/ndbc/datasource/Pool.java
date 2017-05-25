@@ -15,12 +15,14 @@ import io.trane.ndbc.Connection;
 public class Pool<T extends Connection> {
 
   private static final Future<Object> POOL_EXHAUSTED = Future.exception(new RuntimeException("Pool exhausted"));
+  private static final Future<Object> POOL_CLOSED = Future.exception(new RuntimeException("Pool closed"));
 
   public static <T extends Connection> Pool<T> apply(final Supplier<Future<T>> supplier, final int maxSize,
       final int maxWaiters, final Duration validationInterval, final ScheduledExecutorService scheduler) {
     return new Pool<>(supplier, maxSize, maxWaiters, validationInterval, scheduler);
   }
 
+  private volatile boolean closed = false;
   private final Supplier<Future<T>> supplier;
   private final Semaphore sizeSemaphore;
   private final Semaphore waitersSemaphore;
@@ -40,27 +42,55 @@ public class Pool<T extends Connection> {
   }
 
   public <R> Future<R> apply(final Function<T, Future<R>> f) {
-    final T item = items.poll();
-    if (item != null)
-      return Future.flatApply(() -> f.apply(item)).ensure(() -> release(item));
-    else if (sizeSemaphore.tryAcquire())
-      return supplier.get().flatMap(i -> f.apply(i).ensure(() -> release(i)));
-    else if (waitersSemaphore.tryAcquire()) {
-      final Waiter<T, R> p = new Waiter<>(f);
-      waiters.offer(p);
-      return p;
-    } else
-      return POOL_EXHAUSTED.unsafeCast();
+    if (closed)
+      return POOL_CLOSED.unsafeCast();
+    else {
+      final T item = items.poll();
+      if (item != null)
+        return Future.flatApply(() -> f.apply(item)).ensure(() -> release(item));
+      else if (sizeSemaphore.tryAcquire())
+        return supplier.get().flatMap(i -> f.apply(i).ensure(() -> release(i)));
+      else if (waitersSemaphore.tryAcquire()) {
+        final Waiter<T, R> p = new Waiter<>(f);
+        waiters.offer(p);
+        return p;
+      } else
+        return POOL_EXHAUSTED.unsafeCast();
+    }
+  }
+
+  public Future<Void> close() {
+    closed = true;
+
+    Waiter<?, ?> w;
+    while ((w = waiters.poll()) != null) {
+      waitersSemaphore.release();
+      w.become(POOL_CLOSED.unsafeCast());
+    }
+
+    return drain();
+  }
+
+  private final Future<Void> drain() {
+    T item = items.poll();
+    if (item == null)
+      return Future.VOID;
+    else
+      return item.close().flatMap(v -> drain());
   }
 
   private final void release(final T item) {
-    final Waiter<T, ?> waiter = waiters.poll();
-    if (waiter != null) {
-      waitersSemaphore.release();
-      waiter.apply(item).ensure(() -> release(item));
-    } else
-      items.offer(item);
-  };
+    if (closed) 
+      item.close();
+    else {
+      final Waiter<T, ?> waiter = waiters.poll();
+      if (waiter != null) {
+        waitersSemaphore.release();
+        waiter.apply(item).ensure(() -> release(item));
+      } else
+        items.offer(item);
+    }
+  }
 
   private final Future<Void> validateN(final int n) {
     if (n >= 0) {

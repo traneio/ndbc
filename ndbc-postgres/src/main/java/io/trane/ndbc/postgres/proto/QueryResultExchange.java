@@ -2,9 +2,9 @@ package io.trane.ndbc.postgres.proto;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import io.trane.ndbc.ResultSet;
 import io.trane.ndbc.Row;
@@ -68,8 +68,8 @@ public final class QueryResultExchange {
   }
 
   private final ResultSet toResultSet(RowDescription desc, List<DataRow> dataRows) {
-    final Iterator<Row> rows = dataRows.stream()
-        .map(data -> toRow(encoding, desc, data)).iterator();
+    final Stream<Row> rows = dataRows.stream()
+        .map(data -> toRow(encoding, desc, data));
     return new ResultSet(rows);
   }
 

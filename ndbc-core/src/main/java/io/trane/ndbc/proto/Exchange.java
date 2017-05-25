@@ -44,9 +44,9 @@ public interface Exchange<T> {
           if (msg.isNotice()) {
             log.info(msg.toString());
             return receive(f).run(channel);
-          } else if (msg.isError())
+          } else if (msg.isError()) {
             return Future.exception(new Exception(msg.toString()));
-          else
+          } else
             return f.applyOrElse(msg, () -> Exchange.fail("Unexpected server message: " + msg)).run(channel);
         });
   }

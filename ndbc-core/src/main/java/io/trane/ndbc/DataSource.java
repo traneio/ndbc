@@ -53,4 +53,6 @@ public interface DataSource {
   <T> Future<T> transactional(Supplier<Future<T>> supplier);
 
   <T> Future<T> withConnection(Function<Connection, Future<T>> supplier);
+  
+  Future<Void> close();
 }

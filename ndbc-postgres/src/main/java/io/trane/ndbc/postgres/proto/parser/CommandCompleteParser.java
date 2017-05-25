@@ -9,6 +9,7 @@ import io.trane.ndbc.postgres.proto.Message.CommandComplete.FetchComplete;
 import io.trane.ndbc.postgres.proto.Message.CommandComplete.InsertComplete;
 import io.trane.ndbc.postgres.proto.Message.CommandComplete.MoveComplete;
 import io.trane.ndbc.postgres.proto.Message.CommandComplete.SelectorOrCreateTableAsComplete;
+import io.trane.ndbc.postgres.proto.Message.CommandComplete.UnknownCommandComplete;
 import io.trane.ndbc.postgres.proto.Message.CommandComplete.UpdateComplete;
 import io.trane.ndbc.proto.BufferReader;
 
@@ -32,8 +33,10 @@ class CommandCompleteParser {
       return new FetchComplete(parseInt(words[1]));
     case "COPY":
       return new CopyComplete(parseInt(words[1]));
+    case "CREATE TABLE":
+      return new SelectorOrCreateTableAsComplete(parseInt(words[1]));
     default:
-      throw new IllegalStateException("Invalid command complete string: " + string);
+      return new UnknownCommandComplete(0, string);
     }
   }
 }

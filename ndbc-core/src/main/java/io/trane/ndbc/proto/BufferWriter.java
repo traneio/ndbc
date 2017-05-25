@@ -21,6 +21,8 @@ public interface BufferWriter {
   void writeShorts(short[] s);
   
   void writeLength(int position);
-
+  
+  void writeLengthNoSelf(int position);
+  
   int writerIndex();
 }

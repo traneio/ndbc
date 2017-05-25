@@ -76,4 +76,13 @@ public class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
     b.writeInt(length);
     b.resetWriterIndex();
   }
+
+  @Override
+  public void writeLengthNoSelf(int position) {
+    int length = b.writerIndex() - position - 4;
+    b.markWriterIndex();
+    b.writerIndex(position);
+    b.writeInt(length);
+    b.resetWriterIndex();
+  }
 }

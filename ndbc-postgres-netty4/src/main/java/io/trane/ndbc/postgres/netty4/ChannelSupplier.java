@@ -14,6 +14,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.flow.FlowControlHandler;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.trane.future.Future;
 import io.trane.future.Promise;
@@ -69,6 +70,7 @@ public class ChannelSupplier implements Supplier<Future<Channel>> {
                     encoder.encode(msg, new BufferWriter(charset, out));
                   }
                 },
+                new FlowControlHandler(),
                 channel);
           }
         })
