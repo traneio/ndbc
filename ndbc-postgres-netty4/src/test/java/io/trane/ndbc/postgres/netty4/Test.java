@@ -23,7 +23,7 @@ public class Test {
     properties.setProperty("ds.password", "postgres");
     properties.setProperty("ds.host", "localhost");
     DataSource ds = DataSource.fromProperties("ds", properties);
-    PreparedStatement ps = PreparedStatement.create("select * from test");
+    PreparedStatement ps = PreparedStatement.apply("select * from test");
     // .setString(0, "s");
     ResultSet i = ds.query(ps).get(Duration.ofDays(1));
     System.out.println(i.iterator().next().getString(0));

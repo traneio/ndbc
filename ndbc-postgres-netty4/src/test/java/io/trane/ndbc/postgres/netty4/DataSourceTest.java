@@ -51,7 +51,7 @@ public class DataSourceTest {
 
   @Test
   public void extendedQueryNoParams() throws CheckedFutureException {
-    PreparedStatement ps = PreparedStatement.create("SELECT * FROM test");
+    PreparedStatement ps = PreparedStatement.apply("SELECT * FROM test");
 
     Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
     assertEquals(rows.next().getString(0), "s");
@@ -60,8 +60,8 @@ public class DataSourceTest {
 
   @Test
   public void extendedQueryWithParams() throws CheckedFutureException {
-    PreparedStatement ps = PreparedStatement.create("SELECT * FROM test WHERE s = $1")
-        .setString(0, "s");
+    PreparedStatement ps = PreparedStatement.apply("SELECT * FROM test WHERE s = ?")
+        .bind("s");
 
     Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
     assertEquals(rows.next().getString(0), "s");
@@ -94,12 +94,11 @@ public class DataSourceTest {
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
     assertFalse(rows.hasNext());
   }
-  
+
   @Test
   public void extendedExecuteInsertNoParam() throws CheckedFutureException {
-    PreparedStatement ps = 
-        PreparedStatement.create("INSERT INTO test VALUES ('u')");
-    
+    PreparedStatement ps = PreparedStatement.apply("INSERT INTO test VALUES ('u')");
+
     ds.execute(ps).get(timeout);
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
@@ -107,24 +106,22 @@ public class DataSourceTest {
     assertEquals(rows.next().getString(0), "u");
     assertFalse(rows.hasNext());
   }
-  
+
   @Test
   public void extendedExecuteUpdateNoParam() throws CheckedFutureException {
-    PreparedStatement ps = 
-        PreparedStatement.create("UPDATE test SET s = 'u'");
-    
+    PreparedStatement ps = PreparedStatement.apply("UPDATE test SET s = 'u'");
+
     ds.execute(ps).get(timeout);
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
     assertEquals(rows.next().getString(0), "u");
     assertFalse(rows.hasNext());
   }
-  
+
   @Test
   public void extendedExecuteDeleteNoParam() throws CheckedFutureException {
-    PreparedStatement ps = 
-        PreparedStatement.create("DELETE FROM test WHERE s = 's'");
-    
+    PreparedStatement ps = PreparedStatement.apply("DELETE FROM test WHERE s = 's'");
+
     ds.execute(ps).get(timeout);
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
@@ -133,9 +130,8 @@ public class DataSourceTest {
 
   @Test
   public void extendedExecuteInsertWithParam() throws CheckedFutureException {
-    PreparedStatement ps = 
-        PreparedStatement.create("INSERT INTO test VALUES ($1)").setString(0, "u");
-    
+    PreparedStatement ps = PreparedStatement.apply("INSERT INTO test VALUES (?)").bind("u");
+
     ds.execute(ps).get(timeout);
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
@@ -143,24 +139,22 @@ public class DataSourceTest {
     assertEquals(rows.next().getString(0), "u");
     assertFalse(rows.hasNext());
   }
-  
+
   @Test
   public void extendedExecuteUpdateWithParam() throws CheckedFutureException {
-    PreparedStatement ps = 
-        PreparedStatement.create("UPDATE test SET s = $1").setString(0, "u");
-    
+    PreparedStatement ps = PreparedStatement.apply("UPDATE test SET s = ?").bind("u");
+
     ds.execute(ps).get(timeout);
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
     assertEquals(rows.next().getString(0), "u");
     assertFalse(rows.hasNext());
   }
-  
+
   @Test
   public void extendedExecuteDeleteWithParam() throws CheckedFutureException {
-    PreparedStatement ps = 
-        PreparedStatement.create("DELETE FROM test WHERE s = $1").setString(0, "s");
-    
+    PreparedStatement ps = PreparedStatement.apply("DELETE FROM test WHERE s = ?").bind("s");
+
     ds.execute(ps).get(timeout);
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();

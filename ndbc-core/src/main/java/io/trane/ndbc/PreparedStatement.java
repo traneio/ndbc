@@ -12,7 +12,7 @@ public class PreparedStatement {
 
   private static final Value<?>[] emptyValues = new Value<?>[0];
 
-  public static PreparedStatement create(String query) {
+  public static PreparedStatement apply(String query) {
     return new PreparedStatement(query, emptyValues);
   }
 
@@ -25,22 +25,21 @@ public class PreparedStatement {
     this.params = params;
   }
 
-  public PreparedStatement setInteger(int position, Integer value) {
-    return setValue(position, value == null ? Value.NULL : new IntegerValue(value));
+  public PreparedStatement bind(Integer value) {
+    return bind(value == null ? Value.NULL : new IntegerValue(value));
   }
 
-  public PreparedStatement setString(int position, String value) {
-    return setValue(position, value == null ? Value.NULL : new StringValue(value));
+  public PreparedStatement bind(String value) {
+    return bind(value == null ? Value.NULL : new StringValue(value));
+  }
+  
+  public PreparedStatement bindNull(String value) {
+    return bind(Value.NULL);
   }
 
-  public PreparedStatement setNull(int position) {
-    return setValue(position, Value.NULL);
-  }
-
-  public PreparedStatement setValue(int position, Value<?> param) {
-    int newLength = position >= params.length ? position + 1 : params.length;
-    Value<?>[] newParams = Arrays.copyOf(params, newLength);
-    newParams[position] = param;
+  public PreparedStatement bind(Value<?> param) {
+    Value<?>[] newParams = Arrays.copyOf(params, params.length + 1);
+    newParams[params.length] = param;
     return new PreparedStatement(query, newParams);
   }
 

@@ -46,11 +46,29 @@ public class ExtendedExchange {
     String idString = Integer.toString(id);
     if (prepared.contains(id))
       return f.apply(idString);
-    else
+    else {
       return Exchange
-          .send(new Parse(Integer.toString(id), query, emptyParams))
+          .send(new Parse(Integer.toString(id), positional(query), emptyParams))
           .then(f.apply(idString))
           .thenReceive(ParseComplete.class)
           .onSuccess(ign -> Exchange.value(prepared.add(id)));
+    }
+  }
+
+  // TODO handle quotes, comments, etc.
+  private final String positional(String query) {
+    int idx = 0;
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < query.length(); i++) {
+      char c = query.charAt(i);
+      if (c == '?') {
+        idx += 1;
+        sb.append("$");
+        sb.append(idx);
+      } else {
+        sb.append(c);
+      }
+    }
+    return sb.toString();
   }
 }
