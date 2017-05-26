@@ -1,5 +1,8 @@
 package io.trane.ndbc.value;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 public abstract class Value<T> {
 
   public static final NullValue NULL = new NullValue();
@@ -13,14 +16,6 @@ public abstract class Value<T> {
 
   public T get() {
     return value;
-  }
-
-  public String getString() {
-    return value.toString();
-  }
-
-  public Integer getInteger() {
-    return cantRead("Integer");
   }
 
   public boolean isNull() {
@@ -59,5 +54,45 @@ public abstract class Value<T> {
   @Override
   public String toString() {
     return getClass().getSimpleName() + " [value=" + value + "]";
+  }
+
+  public Character getCharacter() {
+    return cantRead("Integer");
+  }
+  
+  public String getString() {
+    return value == null ? "null" : value.toString();
+  }
+
+  public Integer getInteger() {
+    return cantRead("Integer");
+  }
+  
+  public Boolean getBoolean() {
+    return cantRead("Boolean");
+  }
+
+  public Long getLong() {
+    return cantRead("Long");
+  }
+
+  public Short getShort() {
+    return cantRead("Long");
+  }
+
+  public BigDecimal getBigDecimal() {
+    return cantRead("BigDecimal");
+  }
+
+  public Float getFloat() {
+    return cantRead("Float");
+  }
+
+  public Double getDouble() {
+    return cantRead("Double");
+  }
+
+  public LocalDateTime getLocalDateTime() {
+    return cantRead("LocalDateTime");
   }
 }
