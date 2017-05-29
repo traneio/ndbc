@@ -64,6 +64,21 @@ public class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
   }
   
   @Override
+  public void writeLong(Long value) {
+    b.writeLong(value);
+  }
+  
+  @Override
+  public void writeFloat(Float value) {
+    b.writeFloat(value);
+  }
+  
+  @Override
+  public void writeDouble(Double value) {
+    b.writeDouble(value);
+  }
+  
+  @Override
   public int writerIndex() {
     return b.writerIndex();
   }

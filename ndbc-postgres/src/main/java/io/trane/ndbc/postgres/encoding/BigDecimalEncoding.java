@@ -5,11 +5,12 @@ import java.math.BigInteger;
 
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
+import io.trane.ndbc.value.BigDecimalValue;
 
 /**
  * Java version of finagle-postgres' Numerics (https://github.com/finagle/finagle-postgres/blob/69ab3983d6acc6aa4a8e029c96cc1cb224d6c40d/src/main/scala/com/twitter/finagle/postgres/values/Numerics.scala)
  */
-class BigDecimalEncoding implements Encoding<BigDecimal> {
+class BigDecimalEncoding implements Encoding<BigDecimalValue> {
 
   private static final BigInteger BI_BASE = BigInteger.valueOf(10000);
   private static final short[] EMPTY_SHORT_ARRAY = new short[0];
@@ -18,20 +19,21 @@ class BigDecimalEncoding implements Encoding<BigDecimal> {
   private static final int NUMERIC_NAN = 0xC000;
   private static final int NUMERIC_NULL = 0xF000;
   private static final int EXPONENT = 4;
+  private static final BigDecimalValue ZERO = new BigDecimalValue(new BigDecimal(0));
 
   @Override
-  public String encodeText(BigDecimal value) {
-    return value.toPlainString();
+  public String encodeText(BigDecimalValue value) {
+    return value.get().toPlainString();
   }
 
   @Override
-  public BigDecimal decodeText(String value) {
-    return new BigDecimal(value);
+  public BigDecimalValue decodeText(String value) {
+    return new BigDecimalValue(new BigDecimal(value));
   }
 
   @Override
-  public void encodeBinary(BigDecimal value, BufferWriter b) {
-    BigDecimal minimized = value.stripTrailingZeros();
+  public void encodeBinary(BigDecimalValue value, BufferWriter b) {
+    BigDecimal minimized = value.get().stripTrailingZeros();
     BigInteger unscaled = minimized.unscaledValue();
     int sign = minimized.signum();
 
@@ -66,11 +68,11 @@ class BigDecimalEncoding implements Encoding<BigDecimal> {
     b.writeShort((short) digits.length);
     b.writeShort((short) weight);
     b.writeShort(sign < 0 ? NUMERIC_NEG : NUMERIC_POS);
-    b.writeShort((short) value.scale());
+    b.writeShort((short) value.get().scale());
   }
 
   @Override
-  public BigDecimal decodeBinary(BufferReader b) {
+  public BigDecimalValue decodeBinary(BufferReader b) {
 
     int len = getUnsignedShort(b);
     short weight = b.readShort();
@@ -107,9 +109,9 @@ class BigDecimalEncoding implements Encoding<BigDecimal> {
 
       switch (sign) {
       case NUMERIC_POS:
-        return unsigned;
+        return new BigDecimalValue(unsigned);
       case NUMERIC_NEG:
-        return unsigned.negate();
+        return new BigDecimalValue(unsigned.negate());
       case NUMERIC_NAN:
         throw new NumberFormatException("Decimal is NaN");
       case NUMERIC_NULL:
@@ -118,7 +120,7 @@ class BigDecimalEncoding implements Encoding<BigDecimal> {
         throw new NumberFormatException("Invalid sign");
       }
     } else
-      return new BigDecimal(0);
+      return ZERO;
   }
 
   private short[] findDigits(BigInteger i, short[] current) {

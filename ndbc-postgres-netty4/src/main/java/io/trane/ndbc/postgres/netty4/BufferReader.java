@@ -107,6 +107,21 @@ public class BufferReader implements io.trane.ndbc.proto.BufferReader {
   }
   
   @Override
+  public Long readLong() {
+    return bb.readLong();
+  }
+  
+  @Override
+  public Float readFloat() {
+    return bb.readFloat();
+  }
+  
+  @Override
+  public Double readDouble() {
+    return bb.readDouble();
+  }
+  
+  @Override
   public void retain() {
     bb.retain();
   }

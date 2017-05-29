@@ -2,10 +2,11 @@ package io.trane.ndbc.postgres.encoding;
 
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
+import io.trane.ndbc.value.Value;
 
-public interface Encoding<T> {
+public interface Encoding<V extends Value<?>> {
 
-  default void encode(Format format, T value, BufferWriter writer) {
+  default void encode(Format format, V value, BufferWriter writer) {
     if (format == Format.TEXT)
       writer.writeString(encodeText(value));
     else if (format == Format.BINARY)
@@ -14,7 +15,7 @@ public interface Encoding<T> {
       throw new IllegalStateException("Invalid format: " + format);
   }
 
-  default T decode(Format format, BufferReader reader) {
+  default V decode(Format format, BufferReader reader) {
     if (format == Format.TEXT)
       return decodeText(reader.readString());
     else if (format == Format.BINARY)
@@ -23,11 +24,11 @@ public interface Encoding<T> {
       throw new IllegalStateException("Invalid format: " + format);
   }
 
-  String encodeText(T value);
+  String encodeText(V value);
 
-  T decodeText(String value);
+  V decodeText(String value);
 
-  void encodeBinary(T value, BufferWriter b);
+  void encodeBinary(V value, BufferWriter b);
 
-  T decodeBinary(BufferReader b);
+  V decodeBinary(BufferReader b);
 }

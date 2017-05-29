@@ -1,7 +1,9 @@
 package io.trane.ndbc.value;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public abstract class Value<T> {
 
@@ -94,5 +96,17 @@ public abstract class Value<T> {
 
   public LocalDateTime getLocalDateTime() {
     return cantRead("LocalDateTime");
+  }
+
+  public byte[] getByteArray() {
+    return cantRead("ByteArray");
+  }
+
+  public LocalDate getLocalDate() {
+    return cantRead("LocalDate");
+  }
+
+  public LocalTime getLocalTime() {
+    return cantRead("LocalTime");
   }
 }

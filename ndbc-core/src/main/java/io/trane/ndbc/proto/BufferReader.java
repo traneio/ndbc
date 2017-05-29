@@ -39,4 +39,10 @@ public interface BufferReader {
   void retain();
 
   void release();
+
+  Long readLong();
+
+  Float readFloat();
+
+  Double readDouble();
 }

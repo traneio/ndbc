@@ -25,4 +25,10 @@ public interface BufferWriter {
   void writeLengthNoSelf(int position);
   
   int writerIndex();
+
+  void writeLong(Long value);
+
+  void writeFloat(Float value);
+
+  void writeDouble(Double value);
 }
