@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.nio.charset.Charset;
 import java.time.Duration;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -24,11 +24,11 @@ public class DataSourceTest {
   private Config config = new Config("io.trane.ndbc.postgres.netty4.DataSourceSupplier",
       Charset.forName("UTF-8"), "postgres",
       Optional.of("postgres"), Optional.of("postgres"),
-      "localhost", 5432, 10, 10, Duration.ofDays(1), new HashMap<>());
+      "localhost", 5432, 10, 10, Duration.ofDays(1), new HashSet<>());
 
   private DataSource ds = DataSource.fromConfig(config);
 
-  private Duration timeout = Duration.ofSeconds(1);
+  private Duration timeout = Duration.ofSeconds(9999);
 
   @Before
   public void recreateSchema() throws CheckedFutureException {

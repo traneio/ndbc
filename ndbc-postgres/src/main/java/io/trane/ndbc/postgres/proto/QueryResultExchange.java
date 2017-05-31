@@ -50,7 +50,10 @@ public final class QueryResultExchange {
       RowDescription.Field field = fields[i];
       positions.put(field.name, i);
       BufferReader reader = values[i];
-      columns[i] = encoding.decode(field.dataType, Format.fromCode(field.formatCode), reader);
+      if(reader == null)
+        columns[i] = Value.NULL;
+      else
+        columns[i] = encoding.decode(field.dataType, Format.fromCode(field.formatCode), reader);
       reader.release();
     }
 

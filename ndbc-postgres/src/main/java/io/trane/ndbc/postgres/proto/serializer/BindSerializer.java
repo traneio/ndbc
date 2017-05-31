@@ -29,7 +29,7 @@ public class BindSerializer {
     b.writeShort((short) msg.fields.length);
     for (int i = 0; i < msg.fields.length; i++) {
       Value<?> field = msg.fields[i];
-      if (field.isNull())
+      if (field == null || field.isNull())
         b.writeInt(-1);
       else {
         int lengthPosition = b.writerIndex();

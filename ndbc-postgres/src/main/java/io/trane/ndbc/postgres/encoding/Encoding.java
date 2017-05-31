@@ -1,11 +1,13 @@
 package io.trane.ndbc.postgres.encoding;
 
+import java.util.Set;
+
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.Value;
 
 public interface Encoding<V extends Value<?>> {
-
+  
   default void encode(Format format, V value, BufferWriter writer) {
     if (format == Format.TEXT)
       writer.writeString(encodeText(value));
@@ -23,6 +25,10 @@ public interface Encoding<V extends Value<?>> {
     else
       throw new IllegalStateException("Invalid format: " + format);
   }
+  
+  Set<Integer> oids();
+  
+  Class<V> valueClass();
 
   String encodeText(V value);
 

@@ -1,10 +1,23 @@
 package io.trane.ndbc.postgres.encoding;
 
+import java.util.Set;
+
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
+import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.ShortValue;
 
 class ShortEncoding implements Encoding<ShortValue> {
+  
+  @Override
+  public Set<Integer> oids() {
+    return Collections.toImmutableSet(Oid.INT2);
+  }
+  
+  @Override
+  public Class<ShortValue> valueClass() {
+    return ShortValue.class;
+  }
 
   @Override
   public String encodeText(ShortValue value) {

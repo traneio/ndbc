@@ -53,8 +53,7 @@ public class DefaultDataSource implements DataSource {
       });
   }
 
-  @Override
-  public final <R> Future<R> withConnection(Function<Connection, Future<R>> f) {
+  private final <R> Future<R> withConnection(Function<Connection, Future<R>> f) {
     return currentTransation.get().map(f).orElseGet(() -> pool.apply(f));
   }
 

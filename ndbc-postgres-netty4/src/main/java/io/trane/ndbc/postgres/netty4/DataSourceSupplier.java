@@ -2,6 +2,7 @@ package io.trane.ndbc.postgres.netty4;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -11,6 +12,7 @@ import io.trane.ndbc.Connection;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.datasource.DefaultDataSource;
 import io.trane.ndbc.datasource.Pool;
+import io.trane.ndbc.postgres.encoding.Encoding;
 import io.trane.ndbc.postgres.encoding.ValueEncoding;
 import io.trane.ndbc.postgres.proto.ExtendedExchange;
 import io.trane.ndbc.postgres.proto.ExtendedExecuteExchange;
@@ -39,13 +41,24 @@ public class DataSourceSupplier implements Supplier<DataSource> {
   private final Config config;
   private final Supplier<Future<Channel>> channelSupplier;
   private final StartupExchange startup = new StartupExchange();
-  private final ValueEncoding encoding = new ValueEncoding();
+  private final ValueEncoding encoding;
 
   public DataSourceSupplier(Config config) {
     this.config = config;
+    this.encoding = new ValueEncoding(
+        config.encodings.stream().map(this::loadEncoding).collect(Collectors.toSet()));
     this.channelSupplier = new ChannelSupplier(config.charset, createSerializer(), new Parser(),
         new NioEventLoopGroup(0, new DefaultThreadFactory("ndbc-netty4", true)), config.host,
         config.port);
+  }
+
+  private final Encoding<?> loadEncoding(Class<?> cls) {
+    try {
+      return (Encoding<?>) cls.newInstance();
+    } catch (InstantiationException | IllegalAccessException e) {
+      throw new RuntimeException("Can't load encoding class " + cls + ". Make sure to provide an empty constructor.",
+          e);
+    }
   }
 
   private final Serializer createSerializer() {
@@ -60,7 +73,8 @@ public class DataSourceSupplier implements Supplier<DataSource> {
     ExtendedExchange extendedExchange = new ExtendedExchange();
     return () -> channelSupplier.get()
         .flatMap(channel -> startup.apply(config.charset, config.user, config.password, config.database).run(channel)
-            .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, backendKeyData, new SimpleQueryExchange(queryResultExchange),
+            .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, backendKeyData,
+                new SimpleQueryExchange(queryResultExchange),
                 new SimpleExecuteExchange(), new ExtendedQueryExchange(queryResultExchange, extendedExchange),
                 new ExtendedExecuteExchange(extendedExchange))));
   }

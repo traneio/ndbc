@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import io.trane.future.Future;
@@ -52,7 +51,5 @@ public interface DataSource {
 
   <T> Future<T> transactional(Supplier<Future<T>> supplier);
 
-  <T> Future<T> withConnection(Function<Connection, Future<T>> supplier);
-  
   Future<Void> close();
 }

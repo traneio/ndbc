@@ -1,12 +1,24 @@
 package io.trane.ndbc.postgres.encoding;
 
 import java.time.LocalTime;
+import java.util.Set;
 
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
+import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.LocalTimeValue;
 
 class LocalTimeEncoding implements Encoding<LocalTimeValue> {
+  
+  @Override
+  public Set<Integer> oids() {
+    return Collections.toImmutableSet(Oid.TIMESTAMP);
+  }
+  
+  @Override
+  public Class<LocalTimeValue> valueClass() {
+    return LocalTimeValue.class;
+  }
 
   @Override
   public String encodeText(LocalTimeValue value) {
