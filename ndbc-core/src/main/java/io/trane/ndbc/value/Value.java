@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetTime;
 
 public abstract class Value<T> {
 
@@ -108,5 +109,9 @@ public abstract class Value<T> {
 
   public LocalTime getLocalTime() {
     return cantRead("LocalTime");
+  }
+
+  public OffsetTime getOffsetTime() {
+    return cantRead("OffsetTime");
   }
 }

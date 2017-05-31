@@ -11,18 +11,10 @@ import io.trane.ndbc.value.Value;
 
 public class ValueEncoding {
 
-  private static final Set<Encoding<?>> defaultEncodings = Collections.toImmutableSet(
-      new BigDecimalEncoding(),
-      new BooleanEncoding(),
-      new ByteArrayEncoding(),
-      new DoubleEncoding(),
-      new FloatEncoding(),
-      new IntegerEncoding(),
-      new LocalDateEncoding(),
-      new LocalTimeEncoding(),
-      new LongEncoding(),
-      new ShortEncoding(),
-      new StringEncoding());
+  private static final Set<Encoding<?>> defaultEncodings = Collections.toImmutableSet(new BigDecimalEncoding(),
+      new BooleanEncoding(), new ByteArrayEncoding(), new DoubleEncoding(), new FloatEncoding(), new IntegerEncoding(),
+      new LocalDateEncoding(), new LocalDateTimeEncoding(), new LocalTimeEncoding(), new LongEncoding(),
+      new OffsetTimeEncoding(), new ShortEncoding(), new StringEncoding());
 
   private Map<Class<?>, Encoding<?>> byValueClass;
   private Map<Integer, Encoding<?>> byOid;
