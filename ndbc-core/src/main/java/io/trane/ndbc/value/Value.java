@@ -26,7 +26,7 @@ public abstract class Value<T> {
   }
 
   private <U> U cantRead(String type) {
-    throw new UnsupportedOperationException("Can't read " + get() + "as " + type);
+    throw new UnsupportedOperationException("Can't read " + get() + " as " + type);
   }
 
   @Override

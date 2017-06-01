@@ -1,7 +1,10 @@
 package io.trane.ndbc;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import io.trane.ndbc.value.Value;
 
@@ -16,51 +19,20 @@ public final class Row {
     this.columns = columns;
   }
 
-  public String getString(int position) {
-    return getValue(position).getString();
+  public Value<?> column(int columnPosition) {
+    return columns[columnPosition];
   }
 
-  public String getString(String name) {
-    return getValue(name).getString();
+  public Value<?> column(String columnName) {
+    return columns[positions.get(columnName)];
   }
 
-  public Optional<String> getOptionalString(int position) {
-    return Optional.ofNullable(getString(position));
+  public List<String> columnNames() {
+    return Collections.unmodifiableList(positions.entrySet().stream().sorted(Map.Entry.comparingByValue())
+        .map(Map.Entry::getKey).collect(Collectors.toList()));
   }
 
-  public Optional<String> getOptionalString(String name) {
-    return Optional.ofNullable(getString(name));
-  }
-
-  public Integer getInteger(int position) {
-    return getValue(position).getInteger();
-  }
-
-  public Integer getInteger(String name) {
-    return getValue(name).getInteger();
-  }
-
-  public Optional<Integer> getOptionalInteger(int position) {
-    return Optional.ofNullable(getInteger(position));
-  }
-
-  public Optional<Integer> getOptionalInteger(String name) {
-    return Optional.ofNullable(getInteger(name));
-  }
-
-  public boolean isNull(int position) {
-    return getValue(position).isNull();
-  }
-
-  public boolean isNull(String name) {
-    return getValue(name).isNull();
-  }
-
-  public Value<?> getValue(int position) {
-    return columns[position];
-  }
-
-  public Value<?> getValue(String name) {
-    return columns[positions.get(name)];
+  public List<Value<?>> columns() {
+    return Collections.unmodifiableList(Arrays.asList(columns));
   }
 }

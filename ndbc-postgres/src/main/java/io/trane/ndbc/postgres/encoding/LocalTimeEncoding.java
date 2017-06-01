@@ -12,7 +12,7 @@ class LocalTimeEncoding implements Encoding<LocalTimeValue> {
   
   @Override
   public Set<Integer> oids() {
-    return Collections.toImmutableSet(Oid.TIMESTAMP);
+    return Collections.toImmutableSet(Oid.TIME);
   }
   
   @Override

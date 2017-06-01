@@ -3,7 +3,6 @@ package io.trane.ndbc.postgres.netty4;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.time.Duration;
 import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -14,25 +13,10 @@ import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
 import io.trane.future.Future;
-import io.trane.ndbc.Config;
-import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 
-public class DataSourceTest {
-
-  private Config config = Config
-      .apply(
-          "io.trane.ndbc.postgres.netty4.DataSourceSupplier",
-          "localhost", 5432, "postgres")
-      .password("postgres")
-      .poolValidationInterval(Duration.ofSeconds(1))
-      .poolMaxSize(10)
-      .poolMaxWaiters(10);
-
-  private DataSource ds = DataSource.fromConfig(config);
-
-  private Duration timeout = Duration.ofSeconds(9999);
+public class DataSourceTest extends TestEnv {
 
   @Before
   public void recreateSchema() throws CheckedFutureException {
@@ -50,7 +34,7 @@ public class DataSourceTest {
   public void simpleQuery() throws CheckedFutureException {
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
 
-    assertEquals(rows.next().getString(0), "s");
+    assertEquals(rows.next().column(0).getString(), "s");
     assertFalse(rows.hasNext());
   }
 
@@ -59,7 +43,7 @@ public class DataSourceTest {
     PreparedStatement ps = PreparedStatement.apply("SELECT * FROM test");
 
     Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
-    assertEquals(rows.next().getString(0), "s");
+    assertEquals(rows.next().column(0).getString(), "s");
     assertFalse(rows.hasNext());
   }
 
@@ -69,7 +53,7 @@ public class DataSourceTest {
         .bind("s");
 
     Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
-    assertEquals(rows.next().getString(0), "s");
+    assertEquals(rows.next().column(0).getString(), "s");
     assertFalse(rows.hasNext());
   }
 
@@ -78,8 +62,8 @@ public class DataSourceTest {
     ds.execute("INSERT INTO test VALUES ('u')");
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
-    assertEquals(rows.next().getString(0), "s");
-    assertEquals(rows.next().getString(0), "u");
+    assertEquals(rows.next().column(0).getString(), "s");
+    assertEquals(rows.next().column(0).getString(), "u");
     assertFalse(rows.hasNext());
   }
 
@@ -88,7 +72,7 @@ public class DataSourceTest {
     ds.execute("UPDATE test SET s = 'u'");
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
-    assertEquals(rows.next().getString(0), "u");
+    assertEquals(rows.next().column(0).getString(), "u");
     assertFalse(rows.hasNext());
   }
 
@@ -107,8 +91,8 @@ public class DataSourceTest {
     ds.execute(ps).get(timeout);
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
-    assertEquals(rows.next().getString(0), "s");
-    assertEquals(rows.next().getString(0), "u");
+    assertEquals(rows.next().column(0).getString(), "s");
+    assertEquals(rows.next().column(0).getString(), "u");
     assertFalse(rows.hasNext());
   }
 
@@ -119,7 +103,7 @@ public class DataSourceTest {
     ds.execute(ps).get(timeout);
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
-    assertEquals(rows.next().getString(0), "u");
+    assertEquals(rows.next().column(0).getString(), "u");
     assertFalse(rows.hasNext());
   }
 
@@ -140,8 +124,8 @@ public class DataSourceTest {
     ds.execute(ps).get(timeout);
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
-    assertEquals(rows.next().getString(0), "s");
-    assertEquals(rows.next().getString(0), "u");
+    assertEquals(rows.next().column(0).getString(), "s");
+    assertEquals(rows.next().column(0).getString(), "u");
     assertFalse(rows.hasNext());
   }
 
@@ -152,7 +136,7 @@ public class DataSourceTest {
     ds.execute(ps).get(timeout);
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
-    assertEquals(rows.next().getString(0), "u");
+    assertEquals(rows.next().column(0).getString(), "u");
     assertFalse(rows.hasNext());
   }
 
