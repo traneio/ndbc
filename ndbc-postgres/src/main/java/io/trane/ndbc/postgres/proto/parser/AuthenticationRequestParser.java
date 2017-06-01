@@ -39,8 +39,9 @@ class AuthenticationRequestParser {
       return authenticationSSPI;
     case 8:
       new AuthenticationGSSContinue(b.readBytes());
+    default:
+      throw new IllegalStateException("Invalid authentication request type");
     }
-    return null; // TODO
   }
 
 }

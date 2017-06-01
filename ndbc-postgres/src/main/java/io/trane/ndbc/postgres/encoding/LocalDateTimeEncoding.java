@@ -5,14 +5,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoField;
-import java.time.temporal.JulianFields;
 import java.util.Set;
 
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.LocalDateTimeValue;
-import io.trane.ndbc.value.LocalDateValue;
 
 class LocalDateTimeEncoding implements Encoding<LocalDateTimeValue> {
 

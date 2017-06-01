@@ -20,6 +20,7 @@ import io.trane.future.Future;
 import io.trane.future.Promise;
 import io.trane.ndbc.postgres.proto.parser.Parser;
 import io.trane.ndbc.postgres.proto.serializer.Serializer;
+import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.ClientMessage;
 
 public class ChannelSupplier implements Supplier<Future<Channel>> {
@@ -43,11 +44,11 @@ public class ChannelSupplier implements Supplier<Future<Channel>> {
   }
 
   public final Future<Channel> get() {
-    Channel channel = new Channel();
+    NettyChannel channel = new NettyChannel();
     return bootstrap(channel).map(v -> channel);
   }
 
-  private final Future<Void> bootstrap(Channel channel) {
+  private final Future<Void> bootstrap(NettyChannel channel) {
     Promise<Void> p = Promise.apply();
     new Bootstrap()
         .group(eventLoopGroup)

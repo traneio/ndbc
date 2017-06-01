@@ -11,7 +11,7 @@ import io.trane.future.Promise;
 import io.trane.ndbc.proto.ClientMessage;
 import io.trane.ndbc.proto.ServerMessage;
 
-public class Channel extends SimpleChannelInboundHandler<ServerMessage> implements io.trane.ndbc.proto.Channel {
+public class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> implements io.trane.ndbc.proto.Channel {
 
   private Promise<ChannelHandlerContext> ctx = Promise.apply();
   private AtomicReference<Optional<Promise<ServerMessage>>> nextMessagePromise = new AtomicReference<>(

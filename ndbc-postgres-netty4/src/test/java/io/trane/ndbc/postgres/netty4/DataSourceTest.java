@@ -3,17 +3,17 @@ package io.trane.ndbc.postgres.netty4;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.nio.charset.Charset;
 import java.time.Duration;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
+import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
@@ -21,10 +21,14 @@ import io.trane.ndbc.Row;
 
 public class DataSourceTest {
 
-  private Config config = new Config("io.trane.ndbc.postgres.netty4.DataSourceSupplier",
-      Charset.forName("UTF-8"), "postgres",
-      Optional.of("postgres"), Optional.of("postgres"),
-      "localhost", 5432, 10, 10, Duration.ofDays(1), new HashSet<>());
+  private Config config = Config
+      .apply(
+          "io.trane.ndbc.postgres.netty4.DataSourceSupplier",
+          "localhost", 5432, "postgres")
+      .password("postgres")
+      .poolValidationInterval(Duration.ofSeconds(1))
+      .poolMaxSize(10)
+      .poolMaxWaiters(10);
 
   private DataSource ds = DataSource.fromConfig(config);
 
@@ -160,5 +164,17 @@ public class DataSourceTest {
 
     Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
     assertFalse(rows.hasNext());
+  }
+
+  @Test(expected = CheckedFutureException.class)
+  public void cancellation() throws CheckedFutureException {
+    ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    try {
+      Future<Integer> f = ds.execute("SELECT pg_sleep(999)");
+      f.raise(new RuntimeException());
+      f.get(timeout);
+    } finally {
+      scheduler.shutdown();
+    }
   }
 }

@@ -35,6 +35,7 @@ import io.trane.ndbc.postgres.proto.serializer.Serializer;
 import io.trane.ndbc.postgres.proto.serializer.StartupMessageSerializer;
 import io.trane.ndbc.postgres.proto.serializer.SyncSerializer;
 import io.trane.ndbc.postgres.proto.serializer.TerminateSerializer;
+import io.trane.ndbc.proto.Channel;
 
 public class DataSourceSupplier implements Supplier<DataSource> {
 
@@ -46,17 +47,17 @@ public class DataSourceSupplier implements Supplier<DataSource> {
   public DataSourceSupplier(Config config) {
     this.config = config;
     this.encoding = new ValueEncoding(
-        config.encodings.stream().map(this::loadEncoding).collect(Collectors.toSet()));
+        config.encodingClasses.stream().map(this::loadEncoding).collect(Collectors.toSet()));
     this.channelSupplier = new ChannelSupplier(config.charset, createSerializer(), new Parser(),
         new NioEventLoopGroup(0, new DefaultThreadFactory("ndbc-netty4", true)), config.host,
         config.port);
   }
 
-  private final Encoding<?> loadEncoding(Class<?> cls) {
+  private final Encoding<?> loadEncoding(String cls) {
     try {
-      return (Encoding<?>) cls.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
-      throw new RuntimeException("Can't load encoding class " + cls + ". Make sure to provide an empty constructor.",
+      return (Encoding<?>) Class.forName(cls).newInstance();
+    } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+      throw new RuntimeException("Can't load encoding " + cls + ". Make sure to provide an empty constructor.",
           e);
     }
   }
@@ -73,7 +74,7 @@ public class DataSourceSupplier implements Supplier<DataSource> {
     ExtendedExchange extendedExchange = new ExtendedExchange();
     return () -> channelSupplier.get()
         .flatMap(channel -> startup.apply(config.charset, config.user, config.password, config.database).run(channel)
-            .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, backendKeyData,
+            .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, channelSupplier, backendKeyData,
                 new SimpleQueryExchange(queryResultExchange),
                 new SimpleExecuteExchange(), new ExtendedQueryExchange(queryResultExchange, extendedExchange),
                 new ExtendedExecuteExchange(extendedExchange))));
@@ -81,7 +82,7 @@ public class DataSourceSupplier implements Supplier<DataSource> {
 
   private Pool<Connection> createPool() {
     return Pool.apply(createConnection(), config.poolMaxSize, config.poolMaxWaiters, config.poolValidationInterval,
-        new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("pool-scheduler", true)));
+        new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("ndbc-pool-scheduler", true)));
   }
 
   @Override
