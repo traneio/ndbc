@@ -126,15 +126,15 @@ public class EncodingTest extends TestEnv {
     assertEquals(query(select).getLong(), value);
   }
 
-//  @Test
-//  public void offsetTime() throws CheckedFutureException {
-//    createTable("timetz");
-//    OffsetTime value = OffsetTime.now();
-//
-//    execute(insert.bind(value));
-//
-//    assertEquals(query(select).getOffsetTime(), value);
-//  }
+  //  @Test
+  //  public void offsetTime() throws CheckedFutureException {
+  //    createTable("timetz");
+  //    OffsetTime value = OffsetTime.now();
+  //
+  //    execute(insert.bind(value));
+  //
+  //    assertEquals(query(select).getOffsetTime(), value);
+  //  }
 
   @Test
   public void _short() throws CheckedFutureException {

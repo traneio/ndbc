@@ -1,5 +1,8 @@
 package io.trane.ndbc;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Collections;
@@ -15,6 +18,14 @@ public class Config {
 
   public static Config fromSystemProperties(String prefix) {
     return fromProperties(prefix, System.getProperties());
+  }
+
+  public static Config fromPropertiesFile(String prefix, String file) throws IOException {
+    Properties properties = new Properties();
+    FileInputStream fis = new FileInputStream(file);
+    properties.load(fis);
+    fis.close();
+    return fromProperties(prefix, properties);
   }
 
   public static Config fromProperties(String prefix, Properties properties) {
@@ -122,8 +133,8 @@ public class Config {
   }
 
   public final Config database(String database) {
-    return new Config(dataSourceSupplierClass, charset, user, password, Optional.of(database), host, port,
-        poolMaxSize, poolMaxWaiters, poolValidationInterval, encodingClasses);
+    return new Config(dataSourceSupplierClass, charset, user, password, Optional.of(database), host, port, poolMaxSize,
+        poolMaxWaiters, poolValidationInterval, encodingClasses);
   }
 
   public final Config database(Optional<String> database) {
@@ -131,8 +142,8 @@ public class Config {
   }
 
   public final Config poolMaxSize(int poolMaxSize) {
-    return new Config(dataSourceSupplierClass, charset, user, password, database, host, port,
-        poolMaxSize, poolMaxWaiters, poolValidationInterval, encodingClasses);
+    return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
+        poolMaxWaiters, poolValidationInterval, encodingClasses);
   }
 
   public final Config poolMaxSize(Optional<Integer> poolMaxSize) {
@@ -140,8 +151,8 @@ public class Config {
   }
 
   public final Config poolMaxWaiters(int poolMaxWaiters) {
-    return new Config(dataSourceSupplierClass, charset, user, password, database, host, port,
-        poolMaxSize, poolMaxWaiters, poolValidationInterval, encodingClasses);
+    return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
+        poolMaxWaiters, poolValidationInterval, encodingClasses);
   }
 
   public final Config poolMaxWaiters(Optional<Integer> poolMaxWaiters) {
@@ -149,8 +160,8 @@ public class Config {
   }
 
   public final Config poolValidationInterval(Duration poolValidationInterval) {
-    return new Config(dataSourceSupplierClass, charset, user, password, database, host, port,
-        poolMaxSize, poolMaxWaiters, poolValidationInterval, encodingClasses);
+    return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
+        poolMaxWaiters, poolValidationInterval, encodingClasses);
   }
 
   public final Config poolValidationInterval(Optional<Duration> poolValidationInterval) {
@@ -158,8 +169,8 @@ public class Config {
   }
 
   public final Config encodingClasses(Set<String> encodingClasses) {
-    return new Config(dataSourceSupplierClass, charset, user, password, database, host, port,
-        poolMaxSize, poolMaxWaiters, poolValidationInterval, Collections.unmodifiableSet(encodingClasses));
+    return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
+        poolMaxWaiters, poolValidationInterval, Collections.unmodifiableSet(encodingClasses));
   }
 
   public final Config encodingClasses(Optional<Set<String>> encodingClasses) {
@@ -170,7 +181,7 @@ public class Config {
     Set<String> encodingClasses = new HashSet<>();
     encodingClasses.addAll(encodingClasses);
     encodingClasses.add(encoding);
-    return new Config(dataSourceSupplierClass, charset, user, password, database, host, port,
-        poolMaxSize, poolMaxWaiters, poolValidationInterval, encodingClasses);
+    return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
+        poolMaxWaiters, poolValidationInterval, encodingClasses);
   }
 }
