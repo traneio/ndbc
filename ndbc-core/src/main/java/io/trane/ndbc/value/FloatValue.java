@@ -1,13 +1,13 @@
 package io.trane.ndbc.value;
 
-public class FloatValue extends Value<Float> {
+public final class FloatValue extends Value<Float> {
 
-  public FloatValue(Float value) {
+  public FloatValue(final Float value) {
     super(value);
   }
 
   @Override
-  public Float getFloat() {
+  public final Float getFloat() {
     return get();
   }
 }

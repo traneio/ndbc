@@ -10,9 +10,10 @@ import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.BigDecimalValue;
 
 /**
- * Java version of finagle-postgres' Numerics (https://github.com/finagle/finagle-postgres/blob/69ab3983d6acc6aa4a8e029c96cc1cb224d6c40d/src/main/scala/com/twitter/finagle/postgres/values/Numerics.scala)
+ * Java version of finagle-postgres' Numerics
+ * (https://github.com/finagle/finagle-postgres/blob/69ab3983d6acc6aa4a8e029c96cc1cb224d6c40d/src/main/scala/com/twitter/finagle/postgres/values/Numerics.scala)
  */
-class BigDecimalEncoding implements Encoding<BigDecimalValue> {
+final class BigDecimalEncoding implements Encoding<BigDecimalValue> {
 
   private static final BigInteger BI_BASE = BigInteger.valueOf(10000);
   private static final short[] EMPTY_SHORT_ARRAY = new short[0];
@@ -24,34 +25,34 @@ class BigDecimalEncoding implements Encoding<BigDecimalValue> {
   private static final BigDecimalValue ZERO = new BigDecimalValue(new BigDecimal(0));
 
   @Override
-  public Set<Integer> oids() {
+  public final Set<Integer> oids() {
     return Collections.toImmutableSet(Oid.NUMERIC);
   }
-  
+
   @Override
-  public Class<BigDecimalValue> valueClass() {
+  public final Class<BigDecimalValue> valueClass() {
     return BigDecimalValue.class;
   }
-  
+
   @Override
-  public String encodeText(BigDecimalValue value) {
+  public final String encodeText(final BigDecimalValue value) {
     return value.get().toPlainString();
   }
 
   @Override
-  public BigDecimalValue decodeText(String value) {
+  public final BigDecimalValue decodeText(final String value) {
     return new BigDecimalValue(new BigDecimal(value));
   }
 
   @Override
-  public void encodeBinary(BigDecimalValue value, BufferWriter b) {
-    BigDecimal minimized = value.get().stripTrailingZeros();
-    BigInteger unscaled = minimized.unscaledValue();
-    int sign = minimized.signum();
+  public final void encodeBinary(final BigDecimalValue value, final BufferWriter b) {
+    final BigDecimal minimized = value.get().stripTrailingZeros();
+    final BigInteger unscaled = minimized.unscaledValue();
+    final int sign = minimized.signum();
 
-    int beforeDecimal = minimized.precision() - minimized.scale();
+    final int beforeDecimal = minimized.precision() - minimized.scale();
     // the decimal point must align on a base-10000 digit
-    int padZeroes = 4 - (minimized.scale() % 4);
+    final int padZeroes = 4 - minimized.scale() % 4;
 
     BigInteger paddedUnscaled;
     if (padZeroes == 0)
@@ -59,7 +60,7 @@ class BigDecimalEncoding implements Encoding<BigDecimalValue> {
     else
       paddedUnscaled = unscaled.multiply(BigInteger.valueOf(10).pow(padZeroes));
 
-    short[] digits = findDigits(paddedUnscaled, EMPTY_SHORT_ARRAY);
+    final short[] digits = findDigits(paddedUnscaled, EMPTY_SHORT_ARRAY);
 
     int weight;
     if (digits.length == 0) {
@@ -84,18 +85,18 @@ class BigDecimalEncoding implements Encoding<BigDecimalValue> {
   }
 
   @Override
-  public BigDecimalValue decodeBinary(BufferReader b) {
+  public final BigDecimalValue decodeBinary(final BufferReader b) {
 
-    int len = getUnsignedShort(b);
-    short weight = b.readShort();
-    int sign = getUnsignedShort(b);
-    int displayScale = getUnsignedShort(b);
+    final int len = getUnsignedShort(b);
+    final short weight = b.readShort();
+    final int sign = getUnsignedShort(b);
+    final int displayScale = getUnsignedShort(b);
 
     // digits are actually unsigned base-10000 numbers (not straight up bytes)
-    short[] digits = new short[len];
-    BigDecimal[] bdDigits = new BigDecimal[digits.length];
+    final short[] digits = new short[len];
+    final BigDecimal[] bdDigits = new BigDecimal[digits.length];
     for (int i = 0; i < len; i++) {
-      short value = b.readShort();
+      final short value = b.readShort();
       digits[i] = value;
       bdDigits[i] = new BigDecimal(value);
     }
@@ -115,8 +116,8 @@ class BigDecimalEncoding implements Encoding<BigDecimalValue> {
       else
         firstDigitSize = 4;
 
-      int scaleFactor = weight * EXPONENT + firstDigitSize;
-      BigDecimal unsigned = unscaled.movePointLeft(unscaled.precision()).movePointRight(scaleFactor)
+      final int scaleFactor = weight * EXPONENT + firstDigitSize;
+      final BigDecimal unsigned = unscaled.movePointLeft(unscaled.precision()).movePointRight(scaleFactor)
           .setScale(displayScale);
 
       switch (sign) {
@@ -135,10 +136,10 @@ class BigDecimalEncoding implements Encoding<BigDecimalValue> {
       return ZERO;
   }
 
-  private short[] findDigits(BigInteger i, short[] current) {
+  private short[] findDigits(final BigInteger i, final short[] current) {
     if (i.signum() != 0) {
-      BigInteger[] array = i.divideAndRemainder(BI_BASE);
-      short[] next = new short[current.length + 1];
+      final BigInteger[] array = i.divideAndRemainder(BI_BASE);
+      final short[] next = new short[current.length + 1];
       next[0] = (short) array[1].intValue();
       System.arraycopy(current, 0, next, 1, current.length);
       return findDigits(array[0], next);
@@ -146,9 +147,9 @@ class BigDecimalEncoding implements Encoding<BigDecimalValue> {
       return current;
   }
 
-  private int getUnsignedShort(BufferReader b) {
-    int high = (int) b.readByte();
-    byte low = b.readByte();
-    return (high << 8) | low;
+  private int getUnsignedShort(final BufferReader b) {
+    final int high = b.readByte();
+    final byte low = b.readByte();
+    return high << 8 | low;
   }
 }

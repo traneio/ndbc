@@ -15,7 +15,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.flow.FlowControlHandler;
-import io.netty.util.concurrent.GenericFutureListener;
 import io.trane.future.Future;
 import io.trane.future.Promise;
 import io.trane.ndbc.postgres.proto.parser.Parser;
@@ -23,7 +22,7 @@ import io.trane.ndbc.postgres.proto.serializer.Serializer;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.ClientMessage;
 
-public class ChannelSupplier implements Supplier<Future<Channel>> {
+public final class ChannelSupplier implements Supplier<Future<Channel>> {
 
   private final Serializer encoder;
   private final Parser decoder;
@@ -32,8 +31,8 @@ public class ChannelSupplier implements Supplier<Future<Channel>> {
   private final int port;
   private final Charset charset;
 
-  public ChannelSupplier(Charset charset, Serializer encoder, Parser decoder, EventLoopGroup eventLoopGroup, String host,
-      int port) {
+  public ChannelSupplier(final Charset charset, final Serializer encoder, final Parser decoder,
+      final EventLoopGroup eventLoopGroup, final String host, final int port) {
     super();
     this.charset = charset;
     this.encoder = encoder;
@@ -43,45 +42,33 @@ public class ChannelSupplier implements Supplier<Future<Channel>> {
     this.port = port;
   }
 
+  @Override
   public final Future<Channel> get() {
-    NettyChannel channel = new NettyChannel();
+    final NettyChannel channel = new NettyChannel();
     return bootstrap(channel).map(v -> channel);
   }
 
-  private final Future<Void> bootstrap(NettyChannel channel) {
-    Promise<Void> p = Promise.apply();
-    new Bootstrap()
-        .group(eventLoopGroup)
-        .channel(NioSocketChannel.class)
-        .option(ChannelOption.SO_KEEPALIVE, true)
-        .option(ChannelOption.AUTO_READ, false)
-        .handler(new ChannelInitializer<io.netty.channel.Channel>() {
+  private final Future<Void> bootstrap(final NettyChannel channel) {
+    final Promise<Void> p = Promise.apply();
+    new Bootstrap().group(eventLoopGroup).channel(NioSocketChannel.class).option(ChannelOption.SO_KEEPALIVE, true)
+        .option(ChannelOption.AUTO_READ, false).handler(new ChannelInitializer<io.netty.channel.Channel>() {
           @Override
-          protected void initChannel(io.netty.channel.Channel ch) throws Exception {
-            ch.pipeline().addLast(
-                new ByteToMessageDecoder() {
-                  @Override
-                  protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-                    decoder.decode(new BufferReader(charset, in)).ifPresent(out::add);
-                  }
-                },
-                new MessageToByteEncoder<ClientMessage>() {
-                  @Override
-                  protected void encode(ChannelHandlerContext ctx, ClientMessage msg, ByteBuf out) throws Exception {
-                    encoder.encode(msg, new BufferWriter(charset, out));
-                  }
-                },
-                new FlowControlHandler(),
-                channel);
+          protected void initChannel(final io.netty.channel.Channel ch) throws Exception {
+            ch.pipeline().addLast(new ByteToMessageDecoder() {
+              @Override
+              protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
+                  throws Exception {
+                decoder.decode(new BufferReader(charset, in)).ifPresent(out::add);
+              }
+            }, new MessageToByteEncoder<ClientMessage>() {
+              @Override
+              protected void encode(final ChannelHandlerContext ctx, final ClientMessage msg, final ByteBuf out)
+                  throws Exception {
+                encoder.encode(msg, new BufferWriter(charset, out));
+              }
+            }, new FlowControlHandler(), channel);
           }
-        })
-        .connect(new InetSocketAddress(host, port))
-        .addListener(new GenericFutureListener<io.netty.util.concurrent.Future<? super Void>>() {
-          @Override
-          public void operationComplete(io.netty.util.concurrent.Future<? super Void> future) throws Exception {
-            p.become(Future.VOID);
-          }
-        });
+        }).connect(new InetSocketAddress(host, port)).addListener(future -> p.become(Future.VOID));
     return p;
   }
 

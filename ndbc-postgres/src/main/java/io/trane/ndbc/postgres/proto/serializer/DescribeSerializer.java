@@ -3,9 +3,9 @@ package io.trane.ndbc.postgres.proto.serializer;
 import io.trane.ndbc.postgres.proto.Message.Describe;
 import io.trane.ndbc.proto.BufferWriter;
 
-public class DescribeSerializer {
+public final class DescribeSerializer {
 
-  public final void encode(Describe msg, BufferWriter b) {
+  public final void encode(final Describe msg, final BufferWriter b) {
     b.writeChar('D');
     b.writeInt(0);
 

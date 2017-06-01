@@ -1,12 +1,12 @@
 package io.trane.ndbc.value;
 
-public class StringValue extends Value<String> {
-  public StringValue(String value) {
+public final class StringValue extends Value<String> {
+  public StringValue(final String value) {
     super(value);
   }
 
   @Override
-  public String getString() {
+  public final String getString() {
     return get();
   }
 }

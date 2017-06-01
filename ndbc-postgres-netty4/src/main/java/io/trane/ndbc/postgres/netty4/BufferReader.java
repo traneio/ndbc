@@ -4,140 +4,140 @@ import java.nio.charset.Charset;
 
 import io.netty.buffer.ByteBuf;
 
-public class BufferReader implements io.trane.ndbc.proto.BufferReader {
+public final class BufferReader implements io.trane.ndbc.proto.BufferReader {
 
   private final Charset charset;
   private final ByteBuf bb;
 
-  public BufferReader(Charset charset, ByteBuf bb) {
+  public BufferReader(final Charset charset, final ByteBuf bb) {
     super();
     this.charset = charset;
     this.bb = bb;
   }
 
   @Override
-  public int readInt() {
+  public final int readInt() {
     return bb.readInt();
   }
 
   @Override
-  public short readShort() {
+  public final short readShort() {
     return bb.readShort();
   }
 
   @Override
-  public String readCString() {
-    int stringSize = bb.bytesBefore((byte) 0);
-    String string = readString(stringSize);
+  public final String readCString() {
+    final int stringSize = bb.bytesBefore((byte) 0);
+    final String string = readString(stringSize);
     bb.skipBytes(1); // skip 0
     return string;
   }
-  
+
   @Override
-  public String readCString(int length) {
-    String string = readString(length);
+  public final String readCString(final int length) {
+    final String string = readString(length);
     bb.skipBytes(1); // 0
     return string;
   }
 
   @Override
-  public String readString() {
+  public final String readString() {
     return readString(bb.readableBytes());
   }
 
   @Override
-  public String readString(int length) {
-    byte[] b = new byte[length];
+  public final String readString(final int length) {
+    final byte[] b = new byte[length];
     bb.readBytes(b);
-    String string = new String(b, charset);
+    final String string = new String(b, charset);
     return string;
   }
 
   @Override
-  public int readableBytes() {
+  public final int readableBytes() {
     return bb.readableBytes();
   }
 
   @Override
-  public byte readByte() {
+  public final byte readByte() {
     return bb.readByte();
   }
 
   @Override
-  public byte[] readBytes() {
+  public final byte[] readBytes() {
     return readBytes(bb.readableBytes());
   }
 
   @Override
-  public byte[] readBytes(int length) {
-    byte[] bytes = new byte[length];
+  public final byte[] readBytes(final int length) {
+    final byte[] bytes = new byte[length];
     bb.readBytes(bytes);
     return bytes;
   }
 
   @Override
-  public BufferReader readSlice(int length) {
+  public final BufferReader readSlice(final int length) {
     return new BufferReader(charset, bb.readSlice(length));
   }
 
   @Override
-  public int[] readInts() {
+  public final int[] readInts() {
     return readInts(bb.readableBytes() / 4);
   }
 
   @Override
-  public int[] readInts(int length) {
-    int[] ints = new int[length];
+  public final int[] readInts(final int length) {
+    final int[] ints = new int[length];
     for (int i = 0; i < length; i++)
       ints[i] = bb.readInt();
     return ints;
   }
 
   @Override
-  public short[] readShorts() {
+  public final short[] readShorts() {
     return readShorts(bb.readableBytes() / 2);
   }
 
   @Override
-  public short[] readShorts(int length) {
-    short[] shorts = new short[length];
+  public final short[] readShorts(final int length) {
+    final short[] shorts = new short[length];
     for (int i = 0; i < length; i++)
       shorts[i] = bb.readShort();
     return shorts;
   }
-  
+
   @Override
-  public Long readLong() {
+  public final Long readLong() {
     return bb.readLong();
   }
-  
+
   @Override
-  public Float readFloat() {
+  public final Float readFloat() {
     return bb.readFloat();
   }
-  
+
   @Override
-  public Double readDouble() {
+  public final Double readDouble() {
     return bb.readDouble();
   }
-  
+
   @Override
-  public void retain() {
+  public final void retain() {
     bb.retain();
   }
-  
+
   @Override
-  public void release() {
+  public final void release() {
     bb.release();
   }
 
   @Override
-  public void markReaderIndex() {
+  public final void markReaderIndex() {
     bb.markReaderIndex();
   }
 
   @Override
-  public void resetReaderIndex() {
+  public final void resetReaderIndex() {
     bb.resetReaderIndex();
   }
 }

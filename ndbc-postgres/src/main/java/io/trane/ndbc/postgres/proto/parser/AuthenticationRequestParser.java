@@ -11,7 +11,7 @@ import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest.Authentication
 import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest.AuthenticationSSPI;
 import io.trane.ndbc.proto.BufferReader;
 
-class AuthenticationRequestParser {
+final class AuthenticationRequestParser {
 
   private final AuthenticationOk authenticationOk = new AuthenticationOk();
   private final AuthenticationKerberosV5 authenticationKerberosV5 = new AuthenticationKerberosV5();
@@ -20,7 +20,7 @@ class AuthenticationRequestParser {
   private final AuthenticationGSS authenticationGSS = new AuthenticationGSS();
   private final AuthenticationSSPI authenticationSSPI = new AuthenticationSSPI();
 
-  public final AuthenticationRequest decode(BufferReader b) {
+  public final AuthenticationRequest decode(final BufferReader b) {
     switch (b.readInt()) {
 
     case 0:

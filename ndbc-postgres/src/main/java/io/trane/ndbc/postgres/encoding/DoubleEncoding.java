@@ -7,35 +7,35 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.DoubleValue;
 
-class DoubleEncoding implements Encoding<DoubleValue> {
-  
+final class DoubleEncoding implements Encoding<DoubleValue> {
+
   @Override
-  public Set<Integer> oids() {
+  public final Set<Integer> oids() {
     return Collections.toImmutableSet(Oid.FLOAT8);
   }
-  
+
   @Override
-  public Class<DoubleValue> valueClass() {
+  public final Class<DoubleValue> valueClass() {
     return DoubleValue.class;
   }
 
   @Override
-  public String encodeText(DoubleValue value) {
+  public final String encodeText(final DoubleValue value) {
     return Double.toString(value.get());
   }
 
   @Override
-  public DoubleValue decodeText(String value) {
+  public final DoubleValue decodeText(final String value) {
     return new DoubleValue(Double.valueOf(value));
   }
 
   @Override
-  public void encodeBinary(DoubleValue value, BufferWriter b) {
+  public final void encodeBinary(final DoubleValue value, final BufferWriter b) {
     b.writeDouble(value.get());
   }
 
   @Override
-  public DoubleValue decodeBinary(BufferReader b) {
+  public final DoubleValue decodeBinary(final BufferReader b) {
     return new DoubleValue(b.readDouble());
   }
 }

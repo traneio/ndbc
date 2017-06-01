@@ -25,7 +25,7 @@ import io.trane.ndbc.proto.ClientMessage;
 public class Serializer {
 
   private static final Logger log = Logger.getLogger(Serializer.class.getName());
-  
+
   private final BindSerializer bindSerializer;
   private final CancelRequestSerializer cancelRequestSerializer;
   private final CloseSerializer closeSerializer;
@@ -38,13 +38,14 @@ public class Serializer {
   private final StartupMessageSerializer startupMessageSerializer;
   private final SyncSerializer syncSerializer;
   private final TerminateSerializer terminateSerializer;
-  
 
-  public Serializer(BindSerializer bindSerializer, CancelRequestSerializer cancelRequestSerializer,
-      CloseSerializer closeSerializer, DescribeSerializer describeSerializer, ExecuteSerializer executeSerializer,
-      FlushSerializer flushSerializer, ParseSerializer parseSerializer, QuerySerializer querySerializer,
-      PasswordMessageSerializer passwordMessageSerializer, StartupMessageSerializer startupMessageSerializer,
-      SyncSerializer syncSerializer, TerminateSerializer terminateSerializer) {
+  public Serializer(final BindSerializer bindSerializer, final CancelRequestSerializer cancelRequestSerializer,
+      final CloseSerializer closeSerializer, final DescribeSerializer describeSerializer,
+      final ExecuteSerializer executeSerializer, final FlushSerializer flushSerializer,
+      final ParseSerializer parseSerializer, final QuerySerializer querySerializer,
+      final PasswordMessageSerializer passwordMessageSerializer,
+      final StartupMessageSerializer startupMessageSerializer, final SyncSerializer syncSerializer,
+      final TerminateSerializer terminateSerializer) {
     super();
     this.bindSerializer = bindSerializer;
     this.cancelRequestSerializer = cancelRequestSerializer;
@@ -60,7 +61,7 @@ public class Serializer {
     this.terminateSerializer = terminateSerializer;
   }
 
-  public final void encode(ClientMessage msg, BufferWriter b) {
+  public final void encode(final ClientMessage msg, final BufferWriter b) {
     if (msg instanceof Bind)
       bindSerializer.encode((Bind) msg, b);
     else if (msg instanceof CancelRequest)
@@ -99,7 +100,7 @@ public class Serializer {
       log.severe("Invalid client message: " + msg);
   }
 
-  private void notImplemented(Class<? extends ClientMessage> cls) {
+  private void notImplemented(final Class<? extends ClientMessage> cls) {
     throw new UnsupportedOperationException("Decoder not implemented for class: " + cls);
   }
 }

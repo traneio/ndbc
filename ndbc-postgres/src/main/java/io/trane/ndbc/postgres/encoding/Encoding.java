@@ -7,8 +7,8 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.Value;
 
 public interface Encoding<V extends Value<?>> {
-  
-  default void encode(Format format, V value, BufferWriter writer) {
+
+  default void encode(final Format format, final V value, final BufferWriter writer) {
     if (format == Format.TEXT)
       writer.writeString(encodeText(value));
     else if (format == Format.BINARY)
@@ -17,7 +17,7 @@ public interface Encoding<V extends Value<?>> {
       throw new IllegalStateException("Invalid format: " + format);
   }
 
-  default V decode(Format format, BufferReader reader) {
+  default V decode(final Format format, final BufferReader reader) {
     if (format == Format.TEXT)
       return decodeText(reader.readString());
     else if (format == Format.BINARY)
@@ -25,9 +25,9 @@ public interface Encoding<V extends Value<?>> {
     else
       throw new IllegalStateException("Invalid format: " + format);
   }
-  
+
   Set<Integer> oids();
-  
+
   Class<V> valueClass();
 
   String encodeText(V value);

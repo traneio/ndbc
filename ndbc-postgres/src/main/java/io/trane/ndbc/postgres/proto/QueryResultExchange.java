@@ -24,59 +24,57 @@ public final class QueryResultExchange {
 
   private final ValueEncoding encoding;
 
-  public QueryResultExchange(ValueEncoding encoding) {
+  public QueryResultExchange(final ValueEncoding encoding) {
     super();
     this.encoding = encoding;
   }
 
   public final Exchange<ResultSet> apply() {
-    return Exchange.receive(rowDescription).flatMap(desc -> gatherDataRows(new ArrayList<>())
-        .map(rows -> toResultSet(desc, rows)));
+    return Exchange.receive(rowDescription)
+        .flatMap(desc -> gatherDataRows(new ArrayList<>()).map(rows -> toResultSet(desc, rows)));
   }
 
-  private final Row toRow(ValueEncoding encoding, RowDescription desc, DataRow data) {
+  private final Row toRow(final ValueEncoding encoding, final RowDescription desc, final DataRow data) {
 
-    RowDescription.Field[] fields = desc.fields;
-    BufferReader[] values = data.values;
+    final RowDescription.Field[] fields = desc.fields;
+    final BufferReader[] values = data.values;
 
-    int length = fields.length;
+    final int length = fields.length;
     if (length != values.length)
       throw new IllegalStateException("Invalid number of columns.");
 
-    Map<String, Integer> positions = new HashMap<>(length);
-    Value<?>[] columns = new Value<?>[length];
+    final Map<String, Integer> positions = new HashMap<>(length);
+    final Value<?>[] columns = new Value<?>[length];
 
     for (int i = 0; i < length; i++) {
-      RowDescription.Field field = fields[i];
+      final RowDescription.Field field = fields[i];
       positions.put(field.name, i);
-      BufferReader reader = values[i];
-      if(reader == null)
+      final BufferReader reader = values[i];
+      if (reader == null)
         columns[i] = Value.NULL;
       else
         columns[i] = encoding.decode(field.dataType, Format.fromCode(field.formatCode), reader);
       reader.release();
     }
 
-    return new Row(positions, columns);
+    return Row.apply(positions, columns);
   }
 
-  private final Exchange<List<DataRow>> gatherDataRows(List<DataRow> rows) {
+  private final Exchange<List<DataRow>> gatherDataRows(final List<DataRow> rows) {
     return Exchange.receive(PartialFunction.<ServerMessage, Exchange<List<DataRow>>>apply()
         .orElse(EmptyQueryResponse.class, msg -> Exchange.value(rows))
-        .orElse(CommandComplete.class, msg -> Exchange.value(rows))
-        .orElse(DataRow.class, row -> {
+        .orElse(CommandComplete.class, msg -> Exchange.value(rows)).orElse(DataRow.class, row -> {
           rows.add(row);
           return gatherDataRows(rows);
         }));
   }
 
-  private final ResultSet toResultSet(RowDescription desc, List<DataRow> dataRows) {
-    final Stream<Row> rows = dataRows.stream()
-        .map(data -> toRow(encoding, desc, data));
+  private final ResultSet toResultSet(final RowDescription desc, final List<DataRow> dataRows) {
+    final Stream<Row> rows = dataRows.stream().map(data -> toRow(encoding, desc, data));
     return new ResultSet(rows);
   }
 
-  private final PartialFunction<ServerMessage, Exchange<RowDescription>> rowDescription = PartialFunction.when(
-      RowDescription.class, msg -> Exchange.value(msg));
+  private final PartialFunction<ServerMessage, Exchange<RowDescription>> rowDescription = PartialFunction
+      .when(RowDescription.class, msg -> Exchange.value(msg));
 
 }

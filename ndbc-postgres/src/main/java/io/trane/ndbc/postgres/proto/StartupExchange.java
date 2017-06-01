@@ -17,19 +17,14 @@ import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.util.PartialFunction;
 
-public class StartupExchange {
+public final class StartupExchange {
 
-  public Exchange<Optional<BackendKeyData>> apply(final Charset charset, final String user,
+  public final Exchange<Optional<BackendKeyData>> apply(final Charset charset, final String user,
       final Optional<String> password, final Optional<String> database) {
-    return Exchange
-        .send(startupMessage(charset, user, database))
-        .thenReceive(
-            authenticationOk
-                .orElse(clearTextPasswordAuthentication(password))
-                .orElse(md5PasswordAuthentication(charset, user, password))
-                .orElse(unsupportedAuthentication))
-        .then(waitForBackendStartup(Optional.empty()))
-        .onFailure(ex -> Exchange.close());
+    return Exchange.send(startupMessage(charset, user, database))
+        .thenReceive(authenticationOk.orElse(clearTextPasswordAuthentication(password))
+            .orElse(md5PasswordAuthentication(charset, user, password)).orElse(unsupportedAuthentication))
+        .then(waitForBackendStartup(Optional.empty())).onFailure(ex -> Exchange.close());
   }
 
   private final PartialFunction<ServerMessage, Exchange<Void>> authenticationOk = PartialFunction
@@ -43,8 +38,7 @@ public class StartupExchange {
   }
 
   private final PartialFunction<ServerMessage, Exchange<Void>> md5PasswordAuthentication(final Charset charset,
-      final String user,
-      final Optional<String> password) {
+      final String user, final Optional<String> password) {
     return PartialFunction.when(AuthenticationRequest.AuthenticationMD5Password.class,
         msg -> withRequiredPassword(password,
             p -> Exchange.send(md5PasswordMessage(charset, user, p, msg.salt)).thenReceive(authenticationOk)));
@@ -68,14 +62,13 @@ public class StartupExchange {
         .orElse(Exchange.fail("Database requires a password but the configuration doesn't specify one."));
   }
 
-  private PasswordMessage md5PasswordMessage(final Charset charset, final String user, final String password,
+  private final PasswordMessage md5PasswordMessage(final Charset charset, final String user, final String password,
       final byte[] salt) {
     final byte[] bytes = MD5Digest.encode(user.getBytes(charset), password.getBytes(charset), salt);
     return new PasswordMessage(new String(bytes, charset));
   }
 
-  private StartupMessage startupMessage(final Charset charset, final String user,
-      final Optional<String> database) {
+  private final StartupMessage startupMessage(final Charset charset, final String user, final Optional<String> database) {
     final List<StartupMessage.Parameter> params = new ArrayList<>();
     database.ifPresent(db -> params.add(new StartupMessage.Parameter("database", db)));
     params.add(new StartupMessage.Parameter("client_encoding", charset.name()));

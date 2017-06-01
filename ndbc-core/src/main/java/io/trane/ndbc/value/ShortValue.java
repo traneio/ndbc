@@ -1,13 +1,13 @@
 package io.trane.ndbc.value;
 
-public class ShortValue extends Value<Short> {
+public final class ShortValue extends Value<Short> {
 
-  public ShortValue(Short value) {
+  public ShortValue(final Short value) {
     super(value);
   }
 
   @Override
-  public Short getShort() {
+  public final Short getShort() {
     return get();
   }
 }

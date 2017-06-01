@@ -3,9 +3,9 @@ package io.trane.ndbc.postgres.proto.serializer;
 import io.trane.ndbc.postgres.proto.Message.Parse;
 import io.trane.ndbc.proto.BufferWriter;
 
-public class ParseSerializer {
+public final class ParseSerializer {
 
-  public final void encode(Parse msg, BufferWriter b) {
+  public final void encode(final Parse msg, final BufferWriter b) {
     b.writeChar('P');
     b.writeInt(0);
 
@@ -13,7 +13,7 @@ public class ParseSerializer {
     b.writeCString(msg.query);
     b.writeShort((short) msg.parameterTypes.length);
 
-    for (int p : msg.parameterTypes)
+    for (final int p : msg.parameterTypes)
       b.writeInt(p);
 
     b.writeLength(1);

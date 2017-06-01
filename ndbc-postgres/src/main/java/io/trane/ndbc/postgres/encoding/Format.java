@@ -3,7 +3,7 @@ package io.trane.ndbc.postgres.encoding;
 public enum Format {
   TEXT((short) 0), BINARY((short) 1);
 
-  public static Format fromCode(short code) {
+  public static final Format fromCode(final short code) {
     if (code == 0)
       return TEXT;
     else if (code == 1)
@@ -14,7 +14,7 @@ public enum Format {
 
   private final short code;
 
-  private Format(short code) {
+  private Format(final short code) {
     this.code = code;
   }
 

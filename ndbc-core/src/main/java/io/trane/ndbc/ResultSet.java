@@ -7,13 +7,13 @@ public final class ResultSet implements Iterable<Row> {
 
   private final Stream<Row> stream;
 
-  public ResultSet(Stream<Row> rows) {
+  public ResultSet(final Stream<Row> rows) {
     super();
     this.stream = rows;
   }
 
   @Override
-  public Iterator<Row> iterator() {
+  public final Iterator<Row> iterator() {
     return stream.iterator();
   }
 }

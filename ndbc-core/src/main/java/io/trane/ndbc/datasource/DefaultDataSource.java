@@ -11,39 +11,39 @@ import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.ResultSet;
 
-public class DefaultDataSource implements DataSource {
+public final class DefaultDataSource implements DataSource {
 
   private final Pool<Connection> pool;
   private final Local<Connection> currentTransation;
 
-  public DefaultDataSource(Pool<Connection> pool) {
+  public DefaultDataSource(final Pool<Connection> pool) {
     super();
     this.pool = pool;
     this.currentTransation = Local.apply();
   }
 
   @Override
-  public Future<ResultSet> query(String query) {
+  public final Future<ResultSet> query(final String query) {
     return withConnection(c -> c.query(query));
   }
 
   @Override
-  public Future<Integer> execute(String statement) {
+  public final Future<Integer> execute(final String statement) {
     return withConnection(c -> c.execute(statement));
   }
 
   @Override
-  public Future<ResultSet> query(PreparedStatement query) {
+  public final Future<ResultSet> query(final PreparedStatement query) {
     return withConnection(c -> c.query(query));
   }
 
   @Override
-  public Future<Integer> execute(PreparedStatement statement) {
+  public final Future<Integer> execute(final PreparedStatement statement) {
     return withConnection(c -> c.execute(statement));
   }
 
   @Override
-  public <R> Future<R> transactional(Supplier<Future<R>> supplier) {
+  public final <R> Future<R> transactional(final Supplier<Future<R>> supplier) {
     if (currentTransation.get().isPresent())
       return Future.flatApply(supplier);
     else
@@ -53,12 +53,12 @@ public class DefaultDataSource implements DataSource {
       });
   }
 
-  private final <R> Future<R> withConnection(Function<Connection, Future<R>> f) {
+  private final <R> Future<R> withConnection(final Function<Connection, Future<R>> f) {
     return currentTransation.get().map(f).orElseGet(() -> pool.apply(f));
   }
 
   @Override
-  public Future<Void> close() {
+  public final Future<Void> close() {
     return pool.close();
   }
 }

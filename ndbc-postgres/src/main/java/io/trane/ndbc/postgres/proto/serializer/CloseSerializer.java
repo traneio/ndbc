@@ -3,9 +3,9 @@ package io.trane.ndbc.postgres.proto.serializer;
 import io.trane.ndbc.postgres.proto.Message.Close;
 import io.trane.ndbc.proto.BufferWriter;
 
-public class CloseSerializer {
+public final class CloseSerializer {
 
-  public final void encode(Close msg, BufferWriter b) {
+  public final void encode(final Close msg, final BufferWriter b) {
     b.writeChar('C');
     b.writeInt(0);
 

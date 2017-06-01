@@ -9,17 +9,17 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.Value;
 
-public class ValueEncoding {
+public final class ValueEncoding {
 
   private static final Set<Encoding<?>> defaultEncodings = Collections.toImmutableSet(new BigDecimalEncoding(),
       new BooleanEncoding(), new ByteArrayEncoding(), new DoubleEncoding(), new FloatEncoding(), new IntegerEncoding(),
       new LocalDateEncoding(), new LocalDateTimeEncoding(), new LocalTimeEncoding(), new LongEncoding(),
       new OffsetTimeEncoding(), new ShortEncoding(), new StringEncoding());
 
-  private Map<Class<?>, Encoding<?>> byValueClass;
-  private Map<Integer, Encoding<?>> byOid;
+  private final Map<Class<?>, Encoding<?>> byValueClass;
+  private final Map<Integer, Encoding<?>> byOid;
 
-  public ValueEncoding(Set<Encoding<?>> customEncodings) {
+  public ValueEncoding(final Set<Encoding<?>> customEncodings) {
     byValueClass = new HashMap<>();
     byOid = new HashMap<>();
     registerEncodings(defaultEncodings);
@@ -27,7 +27,7 @@ public class ValueEncoding {
   }
 
   @SuppressWarnings("unchecked")
-  public <T> void encode(Format format, Value<T> value, BufferWriter writer) {
+  public final <T> void encode(final Format format, final Value<T> value, final BufferWriter writer) {
     Encoding<Value<T>> enc;
     if ((enc = (Encoding<Value<T>>) byValueClass.get(value.getClass())) != null)
       enc.encode(format, value, writer);
@@ -35,7 +35,7 @@ public class ValueEncoding {
       throw new UnsupportedOperationException("Can't encode value: " + value);
   }
 
-  public Value<?> decode(int oid, Format format, BufferReader reader) {
+  public final Value<?> decode(final int oid, final Format format, final BufferReader reader) {
     Encoding<?> enc;
     if ((enc = byOid.get(oid)) != null)
       return enc.decode(format, reader);
@@ -43,10 +43,10 @@ public class ValueEncoding {
       throw new RuntimeException("Can't decode value of type " + oid);
   }
 
-  private void registerEncodings(Set<Encoding<?>> encodings) {
-    for (Encoding<?> enc : encodings) {
+  private void registerEncodings(final Set<Encoding<?>> encodings) {
+    for (final Encoding<?> enc : encodings) {
       byValueClass.put(enc.valueClass(), enc);
-      for (Integer oid : enc.oids())
+      for (final Integer oid : enc.oids())
         byOid.put(oid, enc);
     }
   }

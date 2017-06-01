@@ -1,13 +1,13 @@
 package io.trane.ndbc.value;
 
-public class BooleanValue extends Value<Boolean> {
+public final class BooleanValue extends Value<Boolean> {
 
-  public BooleanValue(Boolean value) {
+  public BooleanValue(final Boolean value) {
     super(value);
   }
 
   @Override
-  public Boolean getBoolean() {
+  public final Boolean getBoolean() {
     return get();
   }
 }

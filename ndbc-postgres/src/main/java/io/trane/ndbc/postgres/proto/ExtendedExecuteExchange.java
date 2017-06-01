@@ -7,22 +7,22 @@ import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.util.PartialFunction;
 
-public class ExtendedExecuteExchange {
+public final class ExtendedExecuteExchange {
 
   private final ExtendedExchange extendedExchange;
 
-  public ExtendedExecuteExchange(ExtendedExchange extendedExchange) {
+  public ExtendedExecuteExchange(final ExtendedExchange extendedExchange) {
     super();
     this.extendedExchange = extendedExchange;
   }
 
-  public final Exchange<Integer> apply(PreparedStatement ps) {
+  public final Exchange<Integer> apply(final PreparedStatement ps) {
     return extendedExchange.apply(ps, Exchange.receive(commandComplete.orElse(noDataAndCommandComplete)));
   }
 
-  private final PartialFunction<ServerMessage, Exchange<Integer>> commandComplete = PartialFunction.when(
-      CommandComplete.class, msg -> Exchange.value(msg.rows));
-  
-  private final PartialFunction<ServerMessage, Exchange<Integer>> noDataAndCommandComplete = PartialFunction.when(
-      NoData.class, msg -> Exchange.receive(commandComplete));
+  private final PartialFunction<ServerMessage, Exchange<Integer>> commandComplete = PartialFunction
+      .when(CommandComplete.class, msg -> Exchange.value(msg.rows));
+
+  private final PartialFunction<ServerMessage, Exchange<Integer>> noDataAndCommandComplete = PartialFunction
+      .when(NoData.class, msg -> Exchange.receive(commandComplete));
 }

@@ -12,46 +12,46 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.LocalDateTimeValue;
 
-class LocalDateTimeEncoding implements Encoding<LocalDateTimeValue> {
+final class LocalDateTimeEncoding implements Encoding<LocalDateTimeValue> {
 
   private static final long POSTGRES_EPOCH_MICROS = 946684800000000L;
 
   @Override
-  public Set<Integer> oids() {
+  public final Set<Integer> oids() {
     return Collections.toImmutableSet(Oid.TIMESTAMP);
   }
 
   @Override
-  public Class<LocalDateTimeValue> valueClass() {
+  public final Class<LocalDateTimeValue> valueClass() {
     return LocalDateTimeValue.class;
   }
 
   @Override
-  public String encodeText(LocalDateTimeValue value) {
+  public final String encodeText(final LocalDateTimeValue value) {
     return java.sql.Timestamp.valueOf(value.get()).toString();
   }
 
   @Override
-  public LocalDateTimeValue decodeText(String value) {
+  public final LocalDateTimeValue decodeText(final String value) {
     return new LocalDateTimeValue(
         LocalDateTime.ofInstant(java.sql.Timestamp.valueOf(value).toInstant(), ZoneId.systemDefault()));
   }
 
   @Override
-  public void encodeBinary(LocalDateTimeValue value, BufferWriter b) {
-    Instant instant = value.get().atOffset(ZoneOffset.UTC).toInstant();
-    long seconds = instant.getEpochSecond();
-    long micros = instant.getLong(ChronoField.MICRO_OF_SECOND) + seconds * 1000000;
+  public final void encodeBinary(final LocalDateTimeValue value, final BufferWriter b) {
+    final Instant instant = value.get().atOffset(ZoneOffset.UTC).toInstant();
+    final long seconds = instant.getEpochSecond();
+    final long micros = instant.getLong(ChronoField.MICRO_OF_SECOND) + seconds * 1000000;
     b.writeLong(micros - POSTGRES_EPOCH_MICROS);
   }
 
   @Override
-  public LocalDateTimeValue decodeBinary(BufferReader b) {
-    long micros = b.readLong() + POSTGRES_EPOCH_MICROS;
-    long seconds = micros / 1000000L;
-    long nanos = (micros - seconds * 1000000L) * 1000;
-    Instant instant = Instant.ofEpochSecond(seconds, nanos);
-    LocalDateTime date = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+  public final LocalDateTimeValue decodeBinary(final BufferReader b) {
+    final long micros = b.readLong() + POSTGRES_EPOCH_MICROS;
+    final long seconds = micros / 1000000L;
+    final long nanos = (micros - seconds * 1000000L) * 1000;
+    final Instant instant = Instant.ofEpochSecond(seconds, nanos);
+    final LocalDateTime date = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
     return new LocalDateTimeValue(date);
   }
 }

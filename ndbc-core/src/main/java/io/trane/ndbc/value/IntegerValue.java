@@ -1,11 +1,12 @@
 package io.trane.ndbc.value;
 
-public class IntegerValue extends Value<Integer> {
-  public IntegerValue(Integer value) {
+public final class IntegerValue extends Value<Integer> {
+  public IntegerValue(final Integer value) {
     super(value);
   }
 
-  public Integer getInteger() {
+  @Override
+  public final Integer getInteger() {
     return get();
   }
 }

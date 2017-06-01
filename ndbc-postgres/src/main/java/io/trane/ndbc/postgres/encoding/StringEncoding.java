@@ -7,35 +7,35 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.StringValue;
 
-class StringEncoding implements Encoding<StringValue> {
-  
+final class StringEncoding implements Encoding<StringValue> {
+
   @Override
-  public Set<Integer> oids() {
+  public final Set<Integer> oids() {
     return Collections.toImmutableSet(Oid.TEXT, Oid.NAME, Oid.VARCHAR, Oid.XML, Oid.JSON, Oid.BPCHAR);
   }
-  
+
   @Override
-  public Class<StringValue> valueClass() {
+  public final Class<StringValue> valueClass() {
     return StringValue.class;
   }
 
   @Override
-  public String encodeText(StringValue value) {
+  public final String encodeText(final StringValue value) {
     return value.get();
   }
 
   @Override
-  public StringValue decodeText(String value) {
+  public final StringValue decodeText(final String value) {
     return new StringValue(value);
   }
 
   @Override
-  public void encodeBinary(StringValue value, BufferWriter b) {
+  public final void encodeBinary(final StringValue value, final BufferWriter b) {
     b.writeString(value.get());
   }
 
   @Override
-  public StringValue decodeBinary(BufferReader b) {
+  public final StringValue decodeBinary(final BufferReader b) {
     return new StringValue(b.readString());
   }
 }

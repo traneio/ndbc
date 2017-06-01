@@ -13,26 +13,30 @@ public final class Row {
   private final Map<String, Integer> positions;
   private final Value<?>[] columns;
 
-  public Row(Map<String, Integer> positions, Value<?>[] columns) {
+  public static final Row apply(final Map<String, Integer> positions, final Value<?>[] columns) {
+    return new Row(positions, columns);
+  }
+
+  private Row(final Map<String, Integer> positions, final Value<?>[] columns) {
     super();
     this.positions = positions;
     this.columns = columns;
   }
 
-  public Value<?> column(int columnPosition) {
+  public final Value<?> column(final int columnPosition) {
     return columns[columnPosition];
   }
 
-  public Value<?> column(String columnName) {
+  public final Value<?> column(final String columnName) {
     return columns[positions.get(columnName)];
   }
 
-  public List<String> columnNames() {
+  public final List<String> columnNames() {
     return Collections.unmodifiableList(positions.entrySet().stream().sorted(Map.Entry.comparingByValue())
         .map(Map.Entry::getKey).collect(Collectors.toList()));
   }
 
-  public List<Value<?>> columns() {
+  public final List<Value<?>> columns() {
     return Collections.unmodifiableList(Arrays.asList(columns));
   }
 }

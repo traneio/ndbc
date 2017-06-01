@@ -19,19 +19,17 @@ public interface Connection {
 
   Future<Integer> execute(PreparedStatement query);
 
-  default <R> Future<R> withTransaction(Supplier<Future<R>> sup) {
-    return execute("BEGIN")
-        .flatMap(v -> sup.get())
-        .transformWith(new Transformer<R, Future<R>>() {
-          @Override
-          public Future<R> onException(Throwable ex) {
-            return execute("ROLLBACK").flatMap(v -> Future.exception(ex));
-          }
+  default <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
+    return execute("BEGIN").flatMap(v -> sup.get()).transformWith(new Transformer<R, Future<R>>() {
+      @Override
+      public Future<R> onException(final Throwable ex) {
+        return execute("ROLLBACK").flatMap(v -> Future.exception(ex));
+      }
 
-          @Override
-          public Future<R> onValue(R value) {
-            return execute("COMMIT").map(v -> value);
-          }
-        });
+      @Override
+      public Future<R> onValue(final R value) {
+        return execute("COMMIT").map(v -> value);
+      }
+    });
   }
 }

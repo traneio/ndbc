@@ -18,8 +18,8 @@ import io.trane.ndbc.value.Value;
 
 public class EncodingTest extends TestEnv {
 
-  private PreparedStatement insert = PreparedStatement.apply("INSERT INTO test VALUES (?)");
-  private PreparedStatement select = PreparedStatement.apply("SELECT c FROM test");
+  private final PreparedStatement insert = PreparedStatement.apply("INSERT INTO test VALUES (?)");
+  private final PreparedStatement select = PreparedStatement.apply("SELECT c FROM test");
 
   @Before
   public void recreateSchema() throws CheckedFutureException {
@@ -39,7 +39,7 @@ public class EncodingTest extends TestEnv {
   @Test
   public void _boolean() throws CheckedFutureException {
     createTable("bool");
-    Boolean value = true;
+    final Boolean value = true;
 
     execute(insert.bind(value));
 
@@ -49,7 +49,7 @@ public class EncodingTest extends TestEnv {
   @Test
   public void byteArray() throws CheckedFutureException {
     createTable("bytea");
-    byte[] value = "string".getBytes();
+    final byte[] value = "string".getBytes();
 
     execute(insert.bind(value));
 
@@ -59,7 +59,7 @@ public class EncodingTest extends TestEnv {
   @Test
   public void _double() throws CheckedFutureException {
     createTable("float8");
-    Double value = 1D;
+    final Double value = 1D;
 
     execute(insert.bind(value));
 
@@ -69,7 +69,7 @@ public class EncodingTest extends TestEnv {
   @Test
   public void _float() throws CheckedFutureException {
     createTable("float4");
-    Float value = 1.1F;
+    final Float value = 1.1F;
 
     execute(insert.bind(value));
 
@@ -79,7 +79,7 @@ public class EncodingTest extends TestEnv {
   @Test
   public void integer() throws CheckedFutureException {
     createTable("int4");
-    Integer value = 1;
+    final Integer value = 1;
 
     execute(insert.bind(value));
 
@@ -89,7 +89,7 @@ public class EncodingTest extends TestEnv {
   @Test
   public void localDate() throws CheckedFutureException {
     createTable("date");
-    LocalDate value = LocalDate.now();
+    final LocalDate value = LocalDate.now();
 
     execute(insert.bind(value));
 
@@ -109,7 +109,7 @@ public class EncodingTest extends TestEnv {
   @Test
   public void localTime() throws CheckedFutureException {
     createTable("time");
-    LocalTime value = LocalTime.now();
+    final LocalTime value = LocalTime.now();
 
     execute(insert.bind(value));
 
@@ -119,27 +119,27 @@ public class EncodingTest extends TestEnv {
   @Test
   public void _long() throws CheckedFutureException {
     createTable("int8");
-    Long value = 1L;
+    final Long value = 1L;
 
     execute(insert.bind(value));
 
     assertEquals(query(select).getLong(), value);
   }
 
-  //  @Test
-  //  public void offsetTime() throws CheckedFutureException {
-  //    createTable("timetz");
-  //    OffsetTime value = OffsetTime.now();
+  // @Test
+  // public void offsetTime() throws CheckedFutureException {
+  // createTable("timetz");
+  // OffsetTime value = OffsetTime.now();
   //
-  //    execute(insert.bind(value));
+  // execute(insert.bind(value));
   //
-  //    assertEquals(query(select).getOffsetTime(), value);
-  //  }
+  // assertEquals(query(select).getOffsetTime(), value);
+  // }
 
   @Test
   public void _short() throws CheckedFutureException {
     createTable("int2");
-    Short value = 1;
+    final Short value = 1;
 
     execute(insert.bind(value));
 
@@ -148,7 +148,7 @@ public class EncodingTest extends TestEnv {
 
   // Oid.TEXT, Oid.NAME, Oid.VARCHAR, Oid.XML, Oid.JSON, Oid.BPCHAR
 
-  private void stringTest(String columnType, String value) throws CheckedFutureException {
+  private void stringTest(final String columnType, final String value) throws CheckedFutureException {
     createTable(columnType);
     execute(insert.bind(value));
 
@@ -185,17 +185,17 @@ public class EncodingTest extends TestEnv {
     stringTest("varchar", "a");
   }
 
-  private void createTable(String columnType) throws CheckedFutureException {
+  private void createTable(final String columnType) throws CheckedFutureException {
     ds.execute("CREATE TABLE test (c " + columnType + ")").get(timeout);
   }
 
-  private void execute(PreparedStatement ps) throws CheckedFutureException {
+  private void execute(final PreparedStatement ps) throws CheckedFutureException {
     ds.execute(ps).get(timeout);
   }
 
-  private Value<?> query(PreparedStatement ps) throws CheckedFutureException {
-    Iterator<Row> it = ds.query(ps).get(timeout).iterator();
-    Row row = it.next();
+  private Value<?> query(final PreparedStatement ps) throws CheckedFutureException {
+    final Iterator<Row> it = ds.query(ps).get(timeout).iterator();
+    final Row row = it.next();
     assertFalse(it.hasNext());
     return row.column(0);
   }

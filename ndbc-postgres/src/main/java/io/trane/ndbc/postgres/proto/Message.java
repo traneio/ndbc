@@ -290,8 +290,7 @@ public interface Message {
     public final String sourcePreparedStatementName;
 
     public Bind(final String destinationPortalName, final String sourcePreparedStatementName,
-        final short[] parameterFormatCodes,
-        final Value<?>[] fields, final short[] resultColumnFormatCodes) {
+        final short[] parameterFormatCodes, final Value<?>[] fields, final short[] resultColumnFormatCodes) {
       this.destinationPortalName = destinationPortalName;
       this.sourcePreparedStatementName = sourcePreparedStatementName;
       this.parameterFormatCodes = parameterFormatCodes;
@@ -303,11 +302,11 @@ public interface Message {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((destinationPortalName == null) ? 0 : destinationPortalName.hashCode());
+      result = prime * result + (destinationPortalName == null ? 0 : destinationPortalName.hashCode());
       result = prime * result + Arrays.deepHashCode(fields);
       result = prime * result + Arrays.hashCode(parameterFormatCodes);
       result = prime * result + Arrays.hashCode(resultColumnFormatCodes);
-      result = prime * result + ((sourcePreparedStatementName == null) ? 0 : sourcePreparedStatementName.hashCode());
+      result = prime * result + (sourcePreparedStatementName == null ? 0 : sourcePreparedStatementName.hashCode());
       return result;
     }
 
@@ -420,7 +419,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
         return result;
       }
 
@@ -453,7 +452,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
         return result;
       }
 
@@ -787,19 +786,19 @@ public interface Message {
         final int prime = 31;
         int result = 1;
         result = prime * result + rows;
-        result = prime * result + ((tag == null) ? 0 : tag.hashCode());
+        result = prime * result + (tag == null ? 0 : tag.hashCode());
         return result;
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (getClass() != obj.getClass())
           return false;
-        UnknownCommandComplete other = (UnknownCommandComplete) obj;
+        final UnknownCommandComplete other = (UnknownCommandComplete) obj;
         if (tag == null) {
           if (other.tag != null)
             return false;
@@ -941,7 +940,7 @@ public interface Message {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((errorMessage == null) ? 0 : errorMessage.hashCode());
+      result = prime * result + (errorMessage == null ? 0 : errorMessage.hashCode());
       return result;
     }
 
@@ -1110,7 +1109,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
         return result;
       }
 
@@ -1146,7 +1145,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
         return result;
       }
 
@@ -1234,7 +1233,7 @@ public interface Message {
         final int prime = 31;
         int result = 1;
         result = prime * result + type.hashCode();
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + (value == null ? 0 : value.hashCode());
         return result;
       }
 
@@ -1276,7 +1275,7 @@ public interface Message {
 
     public static class ErrorResponse extends InfoResponse {
 
-      public ErrorResponse(Field[] fields) {
+      public ErrorResponse(final Field[] fields) {
         super(fields);
       }
 
@@ -1294,14 +1293,14 @@ public interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof ErrorResponse))
           return false;
-        ErrorResponse other = (ErrorResponse) obj;
+        final ErrorResponse other = (ErrorResponse) obj;
         if (!Arrays.equals(fields, other.fields))
           return false;
         return true;
@@ -1315,10 +1314,10 @@ public interface Message {
 
     public static class NoticeResponse extends InfoResponse {
 
-      public NoticeResponse(Field[] fields) {
+      public NoticeResponse(final Field[] fields) {
         super(fields);
       }
-      
+
       @Override
       public boolean isNotice() {
         return true;
@@ -1333,14 +1332,14 @@ public interface Message {
       }
 
       @Override
-      public boolean equals(Object obj) {
+      public boolean equals(final Object obj) {
         if (this == obj)
           return true;
         if (obj == null)
           return false;
         if (!(obj instanceof ErrorResponse))
           return false;
-        ErrorResponse other = (ErrorResponse) obj;
+        final ErrorResponse other = (ErrorResponse) obj;
         if (!Arrays.equals(fields, other.fields))
           return false;
         return true;
@@ -1371,13 +1370,13 @@ public interface Message {
       this.portalName = portalName;
       this.maxNumberOfRows = maxNumberOfRows;
     }
-    
+
     @Override
     public int hashCode() {
       final int prime = 31;
       int result = 1;
       result = prime * result + maxNumberOfRows;
-      result = prime * result + ((portalName == null) ? 0 : portalName.hashCode());
+      result = prime * result + (portalName == null ? 0 : portalName.hashCode());
       return result;
     }
 
@@ -1597,8 +1596,8 @@ public interface Message {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((channelName == null) ? 0 : channelName.hashCode());
-      result = prime * result + ((payload == null) ? 0 : payload.hashCode());
+      result = prime * result + (channelName == null ? 0 : channelName.hashCode());
+      result = prime * result + (payload == null ? 0 : payload.hashCode());
       result = prime * result + processID;
       return result;
     }
@@ -1691,8 +1690,8 @@ public interface Message {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((value == null) ? 0 : value.hashCode());
+      result = prime * result + (name == null ? 0 : name.hashCode());
+      result = prime * result + (value == null ? 0 : value.hashCode());
       return result;
     }
 
@@ -1755,9 +1754,9 @@ public interface Message {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((destinationName == null) ? 0 : destinationName.hashCode());
+      result = prime * result + (destinationName == null ? 0 : destinationName.hashCode());
       result = prime * result + Arrays.hashCode(parameterTypes);
-      result = prime * result + ((query == null) ? 0 : query.hashCode());
+      result = prime * result + (query == null ? 0 : query.hashCode());
       return result;
     }
 
@@ -1829,7 +1828,7 @@ public interface Message {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((password == null) ? 0 : password.hashCode());
+      result = prime * result + (password == null ? 0 : password.hashCode());
       return result;
     }
 
@@ -1890,7 +1889,7 @@ public interface Message {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((string == null) ? 0 : string.hashCode());
+      result = prime * result + (string == null ? 0 : string.hashCode());
       return result;
     }
 
@@ -2004,8 +2003,7 @@ public interface Message {
       public final int typeModifier;
 
       public Field(final String name, final int objectID, final short attributeNumber, final int dataType,
-          final short dataTypeSize, final int typeModifier,
-          final short formatCode) {
+          final short dataTypeSize, final int typeModifier, final short formatCode) {
         this.name = name;
         this.objectID = objectID;
         this.attributeNumber = attributeNumber;
@@ -2023,7 +2021,7 @@ public interface Message {
         result = prime * result + dataType;
         result = prime * result + dataTypeSize;
         result = prime * result + formatCode;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
         result = prime * result + objectID;
         result = prime * result + typeModifier;
         return result;
@@ -2135,8 +2133,8 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
+        result = prime * result + (value == null ? 0 : value.hashCode());
         return result;
       }
 
@@ -2189,7 +2187,7 @@ public interface Message {
       final int prime = 31;
       int result = 1;
       result = prime * result + Arrays.hashCode(parameters);
-      result = prime * result + ((user == null) ? 0 : user.hashCode());
+      result = prime * result + (user == null ? 0 : user.hashCode());
       return result;
     }
 

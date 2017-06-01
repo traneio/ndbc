@@ -2,14 +2,14 @@ package io.trane.ndbc.value;
 
 import java.time.LocalDate;
 
-public class LocalDateValue extends Value<LocalDate> {
+public final class LocalDateValue extends Value<LocalDate> {
 
-  public LocalDateValue(LocalDate value) {
+  public LocalDateValue(final LocalDate value) {
     super(value);
   }
 
   @Override
-  public LocalDate getLocalDate() {
+  public final LocalDate getLocalDate() {
     return get();
   }
 }

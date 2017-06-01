@@ -6,19 +6,19 @@ import java.util.List;
 import io.trane.ndbc.postgres.proto.Message.InfoResponse;
 import io.trane.ndbc.proto.BufferReader;
 
-class InfoResponseFieldsParser {
+final class InfoResponseFieldsParser {
 
   private final InfoResponse.Field[] emptyFieldArray = new InfoResponse.Field[0];
 
-  public final InfoResponse.Field[] decode(BufferReader b) {
-    List<InfoResponse.Field> fields = new ArrayList<>();
+  public final InfoResponse.Field[] decode(final BufferReader b) {
+    final List<InfoResponse.Field> fields = new ArrayList<>();
     byte type;
     while ((type = b.readByte()) != 0)
       fields.add(new InfoResponse.Field(toTypeEnum(type), b.readCString()));
     return fields.toArray(emptyFieldArray);
   }
 
-  private final InfoResponse.Field.Type toTypeEnum(byte type) {
+  private final InfoResponse.Field.Type toTypeEnum(final byte type) {
     switch (type) {
     case 'S':
       return InfoResponse.Field.Type.Severity;

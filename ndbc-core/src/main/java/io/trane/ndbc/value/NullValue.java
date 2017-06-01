@@ -1,12 +1,12 @@
 package io.trane.ndbc.value;
 
-public class NullValue extends Value<Object> {
+public final class NullValue extends Value<Object> {
   public NullValue() {
     super(null);
   }
 
   @Override
-  public boolean isNull() {
+  public final boolean isNull() {
     return true;
   }
 }

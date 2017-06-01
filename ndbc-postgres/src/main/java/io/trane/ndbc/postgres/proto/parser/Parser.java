@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import io.trane.ndbc.postgres.proto.Message;
 import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
-import io.trane.ndbc.postgres.proto.Message.*;
+import io.trane.ndbc.postgres.proto.Message.BindComplete;
 import io.trane.ndbc.postgres.proto.Message.CloseComplete;
 import io.trane.ndbc.postgres.proto.Message.CopyBothResponse;
 import io.trane.ndbc.postgres.proto.Message.CopyData;
@@ -16,9 +16,14 @@ import io.trane.ndbc.postgres.proto.Message.FunctionCallResponse;
 import io.trane.ndbc.postgres.proto.Message.InfoResponse;
 import io.trane.ndbc.postgres.proto.Message.NoData;
 import io.trane.ndbc.postgres.proto.Message.NotificationResponse;
+import io.trane.ndbc.postgres.proto.Message.ParameterDescription;
+import io.trane.ndbc.postgres.proto.Message.ParameterStatus;
+import io.trane.ndbc.postgres.proto.Message.ParseComplete;
+import io.trane.ndbc.postgres.proto.Message.PortalSuspended;
+import io.trane.ndbc.postgres.proto.Message.ReadyForQuery;
 import io.trane.ndbc.proto.BufferReader;
 
-public class Parser {
+public final class Parser {
 
   private final AuthenticationRequestParser authenticationRequestDecoder;
   private final CommandCompleteParser commandCompleteDecoder;
@@ -43,11 +48,11 @@ public class Parser {
     this.rowDescriptionDecoder = new RowDescriptionParser();
   }
 
-  public Optional<Message> decode(BufferReader b) throws Exception {
+  public final Optional<Message> decode(final BufferReader b) throws Exception {
     if (b.readableBytes() >= 5) {
       b.markReaderIndex();
-      byte tpe = b.readByte();
-      int length = b.readInt() - 4;
+      final byte tpe = b.readByte();
+      final int length = b.readInt() - 4;
       if (b.readableBytes() >= length)
         return Optional.of(decode(tpe, b.readSlice(length)));
       else {
@@ -58,7 +63,7 @@ public class Parser {
       return Optional.empty();
   }
 
-  private final Message decode(byte tpe, BufferReader b) {
+  private final Message decode(final byte tpe, final BufferReader b) {
     switch (tpe) {
     case 'R':
       return authenticationRequestDecoder.decode(b);
@@ -111,7 +116,7 @@ public class Parser {
     }
   }
 
-  private Message notImplemented(Class<?> cls) {
+  private final Message notImplemented(final Class<?> cls) {
     throw new UnsupportedOperationException("Decoder not implemented for class: " + cls);
   }
 }

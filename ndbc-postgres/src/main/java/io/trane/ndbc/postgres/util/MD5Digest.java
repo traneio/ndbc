@@ -8,19 +8,24 @@ package io.trane.ndbc.postgres.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class MD5Digest {
+public final class MD5Digest {
+  
   private MD5Digest() {
   }
 
   /**
-   * Encodes user/password/salt information in the following way: MD5(MD5(password + user) + salt)
+   * Encodes user/password/salt information in the following way:
+   * MD5(MD5(password + user) + salt)
    *
-   * @param user The connecting user.
-   * @param password The connecting user's password.
-   * @param salt A four-salt sent by the server.
+   * @param user
+   *          The connecting user.
+   * @param password
+   *          The connecting user's password.
+   * @param salt
+   *          A four-salt sent by the server.
    * @return A 35-byte array, comprising the string "md5" and an MD5 digest.
    */
-  public static byte[] encode(final byte user[], final byte password[], final byte salt[]) {
+  public static final byte[] encode(final byte user[], final byte password[], final byte salt[]) {
     MessageDigest md;
     byte[] temp_digest;
     byte[] pass_digest;
@@ -52,7 +57,7 @@ public class MD5Digest {
   /*
    * Turn 16-byte stream into a human-readable 32-byte hex string
    */
-  private static void bytesToHex(final byte[] bytes, final byte[] hex, final int offset) {
+  private static final void bytesToHex(final byte[] bytes, final byte[] hex, final int offset) {
     final char lookup[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
     int i;
@@ -64,7 +69,7 @@ public class MD5Digest {
       c = bytes[i] & 0xFF;
       j = c >> 4;
       hex[pos++] = (byte) lookup[j];
-      j = (c & 0xF);
+      j = c & 0xF;
       hex[pos++] = (byte) lookup[j];
     }
   }

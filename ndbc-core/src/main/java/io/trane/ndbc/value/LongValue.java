@@ -1,13 +1,13 @@
 package io.trane.ndbc.value;
 
-public class LongValue extends Value<Long> {
+public final class LongValue extends Value<Long> {
 
-  public LongValue(Long value) {
+  public LongValue(final Long value) {
     super(value);
   }
 
   @Override
-  public Long getLong() {
+  public final Long getLong() {
     return get();
   }
 }

@@ -7,14 +7,12 @@ import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.util.PartialFunction;
 
-public class SimpleExecuteExchange {
+public final class SimpleExecuteExchange {
 
-  public Exchange<Integer> apply(String command) {
-    return Exchange.send(new Query(command))
-        .thenReceive(commandComplete)
-        .thenWaitFor(ReadyForQuery.class);
+  public final Exchange<Integer> apply(final String command) {
+    return Exchange.send(new Query(command)).thenReceive(commandComplete).thenWaitFor(ReadyForQuery.class);
   }
 
-  private final PartialFunction<ServerMessage, Exchange<Integer>> commandComplete = PartialFunction.when(
-      CommandComplete.class, msg -> Exchange.value(msg.rows));
+  private final PartialFunction<ServerMessage, Exchange<Integer>> commandComplete = PartialFunction
+      .when(CommandComplete.class, msg -> Exchange.value(msg.rows));
 }

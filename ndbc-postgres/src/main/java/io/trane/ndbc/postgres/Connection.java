@@ -17,7 +17,7 @@ import io.trane.ndbc.postgres.proto.SimpleQueryExchange;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.Exchange;
 
-public class Connection implements io.trane.ndbc.Connection {
+public final class Connection implements io.trane.ndbc.Connection {
 
   private final Channel channel;
   private final Supplier<Future<Channel>> channelSupplier;
@@ -27,10 +27,10 @@ public class Connection implements io.trane.ndbc.Connection {
   private final ExtendedQueryExchange extendedQueryExchange;
   private final ExtendedExecuteExchange extendedExecuteExchange;
 
-  public Connection(Channel channel, Supplier<Future<Channel>> channelSupplier, Optional<BackendKeyData> backendKeyData,
-      SimpleQueryExchange simpleQueryExchange,
-      SimpleExecuteExchange simpleExecuteExchange, ExtendedQueryExchange extendedQueryExchange,
-      ExtendedExecuteExchange extendedExecuteExchange) {
+  public Connection(final Channel channel, final Supplier<Future<Channel>> channelSupplier,
+      final Optional<BackendKeyData> backendKeyData, final SimpleQueryExchange simpleQueryExchange,
+      final SimpleExecuteExchange simpleExecuteExchange, final ExtendedQueryExchange extendedQueryExchange,
+      final ExtendedExecuteExchange extendedExecuteExchange) {
     super();
     this.channel = channel;
     this.channelSupplier = channelSupplier;
@@ -42,51 +42,49 @@ public class Connection implements io.trane.ndbc.Connection {
   }
 
   @Override
-  public Future<ResultSet> query(String query) {
+  public final Future<ResultSet> query(final String query) {
     return run(simpleQueryExchange.apply(query));
   }
 
   @Override
-  public Future<Integer> execute(String command) {
+  public final Future<Integer> execute(final String command) {
     return run(simpleExecuteExchange.apply(command));
   }
 
   @Override
-  public Future<ResultSet> query(PreparedStatement query) {
+  public final Future<ResultSet> query(final PreparedStatement query) {
     return run(extendedQueryExchange.apply(query));
   }
 
   @Override
-  public Future<Integer> execute(PreparedStatement command) {
+  public final Future<Integer> execute(final PreparedStatement command) {
     return run(extendedExecuteExchange.apply(command));
   }
 
-
   @Override
-  public Future<Boolean> isValid() {
+  public final Future<Boolean> isValid() {
     return query("SELECT 1").map(r -> true).rescue(e -> Future.FALSE);
   }
 
   @Override
-  public Future<Void> close() {
+  public final Future<Void> close() {
     return Exchange.close().run(channel);
   }
 
-  private <T> Future<T> run(Exchange<T> exchange) {
+  private final <T> Future<T> run(final Exchange<T> exchange) {
     return cancellable(exchange.run(channel));
   }
 
-  private <T> Future<T> cancellable(Future<T> fut) {
+  private final <T> Future<T> cancellable(final Future<T> fut) {
     return backendKeyData.map(data -> {
-      Promise<T> p = Promise.create(v -> handler(v, data));
+      final Promise<T> p = Promise.create(v -> handler(v, data));
       fut.proxyTo(p);
       return (Future<T>) p;
     }).orElse(fut);
   }
 
-  private <T> InterruptHandler handler(Promise<T> p, BackendKeyData data) {
-    return ex -> channelSupplier.get()
-        .flatMap(channel -> Exchange.send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.close())
-            .run(channel));
+  private final <T> InterruptHandler handler(final Promise<T> p, final BackendKeyData data) {
+    return ex -> channelSupplier.get().flatMap(channel -> Exchange
+        .send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.close()).run(channel));
   }
 }

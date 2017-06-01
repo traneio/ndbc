@@ -39,16 +39,15 @@ public interface Exchange<T> {
   }
 
   static <R> Exchange<R> receive(final PartialFunction<ServerMessage, Exchange<R>> f) {
-    return channel -> channel.receive().flatMap(
-        msg -> {
-          if (msg.isNotice()) {
-            log.info(msg.toString());
-            return receive(f).run(channel);
-          } else if (msg.isError()) {
-            return Future.exception(new Exception(msg.toString()));
-          } else
-            return f.applyOrElse(msg, () -> Exchange.fail("Unexpected server message: " + msg)).run(channel);
-        });
+    return channel -> channel.receive().flatMap(msg -> {
+      if (msg.isNotice()) {
+        log.info(msg.toString());
+        return receive(f).run(channel);
+      } else if (msg.isError()) {
+        return Future.exception(new Exception(msg.toString()));
+      } else
+        return f.applyOrElse(msg, () -> Exchange.fail("Unexpected server message: " + msg)).run(channel);
+    });
   }
 
   static Exchange<Void> send(final ClientMessage msg) {
@@ -94,7 +93,7 @@ public interface Exchange<T> {
   }
 
   default public Exchange<T> thenWaitFor(final Class<? extends ServerMessage> cls) {
-    PartialFunction<ServerMessage, Exchange<Void>> pf = PartialFunction.when(cls, msg -> Exchange.VOID);
+    final PartialFunction<ServerMessage, Exchange<Void>> pf = PartialFunction.when(cls, msg -> Exchange.VOID);
     return rescue(ex -> Exchange.receive(pf).flatMap(v -> Exchange.fail(ex)))
         .flatMap(r -> Exchange.receive(pf).map(v -> r));
   }

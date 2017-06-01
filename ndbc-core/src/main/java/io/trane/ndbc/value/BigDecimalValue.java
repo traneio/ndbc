@@ -2,14 +2,14 @@ package io.trane.ndbc.value;
 
 import java.math.BigDecimal;
 
-public class BigDecimalValue extends Value<BigDecimal> {
+public final class BigDecimalValue extends Value<BigDecimal> {
 
-  public BigDecimalValue(BigDecimal value) {
+  public BigDecimalValue(final BigDecimal value) {
     super(value);
   }
 
   @Override
-  public BigDecimal getBigDecimal() {
+  public final BigDecimal getBigDecimal() {
     return get();
   }
 }

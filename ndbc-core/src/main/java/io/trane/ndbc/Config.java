@@ -1,6 +1,5 @@
 package io.trane.ndbc;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -14,26 +13,26 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Config {
+public final class Config {
 
-  public static Config fromSystemProperties(String prefix) {
+  public static final Config fromSystemProperties(final String prefix) {
     return fromProperties(prefix, System.getProperties());
   }
 
-  public static Config fromPropertiesFile(String prefix, String file) throws IOException {
-    Properties properties = new Properties();
-    FileInputStream fis = new FileInputStream(file);
+  public static Config fromPropertiesFile(final String prefix, final String file) throws IOException {
+    final Properties properties = new Properties();
+    final FileInputStream fis = new FileInputStream(file);
     properties.load(fis);
     fis.close();
     return fromProperties(prefix, properties);
   }
 
-  public static Config fromProperties(String prefix, Properties properties) {
+  public static final Config fromProperties(final String prefix, final Properties properties) {
 
-    String dataSourceSupplierClass = getRequiredProperty(prefix, properties, "dataSourceSupplierClass");
-    String host = getRequiredProperty(prefix, properties, "host");
-    int port = getRequiredProperty(prefix, properties, "port", Integer::parseInt);
-    String user = getRequiredProperty(prefix, properties, "user");
+    final String dataSourceSupplierClass = getRequiredProperty(prefix, properties, "dataSourceSupplierClass");
+    final String host = getRequiredProperty(prefix, properties, "host");
+    final int port = getRequiredProperty(prefix, properties, "port", Integer::parseInt);
+    final String user = getRequiredProperty(prefix, properties, "user");
 
     Config config = Config.apply(dataSourceSupplierClass, host, port, user);
 
@@ -52,36 +51,38 @@ public class Config {
     return config;
   }
 
-  public static final Config apply(String dataSourceSupplierClass, String host, int port, String user) {
+  public static final Config apply(final String dataSourceSupplierClass, final String host, final int port,
+      final String user) {
     return new Config(dataSourceSupplierClass, Charset.defaultCharset(), user, Optional.empty(), Optional.empty(), host,
         port, Integer.MAX_VALUE, Integer.MAX_VALUE, Duration.ofMillis(Long.MAX_VALUE), new HashSet<>());
   }
 
-  private static <T> T getRequiredProperty(String prefix, Properties properties, String name,
-      Function<String, T> parser) {
+  private static final <T> T getRequiredProperty(final String prefix, final Properties properties, final String name,
+      final Function<String, T> parser) {
     try {
       return parser.apply(getRequiredProperty(prefix, properties, name));
-    } catch (Exception ex) {
+    } catch (final Exception ex) {
       throw new ConfigError(properties, prefix, name, Optional.of(ex));
     }
   }
 
-  private static String getRequiredProperty(String prefix, Properties properties, String name) {
+  private static final String getRequiredProperty(final String prefix, final Properties properties, final String name) {
     return getProperty(prefix, properties, name).orElseGet(() -> {
       throw new ConfigError(properties, prefix, name, Optional.empty());
     });
   }
 
-  private static <T> Optional<T> getProperty(String prefix, Properties properties, String name,
-      Function<String, T> parser) {
+  private static final <T> Optional<T> getProperty(final String prefix, final Properties properties, final String name,
+      final Function<String, T> parser) {
     try {
       return getProperty(prefix, properties, name).map(parser);
-    } catch (Exception ex) {
+    } catch (final Exception ex) {
       throw new ConfigError(properties, prefix, name, Optional.of(ex));
     }
   }
 
-  private static Optional<String> getProperty(String prefix, Properties properties, String name) {
+  private static final Optional<String> getProperty(final String prefix, final Properties properties,
+      final String name) {
     return Optional.ofNullable(properties.getProperty(prefix + "." + name));
   }
 
@@ -97,9 +98,10 @@ public class Config {
   public final Duration poolValidationInterval;
   public final Set<String> encodingClasses;
 
-  private Config(String dataSourceSupplierClass, Charset charset, String user, Optional<String> password,
-      Optional<String> database, String host, int port, int poolMaxSize, int poolMaxWaiters,
-      Duration poolValidationInterval, Set<String> encodingClasses) {
+  private Config(final String dataSourceSupplierClass, final Charset charset, final String user,
+      final Optional<String> password, final Optional<String> database, final String host, final int port,
+      final int poolMaxSize, final int poolMaxWaiters, final Duration poolValidationInterval,
+      final Set<String> encodingClasses) {
     super();
     this.dataSourceSupplierClass = dataSourceSupplierClass;
     this.charset = charset;
@@ -114,71 +116,71 @@ public class Config {
     this.encodingClasses = Collections.unmodifiableSet(encodingClasses);
   }
 
-  public final Config charset(Charset charset) {
+  public final Config charset(final Charset charset) {
     return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses);
   }
 
-  public final Config charset(Optional<Charset> charset) {
+  public final Config charset(final Optional<Charset> charset) {
     return charset.map(this::charset).orElse(this);
   }
 
-  public final Config password(String password) {
+  public final Config password(final String password) {
     return new Config(dataSourceSupplierClass, charset, user, Optional.ofNullable(password), database, host, port,
         poolMaxSize, poolMaxWaiters, poolValidationInterval, encodingClasses);
   }
 
-  public final Config password(Optional<String> password) {
+  public final Config password(final Optional<String> password) {
     return password.map(this::password).orElse(this);
   }
 
-  public final Config database(String database) {
+  public final Config database(final String database) {
     return new Config(dataSourceSupplierClass, charset, user, password, Optional.of(database), host, port, poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses);
   }
 
-  public final Config database(Optional<String> database) {
+  public final Config database(final Optional<String> database) {
     return database.map(this::database).orElse(this);
   }
 
-  public final Config poolMaxSize(int poolMaxSize) {
+  public final Config poolMaxSize(final int poolMaxSize) {
     return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses);
   }
 
-  public final Config poolMaxSize(Optional<Integer> poolMaxSize) {
+  public final Config poolMaxSize(final Optional<Integer> poolMaxSize) {
     return poolMaxSize.map(this::poolMaxSize).orElse(this);
   }
 
-  public final Config poolMaxWaiters(int poolMaxWaiters) {
+  public final Config poolMaxWaiters(final int poolMaxWaiters) {
     return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses);
   }
 
-  public final Config poolMaxWaiters(Optional<Integer> poolMaxWaiters) {
+  public final Config poolMaxWaiters(final Optional<Integer> poolMaxWaiters) {
     return poolMaxWaiters.map(this::poolMaxWaiters).orElse(this);
   }
 
-  public final Config poolValidationInterval(Duration poolValidationInterval) {
+  public final Config poolValidationInterval(final Duration poolValidationInterval) {
     return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses);
   }
 
-  public final Config poolValidationInterval(Optional<Duration> poolValidationInterval) {
+  public final Config poolValidationInterval(final Optional<Duration> poolValidationInterval) {
     return poolValidationInterval.map(this::poolValidationInterval).orElse(this);
   }
 
-  public final Config encodingClasses(Set<String> encodingClasses) {
+  public final Config encodingClasses(final Set<String> encodingClasses) {
     return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
         poolMaxWaiters, poolValidationInterval, Collections.unmodifiableSet(encodingClasses));
   }
 
-  public final Config encodingClasses(Optional<Set<String>> encodingClasses) {
+  public final Config encodingClasses(final Optional<Set<String>> encodingClasses) {
     return encodingClasses.map(this::encodingClasses).orElse(this);
   }
 
-  public final Config addEncodingClass(String encoding) {
-    Set<String> encodingClasses = new HashSet<>();
+  public final Config addEncodingClass(final String encoding) {
+    final Set<String> encodingClasses = new HashSet<>();
     encodingClasses.addAll(encodingClasses);
     encodingClasses.add(encoding);
     return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,

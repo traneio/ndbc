@@ -4,88 +4,88 @@ import java.nio.charset.Charset;
 
 import io.netty.buffer.ByteBuf;
 
-public class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
+public final class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
 
   private final ByteBuf b;
   private final Charset charset;
 
-  public BufferWriter(Charset charset, ByteBuf b) {
+  public BufferWriter(final Charset charset, final ByteBuf b) {
     super();
     this.charset = charset;
     this.b = b;
   }
 
   @Override
-  public void writeInt(int i) {
+  public final void writeInt(final int i) {
     b.writeInt(i);
   }
 
   @Override
-  public void writeByte(byte v) {
+  public final void writeByte(final byte v) {
     b.writeByte(v);
   }
 
   @Override
-  public void writeChar(char c) {
+  public final void writeChar(final char c) {
     b.writeByte(c);
   }
 
   @Override
-  public void writeShort(short s) {
+  public final void writeShort(final short s) {
     b.writeShort(s);
   }
 
   @Override
-  public void writeCString(String s) {
+  public final void writeCString(final String s) {
     writeString(s);
     b.writeByte(0);
   }
-  
+
   @Override
-  public void writeString(String s) {
+  public final void writeString(final String s) {
     b.writeBytes(s.getBytes(charset));
   }
 
   @Override
-  public void writeBytes(byte[] a) {
+  public final void writeBytes(final byte[] a) {
     b.writeBytes(a);
   }
 
   @Override
-  public void writeInts(int[] a) {
-    for (int i : a)
+  public final void writeInts(final int[] a) {
+    for (final int i : a)
       b.writeInt(i);
   }
 
   @Override
-  public void writeShorts(short[] a) {
-    for (short i : a)
+  public final void writeShorts(final short[] a) {
+    for (final short i : a)
       b.writeShort(i);
   }
-  
+
   @Override
-  public void writeLong(Long value) {
+  public final void writeLong(final Long value) {
     b.writeLong(value);
   }
-  
+
   @Override
-  public void writeFloat(Float value) {
+  public final void writeFloat(final Float value) {
     b.writeFloat(value);
   }
-  
+
   @Override
-  public void writeDouble(Double value) {
+  public final void writeDouble(final Double value) {
     b.writeDouble(value);
   }
-  
+
   @Override
-  public int writerIndex() {
+  public final int writerIndex() {
     return b.writerIndex();
   }
 
   @Override
-  public void writeLength(int position) {
-    int length = b.writerIndex() - position;
+  public final void writeLength(final int position) {
+    final int length = b.writerIndex() - position;
     b.markWriterIndex();
     b.writerIndex(position);
     b.writeInt(length);
@@ -93,8 +93,8 @@ public class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
   }
 
   @Override
-  public void writeLengthNoSelf(int position) {
-    int length = b.writerIndex() - position - 4;
+  public final void writeLengthNoSelf(final int position) {
+    final int length = b.writerIndex() - position - 4;
     b.markWriterIndex();
     b.writerIndex(position);
     b.writeInt(length);

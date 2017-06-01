@@ -2,14 +2,14 @@ package io.trane.ndbc.value;
 
 import java.time.OffsetTime;
 
-public class OffsetTimeValue extends Value<OffsetTime> {
+public final class OffsetTimeValue extends Value<OffsetTime> {
 
-  public OffsetTimeValue(OffsetTime value) {
+  public OffsetTimeValue(final OffsetTime value) {
     super(value);
   }
 
   @Override
-  public OffsetTime getOffsetTime() {
+  public final OffsetTime getOffsetTime() {
     return get();
   }
 }

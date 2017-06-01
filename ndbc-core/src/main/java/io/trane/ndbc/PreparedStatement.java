@@ -24,90 +24,90 @@ import io.trane.ndbc.value.ShortValue;
 import io.trane.ndbc.value.StringValue;
 import io.trane.ndbc.value.Value;
 
-public class PreparedStatement {
+public final class PreparedStatement {
 
   private static final Value<?>[] emptyValues = new Value<?>[0];
 
-  public static PreparedStatement apply(String query) {
+  public static final PreparedStatement apply(final String query) {
     return new PreparedStatement(query, emptyValues);
   }
 
   private final String query;
   private final Value<?>[] params;
 
-  private PreparedStatement(String query, Value<?>[] params) {
+  private PreparedStatement(final String query, final Value<?>[] params) {
     super();
     this.query = query;
     this.params = params;
   }
 
-  public PreparedStatement bind(BigDecimal value) {
+  public final PreparedStatement bind(final BigDecimal value) {
     return bind(value == null ? Value.NULL : new BigDecimalValue(value));
   }
 
-  public PreparedStatement bind(Boolean value) {
+  public final PreparedStatement bind(final Boolean value) {
     return bind(value == null ? Value.NULL : new BooleanValue(value));
   }
 
-  public PreparedStatement bind(byte[] value) {
+  public final PreparedStatement bind(final byte[] value) {
     return bind(value == null ? Value.NULL : new ByteArrayValue(value));
   }
 
-  public PreparedStatement bind(Double value) {
+  public final PreparedStatement bind(final Double value) {
     return bind(value == null ? Value.NULL : new DoubleValue(value));
   }
 
-  public PreparedStatement bind(Float value) {
+  public final PreparedStatement bind(final Float value) {
     return bind(value == null ? Value.NULL : new FloatValue(value));
   }
 
-  public PreparedStatement bind(Integer value) {
+  public final PreparedStatement bind(final Integer value) {
     return bind(value == null ? Value.NULL : new IntegerValue(value));
   }
 
-  public PreparedStatement bind(LocalDate value) {
+  public final PreparedStatement bind(final LocalDate value) {
     return bind(value == null ? Value.NULL : new LocalDateValue(value));
   }
 
-  public PreparedStatement bind(LocalDateTime value) {
+  public final PreparedStatement bind(final LocalDateTime value) {
     return bind(value == null ? Value.NULL : new LocalDateTimeValue(value));
   }
 
-  public PreparedStatement bind(LocalTime value) {
+  public final PreparedStatement bind(final LocalTime value) {
     return bind(value == null ? Value.NULL : new LocalTimeValue(value));
   }
 
-  public PreparedStatement bind(Long value) {
+  public final PreparedStatement bind(final Long value) {
     return bind(value == null ? Value.NULL : new LongValue(value));
   }
 
-  public PreparedStatement bind(OffsetTime value) {
+  public final PreparedStatement bind(final OffsetTime value) {
     return bind(value == null ? Value.NULL : new OffsetTimeValue(value));
   }
 
-  public PreparedStatement bind(Short value) {
+  public final PreparedStatement bind(final Short value) {
     return bind(value == null ? Value.NULL : new ShortValue(value));
   }
 
-  public PreparedStatement bind(String value) {
+  public final PreparedStatement bind(final String value) {
     return bind(value == null ? Value.NULL : new StringValue(value));
   }
 
-  public PreparedStatement bindNull(String value) {
+  public final PreparedStatement bindNull(final String value) {
     return bind(Value.NULL);
   }
 
-  public PreparedStatement bind(Value<?> param) {
-    Value<?>[] newParams = Arrays.copyOf(params, params.length + 1);
+  public final PreparedStatement bind(final Value<?> param) {
+    final Value<?>[] newParams = Arrays.copyOf(params, params.length + 1);
     newParams[params.length] = param;
     return new PreparedStatement(query, newParams);
   }
 
-  public String getQuery() {
+  public final String getQuery() {
     return query;
   }
 
-  public List<Value<?>> getValues() {
+  public final List<Value<?>> getValues() {
     return Collections.unmodifiableList(Arrays.asList(params));
   }
 }

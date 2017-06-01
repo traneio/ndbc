@@ -12,7 +12,7 @@ public abstract class Value<T> {
 
   private final T value;
 
-  public Value(T value) {
+  public Value(final T value) {
     super();
     this.value = value;
   }
@@ -25,27 +25,27 @@ public abstract class Value<T> {
     return false;
   }
 
-  private <U> U cantRead(String type) {
+  private final <U> U cantRead(final String type) {
     throw new UnsupportedOperationException("Can't read " + get() + " as " + type);
   }
 
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((value == null) ? 0 : value.hashCode());
+    result = prime * result + (value == null ? 0 : value.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public final boolean equals(final Object obj) {
     if (this == obj)
       return true;
     if (obj == null)
       return false;
-    if (!(getClass().isInstance(obj)))
+    if (!getClass().isInstance(obj))
       return false;
-    Value<?> other = (Value<?>) obj;
+    final Value<?> other = (Value<?>) obj;
     if (value == null) {
       if (other.value != null)
         return false;
@@ -62,7 +62,7 @@ public abstract class Value<T> {
   public Character getCharacter() {
     return cantRead("Integer");
   }
-  
+
   public String getString() {
     return value == null ? "null" : value.toString();
   }
@@ -70,7 +70,7 @@ public abstract class Value<T> {
   public Integer getInteger() {
     return cantRead("Integer");
   }
-  
+
   public Boolean getBoolean() {
     return cantRead("Boolean");
   }

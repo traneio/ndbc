@@ -13,11 +13,11 @@ import io.trane.ndbc.postgres.proto.Message.CommandComplete.UnknownCommandComple
 import io.trane.ndbc.postgres.proto.Message.CommandComplete.UpdateComplete;
 import io.trane.ndbc.proto.BufferReader;
 
-class CommandCompleteParser {
+final class CommandCompleteParser {
 
-  public CommandComplete decode(BufferReader b) {
-    String string = b.readCString();
-    String[] words = string.split(" ");
+  public final CommandComplete decode(final BufferReader b) {
+    final String string = b.readCString();
+    final String[] words = string.split(" ");
     switch (words[0]) {
     case "INSERT":
       return new InsertComplete(parseInt(words[1]), parseInt(words[2]));

@@ -6,16 +6,16 @@ import io.trane.ndbc.postgres.proto.Message.Bind;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.Value;
 
-public class BindSerializer {
+public final class BindSerializer {
 
   private final ValueEncoding encoding;
 
-  public BindSerializer(ValueEncoding encoding) {
+  public BindSerializer(final ValueEncoding encoding) {
     super();
     this.encoding = encoding;
   }
 
-  public final void encode(Bind msg, BufferWriter b) {
+  public final void encode(final Bind msg, final BufferWriter b) {
     b.writeChar('B');
     b.writeInt(0);
 
@@ -23,16 +23,16 @@ public class BindSerializer {
     b.writeCString(msg.sourcePreparedStatementName);
 
     b.writeShort((short) msg.parameterFormatCodes.length);
-    for (short code : msg.parameterFormatCodes)
+    for (final short code : msg.parameterFormatCodes)
       b.writeShort(code);
 
     b.writeShort((short) msg.fields.length);
     for (int i = 0; i < msg.fields.length; i++) {
-      Value<?> field = msg.fields[i];
+      final Value<?> field = msg.fields[i];
       if (field == null || field.isNull())
         b.writeInt(-1);
       else {
-        int lengthPosition = b.writerIndex();
+        final int lengthPosition = b.writerIndex();
         b.writeInt(0);
         encoding.encode(format(msg, i), field, b);
         b.writeLengthNoSelf(lengthPosition);
@@ -40,13 +40,13 @@ public class BindSerializer {
     }
 
     b.writeShort((short) msg.resultColumnFormatCodes.length);
-    for (short code : msg.resultColumnFormatCodes)
+    for (final short code : msg.resultColumnFormatCodes)
       b.writeShort(code);
 
     b.writeLength(1);
   }
 
-  private Format format(Bind msg, int index) {
+  private final Format format(final Bind msg, final int index) {
     if (msg.parameterFormatCodes.length == 1)
       return Format.fromCode(msg.parameterFormatCodes[0]);
     else

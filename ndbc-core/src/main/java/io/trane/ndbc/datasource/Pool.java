@@ -12,7 +12,7 @@ import io.trane.future.Future;
 import io.trane.future.Promise;
 import io.trane.ndbc.Connection;
 
-public class Pool<T extends Connection> {
+public final class Pool<T extends Connection> {
 
   private static final Future<Object> POOL_EXHAUSTED = Future.exception(new RuntimeException("Pool exhausted"));
   private static final Future<Object> POOL_CLOSED = Future.exception(new RuntimeException("Pool closed"));
@@ -41,7 +41,7 @@ public class Pool<T extends Connection> {
       scheduleValidation(validationInterval, scheduler);
   }
 
-  public <R> Future<R> apply(final Function<T, Future<R>> f) {
+  public final <R> Future<R> apply(final Function<T, Future<R>> f) {
     if (closed)
       return POOL_CLOSED.unsafeCast();
     else {
@@ -59,7 +59,7 @@ public class Pool<T extends Connection> {
     }
   }
 
-  public Future<Void> close() {
+  public final Future<Void> close() {
     closed = true;
 
     Waiter<?, ?> w;
@@ -72,7 +72,7 @@ public class Pool<T extends Connection> {
   }
 
   private final Future<Void> drain() {
-    T item = items.poll();
+    final T item = items.poll();
     if (item == null)
       return Future.VOID;
     else
@@ -80,7 +80,7 @@ public class Pool<T extends Connection> {
   }
 
   private final void release(final T item) {
-    if (closed) 
+    if (closed)
       item.close();
     else {
       final Waiter<T, ?> waiter = waiters.poll();
@@ -111,7 +111,7 @@ public class Pool<T extends Connection> {
       return Future.VOID;
   }
 
-  private Future<Void> scheduleValidation(final Duration validationInterval, final ScheduledExecutorService scheduler) {
+  private final Future<Void> scheduleValidation(final Duration validationInterval, final ScheduledExecutorService scheduler) {
     return Future.VOID.delayed(validationInterval, scheduler).flatMap(v1 -> {
       final long start = System.currentTimeMillis();
       return validateN(items.size()).flatMap(v2 -> {
@@ -125,7 +125,7 @@ public class Pool<T extends Connection> {
     });
   }
 
-  private static class Waiter<T, R> extends Promise<R> {
+  private static final class Waiter<T, R> extends Promise<R> {
 
     private final Function<T, Future<R>> f;
 
@@ -140,7 +140,7 @@ public class Pool<T extends Connection> {
     }
   }
 
-  private Semaphore semaphore(final int permits) {
+  private final Semaphore semaphore(final int permits) {
     if (permits == Integer.MAX_VALUE)
       return new Semaphore(permits) {
         private static final long serialVersionUID = 1L;

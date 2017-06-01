@@ -19,7 +19,7 @@ import io.trane.ndbc.postgres.proto.Message.Sync;
 import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.value.Value;
 
-public class ExtendedExchange {
+public final class ExtendedExchange {
 
   private final short[] binary = { Format.BINARY.getCode() };
   private final Value<?>[] emptyValues = new Value<?>[0];
@@ -28,39 +28,31 @@ public class ExtendedExchange {
   private final Set<Integer> prepared = new HashSet<>();
   private final int[] emptyParams = new int[0];
 
-  public final <T> Exchange<T> apply(PreparedStatement ps, Exchange<T> readResult) {
-    return withParsing(ps.getQuery(), id -> Exchange
-        .send(new Bind(id, id, binary, ps.getValues().toArray(emptyValues), binary))
-        .thenSend(new Describe.DescribePortal(id))
-        .thenSend(new Execute(id, 0))
-        .thenSend(new Close.ClosePortal(id))
-        .thenSend(flush)
-        .thenSend(sync))
-            .thenReceive(BindComplete.class)
-            .then(readResult)
-            .thenReceive(CloseComplete.class);
+  public final <T> Exchange<T> apply(final PreparedStatement ps, final Exchange<T> readResult) {
+    return withParsing(ps.getQuery(),
+        id -> Exchange.send(new Bind(id, id, binary, ps.getValues().toArray(emptyValues), binary))
+            .thenSend(new Describe.DescribePortal(id)).thenSend(new Execute(id, 0)).thenSend(new Close.ClosePortal(id))
+            .thenSend(flush).thenSend(sync)).thenReceive(BindComplete.class).then(readResult)
+                .thenReceive(CloseComplete.class);
   }
 
-  private final <T> Exchange<T> withParsing(String query, Function<String, Exchange<T>> f) {
-    int id = query.hashCode();
-    String idString = Integer.toString(id);
+  private final <T> Exchange<T> withParsing(final String query, final Function<String, Exchange<T>> f) {
+    final int id = query.hashCode();
+    final String idString = Integer.toString(id);
     if (prepared.contains(id))
       return f.apply(idString);
     else {
-      return Exchange
-          .send(new Parse(Integer.toString(id), positional(query), emptyParams))
-          .then(f.apply(idString))
-          .thenReceive(ParseComplete.class)
-          .onSuccess(ign -> Exchange.value(prepared.add(id)));
+      return Exchange.send(new Parse(Integer.toString(id), positional(query), emptyParams)).then(f.apply(idString))
+          .thenReceive(ParseComplete.class).onSuccess(ign -> Exchange.value(prepared.add(id)));
     }
   }
 
   // TODO handle quotes, comments, etc.
-  private final String positional(String query) {
+  private final String positional(final String query) {
     int idx = 0;
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < query.length(); i++) {
-      char c = query.charAt(i);
+      final char c = query.charAt(i);
       if (c == '?') {
         idx += 1;
         sb.append("$");
