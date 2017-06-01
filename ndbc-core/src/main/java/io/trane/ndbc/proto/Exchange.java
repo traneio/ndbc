@@ -13,7 +13,7 @@ public interface Exchange<T> {
 
   static Exchange<Void> VOID = value(null);
 
-  static class ExchangeException extends RuntimeException {
+  static final class ExchangeException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public ExchangeException(final String message) {

@@ -22,7 +22,7 @@ import io.trane.ndbc.postgres.proto.serializer.Serializer;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.ClientMessage;
 
-public final class ChannelSupplier implements Supplier<Future<Channel>> {
+final class ChannelSupplier implements Supplier<Future<Channel>> {
 
   private final Serializer encoder;
   private final Parser decoder;

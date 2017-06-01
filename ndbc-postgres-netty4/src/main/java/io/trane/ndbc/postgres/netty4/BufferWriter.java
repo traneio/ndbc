@@ -4,7 +4,7 @@ import java.nio.charset.Charset;
 
 import io.netty.buffer.ByteBuf;
 
-public final class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
+final class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
 
   private final ByteBuf b;
   private final Charset charset;
