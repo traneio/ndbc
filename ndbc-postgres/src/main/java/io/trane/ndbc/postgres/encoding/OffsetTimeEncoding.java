@@ -43,7 +43,7 @@ final class OffsetTimeEncoding implements Encoding<OffsetTimeValue> {
   public final void encodeBinary(final OffsetTimeValue value, final BufferWriter b) {
     final OffsetTime time = value.get();
     b.writeLong(time.toLocalTime().toNanoOfDay() / 1000);
-    b.writeInt(time.getOffset().getTotalSeconds());
+    b.writeInt(-time.getOffset().getTotalSeconds());
   }
 
   @Override

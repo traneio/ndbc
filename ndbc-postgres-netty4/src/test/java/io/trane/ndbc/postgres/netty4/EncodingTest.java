@@ -4,8 +4,11 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetTime;
 import java.util.Iterator;
 
 import org.junit.Before;
@@ -26,15 +29,15 @@ public class EncodingTest extends TestEnv {
     ds.execute("DROP TABLE IF EXISTS test").get(timeout);
   }
 
-  // @Test
-  // public void bigDecimal() throws CheckedFutureException {
-  // createTable("numeric");
-  // BigDecimal value = new BigDecimal(1);
-  //
-  // execute(insert.bind(value));
-  //
-  // assertEquals(query(select).getBigDecimal(), value);
-  // }
+  @Test
+  public void bigDecimal() throws CheckedFutureException {
+    createTable("numeric");
+    BigDecimal value = new BigDecimal(1);
+
+    execute(insert.bind(value));
+
+    assertEquals(query(select).getBigDecimal(), value);
+  }
 
   @Test
   public void _boolean() throws CheckedFutureException {
@@ -96,15 +99,15 @@ public class EncodingTest extends TestEnv {
     assertEquals(query(select).getLocalDate(), value);
   }
 
-  // @Test
-  // public void localDateTime() throws CheckedFutureException {
-  // createTable("timestamp");
-  // LocalDateTime value = LocalDateTime.now();
-  //
-  // execute(insert.bind(value));
-  //
-  // assertEquals(query(select).getLocalDateTime(), value);
-  // }
+  @Test
+  public void localDateTime() throws CheckedFutureException {
+    createTable("timestamp");
+    LocalDateTime value = LocalDateTime.now();
+
+    execute(insert.bind(value));
+
+    assertEquals(query(select).getLocalDateTime(), value);
+  }
 
   @Test
   public void localTime() throws CheckedFutureException {
@@ -126,15 +129,15 @@ public class EncodingTest extends TestEnv {
     assertEquals(query(select).getLong(), value);
   }
 
-  // @Test
-  // public void offsetTime() throws CheckedFutureException {
-  // createTable("timetz");
-  // OffsetTime value = OffsetTime.now();
-  //
-  // execute(insert.bind(value));
-  //
-  // assertEquals(query(select).getOffsetTime(), value);
-  // }
+  @Test
+  public void offsetTime() throws CheckedFutureException {
+    createTable("timetz");
+    OffsetTime value = OffsetTime.now();
+
+    execute(insert.bind(value));
+
+    assertEquals(query(select).getOffsetTime(), value);
+  }
 
   @Test
   public void _short() throws CheckedFutureException {
@@ -145,8 +148,6 @@ public class EncodingTest extends TestEnv {
 
     assertEquals(query(select).getShort(), value);
   }
-
-  // Oid.TEXT, Oid.NAME, Oid.VARCHAR, Oid.XML, Oid.JSON, Oid.BPCHAR
 
   private void stringTest(final String columnType, final String value) throws CheckedFutureException {
     createTable(columnType);

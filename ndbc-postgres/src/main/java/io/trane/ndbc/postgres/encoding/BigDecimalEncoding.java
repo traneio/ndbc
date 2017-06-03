@@ -63,7 +63,7 @@ final class BigDecimalEncoding implements Encoding<BigDecimalValue> {
     final short[] digits = findDigits(paddedUnscaled, EMPTY_SHORT_ARRAY);
 
     int weight;
-    if (digits.length == 0) {
+    if (digits.length != 0) {
       int firstDigitSize;
       if (digits[0] < 10)
         firstDigitSize = 1;
@@ -82,6 +82,8 @@ final class BigDecimalEncoding implements Encoding<BigDecimalValue> {
     b.writeShort((short) weight);
     b.writeShort(sign < 0 ? NUMERIC_NEG : NUMERIC_POS);
     b.writeShort((short) value.get().scale());
+    for (short digit : digits)
+      b.writeShort(digit);
   }
 
   @Override
