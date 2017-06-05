@@ -41,55 +41,55 @@ public final class PreparedStatement {
     this.params = params;
   }
 
-  public final PreparedStatement bind(final BigDecimal value) {
+  public final PreparedStatement bindBigDecimal(final BigDecimal value) {
     return bind(value == null ? Value.NULL : new BigDecimalValue(value));
   }
 
-  public final PreparedStatement bind(final Boolean value) {
+  public final PreparedStatement bindBoolean(final Boolean value) {
     return bind(value == null ? Value.NULL : new BooleanValue(value));
   }
 
-  public final PreparedStatement bind(final byte[] value) {
+  public final PreparedStatement bindByteArray(final byte[] value) {
     return bind(value == null ? Value.NULL : new ByteArrayValue(value));
   }
 
-  public final PreparedStatement bind(final Double value) {
+  public final PreparedStatement bindDouble(final Double value) {
     return bind(value == null ? Value.NULL : new DoubleValue(value));
   }
 
-  public final PreparedStatement bind(final Float value) {
+  public final PreparedStatement bindFloat(final Float value) {
     return bind(value == null ? Value.NULL : new FloatValue(value));
   }
 
-  public final PreparedStatement bind(final Integer value) {
+  public final PreparedStatement bindInteger(final Integer value) {
     return bind(value == null ? Value.NULL : new IntegerValue(value));
   }
 
-  public final PreparedStatement bind(final LocalDate value) {
+  public final PreparedStatement bindLocalDate(final LocalDate value) {
     return bind(value == null ? Value.NULL : new LocalDateValue(value));
   }
 
-  public final PreparedStatement bind(final LocalDateTime value) {
+  public final PreparedStatement bindLocalDateTime(final LocalDateTime value) {
     return bind(value == null ? Value.NULL : new LocalDateTimeValue(value));
   }
 
-  public final PreparedStatement bind(final LocalTime value) {
+  public final PreparedStatement bindLocalTime(final LocalTime value) {
     return bind(value == null ? Value.NULL : new LocalTimeValue(value));
   }
 
-  public final PreparedStatement bind(final Long value) {
+  public final PreparedStatement bindLong(final Long value) {
     return bind(value == null ? Value.NULL : new LongValue(value));
   }
 
-  public final PreparedStatement bind(final OffsetTime value) {
+  public final PreparedStatement bindOffsetTime(final OffsetTime value) {
     return bind(value == null ? Value.NULL : new OffsetTimeValue(value));
   }
 
-  public final PreparedStatement bind(final Short value) {
+  public final PreparedStatement bindShort(final Short value) {
     return bind(value == null ? Value.NULL : new ShortValue(value));
   }
 
-  public final PreparedStatement bind(final String value) {
+  public final PreparedStatement bindString(final String value) {
     return bind(value == null ? Value.NULL : new StringValue(value));
   }
 

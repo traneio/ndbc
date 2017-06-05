@@ -49,7 +49,7 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void extendedQueryWithParams() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM test WHERE s = ?").bind("s");
+    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM test WHERE s = ?").bindString("s");
 
     final Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
@@ -118,7 +118,7 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void extendedExecuteInsertWithParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO test VALUES (?)").bind("u");
+    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO test VALUES (?)").bindString("u");
 
     ds.execute(ps).get(timeout);
 
@@ -130,7 +130,7 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void extendedExecuteUpdateWithParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("UPDATE test SET s = ?").bind("u");
+    final PreparedStatement ps = PreparedStatement.apply("UPDATE test SET s = ?").bindString("u");
 
     ds.execute(ps).get(timeout);
 
@@ -141,7 +141,7 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void extendedExecuteDeleteWithParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM test WHERE s = ?").bind("s");
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM test WHERE s = ?").bindString("s");
 
     ds.execute(ps).get(timeout);
 

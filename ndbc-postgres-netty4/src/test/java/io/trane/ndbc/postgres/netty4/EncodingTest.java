@@ -2,16 +2,17 @@ package io.trane.ndbc.postgres.netty4;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetTime;
+import java.time.ZoneOffset;
 import java.util.Iterator;
+import java.util.Random;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
@@ -21,184 +22,145 @@ import io.trane.ndbc.value.Value;
 
 public class EncodingTest extends TestEnv {
 
-  private final PreparedStatement insert = PreparedStatement.apply("INSERT INTO test VALUES (?)");
-  private final PreparedStatement select = PreparedStatement.apply("SELECT c FROM test");
-
-  @Before
-  public void recreateSchema() throws CheckedFutureException {
-    ds.execute("DROP TABLE IF EXISTS test").get(timeout);
-  }
-
   @Test
   public void bigDecimal() throws CheckedFutureException {
-    createTable("numeric");
-    BigDecimal value = new BigDecimal(1);
-
-    execute(insert.bind(value));
-
-    assertEquals(query(select).getBigDecimal(), value);
+    test("numeric", (ps, v) -> ps.bindBigDecimal(v), Value::getBigDecimal, r -> BigDecimal.valueOf(r.nextDouble()));
   }
 
   @Test
   public void _boolean() throws CheckedFutureException {
-    createTable("bool");
-    final Boolean value = true;
-
-    execute(insert.bind(value));
-
-    assertEquals(query(select).getBoolean(), value);
+    test("bool", (ps, v) -> ps.bindBoolean(v), Value::getBoolean, Random::nextBoolean);
   }
 
   @Test
   public void byteArray() throws CheckedFutureException {
-    createTable("bytea");
-    final byte[] value = "string".getBytes();
-
-    execute(insert.bind(value));
-
-    assertArrayEquals(query(select).getByteArray(), value);
+    test("bytea", (ps, v) -> ps.bindByteArray(v), Value::getByteArray, r -> {
+      byte[] bytes = new byte[r.nextInt(100)];
+      r.nextBytes(bytes);
+      return bytes;
+    }, (a, b) -> assertArrayEquals(a, b));
   }
 
   @Test
-  public void _double() throws CheckedFutureException {
-    createTable("float8");
-    final Double value = 1D;
-
-    execute(insert.bind(value));
-
-    assertEquals(query(select).getDouble(), value);
+  public void double_() throws CheckedFutureException {
+    test("float8", (ps, v) -> ps.bindDouble(v), Value::getDouble, Random::nextDouble);
   }
 
   @Test
-  public void _float() throws CheckedFutureException {
-    createTable("float4");
-    final Float value = 1.1F;
-
-    execute(insert.bind(value));
-
-    assertEquals(query(select).getFloat(), value);
+  public void float_() throws CheckedFutureException {
+    test("float4", (ps, v) -> ps.bindFloat(v), Value::getFloat, Random::nextFloat);
   }
 
   @Test
-  public void integer() throws CheckedFutureException {
-    createTable("int4");
-    final Integer value = 1;
-
-    execute(insert.bind(value));
-
-    assertEquals(query(select).getInteger(), value);
+  public void integer_() throws CheckedFutureException {
+    test("int4", (ps, v) -> ps.bindInteger(v), Value::getInteger, Random::nextInt);
   }
 
   @Test
   public void localDate() throws CheckedFutureException {
-    createTable("date");
-    final LocalDate value = LocalDate.now();
-
-    execute(insert.bind(value));
-
-    assertEquals(query(select).getLocalDate(), value);
+    test("date", (ps, v) -> ps.bindLocalDate(v), Value::getLocalDate, r -> randomLocalDateTime(r).toLocalDate());
   }
 
   @Test
   public void localDateTime() throws CheckedFutureException {
-    createTable("timestamp");
-    LocalDateTime value = LocalDateTime.now();
-
-    execute(insert.bind(value));
-
-    assertEquals(query(select).getLocalDateTime(), value);
+    test("timestamp", (ps, v) -> ps.bindLocalDateTime(v), Value::getLocalDateTime, r -> randomLocalDateTime(r));
   }
 
   @Test
   public void localTime() throws CheckedFutureException {
-    createTable("time");
-    final LocalTime value = LocalTime.now();
-
-    execute(insert.bind(value));
-
-    assertEquals(query(select).getLocalTime(), value);
+    test("time", (ps, v) -> ps.bindLocalTime(v), Value::getLocalTime, r -> randomLocalDateTime(r).toLocalTime());
   }
 
   @Test
-  public void _long() throws CheckedFutureException {
-    createTable("int8");
-    final Long value = 1L;
-
-    execute(insert.bind(value));
-
-    assertEquals(query(select).getLong(), value);
+  public void long_() throws CheckedFutureException {
+    test("int8", (ps, v) -> ps.bindLong(v), Value::getLong, Random::nextLong);
   }
 
   @Test
   public void offsetTime() throws CheckedFutureException {
-    createTable("timetz");
-    OffsetTime value = OffsetTime.now();
-
-    execute(insert.bind(value));
-
-    assertEquals(query(select).getOffsetTime(), value);
+    test("timetz", (ps, v) -> ps.bindOffsetTime(v), Value::getOffsetTime,
+        r -> randomLocalDateTime(r).toLocalTime().atOffset(randomZoneOffset(r)));
   }
 
   @Test
-  public void _short() throws CheckedFutureException {
-    createTable("int2");
-    final Short value = 1;
-
-    execute(insert.bind(value));
-
-    assertEquals(query(select).getShort(), value);
+  public void short_() throws CheckedFutureException {
+    test("int2", (ps, v) -> ps.bindShort(v), Value::getShort, r -> (short) r.nextInt());
   }
 
-  private void stringTest(final String columnType, final String value) throws CheckedFutureException {
-    createTable(columnType);
-    execute(insert.bind(value));
-
-    assertEquals(query(select).getString(), value);
+  private void testString(String columnType, int maxLength) throws CheckedFutureException {
+    test(columnType, (ps, v) -> ps.bindString(v), Value::getString, r -> radomString(r, maxLength));
   }
 
   @Test
-  public void stringText() throws CheckedFutureException {
-    stringTest("text", "some text");
-  }
-
-  @Test
-  public void stringName() throws CheckedFutureException {
-    stringTest("name", "some name");
-  }
-
-  @Test
-  public void stringVarchar() throws CheckedFutureException {
-    stringTest("varchar", "some varchar");
-  }
-
-  @Test
-  public void stringXml() throws CheckedFutureException {
-    stringTest("varchar", "<someXml/>");
+  public void string() throws CheckedFutureException {
+    testString("text", 100);
+    testString("name", 64);
+    testString("varchar", 100);
+    testString("xml", 100);
   }
 
   @Test
   public void stringJson() throws CheckedFutureException {
-    stringTest("varchar", "{ some: \"json\" }");
+    this.<String>test("json", (ps, v) -> ps.bindString(v), Value::getString,
+        r -> "{ \"test\": " + r.nextInt(100) + " }");
   }
 
-  @Test
-  public void stringBpChar() throws CheckedFutureException {
-    stringTest("varchar", "a");
+  private LocalDateTime randomLocalDateTime(Random r) {
+    return LocalDateTime.of(r.nextInt(30000), r.nextInt(12) + 1, r.nextInt(28) + 1, r.nextInt(24), r.nextInt(60),
+        r.nextInt(60), r.nextInt(99999) * 1000);
   }
 
-  private void createTable(final String columnType) throws CheckedFutureException {
-    ds.execute("CREATE TABLE test (c " + columnType + ")").get(timeout);
+  private String radomString(Random r, int maxLength) {
+    int length = r.nextInt(maxLength - 1) + 1;
+    StringBuilder sb = new StringBuilder();
+    while (sb.length() < r.nextInt(length)) {
+      char c = (char) (r.nextInt() & Character.MAX_VALUE);
+      if (Character.isAlphabetic(c) || Character.isDigit(c))
+        sb.append(c);
+    }
+    return sb.toString();
   }
 
-  private void execute(final PreparedStatement ps) throws CheckedFutureException {
-    ds.execute(ps).get(timeout);
+  private ZoneOffset randomZoneOffset(Random r) {
+    return ZoneOffset.ofTotalSeconds(r.nextInt(18 * 2) + 18);
+  }
+
+  private <T> void test(String columnType, BiFunction<PreparedStatement, T, PreparedStatement> bind,
+      Function<Value<?>, T> get, Function<Random, T> gen) throws CheckedFutureException {
+    test(columnType, bind, get, gen, (a, b) -> assertEquals(a, b));
+  }
+
+  private <T> void test(String columnType, BiFunction<PreparedStatement, T, PreparedStatement> bind,
+      Function<Value<?>, T> get, Function<Random, T> gen, BiConsumer<T, T> verify) throws CheckedFutureException {
+    test(columnType, bind, get, gen, verify, 100);
+  }
+
+  private <T> void test(String columnType, BiFunction<PreparedStatement, T, PreparedStatement> bind,
+      Function<Value<?>, T> get, Function<Random, T> gen, BiConsumer<T, T> verify, int iterations)
+      throws CheckedFutureException {
+    String table = "test_" + columnType;
+    ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
+    ds.execute("CREATE TABLE " + table + " (c " + columnType + ")").get(timeout);
+
+    Random r = new Random(1);
+    for (int i = 0; i < iterations; i++) {
+      T expected = gen.apply(r);
+      try {
+        ds.execute(bind.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected)).get(timeout);
+        T actual = get.apply(query(PreparedStatement.apply("SELECT c FROM " + table)));
+        verify.accept(expected, actual);
+      } catch (Exception e) {
+        throw new RuntimeException("Failure. columnType '" + columnType + "', value '" + expected + "'", e);
+      }
+    }
   }
 
   private Value<?> query(final PreparedStatement ps) throws CheckedFutureException {
     final Iterator<Row> it = ds.query(ps).get(timeout).iterator();
-    final Row row = it.next();
-    assertFalse(it.hasNext());
-    return row.column(0);
+    assertTrue(it.hasNext());
+    Row lastRow = null;
+    while (it.hasNext())
+      lastRow = it.next();
+    return lastRow.column(0);
   }
-
 }
