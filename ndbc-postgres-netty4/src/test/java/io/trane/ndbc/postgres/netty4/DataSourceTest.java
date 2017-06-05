@@ -18,11 +18,15 @@ import io.trane.ndbc.Row;
 
 public class DataSourceTest extends TestEnv {
 
+  private static int tableSuffix = 1;
+
+  private String table = "table_" + tableSuffix++;
+
   @Before
   public void recreateSchema() throws CheckedFutureException {
-    ds.execute("DROP TABLE IF EXISTS test").get(timeout);
-    ds.execute("CREATE TABLE test (s varchar)").get(timeout);
-    ds.execute("INSERT INTO test VALUES ('s')").get(timeout);
+    ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
+    ds.execute("CREATE TABLE " + table + " (s varchar)").get(timeout);
+    ds.execute("INSERT INTO " + table + " VALUES ('s')").get(timeout);
   }
 
   @After
@@ -32,7 +36,7 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void simpleQuery() throws CheckedFutureException {
-    final Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
 
     assertEquals(rows.next().column(0).getString(), "s");
     assertFalse(rows.hasNext());
@@ -40,7 +44,7 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void extendedQueryNoParams() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM test");
+    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM " + table);
 
     final Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
@@ -49,7 +53,7 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void extendedQueryWithParams() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM test WHERE s = ?").bindString("s");
+    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM " + table + " WHERE s = ?").bindString("s");
 
     final Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
@@ -58,9 +62,9 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void simpleExecuteInsert() throws CheckedFutureException {
-    ds.execute("INSERT INTO test VALUES ('u')");
+    ds.execute("INSERT INTO " + table + " VALUES ('u')");
 
-    final Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
     assertEquals(rows.next().column(0).getString(), "u");
     assertFalse(rows.hasNext());
@@ -68,28 +72,28 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void simpleExecuteUpdate() throws CheckedFutureException {
-    ds.execute("UPDATE test SET s = 'u'");
+    ds.execute("UPDATE " + table + " SET s = 'u'");
 
-    final Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "u");
     assertFalse(rows.hasNext());
   }
 
   @Test
   public void simpleExecuteDelete() throws CheckedFutureException {
-    ds.execute("DELETE FROM test");
+    ds.execute("DELETE FROM " + table);
 
-    final Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertFalse(rows.hasNext());
   }
 
   @Test
   public void extendedExecuteInsertNoParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO test VALUES ('u')");
+    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES ('u')");
 
     ds.execute(ps).get(timeout);
 
-    final Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
     assertEquals(rows.next().column(0).getString(), "u");
     assertFalse(rows.hasNext());
@@ -97,32 +101,32 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void extendedExecuteUpdateNoParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("UPDATE test SET s = 'u'");
+    final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = 'u'");
 
     ds.execute(ps).get(timeout);
 
-    final Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "u");
     assertFalse(rows.hasNext());
   }
 
   @Test
   public void extendedExecuteDeleteNoParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM test WHERE s = 's'");
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = 's'");
 
     ds.execute(ps).get(timeout);
 
-    final Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertFalse(rows.hasNext());
   }
 
   @Test
   public void extendedExecuteInsertWithParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO test VALUES (?)").bindString("u");
+    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)").bindString("u");
 
     ds.execute(ps).get(timeout);
 
-    final Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
     assertEquals(rows.next().column(0).getString(), "u");
     assertFalse(rows.hasNext());
@@ -130,22 +134,22 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void extendedExecuteUpdateWithParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("UPDATE test SET s = ?").bindString("u");
+    final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = ?").bindString("u");
 
     ds.execute(ps).get(timeout);
 
-    final Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "u");
     assertFalse(rows.hasNext());
   }
 
   @Test
   public void extendedExecuteDeleteWithParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM test WHERE s = ?").bindString("s");
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").bindString("s");
 
     ds.execute(ps).get(timeout);
 
-    final Iterator<Row> rows = ds.query("SELECT * FROM test").get(timeout).iterator();
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertFalse(rows.hasNext());
   }
 
