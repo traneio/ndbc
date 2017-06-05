@@ -1,6 +1,8 @@
 package io.trane.ndbc.postgres.proto;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.value.Value;
@@ -1308,7 +1310,15 @@ public interface Message {
 
       @Override
       public String toString() {
-        return "ErrorResponse [fields=" + Arrays.toString(fields) + "]";
+        String error = "unknown error";
+        List<String> details = new ArrayList<>();
+        for (Field f : fields) {
+          if (f.type == Field.Type.Message)
+            error = f.value;
+          else
+            details.add(f.type + ": " + f.value);
+        }
+        return error + " " + Arrays.toString(details.toArray());
       }
     }
 
