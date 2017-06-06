@@ -54,7 +54,8 @@ public final class Config {
   public static final Config apply(final String dataSourceSupplierClass, final String host, final int port,
       final String user) {
     return new Config(dataSourceSupplierClass, Charset.defaultCharset(), user, Optional.empty(), Optional.empty(), host,
-        port, Integer.MAX_VALUE, Integer.MAX_VALUE, Duration.ofMillis(Long.MAX_VALUE), new HashSet<>());
+        port, Integer.MAX_VALUE, Integer.MAX_VALUE, Duration.ofMillis(Long.MAX_VALUE), new HashSet<>(),
+        Optional.empty());
   }
 
   private static final <T> T getRequiredProperty(final String prefix, final Properties properties, final String name,
@@ -97,11 +98,12 @@ public final class Config {
   public final int poolMaxWaiters;
   public final Duration poolValidationInterval;
   public final Set<String> encodingClasses;
+  public final Optional<Integer> nioThreads;
 
   private Config(final String dataSourceSupplierClass, final Charset charset, final String user,
       final Optional<String> password, final Optional<String> database, final String host, final int port,
       final int poolMaxSize, final int poolMaxWaiters, final Duration poolValidationInterval,
-      final Set<String> encodingClasses) {
+      final Set<String> encodingClasses, Optional<Integer> nioThreads) {
     super();
     this.dataSourceSupplierClass = dataSourceSupplierClass;
     this.charset = charset;
@@ -114,11 +116,12 @@ public final class Config {
     this.poolMaxWaiters = poolMaxWaiters;
     this.poolValidationInterval = poolValidationInterval;
     this.encodingClasses = Collections.unmodifiableSet(encodingClasses);
+    this.nioThreads = nioThreads;
   }
 
   public final Config charset(final Charset charset) {
     return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
-        poolMaxWaiters, poolValidationInterval, encodingClasses);
+        poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads);
   }
 
   public final Config charset(final Optional<Charset> charset) {
@@ -127,7 +130,7 @@ public final class Config {
 
   public final Config password(final String password) {
     return new Config(dataSourceSupplierClass, charset, user, Optional.ofNullable(password), database, host, port,
-        poolMaxSize, poolMaxWaiters, poolValidationInterval, encodingClasses);
+        poolMaxSize, poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads);
   }
 
   public final Config password(final Optional<String> password) {
@@ -136,7 +139,7 @@ public final class Config {
 
   public final Config database(final String database) {
     return new Config(dataSourceSupplierClass, charset, user, password, Optional.of(database), host, port, poolMaxSize,
-        poolMaxWaiters, poolValidationInterval, encodingClasses);
+        poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads);
   }
 
   public final Config database(final Optional<String> database) {
@@ -145,7 +148,7 @@ public final class Config {
 
   public final Config poolMaxSize(final int poolMaxSize) {
     return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
-        poolMaxWaiters, poolValidationInterval, encodingClasses);
+        poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads);
   }
 
   public final Config poolMaxSize(final Optional<Integer> poolMaxSize) {
@@ -154,7 +157,7 @@ public final class Config {
 
   public final Config poolMaxWaiters(final int poolMaxWaiters) {
     return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
-        poolMaxWaiters, poolValidationInterval, encodingClasses);
+        poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads);
   }
 
   public final Config poolMaxWaiters(final Optional<Integer> poolMaxWaiters) {
@@ -163,7 +166,7 @@ public final class Config {
 
   public final Config poolValidationInterval(final Duration poolValidationInterval) {
     return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
-        poolMaxWaiters, poolValidationInterval, encodingClasses);
+        poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads);
   }
 
   public final Config poolValidationInterval(final Optional<Duration> poolValidationInterval) {
@@ -172,7 +175,7 @@ public final class Config {
 
   public final Config encodingClasses(final Set<String> encodingClasses) {
     return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
-        poolMaxWaiters, poolValidationInterval, Collections.unmodifiableSet(encodingClasses));
+        poolMaxWaiters, poolValidationInterval, Collections.unmodifiableSet(encodingClasses), nioThreads);
   }
 
   public final Config encodingClasses(final Optional<Set<String>> encodingClasses) {
@@ -184,6 +187,15 @@ public final class Config {
     encodingClasses.addAll(encodingClasses);
     encodingClasses.add(encoding);
     return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
-        poolMaxWaiters, poolValidationInterval, encodingClasses);
+        poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads);
+  }
+
+  public final Config nioThreads(final int nioThreads) {
+    return new Config(dataSourceSupplierClass, charset, user, password, database, host, port, poolMaxSize,
+        poolMaxWaiters, poolValidationInterval, encodingClasses, Optional.of(nioThreads));
+  }
+
+  public final Config nioThreads(final Optional<Integer> nioThreads) {
+    return nioThreads.map(this::nioThreads).orElse(this);
   }
 }

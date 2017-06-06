@@ -1,6 +1,5 @@
 package io.trane.ndbc.postgres.netty4;
 
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -13,8 +12,7 @@ import io.trane.ndbc.proto.ServerMessage;
 final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> implements io.trane.ndbc.proto.Channel {
 
   private Promise<ChannelHandlerContext> ctx = Promise.apply();
-  private final AtomicReference<Optional<Promise<ServerMessage>>> nextMessagePromise = new AtomicReference<>(
-      Optional.empty());
+  private final AtomicReference<Promise<ServerMessage>> nextMessagePromise = new AtomicReference<>(null);
 
   @Override
   public final void channelActive(final ChannelHandlerContext ctx) throws Exception {
@@ -31,12 +29,10 @@ final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> impl
 
   @Override
   protected final void channelRead0(final ChannelHandlerContext ctx, final ServerMessage msg) throws Exception {
-    System.out.println("received: " + msg);
-    final Optional<Promise<ServerMessage>> option = nextMessagePromise.get();
-    final Promise<ServerMessage> p = option.orElseGet(() -> {
+    final Promise<ServerMessage> p = nextMessagePromise.get();
+    if (p == null)
       throw new IllegalStateException("Unexpected server message: " + msg);
-    });
-    if (!nextMessagePromise.compareAndSet(option, Optional.empty()))
+    if (!nextMessagePromise.compareAndSet(p, null))
       throw new IllegalStateException("Invalid `nextMessagePromise` state: " + nextMessagePromise.get());
     p.setValue(msg);
   }
@@ -45,7 +41,7 @@ final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> impl
   public final Future<ServerMessage> receive() {
     return ctx.flatMap(c -> {
       final Promise<ServerMessage> p = Promise.apply();
-      if (nextMessagePromise.compareAndSet(Optional.empty(), Optional.of(p))) {
+      if (nextMessagePromise.compareAndSet(null, p)) {
         c.read();
         return p;
       } else
@@ -56,7 +52,6 @@ final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> impl
   @Override
   public final Future<Void> send(final ClientMessage msg) {
     return ctx.flatMap(c -> {
-      System.out.println("sent: " + msg);
       final Promise<Void> p = Promise.apply();
       c.writeAndFlush(msg).addListener(future -> p.become(Future.VOID));
       return p;

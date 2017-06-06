@@ -107,7 +107,7 @@ public final class PreparedStatement {
     return query;
   }
 
-  public final List<Value<?>> getValues() {
-    return Collections.unmodifiableList(Arrays.asList(params));
+  public final Value<?>[] getUnsafeParams() {
+    return params;
   }
 }

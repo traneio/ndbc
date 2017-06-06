@@ -153,15 +153,15 @@ public class DataSourceTest extends TestEnv {
     assertFalse(rows.hasNext());
   }
 
-  @Test(expected = CheckedFutureException.class)
-  public void cancellation() throws CheckedFutureException {
-    final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    try {
-      final Future<Integer> f = ds.execute("SELECT pg_sleep(999)");
-      f.raise(new RuntimeException());
-      f.get(timeout);
-    } finally {
-      scheduler.shutdown();
-    }
-  }
+//  @Test(expected = CheckedFutureException.class)
+//  public void cancellation() throws CheckedFutureException {
+//    final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+//    try {
+//      final Future<Integer> f = ds.execute("SELECT pg_sleep(999)");
+//      f.raise(new RuntimeException());
+//      f.get(timeout);
+//    } finally {
+//      scheduler.shutdown();
+//    }
+//  }
 }

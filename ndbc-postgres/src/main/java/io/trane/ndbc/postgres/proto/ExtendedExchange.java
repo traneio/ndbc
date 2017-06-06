@@ -22,7 +22,6 @@ import io.trane.ndbc.value.Value;
 public final class ExtendedExchange {
 
   private final short[] binary = { Format.BINARY.getCode() };
-  private final Value<?>[] emptyValues = new Value<?>[0];
   private final Sync sync = new Sync();
   private final Flush flush = new Flush();
   private final Set<Integer> prepared = new HashSet<>();
@@ -30,9 +29,9 @@ public final class ExtendedExchange {
 
   public final <T> Exchange<T> apply(final PreparedStatement ps, final Exchange<T> readResult) {
     return withParsing(ps.getQuery(),
-        id -> Exchange.send(new Bind(id, id, binary, ps.getValues().toArray(emptyValues), binary))
+        id -> Exchange.send(new Bind(id, id, binary, ps.getUnsafeParams(), binary))
             .thenSend(new Describe.DescribePortal(id)).thenSend(new Execute(id, 0)).thenSend(new Close.ClosePortal(id))
-            .thenSend(flush).thenSend(sync)).thenReceive(BindComplete.class).then(readResult)
+            .thenSend(flush)).thenReceive(BindComplete.class).then(readResult)
                 .thenReceive(CloseComplete.class);
   }
 

@@ -93,9 +93,9 @@ public class Serializer {
     else if (msg instanceof StartupMessage)
       startupMessageSerializer.encode((StartupMessage) msg, b);
     else if (msg instanceof Sync)
-      syncSerializer.encode((Flush) msg, b);
+      syncSerializer.encode((Sync) msg, b);
     else if (msg instanceof Terminate)
-      terminateSerializer.encode((Flush) msg, b);
+      terminateSerializer.encode((Terminate) msg, b);
     else
       log.severe("Invalid client message: " + msg);
   }

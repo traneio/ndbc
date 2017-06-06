@@ -49,7 +49,8 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
     this.encoding = new ValueEncoding(
         config.encodingClasses.stream().map(this::loadEncoding).collect(Collectors.toSet()));
     this.channelSupplier = new ChannelSupplier(config.charset, createSerializer(), new Parser(),
-        new NioEventLoopGroup(0, new DefaultThreadFactory("ndbc-netty4", true)), config.host, config.port);
+        new NioEventLoopGroup(config.nioThreads.orElse(0), new DefaultThreadFactory("ndbc-netty4", true)), config.host,
+        config.port);
   }
 
   private final Encoding<?> loadEncoding(final String cls) {
@@ -69,13 +70,16 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
 
   private final Supplier<Future<Connection>> createConnection() {
     final QueryResultExchange queryResultExchange = new QueryResultExchange(encoding);
-    final ExtendedExchange extendedExchange = new ExtendedExchange();
-    return () -> channelSupplier.get()
-        .flatMap(channel -> startup.apply(config.charset, config.user, config.password, config.database).run(channel)
-            .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, channelSupplier, backendKeyData,
-                new SimpleQueryExchange(queryResultExchange), new SimpleExecuteExchange(),
-                new ExtendedQueryExchange(queryResultExchange, extendedExchange),
-                new ExtendedExecuteExchange(extendedExchange))));
+    return () -> {
+      System.out.println("conn");
+      final ExtendedExchange extendedExchange = new ExtendedExchange();
+      return channelSupplier.get()
+          .flatMap(channel -> startup.apply(config.charset, config.user, config.password, config.database).run(channel)
+              .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, channelSupplier, backendKeyData,
+                  new SimpleQueryExchange(queryResultExchange), new SimpleExecuteExchange(),
+                  new ExtendedQueryExchange(queryResultExchange, extendedExchange),
+                  new ExtendedExecuteExchange(extendedExchange))));
+    };
   }
 
   private final Pool<Connection> createPool() {

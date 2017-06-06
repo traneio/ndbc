@@ -41,6 +41,7 @@
     <module>ndbc-core</module>
     <module>ndbc-postgres</module>
     <module>ndbc-postgres-netty4</module>
+    <module>ndbc-benchmark</module>
   </modules>
 
   <distributionManagement>

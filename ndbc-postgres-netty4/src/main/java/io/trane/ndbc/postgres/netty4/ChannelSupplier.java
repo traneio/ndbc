@@ -48,25 +48,28 @@ final class ChannelSupplier implements Supplier<Future<Channel>> {
     return bootstrap(channel).map(v -> channel);
   }
 
+  private class MessageDecoder extends ByteToMessageDecoder {
+    @Override
+    protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out) throws Exception {
+      decoder.decode(new BufferReader(charset, in)).ifPresent(out::add);
+    }
+  }
+
+  private class MessageEncoder extends MessageToByteEncoder<ClientMessage> {
+    @Override
+    protected void encode(final ChannelHandlerContext ctx, final ClientMessage msg, final ByteBuf out)
+        throws Exception {
+      encoder.encode(msg, new BufferWriter(charset, out));
+    }
+  }
+
   private final Future<Void> bootstrap(final NettyChannel channel) {
     final Promise<Void> p = Promise.apply();
     new Bootstrap().group(eventLoopGroup).channel(NioSocketChannel.class).option(ChannelOption.SO_KEEPALIVE, true)
         .option(ChannelOption.AUTO_READ, false).handler(new ChannelInitializer<io.netty.channel.Channel>() {
           @Override
           protected void initChannel(final io.netty.channel.Channel ch) throws Exception {
-            ch.pipeline().addLast(new ByteToMessageDecoder() {
-              @Override
-              protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
-                  throws Exception {
-                decoder.decode(new BufferReader(charset, in)).ifPresent(out::add);
-              }
-            }, new MessageToByteEncoder<ClientMessage>() {
-              @Override
-              protected void encode(final ChannelHandlerContext ctx, final ClientMessage msg, final ByteBuf out)
-                  throws Exception {
-                encoder.encode(msg, new BufferWriter(charset, out));
-              }
-            }, new FlowControlHandler(), channel);
+            ch.pipeline().addLast(new MessageDecoder(), new MessageEncoder(), new FlowControlHandler(), channel);
           }
         }).connect(new InetSocketAddress(host, port)).addListener(future -> p.become(Future.VOID));
     return p;

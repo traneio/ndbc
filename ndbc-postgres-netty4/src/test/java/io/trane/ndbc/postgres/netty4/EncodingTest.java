@@ -140,7 +140,7 @@ public class EncodingTest extends TestEnv {
       throws CheckedFutureException {
     String table = "test_" + columnType;
     ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
-    ds.execute("CREATE TABLE " + table + "m (c " + columnType + ")").get(timeout);
+    ds.execute("CREATE TABLE " + table + " (c " + columnType + ")").get(timeout);
 
     Random r = new Random(1);
     for (int i = 0; i < iterations; i++) {

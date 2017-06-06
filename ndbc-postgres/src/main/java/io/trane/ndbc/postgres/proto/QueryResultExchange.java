@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import io.trane.ndbc.ResultSet;
 import io.trane.ndbc.Row;
@@ -40,9 +39,6 @@ public final class QueryResultExchange {
     final BufferReader[] values = data.values;
 
     final int length = fields.length;
-    if (length != values.length)
-      throw new IllegalStateException("Invalid number of columns.");
-
     final Map<String, Integer> positions = new HashMap<>(length);
     final Value<?>[] columns = new Value<?>[length];
 
@@ -70,7 +66,10 @@ public final class QueryResultExchange {
   }
 
   private final ResultSet toResultSet(final RowDescription desc, final List<DataRow> dataRows) {
-    final Stream<Row> rows = dataRows.stream().map(data -> toRow(encoding, desc, data));
+    final int size = dataRows.size();
+    final List<Row> rows = new ArrayList<>(size);
+    for (DataRow dr : dataRows) 
+      rows.add(toRow(encoding, desc, dr));
     return new ResultSet(rows);
   }
 
