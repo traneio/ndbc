@@ -15,6 +15,7 @@ import io.trane.ndbc.postgres.proto.Message.Execute;
 import io.trane.ndbc.postgres.proto.Message.Flush;
 import io.trane.ndbc.postgres.proto.Message.Parse;
 import io.trane.ndbc.postgres.proto.Message.ParseComplete;
+import io.trane.ndbc.postgres.proto.Message.ReadyForQuery;
 import io.trane.ndbc.postgres.proto.Message.Sync;
 import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.value.Value;
@@ -23,7 +24,6 @@ public final class ExtendedExchange {
 
   private final short[] binary = { Format.BINARY.getCode() };
   private final Sync sync = new Sync();
-  private final Flush flush = new Flush();
   private final Set<Integer> prepared = new HashSet<>();
   private final int[] emptyParams = new int[0];
 
@@ -31,8 +31,9 @@ public final class ExtendedExchange {
     return withParsing(ps.getQuery(),
         id -> Exchange.send(new Bind(id, id, binary, ps.getUnsafeParams(), binary))
             .thenSend(new Describe.DescribePortal(id)).thenSend(new Execute(id, 0)).thenSend(new Close.ClosePortal(id))
-            .thenSend(flush)).thenReceive(BindComplete.class).then(readResult)
-                .thenReceive(CloseComplete.class);
+            .thenSend(sync)).thenReceive(BindComplete.class).then(readResult)
+                .thenReceive(CloseComplete.class)
+                .thenWaitFor(ReadyForQuery.class);
   }
 
   private final <T> Exchange<T> withParsing(final String query, final Function<String, Exchange<T>> f) {
