@@ -1,4 +1,4 @@
-package io.trane.ndbc.pool;
+package io.trane.ndbc.datasource;
 
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;

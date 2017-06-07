@@ -71,7 +71,6 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
   private final Supplier<Future<Connection>> createConnection() {
     final QueryResultExchange queryResultExchange = new QueryResultExchange(encoding);
     return () -> {
-      System.out.println("conn");
       final ExtendedExchange extendedExchange = new ExtendedExchange();
       return channelSupplier.get()
           .flatMap(channel -> startup.apply(config.charset, config.user, config.password, config.database).run(channel)
