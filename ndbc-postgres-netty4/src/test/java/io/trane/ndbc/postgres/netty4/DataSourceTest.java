@@ -4,15 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.util.Iterator;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
-import io.trane.future.Future;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 

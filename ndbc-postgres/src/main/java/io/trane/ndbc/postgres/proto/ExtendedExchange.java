@@ -12,13 +12,11 @@ import io.trane.ndbc.postgres.proto.Message.Close;
 import io.trane.ndbc.postgres.proto.Message.CloseComplete;
 import io.trane.ndbc.postgres.proto.Message.Describe;
 import io.trane.ndbc.postgres.proto.Message.Execute;
-import io.trane.ndbc.postgres.proto.Message.Flush;
 import io.trane.ndbc.postgres.proto.Message.Parse;
 import io.trane.ndbc.postgres.proto.Message.ParseComplete;
 import io.trane.ndbc.postgres.proto.Message.ReadyForQuery;
 import io.trane.ndbc.postgres.proto.Message.Sync;
 import io.trane.ndbc.proto.Exchange;
-import io.trane.ndbc.value.Value;
 
 public final class ExtendedExchange {
 
