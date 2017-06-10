@@ -2,6 +2,7 @@ package io.trane.ndbc.postgres.encoding;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import io.trane.ndbc.proto.BufferReader;
@@ -17,13 +18,13 @@ public final class ValueEncoding {
       new OffsetTimeEncoding(), new ShortEncoding(), new StringEncoding());
 
   private final Map<Class<?>, Encoding<?>> byValueClass;
-  private final Map<Integer, Encoding<?>> byOid;
+  private final Map<Integer, Encoding<?>>  byOid;
 
-  public ValueEncoding(final Set<Encoding<?>> customEncodings) {
+  public ValueEncoding(final Optional<Set<Encoding<?>>> customEncodings) {
     byValueClass = new HashMap<>();
     byOid = new HashMap<>();
     registerEncodings(defaultEncodings);
-    registerEncodings(customEncodings);
+    customEncodings.ifPresent(this::registerEncodings);
   }
 
   @SuppressWarnings("unchecked")

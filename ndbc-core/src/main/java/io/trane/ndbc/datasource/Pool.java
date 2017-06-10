@@ -1,6 +1,7 @@
 package io.trane.ndbc.datasource;
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -15,30 +16,30 @@ import io.trane.ndbc.Connection;
 public final class Pool<T extends Connection> {
 
   private static final Future<Object> POOL_EXHAUSTED = Future.exception(new RuntimeException("Pool exhausted"));
-  private static final Future<Object> POOL_CLOSED = Future.exception(new RuntimeException("Pool closed"));
+  private static final Future<Object> POOL_CLOSED    = Future.exception(new RuntimeException("Pool closed"));
 
-  public static <T extends Connection> Pool<T> apply(final Supplier<Future<T>> supplier, final int maxSize,
-      final int maxWaiters, final Duration validationInterval, final ScheduledExecutorService scheduler) {
+  public static <T extends Connection> Pool<T> apply(final Supplier<Future<T>> supplier,
+      final Optional<Integer> maxSize, final Optional<Integer> maxWaiters, final Optional<Duration> validationInterval,
+      final ScheduledExecutorService scheduler) {
     return new Pool<>(supplier, maxSize, maxWaiters, validationInterval, scheduler);
   }
 
-  private volatile boolean closed = false;
+  private volatile boolean          closed = false;
   private final Supplier<Future<T>> supplier;
-  private final Semaphore sizeSemaphore;
-  private final Semaphore waitersSemaphore;
-  private final Queue<T> items;
+  private final Semaphore           sizeSemaphore;
+  private final Semaphore           waitersSemaphore;
+  private final Queue<T>            items;
   private final Queue<Waiter<T, ?>> waiters;
 
-  private Pool(final Supplier<Future<T>> supplier, final int maxSize, final int maxWaiters,
-      final Duration validationInterval, final ScheduledExecutorService scheduler) {
+  private Pool(final Supplier<Future<T>> supplier, final Optional<Integer> maxSize, final Optional<Integer> maxWaiters,
+      final Optional<Duration> validationInterval, final ScheduledExecutorService scheduler) {
     this.supplier = supplier;
     this.sizeSemaphore = semaphore(maxSize);
     this.waitersSemaphore = semaphore(maxWaiters);
     // TODO is this the best data structure?
     this.items = new ConcurrentLinkedQueue<>();
     this.waiters = new ConcurrentLinkedQueue<>();
-    if (validationInterval.toMillis() != Long.MAX_VALUE)
-      scheduleValidation(validationInterval, scheduler);
+    validationInterval.ifPresent(i -> scheduleValidation(i, scheduler));
   }
 
   public final <R> Future<R> apply(final Function<T, Future<R>> f) {
@@ -111,7 +112,8 @@ public final class Pool<T extends Connection> {
       return Future.VOID;
   }
 
-  private final Future<Void> scheduleValidation(final Duration validationInterval, final ScheduledExecutorService scheduler) {
+  private final Future<Void> scheduleValidation(final Duration validationInterval,
+      final ScheduledExecutorService scheduler) {
     return Future.VOID.delayed(validationInterval, scheduler).flatMap(v1 -> {
       final long start = System.currentTimeMillis();
       return validateN(items.size()).flatMap(v2 -> {
@@ -140,21 +142,18 @@ public final class Pool<T extends Connection> {
     }
   }
 
-  private final Semaphore semaphore(final int permits) {
-    if (permits == Integer.MAX_VALUE)
-      return new Semaphore(permits) {
-        private static final long serialVersionUID = 1L;
+  private final Semaphore semaphore(final Optional<Integer> permits) {
+    return permits.map(Semaphore::new).orElse(new Semaphore(Integer.MAX_VALUE) {
+      private static final long serialVersionUID = 1L;
 
-        @Override
-        public void release() {
-        }
+      @Override
+      public void release() {
+      }
 
-        @Override
-        public boolean tryAcquire() {
-          return true;
-        }
-      };
-    else
-      return new Semaphore(permits);
+      @Override
+      public boolean tryAcquire() {
+        return true;
+      }
+    });
   }
 }

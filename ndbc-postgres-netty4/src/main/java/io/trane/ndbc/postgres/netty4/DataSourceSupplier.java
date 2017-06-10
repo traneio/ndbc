@@ -47,7 +47,7 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
   public DataSourceSupplier(final Config config) {
     this.config = config;
     this.encoding = new ValueEncoding(
-        config.encodingClasses.stream().map(this::loadEncoding).collect(Collectors.toSet()));
+        config.encodingClasses.map(l -> l.stream().map(this::loadEncoding).collect(Collectors.toSet())));
     this.channelSupplier = new ChannelSupplier(config.charset, createSerializer(), new Parser(),
         new NioEventLoopGroup(config.nioThreads.orElse(0), new DefaultThreadFactory("ndbc-netty4", true)), config.host,
         config.port);

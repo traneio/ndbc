@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,8 +30,8 @@ public class PoolTest {
   @Test
   public void maxSize() {
     final int maxSize = 100;
-    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), maxSize, Integer.MAX_VALUE,
-        Duration.ofMillis(Long.MAX_VALUE), scheduler);
+    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.empty(),
+        Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
 
     for (int i = 0; i < maxSize * 3; i++)
@@ -39,14 +40,14 @@ public class PoolTest {
         return Promise.apply();
       });
 
-    assertEquals(maxSize, executing.get());
+    assertEquals(Optional.of(maxSize), executing.get());
   }
 
   @Test
   public void maxSizeConcurrentCreation() {
     final int maxSize = 100;
-    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), maxSize, Integer.MAX_VALUE,
-        Duration.ofMillis(Long.MAX_VALUE), scheduler);
+    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.empty(),
+        Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
 
     Concurrently.apply(Duration.ofMillis(200), () -> {
@@ -62,8 +63,8 @@ public class PoolTest {
   @Test
   public void maxSizeConcurrentUsage() {
     final int maxSize = 100;
-    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), maxSize, Integer.MAX_VALUE,
-        Duration.ofMillis(Long.MAX_VALUE), scheduler);
+    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.empty(),
+        Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
     final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
@@ -81,8 +82,8 @@ public class PoolTest {
   public void maxWaiters() {
     final int maxSize = 100;
     final int maxWaiters = 60;
-    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), maxSize, maxWaiters,
-        Duration.ofMillis(Long.MAX_VALUE), scheduler);
+    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.of(maxWaiters),
+        Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
     final AtomicInteger rejected = new AtomicInteger();
 
@@ -92,7 +93,7 @@ public class PoolTest {
         return Promise.apply();
       }).onFailure(e -> rejected.incrementAndGet());
 
-    assertEquals(maxSize, executing.get());
+    assertEquals(Optional.of(maxSize), executing.get());
     assertEquals(40, rejected.get());
   }
 
@@ -100,8 +101,8 @@ public class PoolTest {
   public void maxWaitersConcurrentCreation() {
     final int maxSize = 100;
     final int maxWaiters = 60;
-    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), maxSize, maxWaiters,
-        Duration.ofMillis(Long.MAX_VALUE), scheduler);
+    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.of(maxWaiters),
+        Optional.empty(), scheduler);
     final AtomicInteger started = new AtomicInteger();
     final AtomicInteger executing = new AtomicInteger();
     final AtomicInteger rejected = new AtomicInteger();
