@@ -10,4 +10,9 @@ public final class CharValue extends Value<Character> {
   public final Character getCharacter() {
     return get();
   }
+
+  @Override
+  public final Boolean getBoolean() {
+    return get() == '1' || get() == 'T';
+  }
 }
