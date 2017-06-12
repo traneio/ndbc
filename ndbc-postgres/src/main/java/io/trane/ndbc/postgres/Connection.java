@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import io.trane.future.Future;
 import io.trane.future.InterruptHandler;
 import io.trane.future.Promise;
+import io.trane.future.Transformer;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.ResultSet;
 import io.trane.ndbc.postgres.proto.ExtendedExecuteExchange;
@@ -19,13 +20,13 @@ import io.trane.ndbc.proto.Exchange;
 
 public final class Connection implements io.trane.ndbc.Connection {
 
-  private final Channel channel;
+  private final Channel                   channel;
   private final Supplier<Future<Channel>> channelSupplier;
-  private final Optional<BackendKeyData> backendKeyData;
-  private final SimpleQueryExchange simpleQueryExchange;
-  private final SimpleExecuteExchange simpleExecuteExchange;
-  private final ExtendedQueryExchange extendedQueryExchange;
-  private final ExtendedExecuteExchange extendedExecuteExchange;
+  private final Optional<BackendKeyData>  backendKeyData;
+  private final SimpleQueryExchange       simpleQueryExchange;
+  private final SimpleExecuteExchange     simpleExecuteExchange;
+  private final ExtendedQueryExchange     extendedQueryExchange;
+  private final ExtendedExecuteExchange   extendedExecuteExchange;
 
   public Connection(final Channel channel, final Supplier<Future<Channel>> channelSupplier,
       final Optional<BackendKeyData> backendKeyData, final SimpleQueryExchange simpleQueryExchange,
@@ -69,6 +70,21 @@ public final class Connection implements io.trane.ndbc.Connection {
   @Override
   public final Future<Void> close() {
     return Exchange.close().run(channel);
+  }
+
+  @Override
+  public <R> Future<R> withTransaction(Supplier<Future<R>> sup) {
+    return execute("BEGIN").flatMap(v -> sup.get()).transformWith(new Transformer<R, Future<R>>() {
+      @Override
+      public Future<R> onException(final Throwable ex) {
+        return execute("ROLLBACK").flatMap(v -> Future.exception(ex));
+      }
+
+      @Override
+      public Future<R> onValue(final R value) {
+        return execute("COMMIT").map(v -> value);
+      }
+    });
   }
 
   private final <T> Future<T> run(final Exchange<T> exchange) {
