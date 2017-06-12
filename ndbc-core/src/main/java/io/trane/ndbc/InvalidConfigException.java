@@ -3,7 +3,7 @@ package io.trane.ndbc;
 import java.util.Optional;
 import java.util.Properties;
 
-public final class ConfigError extends RuntimeException {
+public final class InvalidConfigException extends RuntimeException {
   private static final long serialVersionUID = -5455508571025077170L;
 
   final Properties properties;
@@ -11,7 +11,7 @@ public final class ConfigError extends RuntimeException {
   final String name;
   final Optional<Exception> cause;
 
-  public ConfigError(final Properties properties, final String prefix, final String name,
+  public InvalidConfigException(final Properties properties, final String prefix, final String name,
       final Optional<Exception> cause) {
     super("Invalid config `" + prefix + "." + name + "`." + cause.map(e -> "Cause: " + e.toString()).orElse(""));
     this.properties = properties;

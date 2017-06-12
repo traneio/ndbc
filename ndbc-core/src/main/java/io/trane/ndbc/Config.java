@@ -47,7 +47,7 @@ public final class Config {
         getProperty(prefix, properties, "poolValidationIntervalSeconds", s -> Duration.ofSeconds(Long.parseLong(s))));
 
     config = config.encodingClasses(getProperty(prefix, properties, "encodingClasses")
-        .map(k -> Stream.of(k.split(",")).collect(Collectors.toSet())));
+        .map(k -> Stream.of(k.split(",")).filter(s -> !s.isEmpty()).collect(Collectors.toSet())));
 
     return config;
   }
@@ -63,13 +63,13 @@ public final class Config {
     try {
       return parser.apply(getRequiredProperty(prefix, properties, name));
     } catch (final Exception ex) {
-      throw new ConfigError(properties, prefix, name, Optional.of(ex));
+      throw new InvalidConfigException(properties, prefix, name, Optional.of(ex));
     }
   }
 
   private static final String getRequiredProperty(final String prefix, final Properties properties, final String name) {
     return getProperty(prefix, properties, name).orElseGet(() -> {
-      throw new ConfigError(properties, prefix, name, Optional.empty());
+      throw new InvalidConfigException(properties, prefix, name, Optional.empty());
     });
   }
 
@@ -78,7 +78,7 @@ public final class Config {
     try {
       return getProperty(prefix, properties, name).map(parser);
     } catch (final Exception ex) {
-      throw new ConfigError(properties, prefix, name, Optional.of(ex));
+      throw new InvalidConfigException(properties, prefix, name, Optional.of(ex));
     }
   }
 
@@ -179,10 +179,10 @@ public final class Config {
         poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads);
   }
 
-  public final Config addEncodingClass(final String encoding) {
-    return encodingClasses(Optional.ofNullable(encoding).map(enc -> {
+  public final Config addEncodingClass(final String encodingClass) {
+    return encodingClasses(Optional.ofNullable(encodingClass).map(enc -> {
       final Set<String> encodingClasses = new HashSet<>();
-      encodingClasses.addAll(encodingClasses);
+      this.encodingClasses.ifPresent(encodingClasses::addAll);
       encodingClasses.add(enc);
       return encodingClasses;
     }));
