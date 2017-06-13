@@ -35,22 +35,21 @@ import io.trane.ndbc.postgres.proto.serializer.Serializer;
 import io.trane.ndbc.postgres.proto.serializer.StartupMessageSerializer;
 import io.trane.ndbc.postgres.proto.serializer.SyncSerializer;
 import io.trane.ndbc.postgres.proto.serializer.TerminateSerializer;
-import io.trane.ndbc.proto.Channel;
 
 public final class DataSourceSupplier implements Supplier<DataSource> {
 
-  private final Config config;
-  private final Supplier<Future<Channel>> channelSupplier;
-  private final StartupExchange startup = new StartupExchange();
-  private final ValueEncoding encoding;
+  private final Config                         config;
+  private final Supplier<Future<NettyChannel>> channelSupplier;
+  private final StartupExchange                startup = new StartupExchange();
+  private final ValueEncoding                  encoding;
 
   public DataSourceSupplier(final Config config) {
     this.config = config;
     this.encoding = new ValueEncoding(
         config.encodingClasses().map(l -> l.stream().map(this::loadEncoding).collect(Collectors.toSet())));
     this.channelSupplier = new ChannelSupplier(config.charset(), createSerializer(), new Parser(),
-        new NioEventLoopGroup(config.nioThreads().orElse(0), new DefaultThreadFactory("ndbc-netty4", true)), config.host(),
-        config.port());
+        new NioEventLoopGroup(config.nioThreads().orElse(0), new DefaultThreadFactory("ndbc-netty4", true)),
+        config.host(), config.port());
   }
 
   private final Encoding<?> loadEncoding(final String cls) {
@@ -73,16 +72,18 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
     return () -> {
       final ExtendedExchange extendedExchange = new ExtendedExchange();
       return channelSupplier.get()
-          .flatMap(channel -> startup.apply(config.charset(), config.user(), config.password(), config.database()).run(channel)
+          .flatMap(channel -> startup.apply(config.charset(), config.user(), config.password(), config.database())
+              .run(channel)
               .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, channelSupplier, backendKeyData,
                   new SimpleQueryExchange(queryResultExchange), new SimpleExecuteExchange(),
                   new ExtendedQueryExchange(queryResultExchange, extendedExchange),
                   new ExtendedExecuteExchange(extendedExchange))));
     };
   }
-
+  
   private final Pool<Connection> createPool() {
-    return Pool.apply(createConnection(), config.poolMaxSize(), config.poolMaxWaiters(), config.poolValidationInterval(),
+    return Pool.apply(createConnection(), config.poolMaxSize(), config.poolMaxWaiters(),
+        config.poolValidationInterval(),
         new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("ndbc-pool-scheduler", true)));
   }
 

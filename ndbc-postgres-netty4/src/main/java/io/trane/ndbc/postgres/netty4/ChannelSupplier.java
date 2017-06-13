@@ -19,17 +19,16 @@ import io.trane.future.Future;
 import io.trane.future.Promise;
 import io.trane.ndbc.postgres.proto.parser.Parser;
 import io.trane.ndbc.postgres.proto.serializer.Serializer;
-import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.ClientMessage;
 
-final class ChannelSupplier implements Supplier<Future<Channel>> {
+final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
 
-  private final Serializer encoder;
-  private final Parser decoder;
+  private final Serializer     encoder;
+  private final Parser         decoder;
   private final EventLoopGroup eventLoopGroup;
-  private final String host;
-  private final int port;
-  private final Charset charset;
+  private final String         host;
+  private final int            port;
+  private final Charset        charset;
 
   public ChannelSupplier(final Charset charset, final Serializer encoder, final Parser decoder,
       final EventLoopGroup eventLoopGroup, final String host, final int port) {
@@ -43,7 +42,7 @@ final class ChannelSupplier implements Supplier<Future<Channel>> {
   }
 
   @Override
-  public final Future<Channel> get() {
+  public final Future<NettyChannel> get() {
     final NettyChannel channel = new NettyChannel();
     return bootstrap(channel).map(v -> channel);
   }

@@ -4,14 +4,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.ssl.SslHandler;
 import io.trane.future.Future;
 import io.trane.future.Promise;
+import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.ClientMessage;
 import io.trane.ndbc.proto.ServerMessage;
 
-final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> implements io.trane.ndbc.proto.Channel {
+final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> implements Channel {
 
-  private Promise<ChannelHandlerContext> ctx = Promise.apply();
+  private Promise<ChannelHandlerContext>                ctx                = Promise.apply();
   private final AtomicReference<Promise<ServerMessage>> nextMessagePromise = new AtomicReference<>(null);
 
   @Override
@@ -29,13 +31,17 @@ final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> impl
 
   @Override
   protected final void channelRead0(final ChannelHandlerContext ctx, final ServerMessage msg) throws Exception {
-//    System.out.println("received: " + msg);
+    // System.out.println("received: " + msg);
     final Promise<ServerMessage> p = nextMessagePromise.get();
     if (p == null)
       throw new IllegalStateException("Unexpected server message: " + msg);
     if (!nextMessagePromise.compareAndSet(p, null))
       throw new IllegalStateException("Invalid `nextMessagePromise` state: " + nextMessagePromise.get());
     p.setValue(msg);
+  }
+
+  public final Future<Void> addSSLHandler(SslHandler h) {
+    return ctx.onSuccess(c -> c.pipeline().addFirst(h)).voided();
   }
 
   @Override
@@ -53,9 +59,9 @@ final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> impl
 
   @Override
   public final Future<Void> send(final ClientMessage msg) {
-//    System.out.println("sent: " + msg);
+    // System.out.println("sent: " + msg);
     return ctx.flatMap(c -> {
-      c.write(msg);//.addListener(future -> p.become(Future.VOID));
+      c.write(msg);// .addListener(future -> p.become(Future.VOID));
       return Future.VOID;
     });
   }

@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import io.trane.ndbc.Config.SSL;
+import io.trane.ndbc.Config.SSL.Mode;
+
 public class ConfigTest {
 
   private String  dataSourceSupplierClass       = "some.Class";
@@ -235,6 +238,26 @@ public class ConfigTest {
   }
 
   @Test
+  public void ssl() {
+    Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    SSL ssl = Config.SSL.apply(Mode.REQUIRE);
+    assertEquals(Optional.of(ssl), c.ssl(ssl).ssl());
+  }
+
+  @Test
+  public void sslOptionalEmpty() {
+    Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    assertFalse(c.ssl(Optional.empty()).ssl().isPresent());
+  }
+
+  @Test
+  public void sslOptionalPresent() {
+    Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    SSL ssl = Config.SSL.apply(Mode.VERIFY_CA);
+    assertEquals(Optional.of(ssl), c.ssl(Optional.of(ssl)).ssl());
+  }
+
+  @Test
   public void fromProperties() {
     Properties p = new Properties();
     p.setProperty("db.dataSourceSupplierClass", dataSourceSupplierClass);
@@ -402,6 +425,34 @@ public class ConfigTest {
     assertEquals(it.next(), "a");
     assertEquals(it.next(), "b");
     assertFalse(it.hasNext());
+  }
+
+  @Test
+  public void fromPropertiesSSLMode() {
+    Mode mode = Mode.PREFER;
+    Properties p = new Properties();
+    p.setProperty("db.dataSourceSupplierClass", dataSourceSupplierClass);
+    p.setProperty("db.host", host);
+    p.setProperty("db.port", Integer.toString(port));
+    p.setProperty("db.user", user);
+    p.setProperty("db.ssl.mode", mode.toString());
+    Config c = Config.fromProperties("db", p);
+    assertEquals(c.ssl(), Optional.of(SSL.apply(mode)));
+  }
+
+  @Test
+  public void fromPropertiesSSLRootCert() {
+    Mode mode = Mode.PREFER;
+    String rootCert = "rootCert";
+    Properties p = new Properties();
+    p.setProperty("db.dataSourceSupplierClass", dataSourceSupplierClass);
+    p.setProperty("db.host", host);
+    p.setProperty("db.port", Integer.toString(port));
+    p.setProperty("db.user", user);
+    p.setProperty("db.ssl.mode", mode.toString());
+    p.setProperty("db.ssl.rootCert", rootCert);
+    Config c = Config.fromProperties("db", p);
+    assertEquals(c.ssl(), Optional.of(SSL.apply(mode, new File(rootCert))));
   }
 
   @Test

@@ -20,15 +20,15 @@ import io.trane.ndbc.proto.Exchange;
 
 public final class Connection implements io.trane.ndbc.datasource.Connection {
 
-  private final Channel                   channel;
-  private final Supplier<Future<Channel>> channelSupplier;
-  private final Optional<BackendKeyData>  backendKeyData;
-  private final SimpleQueryExchange       simpleQueryExchange;
-  private final SimpleExecuteExchange     simpleExecuteExchange;
-  private final ExtendedQueryExchange     extendedQueryExchange;
-  private final ExtendedExecuteExchange   extendedExecuteExchange;
+  private final Channel                                       channel;
+  private final Supplier<? extends Future<? extends Channel>> channelSupplier;
+  private final Optional<BackendKeyData>                      backendKeyData;
+  private final SimpleQueryExchange                           simpleQueryExchange;
+  private final SimpleExecuteExchange                         simpleExecuteExchange;
+  private final ExtendedQueryExchange                         extendedQueryExchange;
+  private final ExtendedExecuteExchange                       extendedExecuteExchange;
 
-  public Connection(final Channel channel, final Supplier<Future<Channel>> channelSupplier,
+  public Connection(final Channel channel, final Supplier<? extends Future<? extends Channel>> channelSupplier,
       final Optional<BackendKeyData> backendKeyData, final SimpleQueryExchange simpleQueryExchange,
       final SimpleExecuteExchange simpleExecuteExchange, final ExtendedQueryExchange extendedQueryExchange,
       final ExtendedExecuteExchange extendedExecuteExchange) {
