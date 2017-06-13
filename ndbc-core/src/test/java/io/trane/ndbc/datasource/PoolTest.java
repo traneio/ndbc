@@ -15,9 +15,8 @@ import org.junit.Test;
 
 import io.trane.future.Future;
 import io.trane.future.Promise;
-import io.trane.ndbc.Connection;
 import io.trane.ndbc.PreparedStatement;
-import io.trane.ndbc.ResultSet;
+import io.trane.ndbc.Row;
 
 public class PoolTest {
 
@@ -123,12 +122,12 @@ public class PoolTest {
     return new Connection() {
 
       @Override
-      public Future<ResultSet> query(PreparedStatement query) {
+      public Future<Iterable<Row>> query(PreparedStatement query) {
         return null;
       }
 
       @Override
-      public Future<ResultSet> query(String query) {
+      public Future<Iterable<Row>> query(String query) {
         return null;
       }
 

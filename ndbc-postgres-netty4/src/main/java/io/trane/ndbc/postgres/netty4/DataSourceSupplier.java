@@ -8,8 +8,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.trane.future.Future;
 import io.trane.ndbc.Config;
-import io.trane.ndbc.Connection;
 import io.trane.ndbc.DataSource;
+import io.trane.ndbc.datasource.Connection;
 import io.trane.ndbc.datasource.DefaultDataSource;
 import io.trane.ndbc.datasource.Pool;
 import io.trane.ndbc.postgres.encoding.Encoding;
@@ -47,10 +47,10 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
   public DataSourceSupplier(final Config config) {
     this.config = config;
     this.encoding = new ValueEncoding(
-        config.encodingClasses.map(l -> l.stream().map(this::loadEncoding).collect(Collectors.toSet())));
-    this.channelSupplier = new ChannelSupplier(config.charset, createSerializer(), new Parser(),
-        new NioEventLoopGroup(config.nioThreads.orElse(0), new DefaultThreadFactory("ndbc-netty4", true)), config.host,
-        config.port);
+        config.encodingClasses().map(l -> l.stream().map(this::loadEncoding).collect(Collectors.toSet())));
+    this.channelSupplier = new ChannelSupplier(config.charset(), createSerializer(), new Parser(),
+        new NioEventLoopGroup(config.nioThreads().orElse(0), new DefaultThreadFactory("ndbc-netty4", true)), config.host(),
+        config.port());
   }
 
   private final Encoding<?> loadEncoding(final String cls) {
@@ -73,7 +73,7 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
     return () -> {
       final ExtendedExchange extendedExchange = new ExtendedExchange();
       return channelSupplier.get()
-          .flatMap(channel -> startup.apply(config.charset, config.user, config.password, config.database).run(channel)
+          .flatMap(channel -> startup.apply(config.charset(), config.user(), config.password(), config.database()).run(channel)
               .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, channelSupplier, backendKeyData,
                   new SimpleQueryExchange(queryResultExchange), new SimpleExecuteExchange(),
                   new ExtendedQueryExchange(queryResultExchange, extendedExchange),
@@ -82,7 +82,7 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
   }
 
   private final Pool<Connection> createPool() {
-    return Pool.apply(createConnection(), config.poolMaxSize, config.poolMaxWaiters, config.poolValidationInterval,
+    return Pool.apply(createConnection(), config.poolMaxSize(), config.poolMaxWaiters(), config.poolValidationInterval(),
         new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("ndbc-pool-scheduler", true)));
   }
 

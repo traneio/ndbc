@@ -11,7 +11,6 @@ import java.util.function.Supplier;
 
 import io.trane.future.Future;
 import io.trane.future.Promise;
-import io.trane.ndbc.Connection;
 
 public final class Pool<T extends Connection> {
 

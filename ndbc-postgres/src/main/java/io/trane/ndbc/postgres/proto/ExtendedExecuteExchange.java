@@ -1,11 +1,11 @@
 package io.trane.ndbc.postgres.proto;
 
-import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.postgres.proto.Message.CommandComplete;
 import io.trane.ndbc.postgres.proto.Message.NoData;
 import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.util.PartialFunction;
+import io.trane.ndbc.value.Value;
 
 public final class ExtendedExecuteExchange {
 
@@ -16,8 +16,8 @@ public final class ExtendedExecuteExchange {
     this.extendedExchange = extendedExchange;
   }
 
-  public final Exchange<Integer> apply(final PreparedStatement ps) {
-    return extendedExchange.apply(ps, Exchange.receive(commandComplete.orElse(noDataAndCommandComplete)));
+  public final Exchange<Integer> apply(final String query, final Value<?>[] params) {
+    return extendedExchange.apply(query, params, Exchange.receive(commandComplete.orElse(noDataAndCommandComplete)));
   }
 
   private final PartialFunction<ServerMessage, Exchange<Integer>> commandComplete = PartialFunction

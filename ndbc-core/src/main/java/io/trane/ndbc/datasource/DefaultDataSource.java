@@ -6,10 +6,9 @@ import java.util.function.Supplier;
 
 import io.trane.future.Future;
 import io.trane.future.Local;
-import io.trane.ndbc.Connection;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
-import io.trane.ndbc.ResultSet;
+import io.trane.ndbc.Row;
 
 public final class DefaultDataSource implements DataSource {
 
@@ -23,7 +22,7 @@ public final class DefaultDataSource implements DataSource {
   }
 
   @Override
-  public final Future<ResultSet> query(final String query) {
+  public final Future<Iterable<Row>> query(final String query) {
     return withConnection(c -> c.query(query));
   }
 
@@ -33,7 +32,7 @@ public final class DefaultDataSource implements DataSource {
   }
 
   @Override
-  public final Future<ResultSet> query(final PreparedStatement query) {
+  public final Future<Iterable<Row>> query(final PreparedStatement query) {
     return withConnection(c -> c.query(query));
   }
 

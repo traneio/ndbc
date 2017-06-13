@@ -1,8 +1,8 @@
 package io.trane.ndbc.postgres.proto;
 
-import io.trane.ndbc.PreparedStatement;
-import io.trane.ndbc.ResultSet;
+import io.trane.ndbc.Row;
 import io.trane.ndbc.proto.Exchange;
+import io.trane.ndbc.value.Value;
 
 public final class ExtendedQueryExchange {
 
@@ -15,7 +15,7 @@ public final class ExtendedQueryExchange {
     this.extendedExchange = extendedExchange;
   }
 
-  public final Exchange<ResultSet> apply(final PreparedStatement ps) {
-    return extendedExchange.apply(ps, queryResultExchange.apply());
+  public final Exchange<Iterable<Row>> apply(final String query, final Value<?>[] params) {
+    return extendedExchange.apply(query, params, queryResultExchange.apply());
   }
 }

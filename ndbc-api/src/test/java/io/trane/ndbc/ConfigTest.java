@@ -36,104 +36,104 @@ public class ConfigTest {
   @Test
   public void apply() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    assertEquals(c.dataSourceSupplierClass, dataSourceSupplierClass);
-    assertEquals(c.host, host);
-    assertEquals(c.port, port);
-    assertEquals(c.user, user);
-    assertEquals(c.charset, Charset.defaultCharset());
-    assertFalse(c.password.isPresent());
-    assertFalse(c.database.isPresent());
-    assertFalse(c.poolMaxSize.isPresent());
-    assertFalse(c.poolMaxWaiters.isPresent());
-    assertFalse(c.poolValidationInterval.isPresent());
-    assertFalse(c.encodingClasses.isPresent());
-    assertFalse(c.nioThreads.isPresent());
+    assertEquals(c.dataSourceSupplierClass(), dataSourceSupplierClass);
+    assertEquals(c.host(), host);
+    assertEquals(c.port(), port);
+    assertEquals(c.user(), user);
+    assertEquals(c.charset(), Charset.defaultCharset());
+    assertFalse(c.password().isPresent());
+    assertFalse(c.database().isPresent());
+    assertFalse(c.poolMaxSize().isPresent());
+    assertFalse(c.poolMaxWaiters().isPresent());
+    assertFalse(c.poolValidationInterval().isPresent());
+    assertFalse(c.encodingClasses().isPresent());
+    assertFalse(c.nioThreads().isPresent());
   }
 
   @Test
   public void charset() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    assertEquals(charset, c.charset(charset).charset);
+    assertEquals(charset, c.charset(charset).charset());
   }
 
   @Test
   public void password() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     String password = "password";
-    assertEquals(Optional.of(password), c.password(password).password);
+    assertEquals(Optional.of(password), c.password(password).password());
   }
 
   @Test
   public void passwordOptionalEmpty() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    assertFalse(c.password(Optional.empty()).password.isPresent());
+    assertFalse(c.password(Optional.empty()).password().isPresent());
   }
 
   @Test
   public void passwordOptionalPresent() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     String password = "password";
-    assertEquals(Optional.of(password), c.password(Optional.of(password)).password);
+    assertEquals(Optional.of(password), c.password(Optional.of(password)).password());
   }
 
   @Test
   public void database() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     String database = "database";
-    assertEquals(Optional.of(database), c.database(database).database);
+    assertEquals(Optional.of(database), c.database(database).database());
   }
 
   @Test
   public void databaseOptionalEmpty() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    assertFalse(c.database(Optional.empty()).database.isPresent());
+    assertFalse(c.database(Optional.empty()).database().isPresent());
   }
 
   @Test
   public void databaseOptionalPresent() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     String database = "database";
-    assertEquals(Optional.of(database), c.database(Optional.of(database)).database);
+    assertEquals(Optional.of(database), c.database(Optional.of(database)).database());
   }
 
   @Test
   public void poolMaxSize() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     int poolMaxSize = 100;
-    assertEquals(Optional.of(poolMaxSize), c.poolMaxSize(poolMaxSize).poolMaxSize);
+    assertEquals(Optional.of(poolMaxSize), c.poolMaxSize(poolMaxSize).poolMaxSize());
   }
 
   @Test
   public void poolMaxSizeOptionalEmpty() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    assertFalse(c.poolMaxSize(Optional.empty()).poolMaxSize.isPresent());
+    assertFalse(c.poolMaxSize(Optional.empty()).poolMaxSize().isPresent());
   }
 
   @Test
   public void poolMaxSizeOptionalPresent() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     int poolMaxSize = 100;
-    assertEquals(Optional.of(poolMaxSize), c.poolMaxSize(Optional.of(poolMaxSize)).poolMaxSize);
+    assertEquals(Optional.of(poolMaxSize), c.poolMaxSize(Optional.of(poolMaxSize)).poolMaxSize());
   }
 
   @Test
   public void poolMaxWaiters() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     int poolMaxWaiters = 100;
-    assertEquals(Optional.of(poolMaxWaiters), c.poolMaxWaiters(poolMaxWaiters).poolMaxWaiters);
+    assertEquals(Optional.of(poolMaxWaiters), c.poolMaxWaiters(poolMaxWaiters).poolMaxWaiters());
   }
 
   @Test
   public void poolMaxWaitersOptionalEmpty() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    assertFalse(c.poolMaxWaiters(Optional.empty()).poolMaxWaiters.isPresent());
+    assertFalse(c.poolMaxWaiters(Optional.empty()).poolMaxWaiters().isPresent());
   }
 
   @Test
   public void poolMaxWaitersOptionalPresent() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     int poolMaxWaiters = 100;
-    assertEquals(Optional.of(poolMaxWaiters), c.poolMaxWaiters(Optional.of(poolMaxWaiters)).poolMaxWaiters);
+    assertEquals(Optional.of(poolMaxWaiters), c.poolMaxWaiters(Optional.of(poolMaxWaiters)).poolMaxWaiters());
   }
 
   @Test
@@ -141,13 +141,13 @@ public class ConfigTest {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     Duration poolValidationInterval = Duration.ofSeconds(100);
     assertEquals(Optional.of(poolValidationInterval),
-        c.poolValidationInterval(poolValidationInterval).poolValidationInterval);
+        c.poolValidationInterval(poolValidationInterval).poolValidationInterval());
   }
 
   @Test
   public void poolValidationIntervalOptionalEmpty() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    assertFalse(c.poolValidationInterval(Optional.empty()).poolValidationInterval.isPresent());
+    assertFalse(c.poolValidationInterval(Optional.empty()).poolValidationInterval().isPresent());
   }
 
   @Test
@@ -155,7 +155,7 @@ public class ConfigTest {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     Duration poolValidationInterval = Duration.ofSeconds(100);
     assertEquals(Optional.of(poolValidationInterval),
-        c.poolValidationInterval(Optional.of(poolValidationInterval)).poolValidationInterval);
+        c.poolValidationInterval(Optional.of(poolValidationInterval)).poolValidationInterval());
   }
 
   @Test
@@ -163,13 +163,13 @@ public class ConfigTest {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     Set<String> encodingClasses = new HashSet<>();
     encodingClasses.add("some.Class");
-    assertEquals(Optional.of(encodingClasses), c.encodingClasses(encodingClasses).encodingClasses);
+    assertEquals(Optional.of(encodingClasses), c.encodingClasses(encodingClasses).encodingClasses());
   }
 
   @Test
   public void encodingClassesOptionalEmpty() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    assertFalse(c.encodingClasses(Optional.empty()).encodingClasses.isPresent());
+    assertFalse(c.encodingClasses(Optional.empty()).encodingClasses().isPresent());
   }
 
   @Test
@@ -177,14 +177,14 @@ public class ConfigTest {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     Set<String> encodingClasses = new HashSet<>();
     encodingClasses.add("some.Class");
-    assertEquals(Optional.of(encodingClasses), c.encodingClasses(Optional.of(encodingClasses)).encodingClasses);
+    assertEquals(Optional.of(encodingClasses), c.encodingClasses(Optional.of(encodingClasses)).encodingClasses());
   }
 
   @Test
   public void addEncodingClassEmpty() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     String encodingClass = "some.Class";
-    Optional<Set<String>> encodingClasses = c.addEncodingClass(encodingClass).encodingClasses;
+    Optional<Set<String>> encodingClasses = c.addEncodingClass(encodingClass).encodingClasses();
     assertTrue(encodingClasses.isPresent());
     assertEquals(1, encodingClasses.get().size());
     assertEquals(encodingClass, encodingClasses.get().iterator().next());
@@ -194,7 +194,7 @@ public class ConfigTest {
   public void addEncodingClassEmptySet() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user).encodingClasses(new HashSet<>());
     String encodingClass = "some.Class";
-    Optional<Set<String>> encodingClasses = c.addEncodingClass(encodingClass).encodingClasses;
+    Optional<Set<String>> encodingClasses = c.addEncodingClass(encodingClass).encodingClasses();
     assertTrue(encodingClasses.isPresent());
     assertEquals(1, encodingClasses.get().size());
     assertEquals(encodingClass, encodingClasses.get().iterator().next());
@@ -207,7 +207,7 @@ public class ConfigTest {
     previous.add(previousEncodingClass);
     Config c = Config.apply(dataSourceSupplierClass, host, port, user).encodingClasses(previous);
     String encodingClass = "some.Class";
-    Optional<Set<String>> encodingClasses = c.addEncodingClass(encodingClass).encodingClasses;
+    Optional<Set<String>> encodingClasses = c.addEncodingClass(encodingClass).encodingClasses();
     assertTrue(encodingClasses.isPresent());
     assertEquals(2, encodingClasses.get().size());
     previous.add(encodingClass);
@@ -218,20 +218,20 @@ public class ConfigTest {
   public void nioThreads() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     int nioThreads = 100;
-    assertEquals(Optional.of(nioThreads), c.nioThreads(nioThreads).nioThreads);
+    assertEquals(Optional.of(nioThreads), c.nioThreads(nioThreads).nioThreads());
   }
 
   @Test
   public void nioThreadsOptionalEmpty() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    assertFalse(c.nioThreads(Optional.empty()).nioThreads.isPresent());
+    assertFalse(c.nioThreads(Optional.empty()).nioThreads().isPresent());
   }
 
   @Test
   public void nioThreadsOptionalPresent() {
     Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     int nioThreads = 100;
-    assertEquals(Optional.of(nioThreads), c.nioThreads(Optional.of(nioThreads)).nioThreads);
+    assertEquals(Optional.of(nioThreads), c.nioThreads(Optional.of(nioThreads)).nioThreads());
   }
 
   @Test
@@ -242,18 +242,18 @@ public class ConfigTest {
     p.setProperty("db.port", Integer.toString(port));
     p.setProperty("db.user", user);
     Config c = Config.fromProperties("db", p);
-    assertEquals(c.dataSourceSupplierClass, dataSourceSupplierClass);
-    assertEquals(c.host, host);
-    assertEquals(c.port, port);
-    assertEquals(c.user, user);
-    assertEquals(c.charset, Charset.defaultCharset());
-    assertFalse(c.password.isPresent());
-    assertFalse(c.database.isPresent());
-    assertFalse(c.poolMaxSize.isPresent());
-    assertFalse(c.poolMaxWaiters.isPresent());
-    assertFalse(c.poolValidationInterval.isPresent());
-    assertFalse(c.encodingClasses.isPresent());
-    assertFalse(c.nioThreads.isPresent());
+    assertEquals(c.dataSourceSupplierClass(), dataSourceSupplierClass);
+    assertEquals(c.host(), host);
+    assertEquals(c.port(), port);
+    assertEquals(c.user(), user);
+    assertEquals(c.charset(), Charset.defaultCharset());
+    assertFalse(c.password().isPresent());
+    assertFalse(c.database().isPresent());
+    assertFalse(c.poolMaxSize().isPresent());
+    assertFalse(c.poolMaxWaiters().isPresent());
+    assertFalse(c.poolValidationInterval().isPresent());
+    assertFalse(c.encodingClasses().isPresent());
+    assertFalse(c.nioThreads().isPresent());
   }
 
   @Test(expected = InvalidConfigException.class)
@@ -282,7 +282,7 @@ public class ConfigTest {
     p.setProperty("db.user", user);
     Config.fromProperties("db", p);
   }
-  
+
   @Test(expected = InvalidConfigException.class)
   public void fromPropertiesIinvalidValue() {
     Properties p = new Properties();
@@ -312,7 +312,7 @@ public class ConfigTest {
     p.setProperty("db.user", user);
     p.setProperty("db.charset", charset.toString());
     Config c = Config.fromProperties("db", p);
-    assertEquals(c.charset, charset);
+    assertEquals(c.charset(), charset);
   }
 
   @Test
@@ -324,7 +324,7 @@ public class ConfigTest {
     p.setProperty("db.user", user);
     p.setProperty("db.password", password);
     Config c = Config.fromProperties("db", p);
-    assertEquals(c.password, Optional.of(password));
+    assertEquals(c.password(), Optional.of(password));
   }
 
   @Test
@@ -336,7 +336,7 @@ public class ConfigTest {
     p.setProperty("db.user", user);
     p.setProperty("db.database", database);
     Config c = Config.fromProperties("db", p);
-    assertEquals(c.database, Optional.of(database));
+    assertEquals(c.database(), Optional.of(database));
   }
 
   @Test
@@ -348,7 +348,7 @@ public class ConfigTest {
     p.setProperty("db.user", user);
     p.setProperty("db.poolMaxSize", Integer.toString(poolMaxSize));
     Config c = Config.fromProperties("db", p);
-    assertEquals(c.poolMaxSize, Optional.of(poolMaxSize));
+    assertEquals(c.poolMaxSize(), Optional.of(poolMaxSize));
   }
 
   @Test
@@ -360,7 +360,7 @@ public class ConfigTest {
     p.setProperty("db.user", user);
     p.setProperty("db.poolMaxWaiters", Integer.toString(poolMaxWaiters));
     Config c = Config.fromProperties("db", p);
-    assertEquals(c.poolMaxWaiters, Optional.of(poolMaxWaiters));
+    assertEquals(c.poolMaxWaiters(), Optional.of(poolMaxWaiters));
   }
 
   @Test
@@ -372,7 +372,7 @@ public class ConfigTest {
     p.setProperty("db.user", user);
     p.setProperty("db.poolValidationIntervalSeconds", Integer.toString(poolValidationIntervalSeconds));
     Config c = Config.fromProperties("db", p);
-    assertEquals(c.poolValidationInterval, Optional.of(Duration.ofSeconds(poolValidationIntervalSeconds)));
+    assertEquals(c.poolValidationInterval(), Optional.of(Duration.ofSeconds(poolValidationIntervalSeconds)));
   }
 
   @Test
@@ -384,8 +384,8 @@ public class ConfigTest {
     p.setProperty("db.user", user);
     p.setProperty("db.encodingClasses", "");
     Config c = Config.fromProperties("db", p);
-    assertTrue(c.encodingClasses.isPresent());
-    assertTrue(c.encodingClasses.get().isEmpty());
+    assertTrue(c.encodingClasses().isPresent());
+    assertTrue(c.encodingClasses().get().isEmpty());
   }
 
   @Test
@@ -397,8 +397,8 @@ public class ConfigTest {
     p.setProperty("db.user", user);
     p.setProperty("db.encodingClasses", "a,b");
     Config c = Config.fromProperties("db", p);
-    assertTrue(c.encodingClasses.isPresent());
-    Iterator<String> it = c.encodingClasses.get().iterator();
+    assertTrue(c.encodingClasses().isPresent());
+    Iterator<String> it = c.encodingClasses().get().iterator();
     assertEquals(it.next(), "a");
     assertEquals(it.next(), "b");
     assertFalse(it.hasNext());
@@ -415,18 +415,18 @@ public class ConfigTest {
     p.store(new FileOutputStream(file), "");
 
     Config c = Config.fromPropertiesFile("db", file.getAbsolutePath());
-    assertEquals(c.dataSourceSupplierClass, dataSourceSupplierClass);
-    assertEquals(c.host, host);
-    assertEquals(c.port, port);
-    assertEquals(c.user, user);
-    assertEquals(c.charset, Charset.defaultCharset());
-    assertFalse(c.password.isPresent());
-    assertFalse(c.database.isPresent());
-    assertFalse(c.poolMaxSize.isPresent());
-    assertFalse(c.poolMaxWaiters.isPresent());
-    assertFalse(c.poolValidationInterval.isPresent());
-    assertFalse(c.encodingClasses.isPresent());
-    assertFalse(c.nioThreads.isPresent());
+    assertEquals(c.dataSourceSupplierClass(), dataSourceSupplierClass);
+    assertEquals(c.host(), host);
+    assertEquals(c.port(), port);
+    assertEquals(c.user(), user);
+    assertEquals(c.charset(), Charset.defaultCharset());
+    assertFalse(c.password().isPresent());
+    assertFalse(c.database().isPresent());
+    assertFalse(c.poolMaxSize().isPresent());
+    assertFalse(c.poolMaxWaiters().isPresent());
+    assertFalse(c.poolValidationInterval().isPresent());
+    assertFalse(c.encodingClasses().isPresent());
+    assertFalse(c.nioThreads().isPresent());
   }
 
   @Test
@@ -438,17 +438,17 @@ public class ConfigTest {
     p.setProperty("db.user", user);
 
     Config c = Config.fromSystemProperties("db");
-    assertEquals(c.dataSourceSupplierClass, dataSourceSupplierClass);
-    assertEquals(c.host, host);
-    assertEquals(c.port, port);
-    assertEquals(c.user, user);
-    assertEquals(c.charset, Charset.defaultCharset());
-    assertFalse(c.password.isPresent());
-    assertFalse(c.database.isPresent());
-    assertFalse(c.poolMaxSize.isPresent());
-    assertFalse(c.poolMaxWaiters.isPresent());
-    assertFalse(c.poolValidationInterval.isPresent());
-    assertFalse(c.encodingClasses.isPresent());
-    assertFalse(c.nioThreads.isPresent());
+    assertEquals(c.dataSourceSupplierClass(), dataSourceSupplierClass);
+    assertEquals(c.host(), host);
+    assertEquals(c.port(), port);
+    assertEquals(c.user(), user);
+    assertEquals(c.charset(), Charset.defaultCharset());
+    assertFalse(c.password().isPresent());
+    assertFalse(c.database().isPresent());
+    assertFalse(c.poolMaxSize().isPresent());
+    assertFalse(c.poolMaxWaiters().isPresent());
+    assertFalse(c.poolValidationInterval().isPresent());
+    assertFalse(c.encodingClasses().isPresent());
+    assertFalse(c.nioThreads().isPresent());
   }
 }

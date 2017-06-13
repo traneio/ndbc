@@ -8,7 +8,7 @@ import io.trane.future.InterruptHandler;
 import io.trane.future.Promise;
 import io.trane.future.Transformer;
 import io.trane.ndbc.PreparedStatement;
-import io.trane.ndbc.ResultSet;
+import io.trane.ndbc.Row;
 import io.trane.ndbc.postgres.proto.ExtendedExecuteExchange;
 import io.trane.ndbc.postgres.proto.ExtendedQueryExchange;
 import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
@@ -18,7 +18,7 @@ import io.trane.ndbc.postgres.proto.SimpleQueryExchange;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.Exchange;
 
-public final class Connection implements io.trane.ndbc.Connection {
+public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   private final Channel                   channel;
   private final Supplier<Future<Channel>> channelSupplier;
@@ -43,7 +43,7 @@ public final class Connection implements io.trane.ndbc.Connection {
   }
 
   @Override
-  public final Future<ResultSet> query(final String query) {
+  public final Future<Iterable<Row>> query(final String query) {
     return run(simpleQueryExchange.apply(query));
   }
 
@@ -53,13 +53,13 @@ public final class Connection implements io.trane.ndbc.Connection {
   }
 
   @Override
-  public final Future<ResultSet> query(final PreparedStatement query) {
-    return run(extendedQueryExchange.apply(query));
+  public final Future<Iterable<Row>> query(final PreparedStatement query) {
+    return run(extendedQueryExchange.apply(query.query(), query.params()));
   }
 
   @Override
   public final Future<Integer> execute(final PreparedStatement command) {
-    return run(extendedExecuteExchange.apply(command));
+    return run(extendedExecuteExchange.apply(command.query(), command.params()));
   }
 
   @Override

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.trane.ndbc.ResultSet;
 import io.trane.ndbc.Row;
 import io.trane.ndbc.postgres.encoding.Format;
 import io.trane.ndbc.postgres.encoding.ValueEncoding;
@@ -28,7 +27,7 @@ public final class QueryResultExchange {
     this.encoding = encoding;
   }
 
-  public final Exchange<ResultSet> apply() {
+  public final Exchange<Iterable<Row>> apply() {
     return Exchange.receive(rowDescription)
         .flatMap(desc -> gatherDataRows(new ArrayList<>()).map(rows -> toResultSet(desc, rows)));
   }
@@ -65,12 +64,12 @@ public final class QueryResultExchange {
         }));
   }
 
-  private final ResultSet toResultSet(final RowDescription desc, final List<DataRow> dataRows) {
+  private final Iterable<Row> toResultSet(final RowDescription desc, final List<DataRow> dataRows) {
     final int size = dataRows.size();
     final List<Row> rows = new ArrayList<>(size);
     for (DataRow dr : dataRows) 
       rows.add(toRow(encoding, desc, dr));
-    return new ResultSet(rows);
+    return rows;
   }
 
   private final PartialFunction<ServerMessage, Exchange<RowDescription>> rowDescription = PartialFunction

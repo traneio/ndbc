@@ -101,11 +101,11 @@ public final class PreparedStatement {
     return new PreparedStatement(query, newParams);
   }
 
-  public final String getQuery() {
+  public final String query() {
     return query;
   }
 
-  public final Value<?>[] getUnsafeParams() {
-    return params;
+  public final Value<?>[] params() {
+    return Arrays.copyOf(params, params.length);
   }
 }
