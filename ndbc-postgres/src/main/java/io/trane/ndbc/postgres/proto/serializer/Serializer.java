@@ -26,18 +26,19 @@ public class Serializer {
 
   private static final Logger log = Logger.getLogger(Serializer.class.getName());
 
-  private final BindSerializer bindSerializer;
-  private final CancelRequestSerializer cancelRequestSerializer;
-  private final CloseSerializer closeSerializer;
-  private final DescribeSerializer describeSerializer;
-  private final ExecuteSerializer executeSerializer;
-  private final FlushSerializer flushSerializer;
-  private final ParseSerializer parseSerializer;
-  private final QuerySerializer querySerializer;
+  private final BindSerializer            bindSerializer;
+  private final CancelRequestSerializer   cancelRequestSerializer;
+  private final CloseSerializer           closeSerializer;
+  private final DescribeSerializer        describeSerializer;
+  private final ExecuteSerializer         executeSerializer;
+  private final FlushSerializer           flushSerializer;
+  private final ParseSerializer           parseSerializer;
+  private final QuerySerializer           querySerializer;
   private final PasswordMessageSerializer passwordMessageSerializer;
-  private final StartupMessageSerializer startupMessageSerializer;
-  private final SyncSerializer syncSerializer;
-  private final TerminateSerializer terminateSerializer;
+  private final StartupMessageSerializer  startupMessageSerializer;
+  private final SyncSerializer            syncSerializer;
+  private final TerminateSerializer       terminateSerializer;
+  private final SSLRequestSerializer      sslRequestSerializer;
 
   public Serializer(final BindSerializer bindSerializer, final CancelRequestSerializer cancelRequestSerializer,
       final CloseSerializer closeSerializer, final DescribeSerializer describeSerializer,
@@ -45,7 +46,7 @@ public class Serializer {
       final ParseSerializer parseSerializer, final QuerySerializer querySerializer,
       final PasswordMessageSerializer passwordMessageSerializer,
       final StartupMessageSerializer startupMessageSerializer, final SyncSerializer syncSerializer,
-      final TerminateSerializer terminateSerializer) {
+      final TerminateSerializer terminateSerializer, SSLRequestSerializer sslRequestSerializer) {
     super();
     this.bindSerializer = bindSerializer;
     this.cancelRequestSerializer = cancelRequestSerializer;
@@ -59,6 +60,7 @@ public class Serializer {
     this.startupMessageSerializer = startupMessageSerializer;
     this.syncSerializer = syncSerializer;
     this.terminateSerializer = terminateSerializer;
+    this.sslRequestSerializer = sslRequestSerializer;
   }
 
   public final void encode(final ClientMessage msg, final BufferWriter b) {
@@ -96,6 +98,8 @@ public class Serializer {
       syncSerializer.encode((Sync) msg, b);
     else if (msg instanceof Terminate)
       terminateSerializer.encode((Terminate) msg, b);
+    else if (msg instanceof SSLRequest)
+      sslRequestSerializer.encode((SSLRequest) msg, b);
     else
       log.severe("Invalid client message: " + msg);
   }

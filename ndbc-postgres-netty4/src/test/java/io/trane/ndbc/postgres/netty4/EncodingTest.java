@@ -132,7 +132,7 @@ public class EncodingTest extends TestEnv {
 
   private <T> void test(String columnType, BiFunction<PreparedStatement, T, PreparedStatement> bind,
       Function<Value<?>, T> get, Function<Random, T> gen, BiConsumer<T, T> verify) throws CheckedFutureException {
-    test(columnType, bind, get, gen, verify, 100);
+    test(columnType, bind, get, gen, verify, 20);
   }
 
   private <T> void test(String columnType, BiFunction<PreparedStatement, T, PreparedStatement> bind,

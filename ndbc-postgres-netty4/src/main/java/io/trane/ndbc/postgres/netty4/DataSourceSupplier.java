@@ -31,6 +31,7 @@ import io.trane.ndbc.postgres.proto.serializer.FlushSerializer;
 import io.trane.ndbc.postgres.proto.serializer.ParseSerializer;
 import io.trane.ndbc.postgres.proto.serializer.PasswordMessageSerializer;
 import io.trane.ndbc.postgres.proto.serializer.QuerySerializer;
+import io.trane.ndbc.postgres.proto.serializer.SSLRequestSerializer;
 import io.trane.ndbc.postgres.proto.serializer.Serializer;
 import io.trane.ndbc.postgres.proto.serializer.StartupMessageSerializer;
 import io.trane.ndbc.postgres.proto.serializer.SyncSerializer;
@@ -64,7 +65,7 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
     return new Serializer(new BindSerializer(encoding), new CancelRequestSerializer(), new CloseSerializer(),
         new DescribeSerializer(), new ExecuteSerializer(), new FlushSerializer(), new ParseSerializer(),
         new QuerySerializer(), new PasswordMessageSerializer(), new StartupMessageSerializer(), new SyncSerializer(),
-        new TerminateSerializer());
+        new TerminateSerializer(), new SSLRequestSerializer());
   }
 
   private final Supplier<Future<Connection>> createConnection() {
