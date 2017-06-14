@@ -7,7 +7,6 @@ public final class SSLRequestSerializer {
 
   public final void encode(final SSLRequest msg, final BufferWriter b) {
     b.writeInt(8);
-    b.writeShort((short) 1234);
-    b.writeShort((short) 5679);
+    b.writeInt(80877103);
   }
 }

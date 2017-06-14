@@ -1,6 +1,7 @@
 package io.trane.ndbc.postgres.proto.parser;
 
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import io.trane.ndbc.postgres.proto.Message;
 import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
@@ -26,6 +27,8 @@ import io.trane.ndbc.proto.BufferReader;
 
 public final class Parser {
 
+  private static final Logger log = Logger.getLogger(Parser.class.getName());
+
   private final AuthenticationRequestParser authenticationRequestDecoder;
   private final CommandCompleteParser       commandCompleteDecoder;
   private final DataRowParser               dataRowDecoder;
@@ -50,18 +53,25 @@ public final class Parser {
   }
 
   public final Optional<Message> decode(final BufferReader b) throws Exception {
-    if (b.readableBytes() >= 5) {
-      b.markReaderIndex();
-      final byte tpe = b.readByte();
-      final int length = b.readInt() - 4;
-      if (b.readableBytes() >= length)
-        return Optional.of(decode(tpe, b.readSlice(length)));
-      else {
-        b.resetReaderIndex();
+    try {
+      if (b.readableBytes() == 1)
+        return Optional.of(decode(b.readByte(), b.readSlice(0)));
+      else if (b.readableBytes() >= 5) {
+        b.markReaderIndex();
+        final byte tpe = b.readByte();
+        final int length = b.readInt() - 4;
+        if (b.readableBytes() >= length)
+          return Optional.of(decode(tpe, b.readSlice(length)));
+        else {
+          b.resetReaderIndex();
+          return Optional.empty();
+        }
+      } else
         return Optional.empty();
-      }
-    } else
-      return Optional.empty();
+    } catch (Exception e) {
+      log.severe("Can't parse msg " + e);
+      throw e;
+    }
   }
 
   private final Message decode(final byte tpe, final BufferReader b) {

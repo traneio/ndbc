@@ -17,6 +17,7 @@ import io.trane.ndbc.postgres.encoding.ValueEncoding;
 import io.trane.ndbc.postgres.proto.ExtendedExchange;
 import io.trane.ndbc.postgres.proto.ExtendedExecuteExchange;
 import io.trane.ndbc.postgres.proto.ExtendedQueryExchange;
+import io.trane.ndbc.postgres.proto.InitSSLExchange;
 import io.trane.ndbc.postgres.proto.QueryResultExchange;
 import io.trane.ndbc.postgres.proto.SimpleExecuteExchange;
 import io.trane.ndbc.postgres.proto.SimpleQueryExchange;
@@ -41,8 +42,10 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
 
   private final Config                         config;
   private final Supplier<Future<NettyChannel>> channelSupplier;
-  private final StartupExchange                startup = new StartupExchange();
+  private final StartupExchange                startup         = new StartupExchange();
   private final ValueEncoding                  encoding;
+  private final InitSSLExchange                initSSLExchange = new InitSSLExchange();
+  private final InitSSLHandler                 initSSLHandler  = new InitSSLHandler();
 
   public DataSourceSupplier(final Config config) {
     this.config = config;
@@ -73,15 +76,17 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
     return () -> {
       final ExtendedExchange extendedExchange = new ExtendedExchange();
       return channelSupplier.get()
-          .flatMap(channel -> startup.apply(config.charset(), config.user(), config.password(), config.database())
-              .run(channel)
-              .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, channelSupplier, backendKeyData,
-                  new SimpleQueryExchange(queryResultExchange), new SimpleExecuteExchange(),
-                  new ExtendedQueryExchange(queryResultExchange, extendedExchange),
-                  new ExtendedExecuteExchange(extendedExchange))));
+          .flatMap(
+              channel -> initSSLExchange.apply(config.ssl()).run(channel)
+                  .flatMap(ssl -> initSSLHandler.apply(config.host(), config.port(), ssl, channel))
+                  .flatMap(v -> startup.apply(config.charset(), config.user(), config.password(), config.database())
+                      .run(channel).map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel,
+                          channelSupplier, backendKeyData, new SimpleQueryExchange(queryResultExchange),
+                          new SimpleExecuteExchange(), new ExtendedQueryExchange(queryResultExchange, extendedExchange),
+                          new ExtendedExecuteExchange(extendedExchange)))));
     };
   }
-  
+
   private final Pool<Connection> createPool() {
     return Pool.apply(createConnection(), config.poolMaxSize(), config.poolMaxWaiters(),
         config.poolValidationInterval(),

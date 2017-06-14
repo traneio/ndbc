@@ -64,44 +64,49 @@ public class Serializer {
   }
 
   public final void encode(final ClientMessage msg, final BufferWriter b) {
-    if (msg instanceof Bind)
-      bindSerializer.encode((Bind) msg, b);
-    else if (msg instanceof CancelRequest)
-      cancelRequestSerializer.encode((CancelRequest) msg, b);
-    else if (msg instanceof Close)
-      closeSerializer.encode((Close) msg, b);
-    else if (msg instanceof CopyData)
-      notImplemented(CopyData.class);
-    else if (msg instanceof CopyDone)
-      notImplemented(CopyDone.class);
-    else if (msg instanceof CopyFail)
-      notImplemented(CopyFail.class);
-    else if (msg instanceof Describe)
-      describeSerializer.encode((Describe) msg, b);
-    else if (msg instanceof Execute)
-      executeSerializer.encode((Execute) msg, b);
-    else if (msg instanceof Flush)
-      flushSerializer.encode((Flush) msg, b);
-    else if (msg instanceof FunctionCall)
-      notImplemented(FunctionCall.class);
-    else if (msg instanceof Parse)
-      parseSerializer.encode((Parse) msg, b);
-    else if (msg instanceof Query)
-      querySerializer.encode((Query) msg, b);
-    else if (msg instanceof PasswordMessage)
-      passwordMessageSerializer.encode((PasswordMessage) msg, b);
-    else if (msg instanceof SSLRequest)
-      notImplemented(SSLRequest.class);
-    else if (msg instanceof StartupMessage)
-      startupMessageSerializer.encode((StartupMessage) msg, b);
-    else if (msg instanceof Sync)
-      syncSerializer.encode((Sync) msg, b);
-    else if (msg instanceof Terminate)
-      terminateSerializer.encode((Terminate) msg, b);
-    else if (msg instanceof SSLRequest)
-      sslRequestSerializer.encode((SSLRequest) msg, b);
-    else
-      log.severe("Invalid client message: " + msg);
+    try {
+      if (msg instanceof Bind)
+        bindSerializer.encode((Bind) msg, b);
+      else if (msg instanceof CancelRequest)
+        cancelRequestSerializer.encode((CancelRequest) msg, b);
+      else if (msg instanceof Close)
+        closeSerializer.encode((Close) msg, b);
+      else if (msg instanceof CopyData)
+        notImplemented(CopyData.class);
+      else if (msg instanceof CopyDone)
+        notImplemented(CopyDone.class);
+      else if (msg instanceof CopyFail)
+        notImplemented(CopyFail.class);
+      else if (msg instanceof Describe)
+        describeSerializer.encode((Describe) msg, b);
+      else if (msg instanceof Execute)
+        executeSerializer.encode((Execute) msg, b);
+      else if (msg instanceof Flush)
+        flushSerializer.encode((Flush) msg, b);
+      else if (msg instanceof FunctionCall)
+        notImplemented(FunctionCall.class);
+      else if (msg instanceof Parse)
+        parseSerializer.encode((Parse) msg, b);
+      else if (msg instanceof Query)
+        querySerializer.encode((Query) msg, b);
+      else if (msg instanceof PasswordMessage)
+        passwordMessageSerializer.encode((PasswordMessage) msg, b);
+      else if (msg instanceof SSLRequest)
+        sslRequestSerializer.encode((SSLRequest) msg, b);
+      else if (msg instanceof StartupMessage)
+        startupMessageSerializer.encode((StartupMessage) msg, b);
+      else if (msg instanceof Sync)
+        syncSerializer.encode((Sync) msg, b);
+      else if (msg instanceof Terminate)
+        terminateSerializer.encode((Terminate) msg, b);
+      else if (msg instanceof SSLRequest)
+        sslRequestSerializer.encode((SSLRequest) msg, b);
+      else
+        log.severe("Invalid client message: " + msg);
+    } catch (Exception e) {
+      log.severe("Can't serialize msg " + msg + " " + e);
+      throw e;
+    }
   }
 
   private void notImplemented(final Class<? extends ClientMessage> cls) {

@@ -31,7 +31,7 @@ final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> impl
 
   @Override
   protected final void channelRead0(final ChannelHandlerContext ctx, final ServerMessage msg) throws Exception {
-    // System.out.println("received: " + msg);
+    System.out.println("received: " + msg);
     final Promise<ServerMessage> p = nextMessagePromise.get();
     if (p == null)
       throw new IllegalStateException("Unexpected server message: " + msg);
@@ -49,6 +49,7 @@ final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> impl
     return ctx.flatMap(c -> {
       final Promise<ServerMessage> p = Promise.apply();
       if (nextMessagePromise.compareAndSet(null, p)) {
+        System.out.println("fush/read");
         c.flush();
         c.read();
         return p;
@@ -59,7 +60,7 @@ final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> impl
 
   @Override
   public final Future<Void> send(final ClientMessage msg) {
-    // System.out.println("sent: " + msg);
+    System.out.println("sent: " + msg);
     return ctx.flatMap(c -> {
       c.write(msg);// .addListener(future -> p.become(Future.VOID));
       return Future.VOID;
@@ -77,5 +78,9 @@ final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> impl
       });
       return p;
     });
+  }
+
+  public Future<ChannelHandlerContext> ctx() {
+    return ctx;
   }
 }
