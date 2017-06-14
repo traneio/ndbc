@@ -90,20 +90,12 @@ public final class Parser {
         return new CopyData(b.readBytes());
       case 'c':
         return copyDone;
-      case 'G':
-        return notImplemented(CopyInResponse.class);
-      case 'H':
-        return notImplemented(CopyOutResponse.class);
-      case 'W':
-        return notImplemented(CopyBothResponse.class);
       case 'D':
         return dataRowDecoder.decode(b);
       case 'I':
         return emptyQueryResponse;
       case 'E':
         return new InfoResponse.ErrorResponse(infoResponseFieldsDecoder.decode(b));
-      case 'V':
-        return notImplemented(FunctionCallResponse.class);
       case 'n':
         return noData;
       case 'N':
@@ -128,6 +120,14 @@ public final class Parser {
         return new ReadyForQuery(b.readByte());
       case 'T':
         return rowDescriptionDecoder.decode(b);
+      case 'G':
+        return notImplemented(CopyInResponse.class);
+      case 'H':
+        return notImplemented(CopyOutResponse.class);
+      case 'W':
+        return notImplemented(CopyBothResponse.class);
+      case 'V':
+        return notImplemented(FunctionCallResponse.class);
       default:
         throw new IllegalStateException("Invalid server message type: " + (char) tpe);
     }
