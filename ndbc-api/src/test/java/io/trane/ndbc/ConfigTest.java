@@ -279,7 +279,7 @@ public class ConfigTest {
     assertFalse(c.nioThreads().isPresent());
   }
 
-  @Test(expected = InvalidConfigException.class)
+  @Test(expected = RuntimeException.class)
   public void fromPropertiesMissingDataSourceSupplierClass() {
     Properties p = new Properties();
     p.setProperty("db.host", host);
@@ -288,7 +288,7 @@ public class ConfigTest {
     Config.fromProperties("db", p);
   }
 
-  @Test(expected = InvalidConfigException.class)
+  @Test(expected = RuntimeException.class)
   public void fromPropertiesMissingHost() {
     Properties p = new Properties();
     p.setProperty("db.dataSourceSupplierClass", dataSourceSupplierClass);
@@ -297,7 +297,7 @@ public class ConfigTest {
     Config.fromProperties("db", p);
   }
 
-  @Test(expected = InvalidConfigException.class)
+  @Test(expected = RuntimeException.class)
   public void fromPropertiesMissingPort() {
     Properties p = new Properties();
     p.setProperty("db.dataSourceSupplierClass", dataSourceSupplierClass);
@@ -306,7 +306,7 @@ public class ConfigTest {
     Config.fromProperties("db", p);
   }
 
-  @Test(expected = InvalidConfigException.class)
+  @Test(expected = RuntimeException.class)
   public void fromPropertiesIinvalidValue() {
     Properties p = new Properties();
     p.setProperty("db.dataSourceSupplierClass", dataSourceSupplierClass);
@@ -317,7 +317,7 @@ public class ConfigTest {
     Config.fromProperties("db", p);
   }
 
-  @Test(expected = InvalidConfigException.class)
+  @Test(expected = RuntimeException.class)
   public void fromPropertiesMissingUser() {
     Properties p = new Properties();
     p.setProperty("db.dataSourceSupplierClass", dataSourceSupplierClass);

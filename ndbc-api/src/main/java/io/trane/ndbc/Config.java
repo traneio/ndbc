@@ -153,26 +153,29 @@ public final class Config {
 
   private static final <T> T getRequiredProperty(final String prefix, final Properties properties, final String name,
       final Function<String, T> parser) {
+    String value = getRequiredProperty(prefix, properties, name);
     try {
-      return parser.apply(getRequiredProperty(prefix, properties, name));
+      return parser.apply(value);
     } catch (final Exception ex) {
-      throw new InvalidConfigException(properties, prefix, name, Optional.of(ex));
+      throw new RuntimeException("Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.", ex);
     }
   }
 
   private static final String getRequiredProperty(final String prefix, final Properties properties, final String name) {
     return getProperty(prefix, properties, name).orElseGet(() -> {
-      throw new InvalidConfigException(properties, prefix, name, Optional.empty());
+      throw new RuntimeException("Missing config `" + prefix + "." + name + "`.");
     });
   }
 
   private static final <T> Optional<T> getProperty(final String prefix, final Properties properties, final String name,
       final Function<String, T> parser) {
-    try {
-      return getProperty(prefix, properties, name).map(parser);
-    } catch (final Exception ex) {
-      throw new InvalidConfigException(properties, prefix, name, Optional.of(ex));
-    }
+    return getProperty(prefix, properties, name).map(value -> {
+      try {
+        return parser.apply(value);
+      } catch (final Exception ex) {
+        throw new RuntimeException("Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.", ex);
+      }
+    });
   }
 
   private static final Optional<String> getProperty(final String prefix, final Properties properties,

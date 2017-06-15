@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetTime;
 import java.util.Arrays;
+import java.util.Collections;
 
 import io.trane.ndbc.value.BigDecimalValue;
 import io.trane.ndbc.value.BooleanValue;
@@ -30,7 +31,7 @@ public final class PreparedStatement {
     return new PreparedStatement(query, emptyValues);
   }
 
-  private final String query;
+  private final String     query;
   private final Value<?>[] params;
 
   private PreparedStatement(final String query, final Value<?>[] params) {
@@ -91,7 +92,7 @@ public final class PreparedStatement {
     return bind(value == null ? Value.NULL : new StringValue(value));
   }
 
-  public final PreparedStatement bindNull(final String value) {
+  public final PreparedStatement bindNull() {
     return bind(Value.NULL);
   }
 
@@ -105,7 +106,7 @@ public final class PreparedStatement {
     return query;
   }
 
-  public final Value<?>[] params() {
-    return Arrays.copyOf(params, params.length);
+  public final Iterable<Value<?>> params() {
+    return Collections.unmodifiableList(Arrays.asList(params));
   }
 }
