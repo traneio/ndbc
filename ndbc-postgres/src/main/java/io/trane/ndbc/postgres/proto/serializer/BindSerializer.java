@@ -26,9 +26,10 @@ public final class BindSerializer {
     for (final short code : msg.parameterFormatCodes)
       b.writeShort(code);
 
-    b.writeShort((short) msg.fields.length);
-    for (int i = 0; i < msg.fields.length; i++) {
-      final Value<?> field = msg.fields[i];
+    b.writeShort((short) msg.fields.size());
+    
+    int i = 0;
+    for (Value<?> field : msg.fields) {
       if (field == null || field.isNull())
         b.writeInt(-1);
       else {
@@ -37,6 +38,7 @@ public final class BindSerializer {
         encoding.encode(format(msg, i), field, b);
         b.writeLengthNoSelf(lengthPosition);
       }
+      i++;
     }
 
     b.writeShort((short) msg.resultColumnFormatCodes.length);

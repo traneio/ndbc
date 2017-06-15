@@ -1,5 +1,6 @@
 package io.trane.ndbc.postgres;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -43,7 +44,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   }
 
   @Override
-  public final Future<Iterable<Row>> query(final String query) {
+  public final Future<List<Row>> query(final String query) {
     return run(simpleQueryExchange.apply(query));
   }
 
@@ -53,7 +54,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   }
 
   @Override
-  public final Future<Iterable<Row>> query(final PreparedStatement query) {
+  public final Future<List<Row>> query(final PreparedStatement query) {
     return run(extendedQueryExchange.apply(query.query(), query.params()));
   }
 

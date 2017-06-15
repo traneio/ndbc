@@ -1,5 +1,7 @@
 package io.trane.ndbc.postgres.proto;
 
+import java.util.List;
+
 import io.trane.ndbc.Row;
 import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.value.Value;
@@ -15,7 +17,7 @@ public final class ExtendedQueryExchange {
     this.extendedExchange = extendedExchange;
   }
 
-  public final Exchange<Iterable<Row>> apply(final String query, final Value<?>[] params) {
+  public final Exchange<List<Row>> apply(final String query, final List<Value<?>> params) {
     return extendedExchange.apply(query, params, queryResultExchange.apply());
   }
 }

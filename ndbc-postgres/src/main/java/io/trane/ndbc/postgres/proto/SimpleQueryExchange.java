@@ -1,5 +1,7 @@
 package io.trane.ndbc.postgres.proto;
 
+import java.util.List;
+
 import io.trane.ndbc.Row;
 import io.trane.ndbc.postgres.proto.Message.Query;
 import io.trane.ndbc.postgres.proto.Message.ReadyForQuery;
@@ -14,7 +16,7 @@ public final class SimpleQueryExchange {
     this.queryResultExchange = queryResultExchange;
   }
 
-  public final Exchange<Iterable<Row>> apply(final String query) {
+  public final Exchange<List<Row>> apply(final String query) {
     return Exchange.send(new Query(query)).then(queryResultExchange.apply()).thenWaitFor(ReadyForQuery.class);
   }
 }

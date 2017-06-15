@@ -1,5 +1,7 @@
 package io.trane.ndbc.postgres.proto;
 
+import java.util.List;
+
 import io.trane.ndbc.postgres.proto.Message.CommandComplete;
 import io.trane.ndbc.postgres.proto.Message.NoData;
 import io.trane.ndbc.proto.Exchange;
@@ -16,7 +18,7 @@ public final class ExtendedExecuteExchange {
     this.extendedExchange = extendedExchange;
   }
 
-  public final Exchange<Integer> apply(final String query, final Value<?>[] params) {
+  public final Exchange<Integer> apply(final String query, final List<Value<?>> params) {
     return extendedExchange.apply(query, params, Exchange.receive(commandComplete.orElse(noDataAndCommandComplete)));
   }
 

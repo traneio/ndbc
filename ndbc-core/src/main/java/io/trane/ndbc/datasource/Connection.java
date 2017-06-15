@@ -1,5 +1,6 @@
 package io.trane.ndbc.datasource;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import io.trane.future.Future;
@@ -12,11 +13,11 @@ public interface Connection {
 
   Future<Void> close();
 
-  Future<Iterable<Row>> query(String query);
+  Future<List<Row>> query(String query);
 
   Future<Integer> execute(String query);
 
-  Future<Iterable<Row>> query(PreparedStatement query);
+  Future<List<Row>> query(PreparedStatement query);
 
   Future<Integer> execute(PreparedStatement query);
 

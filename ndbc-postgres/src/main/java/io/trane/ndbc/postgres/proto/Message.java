@@ -265,7 +265,7 @@ public interface Message {
      * the format indicated by the associated format code. n is the above
      * length.
      */
-    public final Value<?>[] fields;
+    public final List<Value<?>> fields;
 
     /**
      * The number of parameter format codes that follow (denoted C below). This
@@ -292,7 +292,7 @@ public interface Message {
     public final String sourcePreparedStatementName;
 
     public Bind(final String destinationPortalName, final String sourcePreparedStatementName,
-        final short[] parameterFormatCodes, final Value<?>[] fields, final short[] resultColumnFormatCodes) {
+        final short[] parameterFormatCodes, final List<Value<?>> fields, final short[] resultColumnFormatCodes) {
       this.destinationPortalName = destinationPortalName;
       this.sourcePreparedStatementName = sourcePreparedStatementName;
       this.parameterFormatCodes = parameterFormatCodes;
@@ -305,7 +305,7 @@ public interface Message {
       final int prime = 31;
       int result = 1;
       result = prime * result + (destinationPortalName == null ? 0 : destinationPortalName.hashCode());
-      result = prime * result + Arrays.deepHashCode(fields);
+      result = prime * result + fields.hashCode();
       result = prime * result + Arrays.hashCode(parameterFormatCodes);
       result = prime * result + Arrays.hashCode(resultColumnFormatCodes);
       result = prime * result + (sourcePreparedStatementName == null ? 0 : sourcePreparedStatementName.hashCode());
@@ -326,7 +326,7 @@ public interface Message {
           return false;
       } else if (!destinationPortalName.equals(other.destinationPortalName))
         return false;
-      if (!Arrays.deepEquals(fields, other.fields))
+      if (!fields.equals(other.fields))
         return false;
       if (!Arrays.equals(parameterFormatCodes, other.parameterFormatCodes))
         return false;
@@ -342,7 +342,7 @@ public interface Message {
 
     @Override
     public String toString() {
-      return "Bind [destinationPortalName=" + destinationPortalName + ", fields=" + Arrays.toString(fields)
+      return "Bind [destinationPortalName=" + destinationPortalName + ", fields=" + fields.toString()
           + ", parameterFormatCodes=" + Arrays.toString(parameterFormatCodes) + ", resultColumnFormatCodes="
           + Arrays.toString(resultColumnFormatCodes) + ", sourcePreparedStatementName=" + sourcePreparedStatementName
           + "]";

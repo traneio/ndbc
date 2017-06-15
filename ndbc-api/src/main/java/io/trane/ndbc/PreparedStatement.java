@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.time.OffsetTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import io.trane.ndbc.value.BigDecimalValue;
 import io.trane.ndbc.value.BooleanValue;
@@ -106,7 +107,7 @@ public final class PreparedStatement {
     return query;
   }
 
-  public final Iterable<Value<?>> params() {
+  public final List<Value<?>> params() {
     return Collections.unmodifiableList(Arrays.asList(params));
   }
 }

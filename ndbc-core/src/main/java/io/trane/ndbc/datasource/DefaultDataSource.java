@@ -1,5 +1,6 @@
 package io.trane.ndbc.datasource;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -22,7 +23,7 @@ public final class DefaultDataSource implements DataSource {
   }
 
   @Override
-  public final Future<Iterable<Row>> query(final String query) {
+  public final Future<List<Row>> query(final String query) {
     return withConnection(c -> c.query(query));
   }
 
@@ -32,7 +33,7 @@ public final class DefaultDataSource implements DataSource {
   }
 
   @Override
-  public final Future<Iterable<Row>> query(final PreparedStatement query) {
+  public final Future<List<Row>> query(final PreparedStatement query) {
     return withConnection(c -> c.query(query));
   }
 

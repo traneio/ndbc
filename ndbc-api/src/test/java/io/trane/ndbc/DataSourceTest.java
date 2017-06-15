@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 import java.util.function.Supplier;
 
@@ -78,12 +79,12 @@ public class DataSourceTest {
     }
 
     @Override
-    public Future<Iterable<Row>> query(PreparedStatement query) {
+    public Future<List<Row>> query(PreparedStatement query) {
       return null;
     }
 
     @Override
-    public Future<Iterable<Row>> query(String query) {
+    public Future<List<Row>> query(String query) {
       return null;
     }
 

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -122,12 +123,12 @@ public class PoolTest {
     return new Connection() {
 
       @Override
-      public Future<Iterable<Row>> query(PreparedStatement query) {
+      public Future<List<Row>> query(PreparedStatement query) {
         return null;
       }
 
       @Override
-      public Future<Iterable<Row>> query(String query) {
+      public Future<List<Row>> query(String query) {
         return null;
       }
 

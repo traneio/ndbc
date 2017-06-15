@@ -1,6 +1,7 @@
 package io.trane.ndbc;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 import java.util.function.Supplier;
 
@@ -31,11 +32,11 @@ public interface DataSource {
     }
   }
 
-  Future<Iterable<Row>> query(String query);
+  Future<List<Row>> query(String query);
 
   Future<Integer> execute(String statement);
 
-  Future<Iterable<Row>> query(PreparedStatement query);
+  Future<List<Row>> query(PreparedStatement query);
 
   Future<Integer> execute(PreparedStatement statement);
 

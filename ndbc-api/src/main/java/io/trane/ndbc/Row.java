@@ -31,7 +31,7 @@ public final class Row {
     return columns[positions.get(columnName)];
   }
 
-  public final Iterable<String> columnNames() {
+  public final List<String> columnNames() {
     return Collections.unmodifiableList(positions.entrySet().stream().sorted(Map.Entry.comparingByValue())
         .map(Map.Entry::getKey).collect(Collectors.toList()));
   }

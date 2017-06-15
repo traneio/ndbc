@@ -1,6 +1,7 @@
 package io.trane.ndbc.postgres.proto;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -25,7 +26,7 @@ public final class ExtendedExchange {
   private final Set<Integer> prepared = new HashSet<>();
   private final int[] emptyParams = new int[0];
 
-  public final <T> Exchange<T> apply(final String query, final Value<?>[] params, final Exchange<T> readResult) {
+  public final <T> Exchange<T> apply(final String query, final List<Value<?>> params, final Exchange<T> readResult) {
     return withParsing(query,
         id -> Exchange.send(new Bind(id, id, binary, params, binary))
             .thenSend(new Describe.DescribePortal(id)).thenSend(new Execute(id, 0)).thenSend(new Close.ClosePortal(id))

@@ -27,7 +27,7 @@ public final class QueryResultExchange {
     this.encoding = encoding;
   }
 
-  public final Exchange<Iterable<Row>> apply() {
+  public final Exchange<List<Row>> apply() {
     return Exchange.receive(rowDescription)
         .flatMap(desc -> gatherDataRows(new ArrayList<>()).map(rows -> toResultSet(desc, rows)));
   }
@@ -64,7 +64,7 @@ public final class QueryResultExchange {
         }));
   }
 
-  private final Iterable<Row> toResultSet(final RowDescription desc, final List<DataRow> dataRows) {
+  private final List<Row> toResultSet(final RowDescription desc, final List<DataRow> dataRows) {
     final int size = dataRows.size();
     final List<Row> rows = new ArrayList<>(size);
     for (DataRow dr : dataRows) 
