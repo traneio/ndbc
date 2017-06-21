@@ -10,7 +10,8 @@ import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.datasource.Connection;
-import io.trane.ndbc.datasource.DefaultDataSource;
+import io.trane.ndbc.datasource.PooledDataSource;
+import io.trane.ndbc.datasource.LockFreePool;
 import io.trane.ndbc.datasource.Pool;
 import io.trane.ndbc.postgres.encoding.Encoding;
 import io.trane.ndbc.postgres.encoding.ValueEncoding;
@@ -88,13 +89,13 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
   }
 
   private final Pool<Connection> createPool() {
-    return Pool.apply(createConnection(), config.poolMaxSize(), config.poolMaxWaiters(),
+    return LockFreePool.apply(createConnection(), config.poolMaxSize(), config.poolMaxWaiters(),
         config.poolValidationInterval(),
         new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("ndbc-pool-scheduler", true)));
   }
 
   @Override
   public final DataSource get() {
-    return new DefaultDataSource(createPool());
+    return new PooledDataSource(createPool());
   }
 }

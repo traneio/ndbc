@@ -11,12 +11,12 @@ import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 
-public final class DefaultDataSource implements DataSource {
+public final class PooledDataSource implements DataSource {
 
   private final Pool<Connection> pool;
   private final Local<Connection> currentTransation;
 
-  public DefaultDataSource(final Pool<Connection> pool) {
+  public PooledDataSource(final Pool<Connection> pool) {
     super();
     this.pool = pool;
     this.currentTransation = Local.apply();
@@ -53,16 +53,16 @@ public final class DefaultDataSource implements DataSource {
       });
   }
 
+  @Override
+  public final Future<Void> close() {
+    return pool.close();
+  }
+
   private final <R> Future<R> withConnection(final Function<Connection, Future<R>> f) {
     Optional<Connection> transaction = currentTransation.get();
     if (transaction.isPresent())
       return f.apply(transaction.get());
     else
       return pool.apply(f);
-  }
-
-  @Override
-  public final Future<Void> close() {
-    return pool.close();
   }
 }

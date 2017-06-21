@@ -31,7 +31,7 @@ public class PoolTest {
   @Test
   public void maxSize() {
     final int maxSize = 100;
-    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.empty(),
+    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.empty(),
         Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
 
@@ -47,7 +47,7 @@ public class PoolTest {
   @Test
   public void maxSizeConcurrentCreation() {
     final int maxSize = 100;
-    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.empty(),
+    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.empty(),
         Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
 
@@ -64,7 +64,7 @@ public class PoolTest {
   @Test
   public void maxSizeConcurrentUsage() {
     final int maxSize = 100;
-    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.empty(),
+    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.empty(),
         Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
     final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
@@ -83,7 +83,7 @@ public class PoolTest {
   public void maxWaiters() {
     final int maxSize = 100;
     final int maxWaiters = 60;
-    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.of(maxWaiters),
+    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.of(maxWaiters),
         Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
     final AtomicInteger rejected = new AtomicInteger();
@@ -102,7 +102,7 @@ public class PoolTest {
   public void maxWaitersConcurrentCreation() {
     final int maxSize = 100;
     final int maxWaiters = 60;
-    final Pool<Connection> pool = Pool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.of(maxWaiters),
+    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(conn()), Optional.of(maxSize), Optional.of(maxWaiters),
         Optional.empty(), scheduler);
     final AtomicInteger started = new AtomicInteger();
     final AtomicInteger executing = new AtomicInteger();
