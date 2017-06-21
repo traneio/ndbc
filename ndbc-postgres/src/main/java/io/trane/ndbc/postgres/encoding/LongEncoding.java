@@ -21,7 +21,7 @@ final class LongEncoding implements Encoding<LongValue> {
 
   @Override
   public final String encodeText(final LongValue value) {
-    return Long.toString(value.get());
+    return Long.toString(value.getLong());
   }
 
   @Override
@@ -31,7 +31,7 @@ final class LongEncoding implements Encoding<LongValue> {
 
   @Override
   public final void encodeBinary(final LongValue value, final BufferWriter b) {
-    b.writeLong(value.get());
+    b.writeLong(value.getLong());
   }
 
   @Override

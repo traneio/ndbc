@@ -41,7 +41,7 @@ public class PoolTest {
         return Promise.apply();
       });
 
-    assertEquals(Optional.of(maxSize), executing.get());
+    assertEquals(maxSize, executing.get());
   }
 
   @Test
@@ -94,7 +94,7 @@ public class PoolTest {
         return Promise.apply();
       }).onFailure(e -> rejected.incrementAndGet());
 
-    assertEquals(Optional.of(maxSize), executing.get());
+    assertEquals(maxSize, executing.get());
     assertEquals(40, rejected.get());
   }
 

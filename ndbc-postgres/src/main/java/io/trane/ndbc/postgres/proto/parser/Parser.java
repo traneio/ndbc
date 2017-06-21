@@ -52,11 +52,12 @@ public final class Parser {
     this.rowDescriptionDecoder = new RowDescriptionParser();
   }
 
-  public final Optional<Message> decode(final BufferReader b) throws Exception {
+  public final Optional<Message> decode(final boolean ssl, final BufferReader b) throws Exception {
     try {
-      if (b.readableBytes() == 1)
+      if (b.readableBytes() == 1 && ssl)
         return Optional.of(decode(b.readByte(), b.readSlice(0)));
-      else if (b.readableBytes() >= 5) {
+      else 
+        if (b.readableBytes() >= 5) {
         b.markReaderIndex();
         final byte tpe = b.readByte();
         final int length = b.readInt() - 4;

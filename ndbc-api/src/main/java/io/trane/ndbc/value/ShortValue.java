@@ -37,4 +37,9 @@ public final class ShortValue extends Value<Short> {
   public final Long getLong() {
     return new Long(get());
   }
+  
+  @Override
+  public final Boolean getBoolean() {
+    return get() == (short) 1;
+  }
 }

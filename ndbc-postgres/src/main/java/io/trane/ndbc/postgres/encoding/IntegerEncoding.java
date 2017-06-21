@@ -21,7 +21,7 @@ final class IntegerEncoding implements Encoding<IntegerValue> {
 
   @Override
   public final String encodeText(final IntegerValue value) {
-    return Integer.toString(value.get());
+    return Integer.toString(value.getInteger());
   }
 
   @Override
@@ -31,7 +31,7 @@ final class IntegerEncoding implements Encoding<IntegerValue> {
 
   @Override
   public final void encodeBinary(final IntegerValue value, final BufferWriter b) {
-    b.writeInt(value.get());
+    b.writeInt(value.getInteger());
   }
 
   @Override

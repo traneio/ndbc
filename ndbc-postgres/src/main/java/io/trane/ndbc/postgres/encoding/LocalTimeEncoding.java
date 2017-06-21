@@ -22,7 +22,7 @@ final class LocalTimeEncoding implements Encoding<LocalTimeValue> {
 
   @Override
   public final String encodeText(final LocalTimeValue value) {
-    return value.get().toString();
+    return value.getLocalTime().toString();
   }
 
   @Override
@@ -32,7 +32,7 @@ final class LocalTimeEncoding implements Encoding<LocalTimeValue> {
 
   @Override
   public final void encodeBinary(final LocalTimeValue value, final BufferWriter b) {
-    b.writeLong(value.get().toNanoOfDay() / 1000);
+    b.writeLong(value.getLocalTime().toNanoOfDay() / 1000);
   }
 
   @Override

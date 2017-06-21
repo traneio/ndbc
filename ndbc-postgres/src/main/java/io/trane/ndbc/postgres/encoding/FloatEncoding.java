@@ -21,7 +21,7 @@ final class FloatEncoding implements Encoding<FloatValue> {
 
   @Override
   public final String encodeText(final FloatValue value) {
-    return Float.toString(value.get());
+    return Float.toString(value.getFloat());
   }
 
   @Override
@@ -31,7 +31,7 @@ final class FloatEncoding implements Encoding<FloatValue> {
 
   @Override
   public final void encodeBinary(final FloatValue value, final BufferWriter b) {
-    b.writeFloat(value.get());
+    b.writeFloat(value.getFloat());
   }
 
   @Override

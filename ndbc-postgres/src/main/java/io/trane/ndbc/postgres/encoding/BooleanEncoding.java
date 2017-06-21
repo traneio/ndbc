@@ -24,7 +24,7 @@ final class BooleanEncoding implements Encoding<BooleanValue> {
 
   @Override
   public final String encodeText(final BooleanValue value) {
-    return value.get() ? "t" : "false";
+    return value.getBoolean() ? "t" : "false";
   }
 
   @Override
@@ -34,7 +34,7 @@ final class BooleanEncoding implements Encoding<BooleanValue> {
 
   @Override
   public final void encodeBinary(final BooleanValue value, final BufferWriter b) {
-    b.writeByte((byte) (value.get() ? 1 : 0));
+    b.writeByte((byte) (value.getBoolean() ? 1 : 0));
   }
 
   @Override

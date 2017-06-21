@@ -21,7 +21,7 @@ final class DoubleEncoding implements Encoding<DoubleValue> {
 
   @Override
   public final String encodeText(final DoubleValue value) {
-    return Double.toString(value.get());
+    return Double.toString(value.getDouble());
   }
 
   @Override
@@ -31,7 +31,7 @@ final class DoubleEncoding implements Encoding<DoubleValue> {
 
   @Override
   public final void encodeBinary(final DoubleValue value, final BufferWriter b) {
-    b.writeDouble(value.get());
+    b.writeDouble(value.getDouble());
   }
 
   @Override

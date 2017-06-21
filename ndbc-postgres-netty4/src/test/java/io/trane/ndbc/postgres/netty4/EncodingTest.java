@@ -35,7 +35,7 @@ public class EncodingTest extends TestEnv {
   @Test
   public void byteArray() throws CheckedFutureException {
     test("bytea", (ps, v) -> ps.bindByteArray(v), Value::getByteArray, r -> {
-      byte[] bytes = new byte[r.nextInt(100)];
+      byte[] bytes = new byte[r.nextInt(5)];
       r.nextBytes(bytes);
       return bytes;
     }, (a, b) -> assertArrayEquals(a, b));
@@ -96,13 +96,18 @@ public class EncodingTest extends TestEnv {
     testString("text", 100);
     testString("name", 64);
     testString("varchar", 100);
-    testString("xml", 100);
   }
 
   @Test
   public void stringJson() throws CheckedFutureException {
     this.<String>test("json", (ps, v) -> ps.bindString(v), Value::getString,
         r -> "{ \"test\": " + r.nextInt(100) + " }");
+  }
+  
+  @Test
+  public void stringXml() throws CheckedFutureException {
+    this.<String>test("xml", (ps, v) -> ps.bindString(v), Value::getString,
+        r -> "<a/>");
   }
 
   private LocalDateTime randomLocalDateTime(Random r) {
@@ -141,11 +146,12 @@ public class EncodingTest extends TestEnv {
     String table = "test_" + columnType;
     ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
     ds.execute("CREATE TABLE " + table + " (c " + columnType + ")").get(timeout);
-
+    
     Random r = new Random(1);
     for (int i = 0; i < iterations; i++) {
       T expected = gen.apply(r);
       try {
+        ds.execute("DELETE FROM " + table).get(timeout);
         ds.execute(bind.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected)).get(timeout);
         T actual = get.apply(query(PreparedStatement.apply("SELECT c FROM " + table)));
         verify.accept(expected, actual);

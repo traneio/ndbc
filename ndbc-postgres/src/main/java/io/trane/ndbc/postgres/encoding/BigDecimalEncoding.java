@@ -36,7 +36,7 @@ final class BigDecimalEncoding implements Encoding<BigDecimalValue> {
 
   @Override
   public final String encodeText(final BigDecimalValue value) {
-    return value.get().toPlainString();
+    return value.getBigDecimal().toPlainString();
   }
 
   @Override
@@ -46,7 +46,7 @@ final class BigDecimalEncoding implements Encoding<BigDecimalValue> {
 
   @Override
   public final void encodeBinary(final BigDecimalValue value, final BufferWriter b) {
-    final BigDecimal minimized = value.get().stripTrailingZeros();
+    final BigDecimal minimized = value.getBigDecimal().stripTrailingZeros();
     final BigInteger unscaled = minimized.unscaledValue();
     final int sign = minimized.signum();
 
@@ -81,7 +81,7 @@ final class BigDecimalEncoding implements Encoding<BigDecimalValue> {
     b.writeShort((short) digits.length);
     b.writeShort((short) weight);
     b.writeShort(sign < 0 ? NUMERIC_NEG : NUMERIC_POS);
-    b.writeShort((short) value.get().scale());
+    b.writeShort((short) value.getBigDecimal().scale());
     for (short digit : digits)
       b.writeShort(digit);
   }

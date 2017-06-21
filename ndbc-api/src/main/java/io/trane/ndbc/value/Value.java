@@ -17,54 +17,24 @@ public abstract class Value<T> {
     this.value = value;
   }
 
-  public T get() {
+  protected T get() {
     return value;
+  }
+  
+  public <U> U unsafeGetAs(Class<U> cls) {
+    return cls.cast(value);
   }
 
   public boolean isNull() {
     return false;
   }
 
-  private final <U> U cantRead(final String type) {
-    throw new UnsupportedOperationException("Can't read " + get() + " as " + type);
-  }
-
-  @Override
-  public final int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + (value == null ? 0 : value.hashCode());
-    return result;
-  }
-
-  @Override
-  public final boolean equals(final Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (!getClass().isInstance(obj))
-      return false;
-    final Value<?> other = (Value<?>) obj;
-    if (value == null) {
-      if (other.value != null)
-        return false;
-    } else if (!value.equals(other.value))
-      return false;
-    return true;
-  }
-
-  @Override
-  public String toString() {
-    return getClass().getSimpleName() + " [value=" + value + "]";
-  }
-
   public Character getCharacter() {
-    return cantRead("Integer");
+    return cantRead("Character");
   }
 
   public String getString() {
-    return value == null ? "null" : value.toString();
+    return cantRead("String");
   }
 
   public Integer getInteger() {
@@ -113,5 +83,39 @@ public abstract class Value<T> {
 
   public OffsetTime getOffsetTime() {
     return cantRead("OffsetTime");
+  }
+
+  private final <U> U cantRead(final String type) {
+    throw new UnsupportedOperationException("Can't read `" + get() + "` as `" + type + "`");
+  }
+
+  @Override
+  public final int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + (value == null ? 0 : value.hashCode());
+    return result;
+  }
+
+  @Override
+  public final boolean equals(final Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (!getClass().isInstance(obj))
+      return false;
+    final Value<?> other = (Value<?>) obj;
+    if (value == null) {
+      if (other.value != null)
+        return false;
+    } else if (!value.equals(other.value))
+      return false;
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + " [value=" + value + "]";
   }
 }

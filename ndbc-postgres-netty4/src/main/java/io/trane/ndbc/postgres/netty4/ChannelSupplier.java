@@ -48,9 +48,11 @@ final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
   }
 
   private class MessageDecoder extends ByteToMessageDecoder {
+    boolean firstMessage = true;
     @Override
     protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out) throws Exception {
-      decoder.decode(new BufferReader(charset, in)).ifPresent(out::add);
+      decoder.decode(firstMessage, new BufferReader(charset, in)).ifPresent(out::add);
+      firstMessage = false;
     }
   }
 

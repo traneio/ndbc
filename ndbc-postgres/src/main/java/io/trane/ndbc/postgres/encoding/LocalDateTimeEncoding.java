@@ -28,7 +28,7 @@ final class LocalDateTimeEncoding implements Encoding<LocalDateTimeValue> {
 
   @Override
   public final String encodeText(final LocalDateTimeValue value) {
-    return java.sql.Timestamp.valueOf(value.get()).toString();
+    return java.sql.Timestamp.valueOf(value.getLocalDateTime()).toString();
   }
 
   @Override
@@ -39,7 +39,7 @@ final class LocalDateTimeEncoding implements Encoding<LocalDateTimeValue> {
 
   @Override
   public final void encodeBinary(final LocalDateTimeValue value, final BufferWriter b) {
-    final Instant instant = value.get().atOffset(ZoneOffset.UTC).toInstant();
+    final Instant instant = value.getLocalDateTime().atOffset(ZoneOffset.UTC).toInstant();
     final long seconds = instant.getEpochSecond();
     final long micros = instant.getLong(ChronoField.MICRO_OF_SECOND) + seconds * 1000000;
     b.writeLong(micros - POSTGRES_EPOCH_MICROS);

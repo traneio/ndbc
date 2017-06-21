@@ -25,7 +25,7 @@ final class ByteArrayEncoding implements Encoding<ByteArrayValue> {
   public final String encodeText(final ByteArrayValue value) {
     final StringBuilder sb = new StringBuilder();
     sb.append(PREFIX);
-    for (final byte b : value.get())
+    for (final byte b : value.getByteArray())
       sb.append(String.format("%02x", b));
     return sb.toString();
   }
@@ -42,7 +42,7 @@ final class ByteArrayEncoding implements Encoding<ByteArrayValue> {
 
   @Override
   public final void encodeBinary(final ByteArrayValue value, final BufferWriter b) {
-    b.writeBytes(value.get());
+    b.writeBytes(value.getByteArray());
   }
 
   @Override

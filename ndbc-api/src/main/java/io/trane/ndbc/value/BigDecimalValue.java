@@ -12,4 +12,10 @@ public final class BigDecimalValue extends Value<BigDecimal> {
   public final BigDecimal getBigDecimal() {
     return get();
   }
+
+  @Override
+  public String getString() {
+    BigDecimal value = get();
+    return value == null ? "null" : value.toPlainString();
+  }
 }

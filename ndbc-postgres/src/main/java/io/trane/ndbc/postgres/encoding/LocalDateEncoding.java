@@ -23,7 +23,7 @@ final class LocalDateEncoding implements Encoding<LocalDateValue> {
 
   @Override
   public final String encodeText(final LocalDateValue value) {
-    return value.get().toString();
+    return value.getLocalDate().toString();
   }
 
   @Override
@@ -33,7 +33,7 @@ final class LocalDateEncoding implements Encoding<LocalDateValue> {
 
   @Override
   public final void encodeBinary(final LocalDateValue value, final BufferWriter b) {
-    b.writeInt((int) value.get().getLong(JulianFields.JULIAN_DAY) - 2451545);
+    b.writeInt((int) value.getLocalDate().getLong(JulianFields.JULIAN_DAY) - 2451545);
   }
 
   @Override

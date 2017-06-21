@@ -21,7 +21,7 @@ final class ShortEncoding implements Encoding<ShortValue> {
 
   @Override
   public final String encodeText(final ShortValue value) {
-    return Short.toString(value.get());
+    return Short.toString(value.getShort());
   }
 
   @Override
@@ -31,7 +31,7 @@ final class ShortEncoding implements Encoding<ShortValue> {
 
   @Override
   public final void encodeBinary(final ShortValue value, final BufferWriter b) {
-    b.writeShort(value.get());
+    b.writeShort(value.getShort());
   }
 
   @Override
