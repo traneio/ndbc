@@ -11,26 +11,12 @@ public interface Exchange<T> {
 
   static Logger log = Logger.getLogger(Exchange.class.getName());
 
-  static Exchange<Void> VOID = value(null);
-
-  static final class ExchangeException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
-
-    public ExchangeException(final String message) {
-      super(message);
-    }
-  }
-
-  static Exchange<Void> close() {
-    return Channel::close;
-  }
-
-  static Exchange<Void> done() {
-    return channel -> Future.VOID;
-  }
+  static Exchange<Void> VOID = channel -> Future.VOID;
+  static Exchange<Void> CLOSE = Channel::close;
+  static Exchange<Void> DONE = channel -> Future.VOID;
 
   static <R> Exchange<R> fail(final String error) {
-    return fail(new ExchangeException(error));
+    return fail(new RuntimeException(error));
   }
 
   static <R> Exchange<R> fail(final Throwable ex) {

@@ -26,7 +26,7 @@ public class InitSSLExchange {
             return Exchange.fail("Database doesn't accept SSL connections.");
           else
             return disabled;
-        })).onFailure(ex -> Exchange.close());
+        })).onFailure(ex -> Exchange.CLOSE);
     }).orElse(disabled);
   }
 }

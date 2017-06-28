@@ -24,11 +24,11 @@ public final class StartupExchange {
     return Exchange.send(startupMessage(charset, user, database))
         .thenReceive(authenticationOk.orElse(clearTextPasswordAuthentication(password))
             .orElse(md5PasswordAuthentication(charset, user, password)).orElse(unsupportedAuthentication))
-        .then(waitForBackendStartup(Optional.empty())).onFailure(ex -> Exchange.close());
+        .then(waitForBackendStartup(Optional.empty())).onFailure(ex -> Exchange.CLOSE);
   }
 
   private final PartialFunction<ServerMessage, Exchange<Void>> authenticationOk = PartialFunction
-      .when(AuthenticationRequest.AuthenticationOk.class, msg -> Exchange.done());
+      .when(AuthenticationRequest.AuthenticationOk.class, msg -> Exchange.DONE);
 
   private final PartialFunction<ServerMessage, Exchange<Void>> clearTextPasswordAuthentication(
       final Optional<String> password) {
@@ -46,7 +46,7 @@ public final class StartupExchange {
 
   private final PartialFunction<ServerMessage, Exchange<Void>> unsupportedAuthentication = PartialFunction.when(
       AuthenticationRequest.class,
-      msg -> Exchange.close().thenFail("Database authentication method not supported by ndbc: " + msg));
+      msg -> Exchange.CLOSE.thenFail("Database authentication method not supported by ndbc: " + msg));
 
   private final Exchange<Optional<BackendKeyData>> waitForBackendStartup(
       final Optional<BackendKeyData> backendKeyData) {

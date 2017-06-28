@@ -4,29 +4,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
 
-import org.junit.After;
 import org.junit.Test;
 
 import io.trane.future.Future;
 import io.trane.future.Promise;
-import io.trane.ndbc.PreparedStatement;
-import io.trane.ndbc.Row;
 
-public class PoolTest {
-
-  final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-  @After
-  public void shutdown() {
-    scheduler.shutdown();
-  }
+public class LockFreePoolTest extends PoolEnv {
 
   @Test
   public void maxSize() {
@@ -117,45 +105,5 @@ public class PoolTest {
     }, () -> {
       assertTrue(maxSize >= executing.get());
     });
-  }
-
-  private Connection conn() {
-    return new Connection() {
-
-      @Override
-      public Future<List<Row>> query(PreparedStatement query) {
-        return null;
-      }
-
-      @Override
-      public Future<List<Row>> query(String query) {
-        return null;
-      }
-
-      @Override
-      public Future<Boolean> isValid() {
-        return null;
-      }
-
-      @Override
-      public Future<Integer> execute(PreparedStatement query) {
-        return null;
-      }
-
-      @Override
-      public Future<Integer> execute(String query) {
-        return null;
-      }
-
-      @Override
-      public Future<Void> close() {
-        return null;
-      }
-
-      @Override
-      public <R> Future<R> withTransaction(Supplier<Future<R>> sup) {
-        return null;
-      }
-    };
   }
 }

@@ -70,7 +70,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   @Override
   public final Future<Void> close() {
-    return Exchange.close().run(channel);
+    return Exchange.CLOSE.run(channel);
   }
 
   @Override
@@ -102,6 +102,6 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   private final <T> InterruptHandler handler(final Promise<T> p, final BackendKeyData data) {
     return ex -> channelSupplier.get().flatMap(channel -> Exchange
-        .send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.close()).run(channel));
+        .send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.CLOSE).run(channel));
   }
 }
