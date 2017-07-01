@@ -30,8 +30,8 @@ public final class ExtendedExchange {
     return withParsing(query,
         id -> Exchange.send(new Bind(id, id, binary, params, binary))
             .thenSend(new Describe.DescribePortal(id)).thenSend(new Execute(id, 0)).thenSend(new Close.ClosePortal(id))
-            .thenSend(sync)).thenReceive(BindComplete.class).then(readResult)
-                .thenReceive(CloseComplete.class)
+            .thenSend(sync)).thenWaitFor(BindComplete.class).then(readResult)
+                .thenWaitFor(CloseComplete.class)
                 .thenWaitFor(ReadyForQuery.class);
   }
 
@@ -42,7 +42,7 @@ public final class ExtendedExchange {
       return f.apply(idString);
     else {
       return Exchange.send(new Parse(Integer.toString(id), positional(query), emptyParams)).then(f.apply(idString))
-          .thenReceive(ParseComplete.class).onSuccess(ign -> Exchange.value(prepared.add(id)));
+          .thenWaitFor(ParseComplete.class).onSuccess(ign -> Exchange.value(prepared.add(id)));
     }
   }
 

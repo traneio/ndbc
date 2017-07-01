@@ -28,7 +28,7 @@ public final class StartupExchange {
   }
 
   private final PartialFunction<ServerMessage, Exchange<Void>> authenticationOk = PartialFunction
-      .when(AuthenticationRequest.AuthenticationOk.class, msg -> Exchange.DONE);
+      .when(AuthenticationRequest.AuthenticationOk.class, msg -> Exchange.VOID);
 
   private final PartialFunction<ServerMessage, Exchange<Void>> clearTextPasswordAuthentication(
       final Optional<String> password) {

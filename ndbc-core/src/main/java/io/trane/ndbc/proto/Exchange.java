@@ -13,7 +13,6 @@ public interface Exchange<T> {
 
   static Exchange<Void> VOID = channel -> Future.VOID;
   static Exchange<Void> CLOSE = Channel::close;
-  static Exchange<Void> DONE = channel -> Future.VOID;
 
   static <R> Exchange<R> fail(final String error) {
     return fail(new RuntimeException(error));
@@ -30,7 +29,7 @@ public interface Exchange<T> {
         log.info(msg.toString());
         return receive(f).run(channel);
       } else if (msg.isError()) {
-        return Future.exception(new Exception(msg.toString()));
+        return Future.exception(new RuntimeException(msg.toString()));
       } else
         return f.applyOrElse(msg, () -> Exchange.fail("Unexpected server message: " + msg)).run(channel);
     });
@@ -72,10 +71,6 @@ public interface Exchange<T> {
 
   default public <R> Exchange<R> thenReceive(final PartialFunction<ServerMessage, Exchange<R>> f) {
     return then(Exchange.receive(f));
-  }
-
-  default public Exchange<T> thenReceive(final Class<? extends ServerMessage> cls) {
-    return flatMap(value -> Exchange.receive(PartialFunction.when(cls, msg -> Exchange.value(value))));
   }
 
   default public Exchange<T> thenWaitFor(final Class<? extends ServerMessage> cls) {
