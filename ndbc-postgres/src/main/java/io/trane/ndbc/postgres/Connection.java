@@ -21,13 +21,13 @@ import io.trane.ndbc.proto.Exchange;
 
 public final class Connection implements io.trane.ndbc.datasource.Connection {
 
-  private final Channel                                       channel;
+  private final Channel channel;
   private final Supplier<? extends Future<? extends Channel>> channelSupplier;
-  private final Optional<BackendKeyData>                      backendKeyData;
-  private final SimpleQueryExchange                           simpleQueryExchange;
-  private final SimpleExecuteExchange                         simpleExecuteExchange;
-  private final ExtendedQueryExchange                         extendedQueryExchange;
-  private final ExtendedExecuteExchange                       extendedExecuteExchange;
+  private final Optional<BackendKeyData> backendKeyData;
+  private final SimpleQueryExchange simpleQueryExchange;
+  private final SimpleExecuteExchange simpleExecuteExchange;
+  private final ExtendedQueryExchange extendedQueryExchange;
+  private final ExtendedExecuteExchange extendedExecuteExchange;
 
   public Connection(final Channel channel, final Supplier<? extends Future<? extends Channel>> channelSupplier,
       final Optional<BackendKeyData> backendKeyData, final SimpleQueryExchange simpleQueryExchange,
@@ -101,7 +101,10 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   }
 
   private final <T> InterruptHandler handler(final Promise<T> p, final BackendKeyData data) {
-    return ex -> channelSupplier.get().flatMap(channel -> Exchange
-        .send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.CLOSE).run(channel));
+    return ex -> {
+      channelSupplier.get().flatMap(channel -> Exchange
+          .send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.CLOSE).run(channel))
+          .onSuccess(v -> p.setException(ex));
+    };
   }
 }
