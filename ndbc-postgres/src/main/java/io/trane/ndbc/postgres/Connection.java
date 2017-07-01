@@ -3,6 +3,7 @@ package io.trane.ndbc.postgres;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 import io.trane.future.Future;
 import io.trane.future.InterruptHandler;
@@ -20,6 +21,9 @@ import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.Exchange;
 
 public final class Connection implements io.trane.ndbc.datasource.Connection {
+
+  private static final Logger                                 logger = Logger
+      .getLogger(Connection.class.getName());
 
   private final Channel                                       channel;
   private final Supplier<? extends Future<? extends Channel>> channelSupplier;
@@ -97,17 +101,16 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private final <T> Future<T> cancellable(final Future<T> fut) {
     return backendKeyData.map(data -> {
       final Promise<T> p = Promise.create(v -> handler(v, data));
-      fut.proxyTo(p);
+      p.become(fut);
       return (Future<T>) p;
     }).orElse(fut);
   }
 
   private final <T> InterruptHandler handler(final Promise<T> p, final BackendKeyData data) {
-    return ex -> {
-      channelSupplier.get().flatMap(channel -> Exchange
-          .send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.CLOSE)
-          .run(channel))
-          .onSuccess(v -> p.setException(ex));
-    };
+    return ex -> channelSupplier.get().flatMap(channel -> Exchange
+        .send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.CLOSE)
+        .run(channel))
+        .onFailure(e -> logger.warning("Can't cancel request. Reason: " + e))
+        .ensure(() -> p.setException(ex));
   }
 }
