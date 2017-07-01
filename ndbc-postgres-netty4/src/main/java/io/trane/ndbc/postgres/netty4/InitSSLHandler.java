@@ -19,15 +19,18 @@ import io.trane.ndbc.Config.SSL.Mode;
 
 public class InitSSLHandler {
 
-  public Future<Void> apply(String host, int port, Optional<Config.SSL> optCfg, NettyChannel channel) {
+  public Future<Void> apply(final String host, final int port, final Optional<Config.SSL> optCfg,
+      final NettyChannel channel) {
     return optCfg.map(cfg -> {
-      SslContextBuilder ctxBuilder = SslContextBuilder.forClient();
-      if (cfg.mode() == Mode.VERIFY_CA || cfg.mode() == Mode.VERIFY_FULL) {
+      final SslContextBuilder ctxBuilder = SslContextBuilder.forClient();
+      if (cfg.mode() == Mode.VERIFY_CA || cfg.mode() == Mode.VERIFY_FULL)
         cfg.rootCert().map(ctxBuilder::trustManager).orElseGet(() -> {
           try {
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-            FileInputStream cacerts = new FileInputStream(System.getProperty("java.home") + "/lib/security/cacerts");
+            final TrustManagerFactory tmf = TrustManagerFactory
+                .getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            final FileInputStream cacerts = new FileInputStream(
+                System.getProperty("java.home") + "/lib/security/cacerts");
             try {
               ks.load(cacerts, "changeit".toCharArray());
             } finally {
@@ -35,28 +38,28 @@ public class InitSSLHandler {
             }
             tmf.init(ks);
             return ctxBuilder.trustManager(tmf);
-          } catch (Exception e) {
+          } catch (final Exception e) {
             throw new RuntimeException(e);
           }
         });
-      } else
+      else
         ctxBuilder.trustManager(InsecureTrustManagerFactory.INSTANCE);
 
       SslContext sslContext;
       try {
         sslContext = ctxBuilder.build();
-      } catch (SSLException e) {
+      } catch (final SSLException e) {
         throw new RuntimeException(e);
       }
 
       return channel.ctx().onSuccess(ctx -> {
-        SSLEngine sslEngine = sslContext.newEngine(ctx.alloc(), host, port);
+        final SSLEngine sslEngine = sslContext.newEngine(ctx.alloc(), host, port);
         if (cfg.mode() == Mode.VERIFY_FULL) {
-          SSLParameters sslParams = sslEngine.getSSLParameters();
+          final SSLParameters sslParams = sslEngine.getSSLParameters();
           sslParams.setEndpointIdentificationAlgorithm("HTTPS");
           sslEngine.setSSLParameters(sslParams);
         }
-        SslHandler handler = new SslHandler(sslEngine);
+        final SslHandler handler = new SslHandler(sslEngine);
         ctx.pipeline().addFirst(handler);
       }).voided();
     }).orElse(Future.VOID);

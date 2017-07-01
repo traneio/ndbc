@@ -10,7 +10,7 @@ public abstract class Value<T> {
 
   public static final NullValue NULL = new NullValue();
 
-  private final T value;
+  private final T               value;
 
   public Value(final T value) {
     super();
@@ -20,8 +20,8 @@ public abstract class Value<T> {
   protected T get() {
     return value;
   }
-  
-  public <U> U unsafeGetAs(Class<U> cls) {
+
+  public <U> U unsafeGetAs(final Class<U> cls) {
     return cls.cast(value);
   }
 

@@ -15,7 +15,7 @@ public final class BigDecimalValue extends Value<BigDecimal> {
 
   @Override
   public String getString() {
-    BigDecimal value = get();
+    final BigDecimal value = get();
     return value == null ? "null" : value.toPlainString();
   }
 }

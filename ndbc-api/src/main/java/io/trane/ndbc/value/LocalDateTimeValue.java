@@ -14,12 +14,12 @@ public final class LocalDateTimeValue extends Value<LocalDateTime> {
   public final LocalDateTime getLocalDateTime() {
     return get();
   }
-  
+
   @Override
   public final LocalDate getLocalDate() {
     return get().toLocalDate();
   }
-  
+
   @Override
   public final LocalTime getLocalTime() {
     return get().toLocalTime();

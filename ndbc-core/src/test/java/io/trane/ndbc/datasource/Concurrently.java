@@ -10,7 +10,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Concurrently {
 
-  public static void apply(final Duration howLong, final Runnable run, final Runnable checkInvariants) {
+  public static void apply(final Duration howLong, final Runnable run,
+      final Runnable checkInvariants) {
     final int threads = Runtime.getRuntime().availableProcessors() * 2;
     final ExecutorService executor = Executors.newFixedThreadPool(threads);
     final ExecutorService validator = Executors.newFixedThreadPool(1);

@@ -14,7 +14,8 @@ import io.trane.ndbc.proto.ServerMessage;
 final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> implements Channel {
 
   private Promise<ChannelHandlerContext>                ctx                = Promise.apply();
-  private final AtomicReference<Promise<ServerMessage>> nextMessagePromise = new AtomicReference<>(null);
+  private final AtomicReference<Promise<ServerMessage>> nextMessagePromise = new AtomicReference<>(
+      null);
 
   @Override
   public final void channelActive(final ChannelHandlerContext ctx) throws Exception {
@@ -30,17 +31,19 @@ final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> impl
   }
 
   @Override
-  protected final void channelRead0(final ChannelHandlerContext ctx, final ServerMessage msg) throws Exception {
+  protected final void channelRead0(final ChannelHandlerContext ctx, final ServerMessage msg)
+      throws Exception {
     System.out.println("received: " + msg);
     final Promise<ServerMessage> p = nextMessagePromise.get();
     if (p == null)
       throw new IllegalStateException("Unexpected server message: " + msg);
     if (!nextMessagePromise.compareAndSet(p, null))
-      throw new IllegalStateException("Invalid `nextMessagePromise` state: " + nextMessagePromise.get());
+      throw new IllegalStateException(
+          "Invalid `nextMessagePromise` state: " + nextMessagePromise.get());
     p.setValue(msg);
   }
 
-  public final Future<Void> addSSLHandler(SslHandler h) {
+  public final Future<Void> addSSLHandler(final SslHandler h) {
     return ctx.onSuccess(c -> c.pipeline().addFirst(h)).voided();
   }
 

@@ -8,8 +8,8 @@ public class ByteArrayValueTest {
 
   @Test
   public void getByteArray() {
-    byte[] value = new byte[10];
-    ByteArrayValue wrapper = new ByteArrayValue(value);
+    final byte[] value = new byte[10];
+    final ByteArrayValue wrapper = new ByteArrayValue(value);
     assertEquals(value, wrapper.getByteArray());
   }
 }

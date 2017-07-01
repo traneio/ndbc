@@ -12,7 +12,7 @@ public final class LongValue extends Value<Long> {
   public final Long getLong() {
     return get();
   }
-  
+
   @Override
   public final BigDecimal getBigDecimal() {
     return new BigDecimal(get());

@@ -14,10 +14,10 @@ import io.trane.ndbc.Row;
 
 public class PoolEnv {
 
-  final int maxSize = 10;
-  final int maxWaiters = 10;
-  final Duration validationInterval = Duration.ofSeconds(1);
-  final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+  final int                      maxSize            = 10;
+  final int                      maxWaiters         = 10;
+  final Duration                 validationInterval = Duration.ofSeconds(1);
+  final ScheduledExecutorService scheduler          = Executors.newScheduledThreadPool(1);
 
   @After
   public void shutdown() {
@@ -45,27 +45,27 @@ public class PoolEnv {
     }
 
     @Override
-    public Future<List<Row>> query(String query) {
+    public Future<List<Row>> query(final String query) {
       return notExpected();
     }
 
     @Override
-    public Future<Integer> execute(String query) {
+    public Future<Integer> execute(final String query) {
       return notExpected();
     }
 
     @Override
-    public Future<List<Row>> query(PreparedStatement query) {
+    public Future<List<Row>> query(final PreparedStatement query) {
       return notExpected();
     }
 
     @Override
-    public Future<Integer> execute(PreparedStatement query) {
+    public Future<Integer> execute(final PreparedStatement query) {
       return notExpected();
     }
 
     @Override
-    public <R> Future<R> withTransaction(Supplier<Future<R>> sup) {
+    public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
       return notExpected();
     }
   };

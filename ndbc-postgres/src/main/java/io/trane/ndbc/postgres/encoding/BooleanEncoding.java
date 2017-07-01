@@ -9,7 +9,7 @@ import io.trane.ndbc.value.BooleanValue;
 
 final class BooleanEncoding implements Encoding<BooleanValue> {
 
-  private static final BooleanValue TRUE = new BooleanValue(true);
+  private static final BooleanValue TRUE  = new BooleanValue(true);
   private static final BooleanValue FALSE = new BooleanValue(false);
 
   @Override

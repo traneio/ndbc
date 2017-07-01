@@ -14,9 +14,12 @@ import io.trane.ndbc.value.OffsetTimeValue;
 
 final class OffsetTimeEncoding implements Encoding<OffsetTimeValue> {
 
-  private static final DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive()
-      .append(DateTimeFormatter.ISO_LOCAL_TIME).optionalStart().appendOffset("+HH:MM:ss", "Z").optionalEnd()
-      .optionalStart().appendOffset("+HH:mm", "Z").optionalEnd().optionalStart().appendOffset("+HH", "Z").optionalEnd()
+  private static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+      .parseCaseInsensitive()
+      .append(DateTimeFormatter.ISO_LOCAL_TIME).optionalStart().appendOffset("+HH:MM:ss", "Z")
+      .optionalEnd()
+      .optionalStart().appendOffset("+HH:mm", "Z").optionalEnd().optionalStart()
+      .appendOffset("+HH", "Z").optionalEnd()
       .toFormatter();
 
   @Override

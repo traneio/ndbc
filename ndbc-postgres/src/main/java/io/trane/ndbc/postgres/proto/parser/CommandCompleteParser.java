@@ -19,24 +19,24 @@ final class CommandCompleteParser {
     final String string = b.readCString();
     final String[] words = string.split(" ");
     switch (words[0]) {
-    case "INSERT":
-      return new InsertComplete(parseInt(words[1]), parseInt(words[2]));
-    case "DELETE":
-      return new DeleteComplete(parseInt(words[1]));
-    case "UPDATE":
-      return new UpdateComplete(parseInt(words[1]));
-    case "SELECT":
-      return new SelectorOrCreateTableAsComplete(parseInt(words[1]));
-    case "MOVE":
-      return new MoveComplete(parseInt(words[1]));
-    case "FETCH":
-      return new FetchComplete(parseInt(words[1]));
-    case "COPY":
-      return new CopyComplete(parseInt(words[1]));
-    case "CREATE TABLE":
-      return new SelectorOrCreateTableAsComplete(parseInt(words[1]));
-    default:
-      return new UnknownCommandComplete(0, string);
+      case "INSERT":
+        return new InsertComplete(parseInt(words[1]), parseInt(words[2]));
+      case "DELETE":
+        return new DeleteComplete(parseInt(words[1]));
+      case "UPDATE":
+        return new UpdateComplete(parseInt(words[1]));
+      case "SELECT":
+        return new SelectorOrCreateTableAsComplete(parseInt(words[1]));
+      case "MOVE":
+        return new MoveComplete(parseInt(words[1]));
+      case "FETCH":
+        return new FetchComplete(parseInt(words[1]));
+      case "COPY":
+        return new CopyComplete(parseInt(words[1]));
+      case "CREATE TABLE":
+        return new SelectorOrCreateTableAsComplete(parseInt(words[1]));
+      default:
+        return new UnknownCommandComplete(0, string);
     }
   }
 }

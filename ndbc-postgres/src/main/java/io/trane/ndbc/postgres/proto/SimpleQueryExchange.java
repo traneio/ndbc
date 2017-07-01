@@ -17,6 +17,7 @@ public final class SimpleQueryExchange {
   }
 
   public final Exchange<List<Row>> apply(final String query) {
-    return Exchange.send(new Query(query)).then(queryResultExchange.apply()).thenWaitFor(ReadyForQuery.class);
+    return Exchange.send(new Query(query)).then(queryResultExchange.apply())
+        .thenWaitFor(ReadyForQuery.class);
   }
 }

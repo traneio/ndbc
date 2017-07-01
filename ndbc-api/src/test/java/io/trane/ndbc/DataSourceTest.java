@@ -29,16 +29,16 @@ public class DataSourceTest {
 
   @Test
   public void fromPropertiesFile() throws FileNotFoundException, IOException {
-    Properties p = new Properties();
+    final Properties p = new Properties();
     initProperties(p);
-    File file = File.createTempFile("test", "fromPropertiesFile");
+    final File file = File.createTempFile("test", "fromPropertiesFile");
     p.store(new FileOutputStream(file), "");
     assertEquals(ds, DataSource.fromPropertiesFile("db", file.getAbsolutePath()));
   }
 
   @Test
   public void fromProperties() {
-    Properties p = new Properties();
+    final Properties p = new Properties();
     initProperties(p);
     assertEquals(ds, DataSource.fromProperties("db", p));
   }
@@ -47,14 +47,14 @@ public class DataSourceTest {
   public void fromConfig() {
     assertEquals(ds, DataSource.fromConfig(cfg));
   }
-  
+
   @Test(expected = RuntimeException.class)
   public void fromFail() {
-    Config cfg  = Config.apply("not a class", host, port, user);
+    final Config cfg = Config.apply("not a class", host, port, user);
     DataSource.fromConfig(cfg);
   }
 
-  private void initProperties(Properties p) {
+  private void initProperties(final Properties p) {
     p.setProperty("db.dataSourceSupplierClass", DSSupplier.class.getName());
     p.setProperty("db.host", host);
     p.setProperty("db.port", Integer.toString(port));
@@ -62,7 +62,7 @@ public class DataSourceTest {
   }
 
   static class DSSupplier implements Supplier<DataSource> {
-    public DSSupplier(Config c) {
+    public DSSupplier(final Config c) {
     }
 
     @Override
@@ -74,27 +74,27 @@ public class DataSourceTest {
   private static DataSource ds = new DataSource() {
 
     @Override
-    public <T> Future<T> transactional(Supplier<Future<T>> supplier) {
+    public <T> Future<T> transactional(final Supplier<Future<T>> supplier) {
       return null;
     }
 
     @Override
-    public Future<List<Row>> query(PreparedStatement query) {
+    public Future<List<Row>> query(final PreparedStatement query) {
       return null;
     }
 
     @Override
-    public Future<List<Row>> query(String query) {
+    public Future<List<Row>> query(final String query) {
       return null;
     }
 
     @Override
-    public Future<Integer> execute(PreparedStatement statement) {
+    public Future<Integer> execute(final PreparedStatement statement) {
       return null;
     }
 
     @Override
-    public Future<Integer> execute(String statement) {
+    public Future<Integer> execute(final String statement) {
       return null;
     }
 

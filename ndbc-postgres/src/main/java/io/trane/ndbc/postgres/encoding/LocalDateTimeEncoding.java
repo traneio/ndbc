@@ -34,7 +34,8 @@ final class LocalDateTimeEncoding implements Encoding<LocalDateTimeValue> {
   @Override
   public final LocalDateTimeValue decodeText(final String value) {
     return new LocalDateTimeValue(
-        LocalDateTime.ofInstant(java.sql.Timestamp.valueOf(value).toInstant(), ZoneId.systemDefault()));
+        LocalDateTime.ofInstant(java.sql.Timestamp.valueOf(value).toInstant(),
+            ZoneId.systemDefault()));
   }
 
   @Override

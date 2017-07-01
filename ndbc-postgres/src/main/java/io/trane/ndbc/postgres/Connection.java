@@ -21,17 +21,19 @@ import io.trane.ndbc.proto.Exchange;
 
 public final class Connection implements io.trane.ndbc.datasource.Connection {
 
-  private final Channel channel;
+  private final Channel                                       channel;
   private final Supplier<? extends Future<? extends Channel>> channelSupplier;
-  private final Optional<BackendKeyData> backendKeyData;
-  private final SimpleQueryExchange simpleQueryExchange;
-  private final SimpleExecuteExchange simpleExecuteExchange;
-  private final ExtendedQueryExchange extendedQueryExchange;
-  private final ExtendedExecuteExchange extendedExecuteExchange;
+  private final Optional<BackendKeyData>                      backendKeyData;
+  private final SimpleQueryExchange                           simpleQueryExchange;
+  private final SimpleExecuteExchange                         simpleExecuteExchange;
+  private final ExtendedQueryExchange                         extendedQueryExchange;
+  private final ExtendedExecuteExchange                       extendedExecuteExchange;
 
-  public Connection(final Channel channel, final Supplier<? extends Future<? extends Channel>> channelSupplier,
+  public Connection(final Channel channel,
+      final Supplier<? extends Future<? extends Channel>> channelSupplier,
       final Optional<BackendKeyData> backendKeyData, final SimpleQueryExchange simpleQueryExchange,
-      final SimpleExecuteExchange simpleExecuteExchange, final ExtendedQueryExchange extendedQueryExchange,
+      final SimpleExecuteExchange simpleExecuteExchange,
+      final ExtendedQueryExchange extendedQueryExchange,
       final ExtendedExecuteExchange extendedExecuteExchange) {
     super();
     this.channel = channel;
@@ -74,7 +76,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   }
 
   @Override
-  public <R> Future<R> withTransaction(Supplier<Future<R>> sup) {
+  public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
     return execute("BEGIN").flatMap(v -> sup.get()).transformWith(new Transformer<R, Future<R>>() {
       @Override
       public Future<R> onException(final Throwable ex) {
@@ -103,7 +105,8 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private final <T> InterruptHandler handler(final Promise<T> p, final BackendKeyData data) {
     return ex -> {
       channelSupplier.get().flatMap(channel -> Exchange
-          .send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.CLOSE).run(channel))
+          .send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.CLOSE)
+          .run(channel))
           .onSuccess(v -> p.setException(ex));
     };
   }

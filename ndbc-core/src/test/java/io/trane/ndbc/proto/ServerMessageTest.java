@@ -1,20 +1,21 @@
 package io.trane.ndbc.proto;
 
+import static org.junit.Assert.assertFalse;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class ServerMessageTest {
 
   @Test
   public void isError() {
-    ServerMessage msg = new ServerMessage() {
+    final ServerMessage msg = new ServerMessage() {
     };
     assertFalse(msg.isError());
   }
 
   @Test
   public void isNotice() {
-    ServerMessage msg = new ServerMessage() {
+    final ServerMessage msg = new ServerMessage() {
     };
     assertFalse(msg.isNotice());
   }

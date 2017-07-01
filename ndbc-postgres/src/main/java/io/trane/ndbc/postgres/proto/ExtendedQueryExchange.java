@@ -9,9 +9,10 @@ import io.trane.ndbc.value.Value;
 public final class ExtendedQueryExchange {
 
   private final QueryResultExchange queryResultExchange;
-  private final ExtendedExchange extendedExchange;
+  private final ExtendedExchange    extendedExchange;
 
-  public ExtendedQueryExchange(final QueryResultExchange queryResultExchange, final ExtendedExchange extendedExchange) {
+  public ExtendedQueryExchange(final QueryResultExchange queryResultExchange,
+      final ExtendedExchange extendedExchange) {
     super();
     this.queryResultExchange = queryResultExchange;
     this.extendedExchange = extendedExchange;

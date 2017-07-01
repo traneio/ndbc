@@ -10,15 +10,15 @@ public class DoubleValueTest {
 
   @Test
   public void getDouble() {
-    Double value = 1.2D;
-    DoubleValue wrapper = new DoubleValue(value);
+    final Double value = 1.2D;
+    final DoubleValue wrapper = new DoubleValue(value);
     assertEquals(value, wrapper.getDouble());
   }
-  
+
   @Test
   public void getBigDecimal() {
-    Double value = 1.2D;
-    DoubleValue wrapper = new DoubleValue(value);
+    final Double value = 1.2D;
+    final DoubleValue wrapper = new DoubleValue(value);
     assertEquals(new BigDecimal(value), wrapper.getBigDecimal());
   }
 }

@@ -11,7 +11,7 @@ import io.trane.ndbc.value.Value;
 public final class Row {
 
   private final Map<String, Integer> positions;
-  private final Value<?>[] columns;
+  private final Value<?>[]           columns;
 
   public static final Row apply(final Map<String, Integer> positions, final Value<?>[] columns) {
     return new Row(positions, columns);
@@ -32,8 +32,9 @@ public final class Row {
   }
 
   public final List<String> columnNames() {
-    return Collections.unmodifiableList(positions.entrySet().stream().sorted(Map.Entry.comparingByValue())
-        .map(Map.Entry::getKey).collect(Collectors.toList()));
+    return Collections
+        .unmodifiableList(positions.entrySet().stream().sorted(Map.Entry.comparingByValue())
+            .map(Map.Entry::getKey).collect(Collectors.toList()));
   }
 
   public final List<Value<?>> columns() {

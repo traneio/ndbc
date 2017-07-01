@@ -10,7 +10,8 @@ import io.trane.ndbc.util.PartialFunction;
 public final class SimpleExecuteExchange {
 
   public final Exchange<Integer> apply(final String command) {
-    return Exchange.send(new Query(command)).thenReceive(commandComplete).thenWaitFor(ReadyForQuery.class);
+    return Exchange.send(new Query(command)).thenReceive(commandComplete)
+        .thenWaitFor(ReadyForQuery.class);
   }
 
   private final PartialFunction<ServerMessage, Exchange<Integer>> commandComplete = PartialFunction

@@ -13,7 +13,7 @@ public final class OffsetTimeValue extends Value<OffsetTime> {
   public final OffsetTime getOffsetTime() {
     return get();
   }
-  
+
   @Override
   public final LocalTime getLocalTime() {
     return get().toLocalTime();

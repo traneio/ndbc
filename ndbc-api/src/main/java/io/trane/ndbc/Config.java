@@ -43,18 +43,18 @@ public final class Config {
       VERIFY_FULL
     }
 
-    public static final SSL apply(Mode mode) {
+    public static final SSL apply(final Mode mode) {
       return new SSL(mode, Optional.empty());
     }
 
-    public static final SSL apply(Mode mode, File rootCert) {
+    public static final SSL apply(final Mode mode, final File rootCert) {
       return new SSL(mode, Optional.of(rootCert));
     }
 
     private final Mode           mode;
     private final Optional<File> rootCert;
 
-    private SSL(Mode mode, Optional<File> rootCert) {
+    private SSL(final Mode mode, final Optional<File> rootCert) {
       super();
       this.mode = mode;
       this.rootCert = rootCert;
@@ -68,7 +68,7 @@ public final class Config {
       return rootCert;
     }
 
-    public final SSL rootCert(File file) {
+    public final SSL rootCert(final File file) {
       return new SSL(mode, Optional.ofNullable(file));
     }
 
@@ -82,14 +82,14 @@ public final class Config {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (getClass() != obj.getClass())
         return false;
-      SSL other = (SSL) obj;
+      final SSL other = (SSL) obj;
       if (mode != other.mode)
         return false;
       if (rootCert == null) {
@@ -105,7 +105,8 @@ public final class Config {
     return fromProperties(prefix, System.getProperties());
   }
 
-  public static Config fromPropertiesFile(final String prefix, final String file) throws IOException {
+  public static Config fromPropertiesFile(final String prefix, final String file)
+      throws IOException {
     final Properties properties = new Properties();
     final FileInputStream fis = new FileInputStream(file);
     properties.load(fis);
@@ -115,7 +116,8 @@ public final class Config {
 
   public static final Config fromProperties(final String prefix, final Properties properties) {
 
-    final String dataSourceSupplierClass = getRequiredProperty(prefix, properties, "dataSourceSupplierClass");
+    final String dataSourceSupplierClass = getRequiredProperty(prefix, properties,
+        "dataSourceSupplierClass");
     final String host = getRequiredProperty(prefix, properties, "host");
     final int port = getRequiredProperty(prefix, properties, "port", Integer::parseInt);
     final String user = getRequiredProperty(prefix, properties, "user");
@@ -123,62 +125,75 @@ public final class Config {
     Config config = Config.apply(dataSourceSupplierClass, host, port, user);
 
     config = config
-        .charset(getProperty(prefix, properties, "charset", Charset::forName).orElse(Charset.defaultCharset()));
+        .charset(getProperty(prefix, properties, "charset", Charset::forName)
+            .orElse(Charset.defaultCharset()));
     config = config.password(getProperty(prefix, properties, "password"));
     config = config.database(getProperty(prefix, properties, "database"));
     config = config.poolMaxSize(getProperty(prefix, properties, "poolMaxSize", Integer::parseInt));
-    config = config.poolMaxWaiters(getProperty(prefix, properties, "poolMaxWaiters", Integer::parseInt));
+    config = config
+        .poolMaxWaiters(getProperty(prefix, properties, "poolMaxWaiters", Integer::parseInt));
 
     config = config.poolValidationInterval(
-        getProperty(prefix, properties, "poolValidationIntervalSeconds", s -> Duration.ofSeconds(Long.parseLong(s))));
+        getProperty(prefix, properties, "poolValidationIntervalSeconds",
+            s -> Duration.ofSeconds(Long.parseLong(s))));
 
     config = config.encodingClasses(getProperty(prefix, properties, "encodingClasses")
         .map(k -> Stream.of(k.split(",")).filter(s -> !s.isEmpty()).collect(Collectors.toSet())));
 
     config = config.ssl(getProperty(prefix, properties, "ssl.mode", SSL.Mode::valueOf).map(mode -> {
-      SSL ssl = SSL.apply(mode);
-      return getProperty(prefix, properties, "ssl.rootCert").map(rootCert -> ssl.rootCert(new File(rootCert)))
+      final SSL ssl = SSL.apply(mode);
+      return getProperty(prefix, properties, "ssl.rootCert")
+          .map(rootCert -> ssl.rootCert(new File(rootCert)))
           .orElse(ssl);
     }));
 
     return config;
   }
 
-  public static final Config apply(final String dataSourceSupplierClass, final String host, final int port,
+  public static final Config apply(final String dataSourceSupplierClass, final String host,
+      final int port,
       final String user) {
-    return new Config(dataSourceSupplierClass, host, port, user, Charset.defaultCharset(), Optional.empty(),
-        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
+    return new Config(dataSourceSupplierClass, host, port, user, Charset.defaultCharset(),
+        Optional.empty(),
+        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
+        Optional.empty(),
         Optional.empty());
   }
 
-  private static final <T> T getRequiredProperty(final String prefix, final Properties properties, final String name,
+  private static final <T> T getRequiredProperty(final String prefix, final Properties properties,
+      final String name,
       final Function<String, T> parser) {
-    String value = getRequiredProperty(prefix, properties, name);
+    final String value = getRequiredProperty(prefix, properties, name);
     try {
       return parser.apply(value);
     } catch (final Exception ex) {
-      throw new RuntimeException("Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.", ex);
+      throw new RuntimeException(
+          "Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.", ex);
     }
   }
 
-  private static final String getRequiredProperty(final String prefix, final Properties properties, final String name) {
+  private static final String getRequiredProperty(final String prefix, final Properties properties,
+      final String name) {
     return getProperty(prefix, properties, name).orElseGet(() -> {
       throw new RuntimeException("Missing config `" + prefix + "." + name + "`.");
     });
   }
 
-  private static final <T> Optional<T> getProperty(final String prefix, final Properties properties, final String name,
+  private static final <T> Optional<T> getProperty(final String prefix, final Properties properties,
+      final String name,
       final Function<String, T> parser) {
     return getProperty(prefix, properties, name).map(value -> {
       try {
         return parser.apply(value);
       } catch (final Exception ex) {
-        throw new RuntimeException("Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.", ex);
+        throw new RuntimeException(
+            "Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.", ex);
       }
     });
   }
 
-  private static final Optional<String> getProperty(final String prefix, final Properties properties,
+  private static final Optional<String> getProperty(final String prefix,
+      final Properties properties,
       final String name) {
     return Optional.ofNullable(properties.getProperty(prefix + "." + name));
   }
@@ -197,7 +212,8 @@ public final class Config {
   private final Optional<Integer>     nioThreads;
   private final Optional<SSL>         ssl;
 
-  private Config(final String dataSourceSupplierClass, final String host, final int port, final String user,
+  private Config(final String dataSourceSupplierClass, final String host, final int port,
+      final String user,
       final Charset charset, final Optional<String> password, final Optional<String> database,
       final Optional<Integer> poolMaxSize, final Optional<Integer> poolMaxWaiters,
       final Optional<Duration> poolValidationInterval, final Optional<Set<String>> encodingClasses,
@@ -239,7 +255,8 @@ public final class Config {
   }
 
   public final Config charset(final Charset charset) {
-    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database,
+        poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
   }
 
@@ -252,7 +269,8 @@ public final class Config {
   }
 
   public final Config password(final Optional<String> password) {
-    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database,
+        poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
   }
 
@@ -265,7 +283,8 @@ public final class Config {
   }
 
   public final Config database(final Optional<String> database) {
-    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database,
+        poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
   }
 
@@ -278,7 +297,8 @@ public final class Config {
   }
 
   public final Config poolMaxSize(final Optional<Integer> poolMaxSize) {
-    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database,
+        poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
   }
 
@@ -291,7 +311,8 @@ public final class Config {
   }
 
   public final Config poolMaxWaiters(final Optional<Integer> poolMaxWaiters) {
-    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database,
+        poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
   }
 
@@ -304,7 +325,8 @@ public final class Config {
   }
 
   public final Config poolValidationInterval(final Optional<Duration> poolValidationInterval) {
-    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database,
+        poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
   }
 
@@ -317,7 +339,8 @@ public final class Config {
   }
 
   public final Config encodingClasses(final Optional<Set<String>> encodingClasses) {
-    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database,
+        poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
   }
 
@@ -339,7 +362,8 @@ public final class Config {
   }
 
   public final Config nioThreads(final Optional<Integer> nioThreads) {
-    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database,
+        poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
   }
 
@@ -352,7 +376,8 @@ public final class Config {
   }
 
   public final Config ssl(final Optional<SSL> ssl) {
-    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, password, database,
+        poolMaxSize,
         poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
   }
 }

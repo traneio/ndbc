@@ -12,7 +12,7 @@ public final class DoubleValue extends Value<Double> {
   public final Double getDouble() {
     return get();
   }
-  
+
   @Override
   public final BigDecimal getBigDecimal() {
     return new BigDecimal(get());

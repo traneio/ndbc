@@ -8,8 +8,8 @@ public class StringValueTest {
 
   @Test
   public void getString() {
-    String value = "s";
-    StringValue wrapper = new StringValue(value);
+    final String value = "s";
+    final StringValue wrapper = new StringValue(value);
     assertEquals(value, wrapper.getString());
   }
 }

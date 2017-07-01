@@ -9,9 +9,9 @@ import io.trane.ndbc.util.PartialFunction;
 @FunctionalInterface
 public interface Exchange<T> {
 
-  static Logger log = Logger.getLogger(Exchange.class.getName());
+  static Logger         log   = Logger.getLogger(Exchange.class.getName());
 
-  static Exchange<Void> VOID = channel -> Future.VOID;
+  static Exchange<Void> VOID  = channel -> Future.VOID;
   static Exchange<Void> CLOSE = Channel::close;
 
   static <R> Exchange<R> fail(final String error) {
@@ -28,10 +28,11 @@ public interface Exchange<T> {
       if (msg.isNotice()) {
         log.info(msg.toString());
         return receive(f).run(channel);
-      } else if (msg.isError()) {
+      } else if (msg.isError())
         return Future.exception(new RuntimeException(msg.toString()));
-      } else
-        return f.applyOrElse(msg, () -> Exchange.fail("Unexpected server message: " + msg)).run(channel);
+      else
+        return f.applyOrElse(msg, () -> Exchange.fail("Unexpected server message: " + msg))
+            .run(channel);
     });
   }
 
@@ -58,7 +59,8 @@ public interface Exchange<T> {
   }
 
   default public Exchange<T> onFailure(final Function<Throwable, Exchange<?>> e) {
-    return channel -> run(channel).rescue(ex -> e.apply(ex).run(channel).flatMap(v -> Future.exception(ex)));
+    return channel -> run(channel)
+        .rescue(ex -> e.apply(ex).run(channel).flatMap(v -> Future.exception(ex)));
   }
 
   default public Exchange<T> onSuccess(final Function<T, Exchange<?>> f) {
@@ -74,7 +76,8 @@ public interface Exchange<T> {
   }
 
   default public Exchange<T> thenWaitFor(final Class<? extends ServerMessage> cls) {
-    final PartialFunction<ServerMessage, Exchange<Void>> pf = PartialFunction.when(cls, msg -> Exchange.VOID);
+    final PartialFunction<ServerMessage, Exchange<Void>> pf = PartialFunction.when(cls,
+        msg -> Exchange.VOID);
     return rescue(ex -> Exchange.receive(pf).flatMap(v -> Exchange.fail(ex)))
         .flatMap(r -> Exchange.receive(pf).map(v -> r));
   }

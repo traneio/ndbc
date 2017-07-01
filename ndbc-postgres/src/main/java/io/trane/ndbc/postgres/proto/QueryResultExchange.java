@@ -32,7 +32,8 @@ public final class QueryResultExchange {
         .flatMap(desc -> gatherDataRows(new ArrayList<>()).map(rows -> toResultSet(desc, rows)));
   }
 
-  private final Row toRow(final ValueEncoding encoding, final RowDescription desc, final DataRow data) {
+  private final Row toRow(final ValueEncoding encoding, final RowDescription desc,
+      final DataRow data) {
 
     final RowDescription.Field[] fields = desc.fields;
     final BufferReader[] values = data.values;
@@ -67,7 +68,7 @@ public final class QueryResultExchange {
   private final List<Row> toResultSet(final RowDescription desc, final List<DataRow> dataRows) {
     final int size = dataRows.size();
     final List<Row> rows = new ArrayList<>(size);
-    for (DataRow dr : dataRows) 
+    for (final DataRow dr : dataRows)
       rows.add(toRow(encoding, desc, dr));
     return rows;
   }

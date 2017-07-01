@@ -19,10 +19,11 @@ public final class ExtendedExecuteExchange {
   }
 
   public final Exchange<Integer> apply(final String query, final List<Value<?>> params) {
-    return extendedExchange.apply(query, params, Exchange.receive(commandComplete.orElse(noDataAndCommandComplete)));
+    return extendedExchange.apply(query, params,
+        Exchange.receive(commandComplete.orElse(noDataAndCommandComplete)));
   }
 
-  private final PartialFunction<ServerMessage, Exchange<Integer>> commandComplete = PartialFunction
+  private final PartialFunction<ServerMessage, Exchange<Integer>> commandComplete          = PartialFunction
       .when(CommandComplete.class, msg -> Exchange.value(msg.rows));
 
   private final PartialFunction<ServerMessage, Exchange<Integer>> noDataAndCommandComplete = PartialFunction

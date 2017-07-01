@@ -18,7 +18,7 @@ public final class CharacterValue extends Value<Character> {
 
   @Override
   public final Boolean getBoolean() {
-    char c = get();
+    final char c = get();
     return c == '1' || Character.toUpperCase(c) == 'T';
   }
 }

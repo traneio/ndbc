@@ -27,9 +27,9 @@ public final class BindSerializer {
       b.writeShort(code);
 
     b.writeShort((short) msg.fields.size());
-    
+
     int i = 0;
-    for (Value<?> field : msg.fields) {
+    for (final Value<?> field : msg.fields) {
       if (field == null || field.isNull())
         b.writeInt(-1);
       else {

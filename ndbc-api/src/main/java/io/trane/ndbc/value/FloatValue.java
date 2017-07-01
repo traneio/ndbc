@@ -12,7 +12,7 @@ public final class FloatValue extends Value<Float> {
   public final Float getFloat() {
     return get();
   }
-  
+
   @Override
   public final BigDecimal getBigDecimal() {
     return new BigDecimal(get());

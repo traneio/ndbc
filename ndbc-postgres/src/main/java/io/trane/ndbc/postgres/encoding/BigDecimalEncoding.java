@@ -15,14 +15,14 @@ import io.trane.ndbc.value.BigDecimalValue;
  */
 final class BigDecimalEncoding implements Encoding<BigDecimalValue> {
 
-  private static final BigInteger BI_BASE = BigInteger.valueOf(10000);
-  private static final short[] EMPTY_SHORT_ARRAY = new short[0];
-  private static final short NUMERIC_POS = 0x0000;
-  private static final short NUMERIC_NEG = 0x4000;
-  private static final int NUMERIC_NAN = 0xC000;
-  private static final int NUMERIC_NULL = 0xF000;
-  private static final int EXPONENT = 4;
-  private static final BigDecimalValue ZERO = new BigDecimalValue(new BigDecimal(0));
+  private static final BigInteger      BI_BASE           = BigInteger.valueOf(10000);
+  private static final short[]         EMPTY_SHORT_ARRAY = new short[0];
+  private static final short           NUMERIC_POS       = 0x0000;
+  private static final short           NUMERIC_NEG       = 0x4000;
+  private static final int             NUMERIC_NAN       = 0xC000;
+  private static final int             NUMERIC_NULL      = 0xF000;
+  private static final int             EXPONENT          = 4;
+  private static final BigDecimalValue ZERO              = new BigDecimalValue(new BigDecimal(0));
 
   @Override
   public final Set<Integer> oids() {
@@ -74,15 +74,14 @@ final class BigDecimalEncoding implements Encoding<BigDecimalValue> {
       else
         firstDigitSize = 4;
       weight = (beforeDecimal - firstDigitSize) / 4;
-    } else {
+    } else
       weight = 0;
-    }
 
     b.writeShort((short) digits.length);
     b.writeShort((short) weight);
     b.writeShort(sign < 0 ? NUMERIC_NEG : NUMERIC_POS);
     b.writeShort((short) value.getBigDecimal().scale());
-    for (short digit : digits)
+    for (final short digit : digits)
       b.writeShort(digit);
   }
 
@@ -119,20 +118,21 @@ final class BigDecimalEncoding implements Encoding<BigDecimalValue> {
         firstDigitSize = 4;
 
       final int scaleFactor = weight * EXPONENT + firstDigitSize;
-      final BigDecimal unsigned = unscaled.movePointLeft(unscaled.precision()).movePointRight(scaleFactor)
+      final BigDecimal unsigned = unscaled.movePointLeft(unscaled.precision())
+          .movePointRight(scaleFactor)
           .setScale(displayScale);
 
       switch (sign) {
-      case NUMERIC_POS:
-        return new BigDecimalValue(unsigned);
-      case NUMERIC_NEG:
-        return new BigDecimalValue(unsigned.negate());
-      case NUMERIC_NAN:
-        throw new NumberFormatException("Decimal is NaN");
-      case NUMERIC_NULL:
-        throw new NumberFormatException("Decimal is NUMERIC_NULL");
-      default:
-        throw new NumberFormatException("Invalid sign");
+        case NUMERIC_POS:
+          return new BigDecimalValue(unsigned);
+        case NUMERIC_NEG:
+          return new BigDecimalValue(unsigned.negate());
+        case NUMERIC_NAN:
+          throw new NumberFormatException("Decimal is NaN");
+        case NUMERIC_NULL:
+          throw new NumberFormatException("Decimal is NUMERIC_NULL");
+        default:
+          throw new NumberFormatException("Invalid sign");
       }
     } else
       return ZERO;

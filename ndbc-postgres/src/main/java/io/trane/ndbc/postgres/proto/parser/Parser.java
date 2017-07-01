@@ -27,7 +27,8 @@ import io.trane.ndbc.proto.BufferReader;
 
 public final class Parser {
 
-  private static final Logger log = Logger.getLogger(Parser.class.getName());
+  private static final Logger               log                = Logger
+      .getLogger(Parser.class.getName());
 
   private final AuthenticationRequestParser authenticationRequestDecoder;
   private final CommandCompleteParser       commandCompleteDecoder;
@@ -35,29 +36,28 @@ public final class Parser {
   private final InfoResponseFieldsParser    infoResponseFieldsDecoder;
   private final RowDescriptionParser        rowDescriptionDecoder;
 
-  private final BindComplete       bindComplete       = new BindComplete();
-  private final CloseComplete      closeComplete      = new CloseComplete();
-  private final CopyDone           copyDone           = new CopyDone();
-  private final EmptyQueryResponse emptyQueryResponse = new EmptyQueryResponse();
-  private final NoData             noData             = new NoData();
-  private final ParseComplete      parseComplete      = new ParseComplete();
-  private final PortalSuspended    portalSuspended    = new PortalSuspended();
+  private final BindComplete                bindComplete       = new BindComplete();
+  private final CloseComplete               closeComplete      = new CloseComplete();
+  private final CopyDone                    copyDone           = new CopyDone();
+  private final EmptyQueryResponse          emptyQueryResponse = new EmptyQueryResponse();
+  private final NoData                      noData             = new NoData();
+  private final ParseComplete               parseComplete      = new ParseComplete();
+  private final PortalSuspended             portalSuspended    = new PortalSuspended();
 
   public Parser() {
     super();
-    this.authenticationRequestDecoder = new AuthenticationRequestParser();
-    this.commandCompleteDecoder = new CommandCompleteParser();
-    this.dataRowDecoder = new DataRowParser();
-    this.infoResponseFieldsDecoder = new InfoResponseFieldsParser();
-    this.rowDescriptionDecoder = new RowDescriptionParser();
+    authenticationRequestDecoder = new AuthenticationRequestParser();
+    commandCompleteDecoder = new CommandCompleteParser();
+    dataRowDecoder = new DataRowParser();
+    infoResponseFieldsDecoder = new InfoResponseFieldsParser();
+    rowDescriptionDecoder = new RowDescriptionParser();
   }
 
   public final Optional<Message> decode(final boolean ssl, final BufferReader b) throws Exception {
     try {
       if (b.readableBytes() == 1 && ssl)
         return Optional.of(decode(b.readByte(), b.readSlice(0)));
-      else 
-        if (b.readableBytes() >= 5) {
+      else if (b.readableBytes() >= 5) {
         b.markReaderIndex();
         final byte tpe = b.readByte();
         final int length = b.readInt() - 4;
@@ -69,7 +69,7 @@ public final class Parser {
         }
       } else
         return Optional.empty();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log.severe("Can't parse msg " + e);
       throw e;
     }

@@ -11,7 +11,8 @@ final class StringEncoding implements Encoding<StringValue> {
 
   @Override
   public final Set<Integer> oids() {
-    return Collections.toImmutableSet(Oid.TEXT, Oid.NAME, Oid.VARCHAR, Oid.XML, Oid.JSON, Oid.BPCHAR);
+    return Collections.toImmutableSet(Oid.TEXT, Oid.NAME, Oid.VARCHAR, Oid.XML, Oid.JSON,
+        Oid.BPCHAR);
   }
 
   @Override

@@ -13,13 +13,13 @@ import io.trane.ndbc.Row;
 
 public final class PooledDataSource implements DataSource {
 
-  private final Pool<Connection> pool;
+  private final Pool<Connection>  pool;
   private final Local<Connection> currentTransation;
 
   public PooledDataSource(final Pool<Connection> pool) {
     super();
     this.pool = pool;
-    this.currentTransation = Local.apply();
+    currentTransation = Local.apply();
   }
 
   @Override
@@ -59,7 +59,7 @@ public final class PooledDataSource implements DataSource {
   }
 
   private final <R> Future<R> withConnection(final Function<Connection, Future<R>> f) {
-    Optional<Connection> transaction = currentTransation.get();
+    final Optional<Connection> transaction = currentTransation.get();
     if (transaction.isPresent())
       return f.apply(transaction.get());
     else

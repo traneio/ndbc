@@ -9,7 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public final class MD5Digest {
-  
+
   private MD5Digest() {
   }
 
@@ -58,7 +58,8 @@ public final class MD5Digest {
    * Turn 16-byte stream into a human-readable 32-byte hex string
    */
   private static final void bytesToHex(final byte[] bytes, final byte[] hex, final int offset) {
-    final char lookup[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+    final char lookup[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
+        'e', 'f' };
 
     int i;
     int c;

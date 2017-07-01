@@ -14,11 +14,14 @@ import io.trane.future.Promise;
 
 public final class LockFreePool<T extends Connection> implements Pool<T> {
 
-  private static final Future<Object> POOL_EXHAUSTED = Future.exception(new RuntimeException("Pool exhausted"));
-  private static final Future<Object> POOL_CLOSED    = Future.exception(new RuntimeException("Pool closed"));
+  private static final Future<Object> POOL_EXHAUSTED = Future
+      .exception(new RuntimeException("Pool exhausted"));
+  private static final Future<Object> POOL_CLOSED    = Future
+      .exception(new RuntimeException("Pool closed"));
 
   public static <T extends Connection> Pool<T> apply(final Supplier<Future<T>> supplier,
-      final Optional<Integer> maxSize, final Optional<Integer> maxWaiters, final Optional<Duration> validationInterval,
+      final Optional<Integer> maxSize, final Optional<Integer> maxWaiters,
+      final Optional<Duration> validationInterval,
       final ScheduledExecutorService scheduler) {
     return new LockFreePool<>(supplier, maxSize, maxWaiters, validationInterval, scheduler);
   }
@@ -30,7 +33,8 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
   private final Queue<T>            items;
   private final Queue<Waiter<T, ?>> waiters;
 
-  private LockFreePool(final Supplier<Future<T>> supplier, final Optional<Integer> maxSize, final Optional<Integer> maxWaiters,
+  private LockFreePool(final Supplier<Future<T>> supplier, final Optional<Integer> maxSize,
+      final Optional<Integer> maxWaiters,
       final Optional<Duration> validationInterval, final ScheduledExecutorService scheduler) {
     this.supplier = supplier;
     this.sizeSemaphore = semaphore(maxSize);
@@ -97,9 +101,9 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
   private final Future<Void> validateN(final int n) {
     if (n >= 0) {
       final T item = items.poll();
-      if (item == null) {
+      if (item == null)
         return Future.VOID;
-      } else
+      else
         // TODO logging
         return item.isValid().rescue(e -> Future.FALSE).flatMap(valid -> {
           if (!valid)
@@ -119,10 +123,10 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
       final long start = System.currentTimeMillis();
       return validateN(items.size()).flatMap(v2 -> {
         final long next = validationInterval.toMillis() - System.currentTimeMillis() - start;
-        if (next <= 0) {
+        if (next <= 0)
           // TODO logging
           return scheduleValidation(validationInterval, scheduler);
-        } else
+        else
           return scheduleValidation(Duration.ofMillis(next), scheduler);
       });
     });

@@ -21,7 +21,7 @@ public class RowTest {
   LongValue            v2        = new LongValue(2L);
   Value<?>[]           columns   = { v1, v2 };
 
-  Row row = Row.apply(positions, columns);
+  Row                  row       = Row.apply(positions, columns);
 
   public RowTest() {
     positions.put("a", 0);
@@ -42,7 +42,7 @@ public class RowTest {
 
   @Test
   public void columnNames() {
-    Iterator<String> it = row.columnNames().iterator();
+    final Iterator<String> it = row.columnNames().iterator();
     assertEquals("a", it.next());
     assertEquals("b", it.next());
     assertFalse(it.hasNext());

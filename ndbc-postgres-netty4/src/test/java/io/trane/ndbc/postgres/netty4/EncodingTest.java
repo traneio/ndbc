@@ -24,7 +24,8 @@ public class EncodingTest extends TestEnv {
 
   @Test
   public void bigDecimal() throws CheckedFutureException {
-    test("numeric", (ps, v) -> ps.bindBigDecimal(v), Value::getBigDecimal, r -> BigDecimal.valueOf(r.nextDouble()));
+    test("numeric", (ps, v) -> ps.bindBigDecimal(v), Value::getBigDecimal,
+        r -> BigDecimal.valueOf(r.nextDouble()));
   }
 
   @Test
@@ -35,7 +36,7 @@ public class EncodingTest extends TestEnv {
   @Test
   public void byteArray() throws CheckedFutureException {
     test("bytea", (ps, v) -> ps.bindByteArray(v), Value::getByteArray, r -> {
-      byte[] bytes = new byte[r.nextInt(5)];
+      final byte[] bytes = new byte[r.nextInt(5)];
       r.nextBytes(bytes);
       return bytes;
     }, (a, b) -> assertArrayEquals(a, b));
@@ -58,17 +59,20 @@ public class EncodingTest extends TestEnv {
 
   @Test
   public void localDate() throws CheckedFutureException {
-    test("date", (ps, v) -> ps.bindLocalDate(v), Value::getLocalDate, r -> randomLocalDateTime(r).toLocalDate());
+    test("date", (ps, v) -> ps.bindLocalDate(v), Value::getLocalDate,
+        r -> randomLocalDateTime(r).toLocalDate());
   }
 
   @Test
   public void localDateTime() throws CheckedFutureException {
-    test("timestamp", (ps, v) -> ps.bindLocalDateTime(v), Value::getLocalDateTime, r -> randomLocalDateTime(r));
+    test("timestamp", (ps, v) -> ps.bindLocalDateTime(v), Value::getLocalDateTime,
+        r -> randomLocalDateTime(r));
   }
 
   @Test
   public void localTime() throws CheckedFutureException {
-    test("time", (ps, v) -> ps.bindLocalTime(v), Value::getLocalTime, r -> randomLocalDateTime(r).toLocalTime());
+    test("time", (ps, v) -> ps.bindLocalTime(v), Value::getLocalTime,
+        r -> randomLocalDateTime(r).toLocalTime());
   }
 
   @Test
@@ -87,7 +91,8 @@ public class EncodingTest extends TestEnv {
     test("int2", (ps, v) -> ps.bindShort(v), Value::getShort, r -> (short) r.nextInt());
   }
 
-  private void testString(String columnType, int maxLength) throws CheckedFutureException {
+  private void testString(final String columnType, final int maxLength)
+      throws CheckedFutureException {
     test(columnType, (ps, v) -> ps.bindString(v), Value::getString, r -> radomString(r, maxLength));
   }
 
@@ -103,60 +108,70 @@ public class EncodingTest extends TestEnv {
     this.<String>test("json", (ps, v) -> ps.bindString(v), Value::getString,
         r -> "{ \"test\": " + r.nextInt(100) + " }");
   }
-  
+
   @Test
   public void stringXml() throws CheckedFutureException {
     this.<String>test("xml", (ps, v) -> ps.bindString(v), Value::getString,
         r -> "<a/>");
   }
 
-  private LocalDateTime randomLocalDateTime(Random r) {
-    return LocalDateTime.of(r.nextInt(30000), r.nextInt(12) + 1, r.nextInt(28) + 1, r.nextInt(24), r.nextInt(60),
+  private LocalDateTime randomLocalDateTime(final Random r) {
+    return LocalDateTime.of(r.nextInt(30000), r.nextInt(12) + 1, r.nextInt(28) + 1, r.nextInt(24),
+        r.nextInt(60),
         r.nextInt(60), r.nextInt(99999) * 1000);
   }
 
-  private String radomString(Random r, int maxLength) {
-    int length = r.nextInt(maxLength - 1) + 1;
-    StringBuilder sb = new StringBuilder();
+  private String radomString(final Random r, final int maxLength) {
+    final int length = r.nextInt(maxLength - 1) + 1;
+    final StringBuilder sb = new StringBuilder();
     while (sb.length() < r.nextInt(length)) {
-      char c = (char) (r.nextInt() & Character.MAX_VALUE);
+      final char c = (char) (r.nextInt() & Character.MAX_VALUE);
       if (Character.isAlphabetic(c) || Character.isDigit(c))
         sb.append(c);
     }
     return sb.toString();
   }
 
-  private ZoneOffset randomZoneOffset(Random r) {
+  private ZoneOffset randomZoneOffset(final Random r) {
     return ZoneOffset.ofTotalSeconds(r.nextInt(18 * 2) + 18);
   }
 
-  private <T> void test(String columnType, BiFunction<PreparedStatement, T, PreparedStatement> bind,
-      Function<Value<?>, T> get, Function<Random, T> gen) throws CheckedFutureException {
+  private <T> void test(final String columnType,
+      final BiFunction<PreparedStatement, T, PreparedStatement> bind,
+      final Function<Value<?>, T> get, final Function<Random, T> gen)
+      throws CheckedFutureException {
     test(columnType, bind, get, gen, (a, b) -> assertEquals(a, b));
   }
 
-  private <T> void test(String columnType, BiFunction<PreparedStatement, T, PreparedStatement> bind,
-      Function<Value<?>, T> get, Function<Random, T> gen, BiConsumer<T, T> verify) throws CheckedFutureException {
+  private <T> void test(final String columnType,
+      final BiFunction<PreparedStatement, T, PreparedStatement> bind,
+      final Function<Value<?>, T> get, final Function<Random, T> gen, final BiConsumer<T, T> verify)
+      throws CheckedFutureException {
     test(columnType, bind, get, gen, verify, 20);
   }
 
-  private <T> void test(String columnType, BiFunction<PreparedStatement, T, PreparedStatement> bind,
-      Function<Value<?>, T> get, Function<Random, T> gen, BiConsumer<T, T> verify, int iterations)
+  private <T> void test(final String columnType,
+      final BiFunction<PreparedStatement, T, PreparedStatement> bind,
+      final Function<Value<?>, T> get, final Function<Random, T> gen, final BiConsumer<T, T> verify,
+      final int iterations)
       throws CheckedFutureException {
-    String table = "test_" + columnType;
+    final String table = "test_" + columnType;
     ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
     ds.execute("CREATE TABLE " + table + " (c " + columnType + ")").get(timeout);
-    
-    Random r = new Random(1);
+
+    final Random r = new Random(1);
     for (int i = 0; i < iterations; i++) {
-      T expected = gen.apply(r);
+      final T expected = gen.apply(r);
       try {
         ds.execute("DELETE FROM " + table).get(timeout);
-        ds.execute(bind.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected)).get(timeout);
-        T actual = get.apply(query(PreparedStatement.apply("SELECT c FROM " + table)));
+        ds.execute(
+            bind.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected))
+            .get(timeout);
+        final T actual = get.apply(query(PreparedStatement.apply("SELECT c FROM " + table)));
         verify.accept(expected, actual);
-      } catch (Exception e) {
-        throw new RuntimeException("Failure. columnType '" + columnType + "', value '" + expected + "'", e);
+      } catch (final Exception e) {
+        throw new RuntimeException(
+            "Failure. columnType '" + columnType + "', value '" + expected + "'", e);
       }
     }
   }

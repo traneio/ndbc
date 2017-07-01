@@ -18,9 +18,9 @@ import io.trane.ndbc.Row;
 
 public class DataSourceTest extends TestEnv {
 
-  private static int tableSuffix = 1;
+  private static int   tableSuffix = 1;
 
-  private String table = "table_" + tableSuffix++;
+  private final String table       = "table_" + tableSuffix++;
 
   @Before
   public void recreateSchema() throws CheckedFutureException {
@@ -53,7 +53,8 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void extendedQueryWithParams() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM " + table + " WHERE s = ?").bindString("s");
+    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM " + table + " WHERE s = ?")
+        .bindString("s");
 
     final Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
@@ -122,7 +123,8 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void extendedExecuteInsertWithParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)").bindString("u");
+    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)")
+        .bindString("u");
 
     ds.execute(ps).get(timeout);
 
@@ -134,7 +136,8 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void extendedExecuteUpdateWithParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = ?").bindString("u");
+    final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = ?")
+        .bindString("u");
 
     ds.execute(ps).get(timeout);
 
@@ -145,7 +148,8 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void extendedExecuteDeleteWithParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").bindString("s");
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?")
+        .bindString("s");
 
     ds.execute(ps).get(timeout);
 

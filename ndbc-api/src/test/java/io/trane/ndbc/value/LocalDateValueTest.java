@@ -10,8 +10,8 @@ public class LocalDateValueTest {
 
   @Test
   public void getLocalDate() {
-    LocalDate value = LocalDate.now();
-    LocalDateValue wrapper = new LocalDateValue(value);
+    final LocalDate value = LocalDate.now();
+    final LocalDateValue wrapper = new LocalDateValue(value);
     assertEquals(value, wrapper.getLocalDate());
   }
 }

@@ -87,7 +87,8 @@ public interface Message {
 
       @Override
       public String toString() {
-        return "AuthenticationGSSContinue [authenticationData=" + Arrays.toString(authenticationData) + "]";
+        return "AuthenticationGSSContinue [authenticationData="
+            + Arrays.toString(authenticationData) + "]";
       }
     }
 
@@ -256,7 +257,7 @@ public interface Message {
      * The name of the destination portal (an empty string selects the unnamed
      * portal).
      */
-    public final String destinationPortalName;
+    public final String         destinationPortalName;
 
     /**
      * The number of parameter values that follow (possibly zero). This must
@@ -277,22 +278,23 @@ public interface Message {
      * The parameter format codes. Each must presently be zero (text) or one
      * (binary).
      */
-    public final short[] parameterFormatCodes;
+    public final short[]        parameterFormatCodes;
 
     /**
      * The result-column format codes. Each must presently be zero (text) or one
      * (binary).
      */
-    public final short[] resultColumnFormatCodes;
+    public final short[]        resultColumnFormatCodes;
 
     /**
      * The name of the source prepared statement (an empty string selects the
      * unnamed prepared statement).
      */
-    public final String sourcePreparedStatementName;
+    public final String         sourcePreparedStatementName;
 
     public Bind(final String destinationPortalName, final String sourcePreparedStatementName,
-        final short[] parameterFormatCodes, final List<Value<?>> fields, final short[] resultColumnFormatCodes) {
+        final short[] parameterFormatCodes, final List<Value<?>> fields,
+        final short[] resultColumnFormatCodes) {
       this.destinationPortalName = destinationPortalName;
       this.sourcePreparedStatementName = sourcePreparedStatementName;
       this.parameterFormatCodes = parameterFormatCodes;
@@ -304,11 +306,13 @@ public interface Message {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (destinationPortalName == null ? 0 : destinationPortalName.hashCode());
+      result = prime * result
+          + (destinationPortalName == null ? 0 : destinationPortalName.hashCode());
       result = prime * result + fields.hashCode();
       result = prime * result + Arrays.hashCode(parameterFormatCodes);
       result = prime * result + Arrays.hashCode(resultColumnFormatCodes);
-      result = prime * result + (sourcePreparedStatementName == null ? 0 : sourcePreparedStatementName.hashCode());
+      result = prime * result
+          + (sourcePreparedStatementName == null ? 0 : sourcePreparedStatementName.hashCode());
       return result;
     }
 
@@ -342,9 +346,12 @@ public interface Message {
 
     @Override
     public String toString() {
-      return "Bind [destinationPortalName=" + destinationPortalName + ", fields=" + fields.toString()
-          + ", parameterFormatCodes=" + Arrays.toString(parameterFormatCodes) + ", resultColumnFormatCodes="
-          + Arrays.toString(resultColumnFormatCodes) + ", sourcePreparedStatementName=" + sourcePreparedStatementName
+      return "Bind [destinationPortalName=" + destinationPortalName + ", fields="
+          + fields.toString()
+          + ", parameterFormatCodes=" + Arrays.toString(parameterFormatCodes)
+          + ", resultColumnFormatCodes="
+          + Arrays.toString(resultColumnFormatCodes) + ", sourcePreparedStatementName="
+          + sourcePreparedStatementName
           + "]";
     }
   }
@@ -1220,7 +1227,7 @@ public interface Message {
        * listed in Section 51.6. Since more field types might be added in
        * future, frontends should silently ignore fields of unrecognized type.
        */
-      public final Type type;
+      public final Type   type;
 
       /** The field value. */
       public final String value;
@@ -1311,13 +1318,12 @@ public interface Message {
       @Override
       public String toString() {
         String error = "unknown error";
-        List<String> details = new ArrayList<>();
-        for (Field f : fields) {
+        final List<String> details = new ArrayList<>();
+        for (final Field f : fields)
           if (f.type == Field.Type.Message)
             error = f.value;
           else
             details.add(f.type + ": " + f.value);
-        }
         return error + " " + Arrays.toString(details.toArray());
       }
     }
@@ -1368,7 +1374,7 @@ public interface Message {
      * Maximum number of rows to return, if portal contains a query that returns
      * rows (ignored otherwise). Zero denotes "no limit".
      */
-    public final int maxNumberOfRows;
+    public final int    maxNumberOfRows;
 
     /**
      * The name of the portal to execute (an empty string selects the unnamed
@@ -1454,16 +1460,16 @@ public interface Message {
      * number of arguments. The argument format codes. Each must presently be
      * zero (text) or one (binary).
      */
-    public final short[] formatCodes;
+    public final short[]  formatCodes;
 
     /**
      * The format code for the function result. Must presently be zero (text) or
      * one (binary).
      */
-    public final short functionResultFormatCode;
+    public final short    functionResultFormatCode;
 
     /** Specifies the object ID of the function to call. */
-    public final int id;
+    public final int      id;
 
     public FunctionCall(final int id, final short[] formatCodes, final byte[][] fields,
         final short functionResultFormatCode) {
@@ -1506,7 +1512,8 @@ public interface Message {
 
     @Override
     public String toString() {
-      return "FunctionCall [fields=" + Arrays.toString(fields) + ", formatCodes=" + Arrays.toString(formatCodes)
+      return "FunctionCall [fields=" + Arrays.toString(fields) + ", formatCodes="
+          + Arrays.toString(formatCodes)
           + ", functionResultFormatCode=" + functionResultFormatCode + ", id=" + id + "]";
     }
   }
@@ -1524,7 +1531,7 @@ public interface Message {
      * The value of the function result, in the format indicated by the
      * associated format code. n is the above length.
      */
-    public final byte[] value;
+    public final byte[]  value;
 
     public FunctionCallResponse(final boolean isNull, final byte[] value) {
       this.isNull = isNull;
@@ -1589,9 +1596,10 @@ public interface Message {
     public final String payload;
 
     /** The process ID of the notifying backend process. */
-    public final int processID;
+    public final int    processID;
 
-    public NotificationResponse(final int processID, final String channelName, final String payload) {
+    public NotificationResponse(final int processID, final String channelName,
+        final String payload) {
       this.processID = processID;
       this.channelName = channelName;
       this.payload = payload;
@@ -1638,7 +1646,8 @@ public interface Message {
 
     @Override
     public String toString() {
-      return "NotificationResponse [channelName=" + channelName + ", payload=" + payload + ", processID=" + processID
+      return "NotificationResponse [channelName=" + channelName + ", payload=" + payload
+          + ", processID=" + processID
           + "]";
     }
   }
@@ -1749,7 +1758,7 @@ public interface Message {
      * Specifies the object ID of the parameter data type. Placing a zero here
      * is equivalent to leaving the type unspecified.
      */
-    public final int[] parameterTypes;
+    public final int[]  parameterTypes;
 
     /** The query string to be parsed. */
     public final String query;
@@ -1796,7 +1805,8 @@ public interface Message {
 
     @Override
     public String toString() {
-      return "Parse [destinationName=" + destinationName + ", parameterTypes=" + Arrays.toString(parameterTypes)
+      return "Parse [destinationName=" + destinationName + ", parameterTypes="
+          + Arrays.toString(parameterTypes)
           + ", query=" + query + "]";
     }
   }
@@ -1978,16 +1988,16 @@ public interface Message {
        * If the field can be identified as a column of a specific table, the
        * attribute number of the column; otherwise zero.
        */
-      public final short attributeNumber;
+      public final short  attributeNumber;
 
       /** The object ID of the field's data type. */
-      public final int dataType;
+      public final int    dataType;
 
       /**
        * The data type size (see pg_type.typlen). Note that negative values
        * denote variable-width types.
        */
-      public final short dataTypeSize;
+      public final short  dataTypeSize;
 
       /**
        * The format code being used for the field. Currently will be zero (text)
@@ -1995,7 +2005,7 @@ public interface Message {
        * variant of Describe, the format code is not yet known and will always
        * be zero.
        */
-      public final short formatCode;
+      public final short  formatCode;
 
       /** The field name. */
       public final String name;
@@ -2004,15 +2014,16 @@ public interface Message {
        * If the field can be identified as a column of a specific table, the
        * object ID of the table; otherwise zero.
        */
-      public final int objectID;
+      public final int    objectID;
 
       /**
        * The type modifier (see pg_attribute.atttypmod). The meaning of the
        * modifier is type-specific.
        */
-      public final int typeModifier;
+      public final int    typeModifier;
 
-      public Field(final String name, final int objectID, final short attributeNumber, final int dataType,
+      public Field(final String name, final int objectID, final short attributeNumber,
+          final int dataType,
           final short dataTypeSize, final int typeModifier, final short formatCode) {
         this.name = name;
         this.objectID = objectID;
@@ -2068,8 +2079,10 @@ public interface Message {
 
       @Override
       public String toString() {
-        return "Field [attributeNumber=" + attributeNumber + ", dataType=" + dataType + ", dataTypeSize=" + dataTypeSize
-            + ", formatCode=" + formatCode + ", name=" + name + ", objectID=" + objectID + ", typeModifier="
+        return "Field [attributeNumber=" + attributeNumber + ", dataType=" + dataType
+            + ", dataTypeSize=" + dataTypeSize
+            + ", formatCode=" + formatCode + ", name=" + name + ", objectID=" + objectID
+            + ", typeModifier="
             + typeModifier + "]";
       }
     }
@@ -2129,7 +2142,7 @@ public interface Message {
 
     public final boolean enabled;
 
-    public SSLResponse(boolean enabled) {
+    public SSLResponse(final boolean enabled) {
       super();
       this.enabled = enabled;
     }
@@ -2143,14 +2156,14 @@ public interface Message {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (getClass() != obj.getClass())
         return false;
-      SSLResponse other = (SSLResponse) obj;
+      final SSLResponse other = (SSLResponse) obj;
       if (enabled != other.enabled)
         return false;
       return true;
@@ -2222,7 +2235,7 @@ public interface Message {
     public final Parameter[] parameters;
 
     /** The database user name to connect as. Required; there is no default. */
-    public final String user;
+    public final String      user;
 
     public StartupMessage(final String user, final Parameter[] parameters) {
       this.user = user;

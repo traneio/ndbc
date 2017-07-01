@@ -20,44 +20,44 @@ final class InfoResponseFieldsParser {
 
   private final InfoResponse.Field.Type toTypeEnum(final byte type) {
     switch (type) {
-    case 'S':
-      return InfoResponse.Field.Type.Severity;
-    case 'V':
-      return InfoResponse.Field.Type.Severity;
-    case 'C':
-      return InfoResponse.Field.Type.Code;
-    case 'M':
-      return InfoResponse.Field.Type.Message;
-    case 'D':
-      return InfoResponse.Field.Type.Detail;
-    case 'H':
-      return InfoResponse.Field.Type.Hint;
-    case 'P':
-      return InfoResponse.Field.Type.Position;
-    case 'p':
-      return InfoResponse.Field.Type.InternalPosition;
-    case 'q':
-      return InfoResponse.Field.Type.InternalQuery;
-    case 'W':
-      return InfoResponse.Field.Type.Where;
-    case 's':
-      return InfoResponse.Field.Type.SchemaName;
-    case 't':
-      return InfoResponse.Field.Type.TableName;
-    case 'c':
-      return InfoResponse.Field.Type.ColumnName;
-    case 'd':
-      return InfoResponse.Field.Type.DataTypeName;
-    case 'n':
-      return InfoResponse.Field.Type.ConstraintName;
-    case 'F':
-      return InfoResponse.Field.Type.File;
-    case 'L':
-      return InfoResponse.Field.Type.Line;
-    case 'R':
-      return InfoResponse.Field.Type.Routine;
-    default:
-      return InfoResponse.Field.Type.Unknown;
+      case 'S':
+        return InfoResponse.Field.Type.Severity;
+      case 'V':
+        return InfoResponse.Field.Type.Severity;
+      case 'C':
+        return InfoResponse.Field.Type.Code;
+      case 'M':
+        return InfoResponse.Field.Type.Message;
+      case 'D':
+        return InfoResponse.Field.Type.Detail;
+      case 'H':
+        return InfoResponse.Field.Type.Hint;
+      case 'P':
+        return InfoResponse.Field.Type.Position;
+      case 'p':
+        return InfoResponse.Field.Type.InternalPosition;
+      case 'q':
+        return InfoResponse.Field.Type.InternalQuery;
+      case 'W':
+        return InfoResponse.Field.Type.Where;
+      case 's':
+        return InfoResponse.Field.Type.SchemaName;
+      case 't':
+        return InfoResponse.Field.Type.TableName;
+      case 'c':
+        return InfoResponse.Field.Type.ColumnName;
+      case 'd':
+        return InfoResponse.Field.Type.DataTypeName;
+      case 'n':
+        return InfoResponse.Field.Type.ConstraintName;
+      case 'F':
+        return InfoResponse.Field.Type.File;
+      case 'L':
+        return InfoResponse.Field.Type.Line;
+      case 'R':
+        return InfoResponse.Field.Type.Routine;
+      default:
+        return InfoResponse.Field.Type.Unknown;
     }
   }
 }

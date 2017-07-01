@@ -10,8 +10,8 @@ public class LocalTimeValueTest {
 
   @Test
   public void getLocalTime() {
-    LocalTime value = LocalTime.now();
-    LocalTimeValue wrapper = new LocalTimeValue(value);
+    final LocalTime value = LocalTime.now();
+    final LocalTimeValue wrapper = new LocalTimeValue(value);
     assertEquals(value, wrapper.getLocalTime());
   }
 }

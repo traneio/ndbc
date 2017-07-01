@@ -24,7 +24,7 @@ import io.trane.ndbc.proto.ClientMessage;
 
 public class Serializer {
 
-  private static final Logger log = Logger.getLogger(Serializer.class.getName());
+  private static final Logger             log = Logger.getLogger(Serializer.class.getName());
 
   private final BindSerializer            bindSerializer;
   private final CancelRequestSerializer   cancelRequestSerializer;
@@ -40,13 +40,15 @@ public class Serializer {
   private final TerminateSerializer       terminateSerializer;
   private final SSLRequestSerializer      sslRequestSerializer;
 
-  public Serializer(final BindSerializer bindSerializer, final CancelRequestSerializer cancelRequestSerializer,
+  public Serializer(final BindSerializer bindSerializer,
+      final CancelRequestSerializer cancelRequestSerializer,
       final CloseSerializer closeSerializer, final DescribeSerializer describeSerializer,
       final ExecuteSerializer executeSerializer, final FlushSerializer flushSerializer,
       final ParseSerializer parseSerializer, final QuerySerializer querySerializer,
       final PasswordMessageSerializer passwordMessageSerializer,
       final StartupMessageSerializer startupMessageSerializer, final SyncSerializer syncSerializer,
-      final TerminateSerializer terminateSerializer, SSLRequestSerializer sslRequestSerializer) {
+      final TerminateSerializer terminateSerializer,
+      final SSLRequestSerializer sslRequestSerializer) {
     super();
     this.bindSerializer = bindSerializer;
     this.cancelRequestSerializer = cancelRequestSerializer;
@@ -103,7 +105,7 @@ public class Serializer {
         sslRequestSerializer.encode((SSLRequest) msg, b);
       else
         log.severe("Invalid client message: " + msg);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log.severe("Can't serialize msg " + msg + " " + e);
       throw e;
     }

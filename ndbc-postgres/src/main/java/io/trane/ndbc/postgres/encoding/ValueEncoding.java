@@ -12,9 +12,12 @@ import io.trane.ndbc.value.Value;
 
 public final class ValueEncoding {
 
-  private static final Set<Encoding<?>> defaultEncodings = Collections.toImmutableSet(new BigDecimalEncoding(),
-      new BooleanEncoding(), new ByteArrayEncoding(), new DoubleEncoding(), new FloatEncoding(), new IntegerEncoding(),
-      new LocalDateEncoding(), new LocalDateTimeEncoding(), new LocalTimeEncoding(), new LongEncoding(),
+  private static final Set<Encoding<?>>    defaultEncodings = Collections.toImmutableSet(
+      new BigDecimalEncoding(),
+      new BooleanEncoding(), new ByteArrayEncoding(), new DoubleEncoding(), new FloatEncoding(),
+      new IntegerEncoding(),
+      new LocalDateEncoding(), new LocalDateTimeEncoding(), new LocalTimeEncoding(),
+      new LongEncoding(),
       new OffsetTimeEncoding(), new ShortEncoding(), new StringEncoding());
 
   private final Map<Class<?>, Encoding<?>> byValueClass;
@@ -28,7 +31,8 @@ public final class ValueEncoding {
   }
 
   @SuppressWarnings("unchecked")
-  public final <T> void encode(final Format format, final Value<T> value, final BufferWriter writer) {
+  public final <T> void encode(final Format format, final Value<T> value,
+      final BufferWriter writer) {
     Encoding<Value<T>> enc;
     if ((enc = (Encoding<Value<T>>) byValueClass.get(value.getClass())) != null)
       enc.encode(format, value, writer);
