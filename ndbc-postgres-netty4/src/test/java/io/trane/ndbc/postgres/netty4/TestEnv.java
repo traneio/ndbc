@@ -14,6 +14,6 @@ public class TestEnv {
 
   protected DataSource ds      = DataSource.fromConfig(config);
 
-  protected Duration   timeout = Duration.ofSeconds(9999);
+  protected Duration   timeout = Duration.ofSeconds(1);
 
 }

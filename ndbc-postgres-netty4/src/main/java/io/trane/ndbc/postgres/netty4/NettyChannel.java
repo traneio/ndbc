@@ -52,7 +52,6 @@ final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> impl
     return ctx.flatMap(c -> {
       final Promise<ServerMessage> p = Promise.apply();
       if (nextMessagePromise.compareAndSet(null, p)) {
-        System.out.println("fush/read");
         c.flush();
         c.read();
         return p;

@@ -2,6 +2,8 @@ package io.trane.ndbc.postgres;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -11,35 +13,35 @@ import io.trane.future.Promise;
 import io.trane.future.Transformer;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
-import io.trane.ndbc.postgres.proto.ExtendedExecuteExchange;
-import io.trane.ndbc.postgres.proto.ExtendedQueryExchange;
 import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
 import io.trane.ndbc.postgres.proto.Message.CancelRequest;
-import io.trane.ndbc.postgres.proto.SimpleExecuteExchange;
-import io.trane.ndbc.postgres.proto.SimpleQueryExchange;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.Exchange;
+import io.trane.ndbc.value.Value;
 
 public final class Connection implements io.trane.ndbc.datasource.Connection {
 
-  private static final Logger                                 logger = Logger
+  private static final Logger                                           logger       = Logger
       .getLogger(Connection.class.getName());
 
-  private final Channel                                       channel;
-  private final Supplier<? extends Future<? extends Channel>> channelSupplier;
-  private final Optional<BackendKeyData>                      backendKeyData;
-  private final SimpleQueryExchange                           simpleQueryExchange;
-  private final SimpleExecuteExchange                         simpleExecuteExchange;
-  private final ExtendedQueryExchange                         extendedQueryExchange;
-  private final ExtendedExecuteExchange                       extendedExecuteExchange;
+  private static final PreparedStatement                                isValidQuery = PreparedStatement
+      .apply("SELECT 1");
+
+  private final Channel                                                 channel;
+  private final Supplier<? extends Future<? extends Channel>>           channelSupplier;
+  private final Optional<BackendKeyData>                                backendKeyData;
+  private final Function<String, Exchange<List<Row>>>                   simpleQueryExchange;
+  private final Function<String, Exchange<Integer>>                     simpleExecuteExchange;
+  private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
+  private final BiFunction<String, List<Value<?>>, Exchange<Integer>>   extendedExecuteExchange;
 
   public Connection(final Channel channel,
       final Supplier<? extends Future<? extends Channel>> channelSupplier,
-      final Optional<BackendKeyData> backendKeyData, final SimpleQueryExchange simpleQueryExchange,
-      final SimpleExecuteExchange simpleExecuteExchange,
-      final ExtendedQueryExchange extendedQueryExchange,
-      final ExtendedExecuteExchange extendedExecuteExchange) {
-    super();
+      final Optional<BackendKeyData> backendKeyData,
+      final Function<String, Exchange<List<Row>>> simpleQueryExchange,
+      final Function<String, Exchange<Integer>> simpleExecuteExchange,
+      final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange,
+      final BiFunction<String, List<Value<?>>, Exchange<Integer>> extendedExecuteExchange) {
     this.channel = channel;
     this.channelSupplier = channelSupplier;
     this.backendKeyData = backendKeyData;
@@ -71,7 +73,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   @Override
   public final Future<Boolean> isValid() {
-    return query("SELECT 1").map(r -> true).rescue(e -> Future.FALSE);
+    return query(isValidQuery).map(r -> true).rescue(e -> Future.FALSE);
   }
 
   @Override

@@ -1,6 +1,7 @@
 package io.trane.ndbc.postgres.proto;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 import io.trane.ndbc.postgres.proto.Message.CommandComplete;
 import io.trane.ndbc.postgres.proto.Message.NoData;
@@ -9,7 +10,8 @@ import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.util.PartialFunction;
 import io.trane.ndbc.value.Value;
 
-public final class ExtendedExecuteExchange {
+public final class ExtendedExecuteExchange
+    implements BiFunction<String, List<Value<?>>, Exchange<Integer>> {
 
   private final ExtendedExchange extendedExchange;
 

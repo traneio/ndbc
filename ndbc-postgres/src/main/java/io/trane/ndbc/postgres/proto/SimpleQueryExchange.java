@@ -1,13 +1,14 @@
 package io.trane.ndbc.postgres.proto;
 
 import java.util.List;
+import java.util.function.Function;
 
 import io.trane.ndbc.Row;
 import io.trane.ndbc.postgres.proto.Message.Query;
 import io.trane.ndbc.postgres.proto.Message.ReadyForQuery;
 import io.trane.ndbc.proto.Exchange;
 
-public final class SimpleQueryExchange {
+public final class SimpleQueryExchange implements Function<String, Exchange<List<Row>>> {
 
   private final QueryResultExchange queryResultExchange;
 

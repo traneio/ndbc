@@ -1,12 +1,14 @@
 package io.trane.ndbc.postgres.proto;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 import io.trane.ndbc.Row;
 import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.value.Value;
 
-public final class ExtendedQueryExchange {
+public final class ExtendedQueryExchange
+    implements BiFunction<String, List<Value<?>>, Exchange<List<Row>>> {
 
   private final QueryResultExchange queryResultExchange;
   private final ExtendedExchange    extendedExchange;

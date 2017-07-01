@@ -83,6 +83,7 @@ public final class StartupExchange {
     params.add(new StartupMessage.Parameter("client_encoding", charset.name()));
     params.add(new StartupMessage.Parameter("DateStyle", "ISO"));
     params.add(new StartupMessage.Parameter("extra_float_digits", "2"));
+    params.add(new StartupMessage.Parameter("AUTOCOMMIT", "ON"));
     return new StartupMessage(user, params.toArray(new StartupMessage.Parameter[0]));
   }
 }
