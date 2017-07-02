@@ -14,11 +14,6 @@ import io.trane.future.Promise;
 
 public final class LockFreePool<T extends Connection> implements Pool<T> {
 
-  private static final Future<Object> POOL_EXHAUSTED = Future
-      .exception(new RuntimeException("Pool exhausted"));
-  private static final Future<Object> POOL_CLOSED    = Future
-      .exception(new RuntimeException("Pool closed"));
-
   public static <T extends Connection> Pool<T> apply(final Supplier<Future<T>> supplier,
       final Optional<Integer> maxSize, final Optional<Integer> maxWaiters,
       final Optional<Duration> validationInterval,
@@ -48,7 +43,7 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
   @Override
   public final <R> Future<R> apply(final Function<T, Future<R>> f) {
     if (closed)
-      return POOL_CLOSED.unsafeCast();
+      return Future.exception(new RuntimeException("Pool closed"));
     else {
       final T item = items.poll();
       if (item != null)
@@ -60,7 +55,7 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
         waiters.offer(p);
         return p;
       } else
-        return POOL_EXHAUSTED.unsafeCast();
+        return Future.exception(new RuntimeException("Pool exhausted"));
     }
   }
 
@@ -71,7 +66,7 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
     Waiter<?, ?> w;
     while ((w = waiters.poll()) != null) {
       waitersSemaphore.release();
-      w.become(POOL_CLOSED.unsafeCast());
+      w.become(Future.exception(new RuntimeException("Pool closed")));
     }
 
     return drain();

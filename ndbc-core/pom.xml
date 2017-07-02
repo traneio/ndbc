@@ -23,11 +23,6 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>io.trane</groupId>
-			<artifactId>future-java</artifactId>
-			<version>0.2.0</version>
-		</dependency>
 	</dependencies>
 
 	<build>
