@@ -2,6 +2,7 @@ package io.trane.ndbc.postgres.netty4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
 import java.util.concurrent.Executors;
@@ -155,6 +156,30 @@ public class DataSourceTest extends TestEnv {
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertFalse(rows.hasNext());
+  }
+
+  @Test
+  public void transactionSuccess() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?")
+        .bindString("s");
+
+    ds.transactional(() -> ds.execute(ps)).get(timeout);
+
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertFalse(rows.hasNext());
+  }
+
+  @Test
+  public void transactionFailure() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?")
+        .bindString("s");
+
+    ds.transactional(() -> ds.execute(ps).map(v -> {
+      throw new IllegalStateException();
+    })).join(timeout);
+
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertTrue(rows.hasNext());
   }
 
   @Test(expected = RuntimeException.class)
