@@ -62,7 +62,7 @@ final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> impl
 
   @Override
   public final Future<Void> send(final ClientMessage msg) {
-    System.out.println(this.hashCode() + "sent: " + msg);
+    System.out.println(this.hashCode() + " sent: " + msg);
     return ctx.flatMap(c -> {
       c.write(msg);// .addListener(future -> p.become(Future.VOID));
       return Future.VOID;

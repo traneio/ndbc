@@ -11,10 +11,10 @@ public class TestEnv {
       .apply("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 5432, "postgres")
       .password("postgres")
       .poolValidationInterval(Duration.ofSeconds(1))
-      .poolMaxSize(10).poolMaxWaiters(10);                                                     // .ssl(SSL.apply(SSL.Mode.REQUIRE));
+      .poolMaxSize(1).poolMaxWaiters(0);                                                       // .ssl(SSL.apply(SSL.Mode.REQUIRE));
 
   protected DataSource ds      = DataSource.fromConfig(config);
 
-  protected Duration   timeout = Duration.ofSeconds(9999);
+  protected Duration   timeout = Duration.ofSeconds(999);
 
 }

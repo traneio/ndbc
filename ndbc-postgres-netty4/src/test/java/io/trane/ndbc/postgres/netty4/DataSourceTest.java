@@ -64,7 +64,7 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void simpleExecuteInsert() throws CheckedFutureException {
-    ds.execute("INSERT INTO " + table + " VALUES ('u')");
+    ds.execute("INSERT INTO " + table + " VALUES ('u')").get(timeout);
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
@@ -74,7 +74,7 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void simpleExecuteUpdate() throws CheckedFutureException {
-    ds.execute("UPDATE " + table + " SET s = 'u'");
+    ds.execute("UPDATE " + table + " SET s = 'u'").get(timeout);
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "u");
@@ -83,7 +83,7 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void simpleExecuteDelete() throws CheckedFutureException {
-    ds.execute("DELETE FROM " + table);
+    ds.execute("DELETE FROM " + table).get(timeout);
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertFalse(rows.hasNext());
