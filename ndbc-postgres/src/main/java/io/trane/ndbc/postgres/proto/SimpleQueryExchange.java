@@ -19,6 +19,6 @@ public final class SimpleQueryExchange implements Function<String, Exchange<List
 
   public final Exchange<List<Row>> apply(final String query) {
     return Exchange.send(new Query(query)).then(queryResultExchange.apply())
-        .thenWaitFor(ReadyForQuery.class);
+        .thenReceive(ReadyForQuery.class);
   }
 }

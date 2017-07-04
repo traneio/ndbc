@@ -14,7 +14,7 @@ public final class SimpleExecuteExchange implements Function<String, Exchange<In
   public final Exchange<Integer> apply(final String command) {
     return Exchange.send(new Query(command))
         .thenReceive(commandComplete)
-        .thenWaitFor(ReadyForQuery.class);
+        .thenReceive(ReadyForQuery.class);
   }
 
   private final PartialFunction<ServerMessage, Exchange<Integer>> commandComplete = PartialFunction

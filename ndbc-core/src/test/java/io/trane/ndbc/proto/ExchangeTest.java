@@ -258,41 +258,6 @@ public class ExchangeTest {
     assertEquals(msg, Exchange.value(1).thenReceive(f).run(channel).get(timeout));
   }
 
-  @Test
-  public void thenWaitFor() throws CheckedFutureException {
-    final Integer value = 12;
-    final TestServerMessage msg = new TestServerMessage();
-    final AtomicBoolean called = new AtomicBoolean(false);
-    final Channel channel = new TestChannel() {
-      @Override
-      public Future<ServerMessage> receive() {
-        called.set(true);
-        return Future.value(msg);
-      }
-    };
-    assertEquals(value,
-        Exchange.value(value).thenWaitFor(TestServerMessage.class).run(channel).get(timeout));
-    assertTrue(called.get());
-  }
-
-  @Test(expected = Exception.class)
-  public void thenWaitForFailed() throws CheckedFutureException {
-    final Exception ex = new Exception();
-    final TestServerMessage msg = new TestServerMessage();
-    final AtomicBoolean called = new AtomicBoolean(false);
-    final Channel channel = new TestChannel() {
-      @Override
-      public Future<ServerMessage> receive() {
-        called.set(true);
-        return Future.value(msg);
-      }
-    };
-    final Future<Void> result = Exchange.<Void>fail(ex).thenWaitFor(TestServerMessage.class)
-        .run(channel);
-    assertTrue(called.get());
-    result.get(timeout);
-  }
-
   @Test(expected = RuntimeException.class)
   public void thenFail() throws CheckedFutureException {
     Exchange.value(1).thenFail("error").run(new TestChannel()).get(timeout);

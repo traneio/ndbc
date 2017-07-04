@@ -79,15 +79,6 @@ public interface Exchange<T> {
     return then(Exchange.receive(f));
   }
 
-  default public Exchange<T> thenWaitFor(final Class<? extends ServerMessage> cls) {
-    final PartialFunction<ServerMessage, Exchange<Void>> pf = PartialFunction.when(cls,
-        msg -> Exchange.VOID);
-    return rescue(ex -> {
-      return Exchange.receive(pf).flatMap(v -> Exchange.fail(ex));
-    })
-        .flatMap(r -> Exchange.receive(pf).map(v -> r));
-  }
-
   default public <R> Exchange<R> thenFail(final String error) {
     return then(Exchange.fail(error));
   }
