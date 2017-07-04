@@ -32,8 +32,10 @@ public final class ExtendedExchange {
         id -> Exchange.send(new Bind(id, id, binary, params, binary))
             .thenSend(new Describe.DescribePortal(id)).thenSend(new Execute(id, 0))
             .thenSend(new Close.ClosePortal(id))
-            .thenSend(sync)).thenWaitFor(BindComplete.class).then(readResult)
-                .thenWaitFor(CloseComplete.class)
+            .thenSend(sync))
+                .thenReceive(BindComplete.class)
+                .then(readResult)
+                .thenReceive(CloseComplete.class)
                 .thenWaitFor(ReadyForQuery.class);
   }
 
@@ -46,7 +48,8 @@ public final class ExtendedExchange {
     else
       return Exchange.send(new Parse(Integer.toString(id), positional(query), emptyParams))
           .then(f.apply(idString))
-          .thenWaitFor(ParseComplete.class).onSuccess(ign -> Exchange.value(prepared.add(id)));
+          .thenReceive(ParseComplete.class)
+          .onSuccess(ign -> Exchange.value(prepared.add(id)));
   }
 
   // TODO handle quotes, comments, etc.

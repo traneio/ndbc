@@ -14,7 +14,7 @@ import io.trane.ndbc.datasource.LockFreePool;
 import io.trane.ndbc.datasource.Pool;
 import io.trane.ndbc.datasource.PooledDataSource;
 import io.trane.ndbc.postgres.encoding.Encoding;
-import io.trane.ndbc.postgres.encoding.ValueEncoding;
+import io.trane.ndbc.postgres.encoding.EncodingRegistry;
 import io.trane.ndbc.postgres.proto.ExtendedExchange;
 import io.trane.ndbc.postgres.proto.ExtendedExecuteExchange;
 import io.trane.ndbc.postgres.proto.ExtendedQueryExchange;
@@ -44,13 +44,13 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
   private final Config                         config;
   private final Supplier<Future<NettyChannel>> channelSupplier;
   private final StartupExchange                startup         = new StartupExchange();
-  private final ValueEncoding                  encoding;
+  private final EncodingRegistry               encoding;
   private final InitSSLExchange                initSSLExchange = new InitSSLExchange();
   private final InitSSLHandler                 initSSLHandler  = new InitSSLHandler();
 
   public DataSourceSupplier(final Config config) {
     this.config = config;
-    encoding = new ValueEncoding(
+    encoding = new EncodingRegistry(
         config.encodingClasses()
             .map(l -> l.stream().map(this::loadEncoding).collect(Collectors.toSet())));
     channelSupplier = new ChannelSupplier(config.charset(), createSerializer(), new Parser(),

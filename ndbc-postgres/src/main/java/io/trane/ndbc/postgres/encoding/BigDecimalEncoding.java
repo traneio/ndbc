@@ -47,7 +47,7 @@ final class BigDecimalEncoding implements Encoding<BigDecimalValue> {
   @Override
   public final void encodeBinary(final BigDecimalValue value, final BufferWriter b) {
     final BigDecimal minimized = value.getBigDecimal().stripTrailingZeros();
-    final BigInteger unscaled = minimized.unscaledValue();
+    final BigInteger unscaled = minimized.abs().unscaledValue();
     final int sign = minimized.signum();
 
     final int beforeDecimal = minimized.precision() - minimized.scale();

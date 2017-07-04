@@ -25,7 +25,7 @@ public class EncodingTest extends TestEnv {
   @Test
   public void bigDecimal() throws CheckedFutureException {
     test("numeric", (ps, v) -> ps.bindBigDecimal(v), Value::getBigDecimal,
-        r -> BigDecimal.valueOf(r.nextDouble()));
+        r -> BigDecimal.valueOf(r.nextLong(), r.nextInt(100)));
   }
 
   @Test
@@ -116,7 +116,8 @@ public class EncodingTest extends TestEnv {
   }
 
   private LocalDateTime randomLocalDateTime(final Random r) {
-    return LocalDateTime.of(r.nextInt(30000), r.nextInt(12) + 1, r.nextInt(28) + 1, r.nextInt(24),
+    return LocalDateTime.of(r.nextInt(5000 - 1971) + 1971, r.nextInt(12) + 1, r.nextInt(28) + 1,
+        r.nextInt(24),
         r.nextInt(60),
         r.nextInt(60), r.nextInt(99999) * 1000);
   }

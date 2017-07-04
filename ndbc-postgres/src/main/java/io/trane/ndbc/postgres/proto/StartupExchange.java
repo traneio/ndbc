@@ -22,9 +22,11 @@ public final class StartupExchange {
   public final Exchange<Optional<BackendKeyData>> apply(final Charset charset, final String user,
       final Optional<String> password, final Optional<String> database) {
     return Exchange.send(startupMessage(charset, user, database))
-        .thenReceive(authenticationOk.orElse(clearTextPasswordAuthentication(password))
-            .orElse(md5PasswordAuthentication(charset, user, password))
-            .orElse(unsupportedAuthentication))
+        .thenReceive(
+            authenticationOk
+                .orElse(clearTextPasswordAuthentication(password))
+                .orElse(md5PasswordAuthentication(charset, user, password))
+                .orElse(unsupportedAuthentication))
         .then(waitForBackendStartup(Optional.empty())).onFailure(ex -> Exchange.CLOSE);
   }
 

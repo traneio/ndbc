@@ -71,6 +71,10 @@ public interface Exchange<T> {
     return channel -> run(channel).flatMap(v -> ex.run(channel));
   }
 
+  default public Exchange<T> thenReceive(final Class<? extends ServerMessage> cls) {
+    return flatMap(v -> Exchange.receive(PartialFunction.when(cls, msg -> Exchange.value(v))));
+  }
+
   default public <R> Exchange<R> thenReceive(final PartialFunction<ServerMessage, Exchange<R>> f) {
     return then(Exchange.receive(f));
   }
@@ -78,7 +82,9 @@ public interface Exchange<T> {
   default public Exchange<T> thenWaitFor(final Class<? extends ServerMessage> cls) {
     final PartialFunction<ServerMessage, Exchange<Void>> pf = PartialFunction.when(cls,
         msg -> Exchange.VOID);
-    return rescue(ex -> Exchange.receive(pf).flatMap(v -> Exchange.fail(ex)))
+    return rescue(ex -> {
+      return Exchange.receive(pf).flatMap(v -> Exchange.fail(ex));
+    })
         .flatMap(r -> Exchange.receive(pf).map(v -> r));
   }
 

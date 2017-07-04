@@ -1,16 +1,16 @@
 package io.trane.ndbc.postgres.proto.serializer;
 
+import io.trane.ndbc.postgres.encoding.EncodingRegistry;
 import io.trane.ndbc.postgres.encoding.Format;
-import io.trane.ndbc.postgres.encoding.ValueEncoding;
 import io.trane.ndbc.postgres.proto.Message.Bind;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.Value;
 
 public final class BindSerializer {
 
-  private final ValueEncoding encoding;
+  private final EncodingRegistry encoding;
 
-  public BindSerializer(final ValueEncoding encoding) {
+  public BindSerializer(final EncodingRegistry encoding) {
     super();
     this.encoding = encoding;
   }

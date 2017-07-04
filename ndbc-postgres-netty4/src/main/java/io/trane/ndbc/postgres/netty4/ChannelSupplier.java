@@ -78,7 +78,9 @@ final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
             ch.pipeline().addLast(new MessageDecoder(), new MessageEncoder(),
                 new FlowControlHandler(), channel);
           }
-        }).connect(new InetSocketAddress(host, port)).addListener(future -> p.become(Future.VOID));
+        })
+        .connect(new InetSocketAddress(host, port))
+        .addListener(future -> p.become(Future.VOID));
     return p;
   }
 

@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import io.trane.ndbc.Row;
+import io.trane.ndbc.postgres.encoding.EncodingRegistry;
 import io.trane.ndbc.postgres.encoding.Format;
-import io.trane.ndbc.postgres.encoding.ValueEncoding;
 import io.trane.ndbc.postgres.proto.Message.CommandComplete;
 import io.trane.ndbc.postgres.proto.Message.DataRow;
 import io.trane.ndbc.postgres.proto.Message.EmptyQueryResponse;
@@ -20,9 +20,9 @@ import io.trane.ndbc.value.Value;
 
 public final class QueryResultExchange {
 
-  private final ValueEncoding encoding;
+  private final EncodingRegistry encoding;
 
-  public QueryResultExchange(final ValueEncoding encoding) {
+  public QueryResultExchange(final EncodingRegistry encoding) {
     super();
     this.encoding = encoding;
   }
@@ -32,7 +32,7 @@ public final class QueryResultExchange {
         .flatMap(desc -> gatherDataRows(new ArrayList<>()).map(rows -> toResultSet(desc, rows)));
   }
 
-  private final Row toRow(final ValueEncoding encoding, final RowDescription desc,
+  private final Row toRow(final EncodingRegistry encoding, final RowDescription desc,
       final DataRow data) {
 
     final RowDescription.Field[] fields = desc.fields;

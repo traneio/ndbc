@@ -10,20 +10,18 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.Value;
 
-public final class ValueEncoding {
+public final class EncodingRegistry {
 
   private static final Set<Encoding<?>>    defaultEncodings = Collections.toImmutableSet(
-      new BigDecimalEncoding(),
-      new BooleanEncoding(), new ByteArrayEncoding(), new DoubleEncoding(), new FloatEncoding(),
-      new IntegerEncoding(),
-      new LocalDateEncoding(), new LocalDateTimeEncoding(), new LocalTimeEncoding(),
-      new LongEncoding(),
+      new BigDecimalEncoding(), new BooleanEncoding(), new ByteArrayEncoding(),
+      new DoubleEncoding(), new FloatEncoding(), new IntegerEncoding(), new LocalDateEncoding(),
+      new LocalDateTimeEncoding(), new LocalTimeEncoding(), new LongEncoding(),
       new OffsetTimeEncoding(), new ShortEncoding(), new StringEncoding());
 
   private final Map<Class<?>, Encoding<?>> byValueClass;
   private final Map<Integer, Encoding<?>>  byOid;
 
-  public ValueEncoding(final Optional<Set<Encoding<?>>> customEncodings) {
+  public EncodingRegistry(final Optional<Set<Encoding<?>>> customEncodings) {
     byValueClass = new HashMap<>();
     byOid = new HashMap<>();
     registerEncodings(defaultEncodings);
@@ -45,7 +43,7 @@ public final class ValueEncoding {
     if ((enc = byOid.get(oid)) != null)
       return enc.decode(format, reader);
     else
-      throw new RuntimeException("Can't decode value of type " + oid);
+      throw new UnsupportedOperationException("Can't decode value of type " + oid);
   }
 
   private void registerEncodings(final Set<Encoding<?>> encodings) {
