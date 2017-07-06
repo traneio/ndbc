@@ -9,6 +9,8 @@ cache:
   directories:
   - $HOME/.m2/repository
   - $HOME/.sonar/cache
+addons:
+  postgresql: "9.4"
 env:
   global:
   - BUILD_DIR="`pwd`/build"
