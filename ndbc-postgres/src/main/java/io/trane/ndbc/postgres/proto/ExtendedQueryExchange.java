@@ -20,6 +20,7 @@ public final class ExtendedQueryExchange
     this.extendedExchange = extendedExchange;
   }
 
+  @Override
   public final Exchange<List<Row>> apply(final String query, final List<Value<?>> params) {
     return extendedExchange.apply(query, params, queryResultExchange.apply());
   }

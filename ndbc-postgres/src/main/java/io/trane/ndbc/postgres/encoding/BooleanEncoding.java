@@ -7,7 +7,7 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.BooleanValue;
 
-final class BooleanEncoding implements Encoding<BooleanValue> {
+final class BooleanEncoding extends Encoding<BooleanValue> {
 
   private static final BooleanValue TRUE  = new BooleanValue(true);
   private static final BooleanValue FALSE = new BooleanValue(false);
@@ -24,12 +24,13 @@ final class BooleanEncoding implements Encoding<BooleanValue> {
 
   @Override
   public final String encodeText(final BooleanValue value) {
-    return value.getBoolean() ? "t" : "false";
+    return value.getBoolean() ? "T" : "F";
   }
 
   @Override
   public final BooleanValue decodeText(final String value) {
-    return value == "t" || value == "true" ? TRUE : FALSE;
+    final String upperCase = value.toUpperCase();
+    return "T".equals(upperCase) || "TRUE".equals(upperCase) ? TRUE : FALSE;
   }
 
   @Override
@@ -41,5 +42,4 @@ final class BooleanEncoding implements Encoding<BooleanValue> {
   public final BooleanValue decodeBinary(final BufferReader b) {
     return b.readByte() != 0 ? TRUE : FALSE;
   }
-
 }

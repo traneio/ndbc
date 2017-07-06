@@ -7,7 +7,7 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.DoubleValue;
 
-final class DoubleEncoding implements Encoding<DoubleValue> {
+final class DoubleEncoding extends Encoding<DoubleValue> {
 
   @Override
   public final Set<Integer> oids() {

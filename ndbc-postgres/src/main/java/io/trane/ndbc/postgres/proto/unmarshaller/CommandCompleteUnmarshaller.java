@@ -1,4 +1,4 @@
-package io.trane.ndbc.postgres.proto.parser;
+package io.trane.ndbc.postgres.proto.unmarshaller;
 
 import static java.lang.Integer.parseInt;
 
@@ -13,7 +13,7 @@ import io.trane.ndbc.postgres.proto.Message.CommandComplete.UnknownCommandComple
 import io.trane.ndbc.postgres.proto.Message.CommandComplete.UpdateComplete;
 import io.trane.ndbc.proto.BufferReader;
 
-final class CommandCompleteParser {
+final class CommandCompleteUnmarshaller {
 
   public final CommandComplete decode(final BufferReader b) {
     final String string = b.readCString();

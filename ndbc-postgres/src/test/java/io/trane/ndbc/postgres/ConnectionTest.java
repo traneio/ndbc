@@ -33,9 +33,9 @@ public class ConnectionTest {
 
   @Test
   public void query() throws CheckedFutureException {
-    List<Row> result = new ArrayList<>();
-    String query = "query";
-    Supplier<Connection> sup = new ConnectionSupplier() {
+    final List<Row> result = new ArrayList<>();
+    final String query = "query";
+    final Supplier<Connection> sup = new ConnectionSupplier() {
       @Override
       Function<String, Exchange<List<Row>>> simpleQueryExchange() {
         return q -> {
@@ -49,9 +49,9 @@ public class ConnectionTest {
 
   @Test
   public void execute() throws CheckedFutureException {
-    Integer result = 33;
-    String command = "command";
-    Supplier<Connection> sup = new ConnectionSupplier() {
+    final Integer result = 33;
+    final String command = "command";
+    final Supplier<Connection> sup = new ConnectionSupplier() {
       @Override
       Function<String, Exchange<Integer>> simpleExecuteExchange() {
         return q -> {
@@ -65,11 +65,11 @@ public class ConnectionTest {
 
   @Test
   public void queryPreparedStatement() throws CheckedFutureException {
-    List<Row> result = new ArrayList<>();
-    String query = "query";
-    Integer bind = 223;
-    PreparedStatement ps = PreparedStatement.apply(query).bindInteger(bind);
-    Supplier<Connection> sup = new ConnectionSupplier() {
+    final List<Row> result = new ArrayList<>();
+    final String query = "query";
+    final Integer bind = 223;
+    final PreparedStatement ps = PreparedStatement.apply(query).bindInteger(bind);
+    final Supplier<Connection> sup = new ConnectionSupplier() {
       @Override
       BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange() {
         return (q, b) -> {
@@ -84,11 +84,11 @@ public class ConnectionTest {
 
   @Test
   public void executePreparedStatement() throws CheckedFutureException {
-    Integer result = 413;
-    String command = "command";
-    Integer bind = 223;
-    PreparedStatement ps = PreparedStatement.apply(command).bindInteger(bind);
-    Supplier<Connection> sup = new ConnectionSupplier() {
+    final Integer result = 413;
+    final String command = "command";
+    final Integer bind = 223;
+    final PreparedStatement ps = PreparedStatement.apply(command).bindInteger(bind);
+    final Supplier<Connection> sup = new ConnectionSupplier() {
       @Override
       BiFunction<String, List<Value<?>>, Exchange<Integer>> extendedExecuteExchange() {
         return (c, b) -> {
@@ -103,9 +103,9 @@ public class ConnectionTest {
 
   @Test
   public void isValidTrue() throws CheckedFutureException {
-    List<Row> result = new ArrayList<>();
-    String query = "SELECT 1";
-    Supplier<Connection> sup = new ConnectionSupplier() {
+    final List<Row> result = new ArrayList<>();
+    final String query = "SELECT 1";
+    final Supplier<Connection> sup = new ConnectionSupplier() {
       @Override
       BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange() {
         return (q, b) -> {
@@ -119,8 +119,8 @@ public class ConnectionTest {
 
   @Test
   public void isValidFalse() throws CheckedFutureException {
-    String query = "SELECT 1";
-    Supplier<Connection> sup = new ConnectionSupplier() {
+    final String query = "SELECT 1";
+    final Supplier<Connection> sup = new ConnectionSupplier() {
       @Override
       BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange() {
         return (q, b) -> {
@@ -134,8 +134,8 @@ public class ConnectionTest {
 
   @Test
   public void close() throws CheckedFutureException {
-    AtomicBoolean called = new AtomicBoolean(false);
-    Supplier<Connection> sup = new ConnectionSupplier() {
+    final AtomicBoolean called = new AtomicBoolean(false);
+    final Supplier<Connection> sup = new ConnectionSupplier() {
       @Override
       Channel channel() {
         return new TestChannel() {
@@ -154,7 +154,7 @@ public class ConnectionTest {
   class TestChannel implements Channel {
 
     @Override
-    public Future<Void> send(ClientMessage msg) {
+    public Future<Void> send(final ClientMessage msg) {
       return notExpected();
     }
 

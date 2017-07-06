@@ -1,4 +1,4 @@
-package io.trane.ndbc.postgres.proto.parser;
+package io.trane.ndbc.postgres.proto.unmarshaller;
 
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -25,32 +25,32 @@ import io.trane.ndbc.postgres.proto.Message.ReadyForQuery;
 import io.trane.ndbc.postgres.proto.Message.SSLResponse;
 import io.trane.ndbc.proto.BufferReader;
 
-public final class Parser {
+public final class Unmarshaller {
 
-  private static final Logger               log                = Logger
-      .getLogger(Parser.class.getName());
+  private static final Logger                     log                = Logger
+      .getLogger(Unmarshaller.class.getName());
 
-  private final AuthenticationRequestParser authenticationRequestDecoder;
-  private final CommandCompleteParser       commandCompleteDecoder;
-  private final DataRowParser               dataRowDecoder;
-  private final InfoResponseFieldsParser    infoResponseFieldsDecoder;
-  private final RowDescriptionParser        rowDescriptionDecoder;
+  private final AuthenticationRequestUnmarshaller authenticationRequestUnmarshaller;
+  private final CommandCompleteUnmarshaller       commandCompleteUnmarshaller;
+  private final DataRowUnmarshaller               dataRowUnmarshaller;
+  private final InfoResponseFieldsUnmarshaller    infoResponseFieldsUnmarshaller;
+  private final RowDescriptionUnmarshaller        rowDescriptionUnmarshaller;
 
-  private final BindComplete                bindComplete       = new BindComplete();
-  private final CloseComplete               closeComplete      = new CloseComplete();
-  private final CopyDone                    copyDone           = new CopyDone();
-  private final EmptyQueryResponse          emptyQueryResponse = new EmptyQueryResponse();
-  private final NoData                      noData             = new NoData();
-  private final ParseComplete               parseComplete      = new ParseComplete();
-  private final PortalSuspended             portalSuspended    = new PortalSuspended();
+  private final BindComplete                      bindComplete       = new BindComplete();
+  private final CloseComplete                     closeComplete      = new CloseComplete();
+  private final CopyDone                          copyDone           = new CopyDone();
+  private final EmptyQueryResponse                emptyQueryResponse = new EmptyQueryResponse();
+  private final NoData                            noData             = new NoData();
+  private final ParseComplete                     parseComplete      = new ParseComplete();
+  private final PortalSuspended                   portalSuspended    = new PortalSuspended();
 
-  public Parser() {
+  public Unmarshaller() {
     super();
-    authenticationRequestDecoder = new AuthenticationRequestParser();
-    commandCompleteDecoder = new CommandCompleteParser();
-    dataRowDecoder = new DataRowParser();
-    infoResponseFieldsDecoder = new InfoResponseFieldsParser();
-    rowDescriptionDecoder = new RowDescriptionParser();
+    authenticationRequestUnmarshaller = new AuthenticationRequestUnmarshaller();
+    commandCompleteUnmarshaller = new CommandCompleteUnmarshaller();
+    dataRowUnmarshaller = new DataRowUnmarshaller();
+    infoResponseFieldsUnmarshaller = new InfoResponseFieldsUnmarshaller();
+    rowDescriptionUnmarshaller = new RowDescriptionUnmarshaller();
   }
 
   public final Optional<Message> decode(final boolean ssl, final BufferReader b) throws Exception {
@@ -78,7 +78,7 @@ public final class Parser {
   private final Message decode(final byte tpe, final BufferReader b) {
     switch (tpe) {
       case 'R':
-        return authenticationRequestDecoder.decode(b);
+        return authenticationRequestUnmarshaller.decode(b);
       case 'K':
         return new BackendKeyData(b.readInt(), b.readInt());
       case '2':
@@ -86,24 +86,24 @@ public final class Parser {
       case '3':
         return closeComplete;
       case 'C':
-        return commandCompleteDecoder.decode(b);
+        return commandCompleteUnmarshaller.decode(b);
       case 'd':
         return new CopyData(b.readBytes());
       case 'c':
         return copyDone;
       case 'D':
-        return dataRowDecoder.decode(b);
+        return dataRowUnmarshaller.decode(b);
       case 'I':
         return emptyQueryResponse;
       case 'E':
-        return new InfoResponse.ErrorResponse(infoResponseFieldsDecoder.decode(b));
+        return new InfoResponse.ErrorResponse(infoResponseFieldsUnmarshaller.decode(b));
       case 'n':
         return noData;
       case 'N':
         if (b.readableBytes() == 0)
           return new SSLResponse(false);
         else
-          return new InfoResponse.NoticeResponse(infoResponseFieldsDecoder.decode(b));
+          return new InfoResponse.NoticeResponse(infoResponseFieldsUnmarshaller.decode(b));
       case 'A':
         return new NotificationResponse(b.readInt(), b.readCString(), b.readCString());
       case 't':
@@ -120,7 +120,7 @@ public final class Parser {
       case 'Z':
         return new ReadyForQuery(b.readByte());
       case 'T':
-        return rowDescriptionDecoder.decode(b);
+        return rowDescriptionUnmarshaller.decode(b);
       case 'G':
         return notImplemented(CopyInResponse.class);
       case 'H':
@@ -135,6 +135,6 @@ public final class Parser {
   }
 
   private final Message notImplemented(final Class<?> cls) {
-    throw new UnsupportedOperationException("Decoder not implemented for class: " + cls);
+    throw new UnsupportedOperationException("Unmarshaller not implemented for class: " + cls);
   }
 }

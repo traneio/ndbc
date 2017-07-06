@@ -1,4 +1,4 @@
-package io.trane.ndbc.postgres.proto.serializer;
+package io.trane.ndbc.postgres.proto.marshaller;
 
 import io.trane.ndbc.postgres.encoding.EncodingRegistry;
 import io.trane.ndbc.postgres.encoding.Format;
@@ -6,11 +6,11 @@ import io.trane.ndbc.postgres.proto.Message.Bind;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.Value;
 
-public final class BindSerializer {
+public final class BindMarshaller {
 
   private final EncodingRegistry encoding;
 
-  public BindSerializer(final EncodingRegistry encoding) {
+  public BindMarshaller(final EncodingRegistry encoding) {
     super();
     this.encoding = encoding;
   }

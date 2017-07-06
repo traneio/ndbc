@@ -48,9 +48,10 @@ public final class QueryResultExchange {
       final BufferReader reader = values[i];
       if (reader == null)
         columns[i] = Value.NULL;
-      else
+      else {
         columns[i] = encoding.decode(field.dataType, Format.fromCode(field.formatCode), reader);
-      reader.release();
+        reader.release();
+      }
     }
 
     return Row.apply(positions, columns);

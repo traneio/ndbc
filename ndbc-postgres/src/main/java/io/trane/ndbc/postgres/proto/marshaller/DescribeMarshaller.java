@@ -1,9 +1,9 @@
-package io.trane.ndbc.postgres.proto.serializer;
+package io.trane.ndbc.postgres.proto.marshaller;
 
 import io.trane.ndbc.postgres.proto.Message.Describe;
 import io.trane.ndbc.proto.BufferWriter;
 
-public final class DescribeSerializer {
+public final class DescribeMarshaller {
 
   public final void encode(final Describe msg, final BufferWriter b) {
     b.writeChar('D');

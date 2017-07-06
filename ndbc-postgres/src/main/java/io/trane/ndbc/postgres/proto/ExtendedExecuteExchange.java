@@ -20,6 +20,7 @@ public final class ExtendedExecuteExchange
     this.extendedExchange = extendedExchange;
   }
 
+  @Override
   public final Exchange<Integer> apply(final String query, final List<Value<?>> params) {
     return extendedExchange.apply(query, params,
         Exchange.receive(commandComplete.orElse(noDataAndCommandComplete)));

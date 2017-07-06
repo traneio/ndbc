@@ -5,7 +5,7 @@ package io.trane.ndbc.postgres.encoding;
  * https://raw.githubusercontent.com/pgjdbc/pgjdbc/8be516d47ece60b7aeba5a9474b5cac1d538a04a/pgjdbc/src/main/java/org/postgresql/core/Oid.java
  * Provides constants for well-known backend OIDs for the types we commonly use.
  */
-final class Oid {
+public interface Oid {
   public static final int UNSPECIFIED       = 0;
   public static final int INT2              = 21;
   public static final int INT2_ARRAY        = 1005;

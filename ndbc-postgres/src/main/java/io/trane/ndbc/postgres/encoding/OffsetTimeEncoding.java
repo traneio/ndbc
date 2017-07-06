@@ -12,7 +12,7 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.OffsetTimeValue;
 
-final class OffsetTimeEncoding implements Encoding<OffsetTimeValue> {
+final class OffsetTimeEncoding extends Encoding<OffsetTimeValue> {
 
   private static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
       .parseCaseInsensitive()

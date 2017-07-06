@@ -121,14 +121,14 @@ public final class PreparedStatement {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if (this == obj)
       return true;
     if (obj == null)
       return false;
     if (getClass() != obj.getClass())
       return false;
-    PreparedStatement other = (PreparedStatement) obj;
+    final PreparedStatement other = (PreparedStatement) obj;
     if (!Arrays.equals(params, other.params))
       return false;
     if (query == null) {

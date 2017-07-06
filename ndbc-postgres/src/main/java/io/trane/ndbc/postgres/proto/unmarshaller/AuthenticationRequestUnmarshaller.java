@@ -1,4 +1,4 @@
-package io.trane.ndbc.postgres.proto.parser;
+package io.trane.ndbc.postgres.proto.unmarshaller;
 
 import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest;
 import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest.AuthenticationCleartextPassword;
@@ -11,7 +11,7 @@ import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest.Authentication
 import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest.AuthenticationSSPI;
 import io.trane.ndbc.proto.BufferReader;
 
-final class AuthenticationRequestParser {
+final class AuthenticationRequestUnmarshaller {
 
   private final AuthenticationOk                authenticationOk                = new AuthenticationOk();
   private final AuthenticationKerberosV5        authenticationKerberosV5        = new AuthenticationKerberosV5();

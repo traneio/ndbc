@@ -1,9 +1,9 @@
-package io.trane.ndbc.postgres.proto.serializer;
+package io.trane.ndbc.postgres.proto.marshaller;
 
 import io.trane.ndbc.postgres.proto.Message.Close;
 import io.trane.ndbc.proto.BufferWriter;
 
-public final class CloseSerializer {
+public final class CloseMarshaller {
 
   public final void encode(final Close msg, final BufferWriter b) {
     b.writeChar('C');

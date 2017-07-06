@@ -13,7 +13,7 @@ import io.trane.ndbc.value.BigDecimalValue;
  * Java version of finagle-postgres' Numerics
  * (https://github.com/finagle/finagle-postgres/blob/69ab3983d6acc6aa4a8e029c96cc1cb224d6c40d/src/main/scala/com/twitter/finagle/postgres/values/Numerics.scala)
  */
-final class BigDecimalEncoding implements Encoding<BigDecimalValue> {
+final class BigDecimalEncoding extends Encoding<BigDecimalValue> {
 
   private static final BigInteger      BI_BASE           = BigInteger.valueOf(10000);
   private static final short[]         EMPTY_SHORT_ARRAY = new short[0];

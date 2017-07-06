@@ -8,7 +8,7 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.LocalTimeValue;
 
-final class LocalTimeEncoding implements Encoding<LocalTimeValue> {
+final class LocalTimeEncoding extends Encoding<LocalTimeValue> {
 
   @Override
   public final Set<Integer> oids() {

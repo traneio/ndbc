@@ -7,7 +7,7 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.IntegerValue;
 
-final class IntegerEncoding implements Encoding<IntegerValue> {
+final class IntegerEncoding extends Encoding<IntegerValue> {
 
   @Override
   public final Set<Integer> oids() {

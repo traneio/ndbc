@@ -6,8 +6,10 @@ import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import io.trane.ndbc.value.Value;
@@ -20,14 +22,22 @@ public abstract class EncodingTest<V extends Value<?>, E extends Encoding<V>> {
   private final Set<Integer>        expectedOids;
   private final Class<V>            expectedValueClass;
   private final Function<Random, V> generator;
+  private final BiConsumer<V, V>    verify;
 
-  public EncodingTest(E enc, Set<Integer> expectedOids,
-      Class<V> expectedValueClass, Function<Random, V> generator) {
+  public EncodingTest(final E enc, final Set<Integer> expectedOids,
+      final Class<V> expectedValueClass, final Function<Random, V> generator) {
+    this(enc, expectedOids, expectedValueClass, generator, Assert::assertEquals);
+  }
+
+  public EncodingTest(final E enc, final Set<Integer> expectedOids,
+      final Class<V> expectedValueClass, final Function<Random, V> generator,
+      final BiConsumer<V, V> verify) {
     super();
     this.enc = enc;
     this.expectedOids = expectedOids;
     this.expectedValueClass = expectedValueClass;
     this.generator = generator;
+    this.verify = verify;
   }
 
   @Test
@@ -40,30 +50,29 @@ public abstract class EncodingTest<V extends Value<?>, E extends Encoding<V>> {
     assertEquals(expectedValueClass, enc.valueClass());
   }
 
+  private void testValue(final V value, final Format format) {
+    final ByteBuffer buf = ByteBuffer.allocate(1000);
+    enc.encode(format, value, new TestBufferWriter(buf));
+    buf.limit(buf.position());
+    buf.rewind();
+    final V decoded = enc.decode(format, new TestBufferReader(buf));
+    verify.accept(value, decoded);
+  }
+
+  private void testFormat(final Format format) {
+    final Random r = new Random(1);
+    for (int i = 0; i < SAMPLES; i++)
+      testValue(generator.apply(r), format);
+  }
+
   @Test
   public void textEncoding() {
-    Random r = new Random(1);
-    for (int i = 0; i < SAMPLES; i++) {
-      V expected = generator.apply(r);
-      String encoded = enc.encodeText(expected);
-      System.out.println(encoded);
-      V actual = enc.decodeText(encoded);
-      assertEquals(expected, actual);
-    }
+    testFormat(Format.TEXT);
   }
 
   @Test
   public void binaryEncoding() {
-    Random r = new Random(1);
-    for (int i = 0; i < SAMPLES; i++) {
-      ByteBuffer buf = ByteBuffer.allocate(1000);
-      V expected = generator.apply(r);
-      enc.encodeBinary(expected, new TestBufferWriter(buf));
-      buf.limit(buf.position());
-      buf.rewind();
-      V actual = enc.decodeBinary(new TestBufferReader(buf));
-      assertEquals(expected, actual);
-    }
+    testFormat(Format.BINARY);
   }
 
   protected static LocalDateTime randomLocalDateTime(final Random r) {

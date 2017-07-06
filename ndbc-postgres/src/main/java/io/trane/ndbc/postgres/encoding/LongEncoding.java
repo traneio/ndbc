@@ -7,7 +7,7 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.LongValue;
 
-final class LongEncoding implements Encoding<LongValue> {
+final class LongEncoding extends Encoding<LongValue> {
 
   @Override
   public final Set<Integer> oids() {

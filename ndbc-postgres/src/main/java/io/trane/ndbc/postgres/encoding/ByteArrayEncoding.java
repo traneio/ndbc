@@ -7,7 +7,7 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.ByteArrayValue;
 
-final class ByteArrayEncoding implements Encoding<ByteArrayValue> {
+final class ByteArrayEncoding extends Encoding<ByteArrayValue> {
 
   private static final String PREFIX = "\\x";
 
@@ -32,7 +32,6 @@ final class ByteArrayEncoding implements Encoding<ByteArrayValue> {
 
   @Override
   public final ByteArrayValue decodeText(final String value) {
-    assert value.startsWith(PREFIX);
     final char[] chars = value.substring(PREFIX.length()).toCharArray();
     final byte[] result = new byte[chars.length / 2];
     for (int i = 0; i < result.length; i++)

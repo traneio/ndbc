@@ -1,9 +1,9 @@
-package io.trane.ndbc.postgres.proto.parser;
+package io.trane.ndbc.postgres.proto.unmarshaller;
 
 import io.trane.ndbc.postgres.proto.Message.RowDescription;
 import io.trane.ndbc.proto.BufferReader;
 
-final class RowDescriptionParser {
+final class RowDescriptionUnmarshaller {
 
   public final RowDescription decode(final BufferReader b) {
     final short size = b.readShort();

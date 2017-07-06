@@ -18,57 +18,57 @@ public class EncodingRegistryTest {
 
   @Test
   public void encode() {
-    IntegerValue expected = new IntegerValue(13);
-    EncodingRegistry reg = new EncodingRegistry(Optional.empty());
-    ByteBuffer buf = ByteBuffer.allocate(1000);
+    final IntegerValue expected = new IntegerValue(13);
+    final EncodingRegistry reg = new EncodingRegistry(Optional.empty());
+    final ByteBuffer buf = ByteBuffer.allocate(1000);
     reg.encode(Format.BINARY, expected, new TestBufferWriter(buf));
     buf.rewind();
-    IntegerValue actual = (new IntegerEncoding()).decodeBinary(new TestBufferReader(buf));
+    final IntegerValue actual = (new IntegerEncoding()).decodeBinary(new TestBufferReader(buf));
     assertEquals(expected, actual);
   }
 
   @Test(expected = UnsupportedOperationException.class)
   public void encodeUnsupported() {
-    Value<Thread> value = new Value<Thread>(new Thread()) {
+    final Value<Thread> value = new Value<Thread>(new Thread()) {
     };
-    EncodingRegistry reg = new EncodingRegistry(Optional.empty());
-    ByteBuffer buf = ByteBuffer.allocate(1000);
+    final EncodingRegistry reg = new EncodingRegistry(Optional.empty());
+    final ByteBuffer buf = ByteBuffer.allocate(1000);
     reg.encode(Format.BINARY, value, new TestBufferWriter(buf));
   }
 
   @Test
   public void decode() {
-    IntegerValue value = new IntegerValue(213);
-    EncodingRegistry reg = new EncodingRegistry(Optional.empty());
-    ByteBuffer buf = ByteBuffer.allocate(1000);
+    final IntegerValue value = new IntegerValue(213);
+    final EncodingRegistry reg = new EncodingRegistry(Optional.empty());
+    final ByteBuffer buf = ByteBuffer.allocate(1000);
     (new IntegerEncoding()).encode(Format.BINARY, value, new TestBufferWriter(buf));
     buf.rewind();
-    Value<?> decoded = reg.decode(Oid.INT4, Format.BINARY, new TestBufferReader(buf));
+    final Value<?> decoded = reg.decode(Oid.INT4, Format.BINARY, new TestBufferReader(buf));
     assertEquals(value, decoded);
   }
 
   @Test(expected = UnsupportedOperationException.class)
   public void decodeUnsupported() {
-    EncodingRegistry reg = new EncodingRegistry(Optional.empty());
+    final EncodingRegistry reg = new EncodingRegistry(Optional.empty());
     reg.decode(99999, Format.BINARY, new TestBufferReader(ByteBuffer.allocate(100)));
   }
 
   @Test
   public void customEncoding() {
-    TestValueEncoding enc = new TestValueEncoding();
-    TestValue value = new TestValue("str");
-    EncodingRegistry reg = new EncodingRegistry(Optional.of(Collections.toImmutableSet(enc)));
-    ByteBuffer buf = ByteBuffer.allocate(1000);
+    final TestValueEncoding enc = new TestValueEncoding();
+    final TestValue value = new TestValue("str");
+    final EncodingRegistry reg = new EncodingRegistry(Optional.of(Collections.toImmutableSet(enc)));
+    final ByteBuffer buf = ByteBuffer.allocate(1000);
     reg.encode(Format.BINARY, value, new TestBufferWriter(buf));
     buf.limit(buf.position());
     buf.rewind();
-    Value<?> decoded = reg.decode(enc.oids().iterator().next(), Format.BINARY,
+    final Value<?> decoded = reg.decode(enc.oids().iterator().next(), Format.BINARY,
         new TestBufferReader(buf));
     assertEquals(value, decoded);
   }
 
   class TestValue extends Value<String> {
-    public TestValue(String value) {
+    public TestValue(final String value) {
       super(value);
     }
 
@@ -78,7 +78,7 @@ public class EncodingRegistryTest {
     }
   }
 
-  class TestValueEncoding implements Encoding<TestValue> {
+  class TestValueEncoding extends Encoding<TestValue> {
 
     @Override
     public Set<Integer> oids() {
@@ -91,22 +91,22 @@ public class EncodingRegistryTest {
     }
 
     @Override
-    public String encodeText(TestValue value) {
+    public String encodeText(final TestValue value) {
       return value.getString();
     }
 
     @Override
-    public TestValue decodeText(String value) {
+    public TestValue decodeText(final String value) {
       return new TestValue(value);
     }
 
     @Override
-    public void encodeBinary(TestValue value, BufferWriter b) {
+    public void encodeBinary(final TestValue value, final BufferWriter b) {
       b.writeString(value.getString());
     }
 
     @Override
-    public TestValue decodeBinary(BufferReader b) {
+    public TestValue decodeBinary(final BufferReader b) {
       return new TestValue(b.readString());
     }
   }

@@ -4,7 +4,6 @@ package io.trane.ndbc.postgres.util;
  * From postgre's JDBC driver:
  * https://github.com/pgjdbc/pgjdbc/blob/8be516d47ece60b7aeba5a9474b5cac1d538a04a/pgjdbc/src/main/java/org/postgresql/util/MD5Digest.java
  */
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 

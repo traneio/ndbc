@@ -7,7 +7,7 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.ShortValue;
 
-final class ShortEncoding implements Encoding<ShortValue> {
+final class ShortEncoding extends Encoding<ShortValue> {
 
   @Override
   public final Set<Integer> oids() {

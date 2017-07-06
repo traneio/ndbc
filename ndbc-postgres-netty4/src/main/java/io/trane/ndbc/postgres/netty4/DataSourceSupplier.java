@@ -23,21 +23,21 @@ import io.trane.ndbc.postgres.proto.QueryResultExchange;
 import io.trane.ndbc.postgres.proto.SimpleExecuteExchange;
 import io.trane.ndbc.postgres.proto.SimpleQueryExchange;
 import io.trane.ndbc.postgres.proto.StartupExchange;
-import io.trane.ndbc.postgres.proto.parser.Parser;
-import io.trane.ndbc.postgres.proto.serializer.BindSerializer;
-import io.trane.ndbc.postgres.proto.serializer.CancelRequestSerializer;
-import io.trane.ndbc.postgres.proto.serializer.CloseSerializer;
-import io.trane.ndbc.postgres.proto.serializer.DescribeSerializer;
-import io.trane.ndbc.postgres.proto.serializer.ExecuteSerializer;
-import io.trane.ndbc.postgres.proto.serializer.FlushSerializer;
-import io.trane.ndbc.postgres.proto.serializer.ParseSerializer;
-import io.trane.ndbc.postgres.proto.serializer.PasswordMessageSerializer;
-import io.trane.ndbc.postgres.proto.serializer.QuerySerializer;
-import io.trane.ndbc.postgres.proto.serializer.SSLRequestSerializer;
-import io.trane.ndbc.postgres.proto.serializer.Serializer;
-import io.trane.ndbc.postgres.proto.serializer.StartupMessageSerializer;
-import io.trane.ndbc.postgres.proto.serializer.SyncSerializer;
-import io.trane.ndbc.postgres.proto.serializer.TerminateSerializer;
+import io.trane.ndbc.postgres.proto.marshaller.BindMarshaller;
+import io.trane.ndbc.postgres.proto.marshaller.CancelRequestMarshaller;
+import io.trane.ndbc.postgres.proto.marshaller.CloseMarshaller;
+import io.trane.ndbc.postgres.proto.marshaller.DescribeMarshaller;
+import io.trane.ndbc.postgres.proto.marshaller.ExecuteMarshaller;
+import io.trane.ndbc.postgres.proto.marshaller.FlushMarshaller;
+import io.trane.ndbc.postgres.proto.marshaller.Marshaller;
+import io.trane.ndbc.postgres.proto.marshaller.ParseMarshaller;
+import io.trane.ndbc.postgres.proto.marshaller.PasswordMessageMarshaller;
+import io.trane.ndbc.postgres.proto.marshaller.QueryMarshaller;
+import io.trane.ndbc.postgres.proto.marshaller.SSLRequestMarshaller;
+import io.trane.ndbc.postgres.proto.marshaller.StartupMessageMarshaller;
+import io.trane.ndbc.postgres.proto.marshaller.SyncMarshaller;
+import io.trane.ndbc.postgres.proto.marshaller.TerminateMarshaller;
+import io.trane.ndbc.postgres.proto.unmarshaller.Unmarshaller;
 
 public final class DataSourceSupplier implements Supplier<DataSource> {
 
@@ -53,7 +53,7 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
     encoding = new EncodingRegistry(
         config.encodingClasses()
             .map(l -> l.stream().map(this::loadEncoding).collect(Collectors.toSet())));
-    channelSupplier = new ChannelSupplier(config.charset(), createSerializer(), new Parser(),
+    channelSupplier = new ChannelSupplier(config.charset(), createMarshaller(), new Unmarshaller(),
         new NioEventLoopGroup(config.nioThreads().orElse(0),
             new DefaultThreadFactory("ndbc-netty4", true)),
         config.host(), config.port());
@@ -68,14 +68,14 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
     }
   }
 
-  private final Serializer createSerializer() {
-    return new Serializer(new BindSerializer(encoding), new CancelRequestSerializer(),
-        new CloseSerializer(),
-        new DescribeSerializer(), new ExecuteSerializer(), new FlushSerializer(),
-        new ParseSerializer(),
-        new QuerySerializer(), new PasswordMessageSerializer(), new StartupMessageSerializer(),
-        new SyncSerializer(),
-        new TerminateSerializer(), new SSLRequestSerializer());
+  private final Marshaller createMarshaller() {
+    return new Marshaller(new BindMarshaller(encoding), new CancelRequestMarshaller(),
+        new CloseMarshaller(),
+        new DescribeMarshaller(), new ExecuteMarshaller(), new FlushMarshaller(),
+        new ParseMarshaller(),
+        new QueryMarshaller(), new PasswordMessageMarshaller(), new StartupMessageMarshaller(),
+        new SyncMarshaller(),
+        new TerminateMarshaller(), new SSLRequestMarshaller());
   }
 
   private final Supplier<Future<Connection>> createConnection() {

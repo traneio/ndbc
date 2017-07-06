@@ -12,7 +12,7 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.LocalDateTimeValue;
 
-final class LocalDateTimeEncoding implements Encoding<LocalDateTimeValue> {
+final class LocalDateTimeEncoding extends Encoding<LocalDateTimeValue> {
 
   private static final long POSTGRES_EPOCH_MICROS = 946684800000000L;
 

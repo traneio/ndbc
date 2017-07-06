@@ -9,7 +9,7 @@ import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.LocalDateValue;
 
-final class LocalDateEncoding implements Encoding<LocalDateValue> {
+final class LocalDateEncoding extends Encoding<LocalDateValue> {
 
   @Override
   public final Set<Integer> oids() {

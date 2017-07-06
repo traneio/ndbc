@@ -9,7 +9,7 @@ public class TestBufferReader implements BufferReader {
 
   private final ByteBuffer buf;
 
-  public TestBufferReader(ByteBuffer buf) {
+  public TestBufferReader(final ByteBuffer buf) {
     super();
     this.buf = buf;
   }
@@ -42,17 +42,17 @@ public class TestBufferReader implements BufferReader {
     return string;
   }
 
-  private int bytesBefore(byte b) {
-    int pos = buf.position();
+  private int bytesBefore(final byte b) {
+    final int pos = buf.position();
     while (buf.remaining() != 0 && buf.get() != b) {
     }
-    int found = buf.position() - 1;
+    final int found = buf.position() - 1;
     buf.position(pos);
     return found;
   }
 
   @Override
-  public String readCString(int length) {
+  public String readCString(final int length) {
     final String string = readString(length);
     buf.position(buf.position() + 1); // skip 0
     return string;
@@ -64,7 +64,7 @@ public class TestBufferReader implements BufferReader {
   }
 
   @Override
-  public String readString(int length) {
+  public String readString(final int length) {
     final byte[] b = new byte[length];
     buf.get(b);
     final String string = new String(b, Charset.forName("UTF-8"));
@@ -77,7 +77,7 @@ public class TestBufferReader implements BufferReader {
   }
 
   @Override
-  public byte[] readBytes(int length) {
+  public byte[] readBytes(final int length) {
     final byte[] bytes = new byte[length];
     buf.get(bytes);
     return bytes;
@@ -89,7 +89,7 @@ public class TestBufferReader implements BufferReader {
   }
 
   @Override
-  public int[] readInts(int length) {
+  public int[] readInts(final int length) {
     final int[] ints = new int[length];
     for (int i = 0; i < length; i++)
       ints[i] = buf.getInt();
@@ -102,7 +102,7 @@ public class TestBufferReader implements BufferReader {
   }
 
   @Override
-  public short[] readShorts(int length) {
+  public short[] readShorts(final int length) {
     final short[] shorts = new short[length];
     for (int i = 0; i < length; i++)
       shorts[i] = buf.getShort();
@@ -110,8 +110,8 @@ public class TestBufferReader implements BufferReader {
   }
 
   @Override
-  public BufferReader readSlice(int length) {
-    byte[] slice = new byte[length];
+  public BufferReader readSlice(final int length) {
+    final byte[] slice = new byte[length];
     buf.get(slice);
     return new TestBufferReader(ByteBuffer.wrap(slice));
   }
