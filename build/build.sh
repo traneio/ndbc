@@ -32,14 +32,14 @@ then
 	elif [[ $TRAVIS_BRANCH == "master" ]]
 	then
 		echo "Publishing a snapshot..."
-		mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar deploy --settings build/settings.xml
+		mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package deploy --settings build/settings.xml
 
 	else
 		echo "Publishing a branch snapshot..."
 		mvn clean versions:set -DnewVersion=$TRAVIS_BRANCH-SNAPSHOT
-		mvn org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar deploy --settings build/settings.xml 
+		mvn org.jacoco:jacoco-maven-plugin:prepare-agent package deploy --settings build/settings.xml 
 	fi
 else
 	echo "Running build..."
-	mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+	mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package
 fi
