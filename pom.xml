@@ -5,7 +5,7 @@
 	<packaging>pom</packaging>
 	<version>0.0.2-SNAPSHOT</version>
 	<name>NDBC</name>
-	<description>Non-blocking Database Conectivity (NDBC)</description>
+	<description>Non-blocking Database Connectivity (NDBC)</description>
 	<url>http://trane.io/ndbc</url>
 
 	<licenses>
