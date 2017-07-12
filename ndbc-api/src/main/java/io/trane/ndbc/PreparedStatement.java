@@ -41,64 +41,76 @@ public final class PreparedStatement {
     this.params = params;
   }
 
-  public final PreparedStatement bindBigDecimal(final BigDecimal value) {
-    return bind(value == null ? Value.NULL : new BigDecimalValue(value));
+  public final PreparedStatement setBigDecimal(final BigDecimal value) {
+    return setBigDecimal(params.length, value);
   }
 
-  public final PreparedStatement bindBoolean(final Boolean value) {
-    return bind(value == null ? Value.NULL : new BooleanValue(value));
+  public final PreparedStatement setBigDecimal(final int index, final BigDecimal value) {
+    return set(index, value == null ? Value.NULL : new BigDecimalValue(value));
   }
 
-  public final PreparedStatement bindByteArray(final byte[] value) {
-    return bind(value == null ? Value.NULL : new ByteArrayValue(value));
+  public final PreparedStatement setBoolean(final Boolean value) {
+    return set(value == null ? Value.NULL : new BooleanValue(value));
   }
 
-  public final PreparedStatement bindDouble(final Double value) {
-    return bind(value == null ? Value.NULL : new DoubleValue(value));
+  public final PreparedStatement setByteArray(final byte[] value) {
+    return set(value == null ? Value.NULL : new ByteArrayValue(value));
   }
 
-  public final PreparedStatement bindFloat(final Float value) {
-    return bind(value == null ? Value.NULL : new FloatValue(value));
+  public final PreparedStatement setDouble(final Double value) {
+    return set(value == null ? Value.NULL : new DoubleValue(value));
   }
 
-  public final PreparedStatement bindInteger(final Integer value) {
-    return bind(value == null ? Value.NULL : new IntegerValue(value));
+  public final PreparedStatement setFloat(final Float value) {
+    return set(value == null ? Value.NULL : new FloatValue(value));
   }
 
-  public final PreparedStatement bindLocalDate(final LocalDate value) {
-    return bind(value == null ? Value.NULL : new LocalDateValue(value));
+  public final PreparedStatement setInteger(final Integer value) {
+    return set(value == null ? Value.NULL : new IntegerValue(value));
   }
 
-  public final PreparedStatement bindLocalDateTime(final LocalDateTime value) {
-    return bind(value == null ? Value.NULL : new LocalDateTimeValue(value));
+  public final PreparedStatement setLocalDate(final LocalDate value) {
+    return set(value == null ? Value.NULL : new LocalDateValue(value));
   }
 
-  public final PreparedStatement bindLocalTime(final LocalTime value) {
-    return bind(value == null ? Value.NULL : new LocalTimeValue(value));
+  public final PreparedStatement setLocalDateTime(final LocalDateTime value) {
+    return set(value == null ? Value.NULL : new LocalDateTimeValue(value));
   }
 
-  public final PreparedStatement bindLong(final Long value) {
-    return bind(value == null ? Value.NULL : new LongValue(value));
+  public final PreparedStatement setLocalTime(final LocalTime value) {
+    return set(value == null ? Value.NULL : new LocalTimeValue(value));
   }
 
-  public final PreparedStatement bindOffsetTime(final OffsetTime value) {
-    return bind(value == null ? Value.NULL : new OffsetTimeValue(value));
+  public final PreparedStatement setLong(final Long value) {
+    return set(value == null ? Value.NULL : new LongValue(value));
   }
 
-  public final PreparedStatement bindShort(final Short value) {
-    return bind(value == null ? Value.NULL : new ShortValue(value));
+  public final PreparedStatement setOffsetTime(final OffsetTime value) {
+    return set(value == null ? Value.NULL : new OffsetTimeValue(value));
   }
 
-  public final PreparedStatement bindString(final String value) {
-    return bind(value == null ? Value.NULL : new StringValue(value));
+  public final PreparedStatement setShort(final Short value) {
+    return set(value == null ? Value.NULL : new ShortValue(value));
   }
 
-  public final PreparedStatement bindNull() {
-    return bind(Value.NULL);
+  public final PreparedStatement setString(final String value) {
+    return set(value == null ? Value.NULL : new StringValue(value));
   }
 
-  public final PreparedStatement bind(final Value<?> param) {
-    final Value<?>[] newParams = Arrays.copyOf(params, params.length + 1);
+  public final PreparedStatement setNull() {
+    return set(Value.NULL);
+  }
+
+  public final PreparedStatement set(final Value<?> param) {
+    return set(params.length, param);
+  }
+
+  public final PreparedStatement set(final int index, final Value<?> param) {
+    final Value<?>[] newParams;
+    if (index >= params.length)
+      newParams = Arrays.copyOf(params, index + 1);
+    else
+      newParams = Arrays.copyOf(params, params.length);
     newParams[params.length] = param;
     return new PreparedStatement(query, newParams);
   }

@@ -28,7 +28,7 @@ public final class PooledDataSource implements DataSource {
   }
 
   @Override
-  public final Future<Integer> execute(final String statement) {
+  public final Future<Long> execute(final String statement) {
     return withConnection(c -> c.execute(statement));
   }
 
@@ -38,7 +38,7 @@ public final class PooledDataSource implements DataSource {
   }
 
   @Override
-  public final Future<Integer> execute(final PreparedStatement statement) {
+  public final Future<Long> execute(final PreparedStatement statement) {
     return withConnection(c -> c.execute(statement));
   }
 

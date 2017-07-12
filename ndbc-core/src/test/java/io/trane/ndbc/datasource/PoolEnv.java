@@ -50,7 +50,7 @@ public class PoolEnv {
     }
 
     @Override
-    public Future<Integer> execute(final String query) {
+    public Future<Long> execute(final String query) {
       return notExpected();
     }
 
@@ -60,7 +60,7 @@ public class PoolEnv {
     }
 
     @Override
-    public Future<Integer> execute(final PreparedStatement query) {
+    public Future<Long> execute(final PreparedStatement query) {
       return notExpected();
     }
 

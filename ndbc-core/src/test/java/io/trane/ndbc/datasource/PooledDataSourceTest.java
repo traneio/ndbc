@@ -40,10 +40,10 @@ public class PooledDataSourceTest extends PoolEnv {
 
   @Test
   public void execute() throws CheckedFutureException {
-    final Integer result = 121;
+    final Long result = 121L;
     final Connection c = new TestConnection() {
       @Override
-      public Future<Integer> execute(final String statement) {
+      public Future<Long> execute(final String statement) {
         assertEquals(PooledDataSourceTest.this.statement, statement);
         return Future.value(result);
       }
@@ -70,10 +70,10 @@ public class PooledDataSourceTest extends PoolEnv {
   @Test
   public void executePreparedStatement() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply(statement);
-    final Integer result = 121;
+    final Long result = 121L;
     final Connection c = new TestConnection() {
       @Override
-      public Future<Integer> execute(final PreparedStatement statement) {
+      public Future<Long> execute(final PreparedStatement statement) {
         assertEquals(ps, statement);
         return Future.value(result);
       }

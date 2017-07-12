@@ -11,7 +11,7 @@ import io.trane.ndbc.util.PartialFunction;
 import io.trane.ndbc.value.Value;
 
 public final class ExtendedExecuteExchange
-    implements BiFunction<String, List<Value<?>>, Exchange<Integer>> {
+    implements BiFunction<String, List<Value<?>>, Exchange<Long>> {
 
   private final ExtendedExchange extendedExchange;
 
@@ -21,14 +21,14 @@ public final class ExtendedExecuteExchange
   }
 
   @Override
-  public final Exchange<Integer> apply(final String query, final List<Value<?>> params) {
+  public final Exchange<Long> apply(final String query, final List<Value<?>> params) {
     return extendedExchange.apply(query, params,
         Exchange.receive(commandComplete.orElse(noDataAndCommandComplete)));
   }
 
-  private final PartialFunction<ServerMessage, Exchange<Integer>> commandComplete          = PartialFunction
+  private final PartialFunction<ServerMessage, Exchange<Long>> commandComplete          = PartialFunction
       .when(CommandComplete.class, msg -> Exchange.value(msg.rows));
 
-  private final PartialFunction<ServerMessage, Exchange<Integer>> noDataAndCommandComplete = PartialFunction
+  private final PartialFunction<ServerMessage, Exchange<Long>> noDataAndCommandComplete = PartialFunction
       .when(NoData.class, msg -> Exchange.receive(commandComplete));
 }

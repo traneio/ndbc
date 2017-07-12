@@ -37,11 +37,11 @@ public interface DataSource {
 
   Future<List<Row>> query(String query);
 
-  Future<Integer> execute(String statement);
+  Future<Long> execute(String statement);
 
   Future<List<Row>> query(PreparedStatement query);
 
-  Future<Integer> execute(PreparedStatement statement);
+  Future<Long> execute(PreparedStatement statement);
 
   <T> Future<T> transactional(Supplier<Future<T>> supplier);
 

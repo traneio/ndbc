@@ -521,7 +521,7 @@ public interface Message {
      * copied. (Note: the row count appears only in PostgreSQL 8.2 and later.)
      */
     public static final class CopyComplete extends CommandComplete {
-      public CopyComplete(final int rows) {
+      public CopyComplete(final long rows) {
         super(rows);
       }
 
@@ -529,7 +529,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + rows;
+        result = prime * result + Long.hashCode(rows);
         return result;
       }
 
@@ -558,7 +558,7 @@ public interface Message {
      * rows deleted.
      */
     public static final class DeleteComplete extends CommandComplete {
-      public DeleteComplete(final int rows) {
+      public DeleteComplete(final long rows) {
         super(rows);
       }
 
@@ -566,7 +566,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + rows;
+        result = prime * result + Long.hashCode(rows);
         return result;
       }
 
@@ -595,7 +595,7 @@ public interface Message {
      * rows that have been retrieved from the cursor.
      */
     public static final class FetchComplete extends CommandComplete {
-      public FetchComplete(final int rows) {
+      public FetchComplete(final long rows) {
         super(rows);
       }
 
@@ -603,7 +603,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + rows;
+        result = prime * result + Long.hashCode(rows);
         return result;
       }
 
@@ -635,7 +635,7 @@ public interface Message {
     public static final class InsertComplete extends CommandComplete {
       public final int oid;
 
-      public InsertComplete(final int rows, final int oid) {
+      public InsertComplete(final long rows, final int oid) {
         super(rows);
         this.oid = oid;
       }
@@ -644,7 +644,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + rows;
+        result = prime * result + Long.hashCode(rows);
         result = prime * result + oid;
         return result;
       }
@@ -676,7 +676,7 @@ public interface Message {
      * the cursor's position has been changed by.
      */
     public static final class MoveComplete extends CommandComplete {
-      public MoveComplete(final int rows) {
+      public MoveComplete(final long rows) {
         super(rows);
       }
 
@@ -684,7 +684,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + rows;
+        result = prime * result + Long.hashCode(rows);
         return result;
       }
 
@@ -713,7 +713,7 @@ public interface Message {
      * rows is the number of rows retrieved.
      */
     public static final class SelectorOrCreateTableAsComplete extends CommandComplete {
-      public SelectorOrCreateTableAsComplete(final int rows) {
+      public SelectorOrCreateTableAsComplete(final long rows) {
         super(rows);
       }
 
@@ -721,7 +721,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + rows;
+        result = prime * result + Long.hashCode(rows);
         return result;
       }
 
@@ -750,7 +750,7 @@ public interface Message {
      * rows updated.
      */
     public static final class UpdateComplete extends CommandComplete {
-      public UpdateComplete(final int rows) {
+      public UpdateComplete(final long rows) {
         super(rows);
       }
 
@@ -758,7 +758,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + rows;
+        result = prime * result + Long.hashCode(rows);
         return result;
       }
 
@@ -785,7 +785,7 @@ public interface Message {
     public static final class UnknownCommandComplete extends CommandComplete {
       public final String tag;
 
-      public UnknownCommandComplete(final int rows, final String tag) {
+      public UnknownCommandComplete(final long rows, final String tag) {
         super(rows);
         this.tag = tag;
       }
@@ -794,7 +794,7 @@ public interface Message {
       public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + rows;
+        result = prime * result + Long.hashCode(rows);
         result = prime * result + (tag == null ? 0 : tag.hashCode());
         return result;
       }
@@ -824,9 +824,9 @@ public interface Message {
       }
     }
 
-    public final int rows;
+    public final long rows;
 
-    public CommandComplete(final int rows) {
+    public CommandComplete(final long rows) {
       this.rows = rows;
     }
   }

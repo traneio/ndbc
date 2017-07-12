@@ -31,17 +31,17 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private final Supplier<? extends Future<? extends Channel>>           channelSupplier;
   private final Optional<BackendKeyData>                                backendKeyData;
   private final Function<String, Exchange<List<Row>>>                   simpleQueryExchange;
-  private final Function<String, Exchange<Integer>>                     simpleExecuteExchange;
+  private final Function<String, Exchange<Long>>                        simpleExecuteExchange;
   private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
-  private final BiFunction<String, List<Value<?>>, Exchange<Integer>>   extendedExecuteExchange;
+  private final BiFunction<String, List<Value<?>>, Exchange<Long>>      extendedExecuteExchange;
 
   public Connection(final Channel channel,
       final Supplier<? extends Future<? extends Channel>> channelSupplier,
       final Optional<BackendKeyData> backendKeyData,
       final Function<String, Exchange<List<Row>>> simpleQueryExchange,
-      final Function<String, Exchange<Integer>> simpleExecuteExchange,
+      final Function<String, Exchange<Long>> simpleExecuteExchange,
       final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange,
-      final BiFunction<String, List<Value<?>>, Exchange<Integer>> extendedExecuteExchange) {
+      final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange) {
     this.channel = channel;
     this.channelSupplier = channelSupplier;
     this.backendKeyData = backendKeyData;
@@ -57,7 +57,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   }
 
   @Override
-  public final Future<Integer> execute(final String command) {
+  public final Future<Long> execute(final String command) {
     return run(simpleExecuteExchange.apply(command));
   }
 
@@ -67,7 +67,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   }
 
   @Override
-  public final Future<Integer> execute(final PreparedStatement command) {
+  public final Future<Long> execute(final PreparedStatement command) {
     return run(extendedExecuteExchange.apply(command.query(), command.params()));
   }
 

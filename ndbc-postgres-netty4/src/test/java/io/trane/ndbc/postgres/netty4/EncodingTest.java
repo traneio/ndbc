@@ -24,18 +24,18 @@ public class EncodingTest extends TestEnv {
 
   @Test
   public void bigDecimal() throws CheckedFutureException {
-    test("numeric", (ps, v) -> ps.bindBigDecimal(v), Value::getBigDecimal,
+    test("numeric", (ps, v) -> ps.setBigDecimal(v), Value::getBigDecimal,
         r -> BigDecimal.valueOf(r.nextLong(), r.nextInt(100)));
   }
 
   @Test
   public void _boolean() throws CheckedFutureException {
-    test("bool", (ps, v) -> ps.bindBoolean(v), Value::getBoolean, Random::nextBoolean);
+    test("bool", (ps, v) -> ps.setBoolean(v), Value::getBoolean, Random::nextBoolean);
   }
 
   @Test
   public void byteArray() throws CheckedFutureException {
-    test("bytea", (ps, v) -> ps.bindByteArray(v), Value::getByteArray, r -> {
+    test("bytea", (ps, v) -> ps.setByteArray(v), Value::getByteArray, r -> {
       final byte[] bytes = new byte[r.nextInt(5)];
       r.nextBytes(bytes);
       return bytes;
@@ -44,56 +44,56 @@ public class EncodingTest extends TestEnv {
 
   @Test
   public void double_() throws CheckedFutureException {
-    test("float8", (ps, v) -> ps.bindDouble(v), Value::getDouble, Random::nextDouble);
+    test("float8", (ps, v) -> ps.setDouble(v), Value::getDouble, Random::nextDouble);
   }
 
   @Test
   public void float_() throws CheckedFutureException {
-    test("float4", (ps, v) -> ps.bindFloat(v), Value::getFloat, Random::nextFloat);
+    test("float4", (ps, v) -> ps.setFloat(v), Value::getFloat, Random::nextFloat);
   }
 
   @Test
   public void integer_() throws CheckedFutureException {
-    test("int4", (ps, v) -> ps.bindInteger(v), Value::getInteger, Random::nextInt);
+    test("int4", (ps, v) -> ps.setInteger(v), Value::getInteger, Random::nextInt);
   }
 
   @Test
   public void localDate() throws CheckedFutureException {
-    test("date", (ps, v) -> ps.bindLocalDate(v), Value::getLocalDate,
+    test("date", (ps, v) -> ps.setLocalDate(v), Value::getLocalDate,
         r -> randomLocalDateTime(r).toLocalDate());
   }
 
   @Test
   public void localDateTime() throws CheckedFutureException {
-    test("timestamp", (ps, v) -> ps.bindLocalDateTime(v), Value::getLocalDateTime,
+    test("timestamp", (ps, v) -> ps.setLocalDateTime(v), Value::getLocalDateTime,
         r -> randomLocalDateTime(r));
   }
 
   @Test
   public void localTime() throws CheckedFutureException {
-    test("time", (ps, v) -> ps.bindLocalTime(v), Value::getLocalTime,
+    test("time", (ps, v) -> ps.setLocalTime(v), Value::getLocalTime,
         r -> randomLocalDateTime(r).toLocalTime());
   }
 
   @Test
   public void long_() throws CheckedFutureException {
-    test("int8", (ps, v) -> ps.bindLong(v), Value::getLong, Random::nextLong);
+    test("int8", (ps, v) -> ps.setLong(v), Value::getLong, Random::nextLong);
   }
 
   @Test
   public void offsetTime() throws CheckedFutureException {
-    test("timetz", (ps, v) -> ps.bindOffsetTime(v), Value::getOffsetTime,
+    test("timetz", (ps, v) -> ps.setOffsetTime(v), Value::getOffsetTime,
         r -> randomLocalDateTime(r).toLocalTime().atOffset(randomZoneOffset(r)));
   }
 
   @Test
   public void short_() throws CheckedFutureException {
-    test("int2", (ps, v) -> ps.bindShort(v), Value::getShort, r -> (short) r.nextInt());
+    test("int2", (ps, v) -> ps.setShort(v), Value::getShort, r -> (short) r.nextInt());
   }
 
   private void testString(final String columnType, final int maxLength)
       throws CheckedFutureException {
-    test(columnType, (ps, v) -> ps.bindString(v), Value::getString, r -> radomString(r, maxLength));
+    test(columnType, (ps, v) -> ps.setString(v), Value::getString, r -> radomString(r, maxLength));
   }
 
   @Test
@@ -105,13 +105,13 @@ public class EncodingTest extends TestEnv {
 
   @Test
   public void stringJson() throws CheckedFutureException {
-    this.<String>test("json", (ps, v) -> ps.bindString(v), Value::getString,
+    this.<String>test("json", (ps, v) -> ps.setString(v), Value::getString,
         r -> "{ \"test\": " + r.nextInt(100) + " }");
   }
 
   @Test
   public void stringXml() throws CheckedFutureException {
-    this.<String>test("xml", (ps, v) -> ps.bindString(v), Value::getString,
+    this.<String>test("xml", (ps, v) -> ps.setString(v), Value::getString,
         r -> "<a/>");
   }
 
@@ -138,21 +138,21 @@ public class EncodingTest extends TestEnv {
   }
 
   private <T> void test(final String columnType,
-      final BiFunction<PreparedStatement, T, PreparedStatement> bind,
+      final BiFunction<PreparedStatement, T, PreparedStatement> set,
       final Function<Value<?>, T> get, final Function<Random, T> gen)
       throws CheckedFutureException {
-    test(columnType, bind, get, gen, (a, b) -> assertEquals(a, b));
+    test(columnType, set, get, gen, (a, b) -> assertEquals(a, b));
   }
 
   private <T> void test(final String columnType,
-      final BiFunction<PreparedStatement, T, PreparedStatement> bind,
+      final BiFunction<PreparedStatement, T, PreparedStatement> set,
       final Function<Value<?>, T> get, final Function<Random, T> gen, final BiConsumer<T, T> verify)
       throws CheckedFutureException {
-    test(columnType, bind, get, gen, verify, 20);
+    test(columnType, set, get, gen, verify, 20);
   }
 
   private <T> void test(final String columnType,
-      final BiFunction<PreparedStatement, T, PreparedStatement> bind,
+      final BiFunction<PreparedStatement, T, PreparedStatement> set,
       final Function<Value<?>, T> get, final Function<Random, T> gen, final BiConsumer<T, T> verify,
       final int iterations)
       throws CheckedFutureException {
@@ -166,7 +166,7 @@ public class EncodingTest extends TestEnv {
       try {
         ds.execute("DELETE FROM " + table).get(timeout);
         ds.execute(
-            bind.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected))
+            set.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected))
             .get(timeout);
         final T actual = get.apply(query(PreparedStatement.apply("SELECT c FROM " + table)));
         verify.accept(expected, actual);

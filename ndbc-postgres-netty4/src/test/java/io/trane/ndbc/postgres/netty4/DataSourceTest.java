@@ -55,7 +55,7 @@ public class DataSourceTest extends TestEnv {
   @Test
   public void extendedQueryWithParams() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM " + table + " WHERE s = ?")
-        .bindString("s");
+        .setString("s");
 
     final Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
@@ -125,7 +125,7 @@ public class DataSourceTest extends TestEnv {
   @Test
   public void extendedExecuteInsertWithParam() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)")
-        .bindString("u");
+        .setString("u");
 
     ds.execute(ps).get(timeout);
 
@@ -138,7 +138,7 @@ public class DataSourceTest extends TestEnv {
   @Test
   public void extendedExecuteUpdateWithParam() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = ?")
-        .bindString("u");
+        .setString("u");
 
     ds.execute(ps).get(timeout);
 
@@ -150,7 +150,7 @@ public class DataSourceTest extends TestEnv {
   @Test
   public void extendedExecuteDeleteWithParam() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?")
-        .bindString("s");
+        .setString("s");
 
     ds.execute(ps).get(timeout);
 
@@ -161,7 +161,7 @@ public class DataSourceTest extends TestEnv {
   @Test
   public void transactionSuccess() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?")
-        .bindString("s");
+        .setString("s");
 
     ds.transactional(() -> ds.execute(ps)).get(timeout);
 
@@ -172,7 +172,7 @@ public class DataSourceTest extends TestEnv {
   @Test
   public void transactionFailure() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?")
-        .bindString("s");
+        .setString("s");
 
     ds.transactional(() -> ds.execute(ps).map(v -> {
       throw new IllegalStateException();
@@ -186,7 +186,7 @@ public class DataSourceTest extends TestEnv {
   public void cancellation() throws CheckedFutureException {
     final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     try {
-      final Future<Integer> f = ds.execute("SELECT pg_sleep(999)");
+      final Future<Long> f = ds.execute("SELECT pg_sleep(999)");
       f.raise(new RuntimeException());
       f.get(timeout);
     } finally {

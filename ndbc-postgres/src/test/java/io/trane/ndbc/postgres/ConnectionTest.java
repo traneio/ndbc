@@ -49,11 +49,11 @@ public class ConnectionTest {
 
   @Test
   public void execute() throws CheckedFutureException {
-    final Integer result = 33;
+    final Long result = 33L;
     final String command = "command";
     final Supplier<Connection> sup = new ConnectionSupplier() {
       @Override
-      Function<String, Exchange<Integer>> simpleExecuteExchange() {
+      Function<String, Exchange<Long>> simpleExecuteExchange() {
         return q -> {
           assertEquals(command, q);
           return Exchange.value(result);
@@ -67,14 +67,14 @@ public class ConnectionTest {
   public void queryPreparedStatement() throws CheckedFutureException {
     final List<Row> result = new ArrayList<>();
     final String query = "query";
-    final Integer bind = 223;
-    final PreparedStatement ps = PreparedStatement.apply(query).bindInteger(bind);
+    final Integer set = 223;
+    final PreparedStatement ps = PreparedStatement.apply(query).setInteger(set);
     final Supplier<Connection> sup = new ConnectionSupplier() {
       @Override
       BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange() {
         return (q, b) -> {
           assertEquals(query, q);
-          assertEquals(Arrays.asList(new IntegerValue(bind)), b);
+          assertEquals(Arrays.asList(new IntegerValue(set)), b);
           return Exchange.value(result);
         };
       }
@@ -84,16 +84,16 @@ public class ConnectionTest {
 
   @Test
   public void executePreparedStatement() throws CheckedFutureException {
-    final Integer result = 413;
+    final Long result = 413L;
     final String command = "command";
-    final Integer bind = 223;
-    final PreparedStatement ps = PreparedStatement.apply(command).bindInteger(bind);
+    final Integer set = 223;
+    final PreparedStatement ps = PreparedStatement.apply(command).setInteger(set);
     final Supplier<Connection> sup = new ConnectionSupplier() {
       @Override
-      BiFunction<String, List<Value<?>>, Exchange<Integer>> extendedExecuteExchange() {
+      BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange() {
         return (c, b) -> {
           assertEquals(command, c);
-          assertEquals(Arrays.asList(new IntegerValue(bind)), b);
+          assertEquals(Arrays.asList(new IntegerValue(set)), b);
           return Exchange.value(result);
         };
       }
@@ -186,7 +186,7 @@ public class ConnectionTest {
       return v -> notExpected();
     }
 
-    Function<String, Exchange<Integer>> simpleExecuteExchange() {
+    Function<String, Exchange<Long>> simpleExecuteExchange() {
       return v -> notExpected();
     }
 
@@ -194,7 +194,7 @@ public class ConnectionTest {
       return (a, b) -> notExpected();
     }
 
-    BiFunction<String, List<Value<?>>, Exchange<Integer>> extendedExecuteExchange() {
+    BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange() {
       return (a, b) -> notExpected();
     }
 

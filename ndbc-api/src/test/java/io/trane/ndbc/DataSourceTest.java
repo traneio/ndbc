@@ -89,12 +89,12 @@ public class DataSourceTest {
     }
 
     @Override
-    public Future<Integer> execute(final PreparedStatement statement) {
+    public Future<Long> execute(final PreparedStatement statement) {
       return null;
     }
 
     @Override
-    public Future<Integer> execute(final String statement) {
+    public Future<Long> execute(final String statement) {
       return null;
     }
 

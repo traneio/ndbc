@@ -38,196 +38,196 @@ public class PreparedStatementTest {
   }
 
   @Test
-  public void bindBigDecimal() {
+  public void setBigDecimal() {
     final BigDecimal value = new BigDecimal(1.2D);
-    final Iterator<Value<?>> it = ps.bindBigDecimal(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setBigDecimal(value).params().iterator();
     assertEquals(new BigDecimalValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindBigDecimalNull() {
-    final Iterator<Value<?>> it = ps.bindBigDecimal(null).params().iterator();
+  public void setBigDecimalNull() {
+    final Iterator<Value<?>> it = ps.setBigDecimal(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindBoolean() {
+  public void setBoolean() {
     final Boolean value = true;
-    final Iterator<Value<?>> it = ps.bindBoolean(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setBoolean(value).params().iterator();
     assertEquals(new BooleanValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindBigBoolean() {
-    final Iterator<Value<?>> it = ps.bindBoolean(null).params().iterator();
+  public void setBigBoolean() {
+    final Iterator<Value<?>> it = ps.setBoolean(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindByteArray() {
+  public void setByteArray() {
     final byte[] value = new byte[10];
-    final Iterator<Value<?>> it = ps.bindByteArray(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setByteArray(value).params().iterator();
     assertEquals(new ByteArrayValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindByteArrayNull() {
-    final Iterator<Value<?>> it = ps.bindByteArray(null).params().iterator();
+  public void setByteArrayNull() {
+    final Iterator<Value<?>> it = ps.setByteArray(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindDouble() {
+  public void setDouble() {
     final Double value = 1.2D;
-    final Iterator<Value<?>> it = ps.bindDouble(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setDouble(value).params().iterator();
     assertEquals(new DoubleValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindDoubleNull() {
-    final Iterator<Value<?>> it = ps.bindDouble(null).params().iterator();
+  public void setDoubleNull() {
+    final Iterator<Value<?>> it = ps.setDouble(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindFloat() {
+  public void setFloat() {
     final Float value = 1.2F;
-    final Iterator<Value<?>> it = ps.bindFloat(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setFloat(value).params().iterator();
     assertEquals(new FloatValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindFloatNull() {
-    final Iterator<Value<?>> it = ps.bindFloat(null).params().iterator();
+  public void setFloatNull() {
+    final Iterator<Value<?>> it = ps.setFloat(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindInteger() {
+  public void setInteger() {
     final Integer value = 33;
-    final Iterator<Value<?>> it = ps.bindInteger(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setInteger(value).params().iterator();
     assertEquals(new IntegerValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindIntegerNull() {
-    final Iterator<Value<?>> it = ps.bindInteger(null).params().iterator();
+  public void setIntegerNull() {
+    final Iterator<Value<?>> it = ps.setInteger(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindLocalDate() {
+  public void setLocalDate() {
     final LocalDate value = LocalDate.now();
-    final Iterator<Value<?>> it = ps.bindLocalDate(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setLocalDate(value).params().iterator();
     assertEquals(new LocalDateValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindLocalDateNull() {
-    final Iterator<Value<?>> it = ps.bindLocalDate(null).params().iterator();
+  public void setLocalDateNull() {
+    final Iterator<Value<?>> it = ps.setLocalDate(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindLocalDateTime() {
+  public void setLocalDateTime() {
     final LocalDateTime value = LocalDateTime.now();
-    final Iterator<Value<?>> it = ps.bindLocalDateTime(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setLocalDateTime(value).params().iterator();
     assertEquals(new LocalDateTimeValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindLocalDateTimeNull() {
-    final Iterator<Value<?>> it = ps.bindLocalDateTime(null).params().iterator();
+  public void setLocalDateTimeNull() {
+    final Iterator<Value<?>> it = ps.setLocalDateTime(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindLocalTime() {
+  public void setLocalTime() {
     final LocalTime value = LocalTime.now();
-    final Iterator<Value<?>> it = ps.bindLocalTime(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setLocalTime(value).params().iterator();
     assertEquals(new LocalTimeValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindLocalTimeNull() {
-    final Iterator<Value<?>> it = ps.bindLocalTime(null).params().iterator();
+  public void setLocalTimeNull() {
+    final Iterator<Value<?>> it = ps.setLocalTime(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindLong() {
+  public void setLong() {
     final Long value = 212L;
-    final Iterator<Value<?>> it = ps.bindLong(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setLong(value).params().iterator();
     assertEquals(new LongValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindLongNull() {
-    final Iterator<Value<?>> it = ps.bindLong(null).params().iterator();
+  public void setLongNull() {
+    final Iterator<Value<?>> it = ps.setLong(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindOffsetTime() {
+  public void setOffsetTime() {
     final OffsetTime value = OffsetTime.now();
-    final Iterator<Value<?>> it = ps.bindOffsetTime(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setOffsetTime(value).params().iterator();
     assertEquals(new OffsetTimeValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindOffsetTimeNull() {
-    final Iterator<Value<?>> it = ps.bindOffsetTime(null).params().iterator();
+  public void setOffsetTimeNull() {
+    final Iterator<Value<?>> it = ps.setOffsetTime(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindShort() {
+  public void setShort() {
     final Short value = 31;
-    final Iterator<Value<?>> it = ps.bindShort(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setShort(value).params().iterator();
     assertEquals(new ShortValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindShortNull() {
-    final Iterator<Value<?>> it = ps.bindShort(null).params().iterator();
+  public void setShortNull() {
+    final Iterator<Value<?>> it = ps.setShort(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindString() {
+  public void setString() {
     final String value = "s";
-    final Iterator<Value<?>> it = ps.bindString(value).params().iterator();
+    final Iterator<Value<?>> it = ps.setString(value).params().iterator();
     assertEquals(new StringValue(value), it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindStringNull() {
-    final Iterator<Value<?>> it = ps.bindString(null).params().iterator();
+  public void setStringNull() {
+    final Iterator<Value<?>> it = ps.setString(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }
@@ -239,9 +239,9 @@ public class PreparedStatementTest {
     final Float v3 = 2.3F;
 
     PreparedStatement ps = this.ps;
-    ps = ps.bindInteger(v1);
-    ps = ps.bindShort(v2);
-    ps = ps.bindFloat(v3);
+    ps = ps.setInteger(v1);
+    ps = ps.setShort(v2);
+    ps = ps.setFloat(v3);
 
     final Iterator<Value<?>> it = ps.params().iterator();
     assertEquals(new IntegerValue(v1), it.next());
@@ -251,16 +251,16 @@ public class PreparedStatementTest {
   }
 
   @Test
-  public void bind() {
+  public void set() {
     final IntegerValue value = new IntegerValue(11);
-    final Iterator<Value<?>> it = ps.bind(value).params().iterator();
+    final Iterator<Value<?>> it = ps.set(value).params().iterator();
     assertEquals(value, it.next());
     assertFalse(it.hasNext());
   }
 
   @Test
-  public void bindNull() {
-    final Iterator<Value<?>> it = ps.bindNull().params().iterator();
+  public void setNull() {
+    final Iterator<Value<?>> it = ps.setNull().params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }

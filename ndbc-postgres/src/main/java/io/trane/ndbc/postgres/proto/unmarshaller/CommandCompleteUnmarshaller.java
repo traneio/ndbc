@@ -1,6 +1,7 @@
 package io.trane.ndbc.postgres.proto.unmarshaller;
 
 import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
 
 import io.trane.ndbc.postgres.proto.Message.CommandComplete;
 import io.trane.ndbc.postgres.proto.Message.CommandComplete.CopyComplete;
@@ -20,21 +21,21 @@ final class CommandCompleteUnmarshaller {
     final String[] words = string.split(" ");
     switch (words[0]) {
       case "INSERT":
-        return new InsertComplete(parseInt(words[1]), parseInt(words[2]));
+        return new InsertComplete(parseLong(words[1]), parseInt(words[2]));
       case "DELETE":
-        return new DeleteComplete(parseInt(words[1]));
+        return new DeleteComplete(parseLong(words[1]));
       case "UPDATE":
-        return new UpdateComplete(parseInt(words[1]));
+        return new UpdateComplete(parseLong(words[1]));
       case "SELECT":
-        return new SelectorOrCreateTableAsComplete(parseInt(words[1]));
+        return new SelectorOrCreateTableAsComplete(parseLong(words[1]));
       case "MOVE":
-        return new MoveComplete(parseInt(words[1]));
+        return new MoveComplete(parseLong(words[1]));
       case "FETCH":
-        return new FetchComplete(parseInt(words[1]));
+        return new FetchComplete(parseLong(words[1]));
       case "COPY":
-        return new CopyComplete(parseInt(words[1]));
+        return new CopyComplete(parseLong(words[1]));
       case "CREATE TABLE":
-        return new SelectorOrCreateTableAsComplete(parseInt(words[1]));
+        return new SelectorOrCreateTableAsComplete(parseLong(words[1]));
       default:
         return new UnknownCommandComplete(0, string);
     }
