@@ -50,55 +50,107 @@ public final class PreparedStatement {
   }
 
   public final PreparedStatement setBoolean(final Boolean value) {
-    return set(value == null ? Value.NULL : new BooleanValue(value));
+    return setBoolean(params.length, value);
+  }
+
+  public final PreparedStatement setBoolean(final int index, final Boolean value) {
+    return set(index, value == null ? Value.NULL : new BooleanValue(value));
   }
 
   public final PreparedStatement setByteArray(final byte[] value) {
-    return set(value == null ? Value.NULL : new ByteArrayValue(value));
+    return setByteArray(params.length, value);
+  }
+
+  public final PreparedStatement setByteArray(final int index, final byte[] value) {
+    return set(index, value == null ? Value.NULL : new ByteArrayValue(value));
   }
 
   public final PreparedStatement setDouble(final Double value) {
-    return set(value == null ? Value.NULL : new DoubleValue(value));
+    return setDouble(params.length, value);
+  }
+
+  public final PreparedStatement setDouble(final int index, final Double value) {
+    return set(index, value == null ? Value.NULL : new DoubleValue(value));
   }
 
   public final PreparedStatement setFloat(final Float value) {
-    return set(value == null ? Value.NULL : new FloatValue(value));
+    return setFloat(params.length, value);
+  }
+
+  public final PreparedStatement setFloat(final int index, final Float value) {
+    return set(index, value == null ? Value.NULL : new FloatValue(value));
   }
 
   public final PreparedStatement setInteger(final Integer value) {
-    return set(value == null ? Value.NULL : new IntegerValue(value));
+    return setInteger(params.length, value);
+  }
+
+  public final PreparedStatement setInteger(final int index, final Integer value) {
+    return set(index, value == null ? Value.NULL : new IntegerValue(value));
   }
 
   public final PreparedStatement setLocalDate(final LocalDate value) {
-    return set(value == null ? Value.NULL : new LocalDateValue(value));
+    return setLocalDate(params.length, value);
+  }
+
+  public final PreparedStatement setLocalDate(final int index, final LocalDate value) {
+    return set(index, value == null ? Value.NULL : new LocalDateValue(value));
   }
 
   public final PreparedStatement setLocalDateTime(final LocalDateTime value) {
-    return set(value == null ? Value.NULL : new LocalDateTimeValue(value));
+    return setLocalDateTime(params.length, value);
+  }
+
+  public final PreparedStatement setLocalDateTime(final int index, final LocalDateTime value) {
+    return set(index, value == null ? Value.NULL : new LocalDateTimeValue(value));
   }
 
   public final PreparedStatement setLocalTime(final LocalTime value) {
-    return set(value == null ? Value.NULL : new LocalTimeValue(value));
+    return setLocalTime(params.length, value);
+  }
+
+  public final PreparedStatement setLocalTime(final int index, final LocalTime value) {
+    return set(index, value == null ? Value.NULL : new LocalTimeValue(value));
   }
 
   public final PreparedStatement setLong(final Long value) {
-    return set(value == null ? Value.NULL : new LongValue(value));
+    return setLong(params.length, value);
+  }
+
+  public final PreparedStatement setLong(final int index, final Long value) {
+    return set(index, value == null ? Value.NULL : new LongValue(value));
   }
 
   public final PreparedStatement setOffsetTime(final OffsetTime value) {
+    return setOffsetTime(params.length, value);
+  }
+
+  public final PreparedStatement setOffsetTime(final int index, final OffsetTime value) {
     return set(value == null ? Value.NULL : new OffsetTimeValue(value));
   }
 
   public final PreparedStatement setShort(final Short value) {
-    return set(value == null ? Value.NULL : new ShortValue(value));
+    return setShort(params.length, value);
+  }
+
+  public final PreparedStatement setShort(final int index, final Short value) {
+    return set(index, value == null ? Value.NULL : new ShortValue(value));
   }
 
   public final PreparedStatement setString(final String value) {
-    return set(value == null ? Value.NULL : new StringValue(value));
+    return setString(params.length, value);
+  }
+
+  public final PreparedStatement setString(final int index, final String value) {
+    return set(index, value == null ? Value.NULL : new StringValue(value));
   }
 
   public final PreparedStatement setNull() {
-    return set(Value.NULL);
+    return setNull(params.length);
+  }
+
+  public final PreparedStatement setNull(final int index) {
+    return set(index, Value.NULL);
   }
 
   public final PreparedStatement set(final Value<?> param) {
@@ -106,12 +158,15 @@ public final class PreparedStatement {
   }
 
   public final PreparedStatement set(final int index, final Value<?> param) {
+    if (index < 0)
+      throw new IllegalArgumentException("PreparedStatement binding index can't be negative");
     final Value<?>[] newParams;
-    if (index >= params.length)
+    if (index >= params.length) {
       newParams = Arrays.copyOf(params, index + 1);
-    else
+      Arrays.fill(newParams, params.length, index, Value.NULL);
+    } else
       newParams = Arrays.copyOf(params, params.length);
-    newParams[params.length] = param;
+    newParams[index] = param;
     return new PreparedStatement(query, newParams);
   }
 
