@@ -100,27 +100,22 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private AtomicReference<Future<?>> mutex = new AtomicReference<>();
   
   private final <T> Future<T> run(final Exchange<T> exchange) {
-    Promise<T> next = cancellablePromise();
+    Promise<T> next = Promise.create(this::handler);
     Future<?> previous = mutex.getAndSet(next);
-    if(previous == null) 
+    if (previous == null)
       next.become(exchange.run(channel));
-     else 
+    else
       previous.ensure(() -> next.become(exchange.run(channel)));
     return next;
   }
-  
-  private final <T> Promise<T> cancellablePromise() {
-    return backendKeyData
-        .map(data -> Promise.<T>create(p -> handler(p, data)))
-        .orElseGet(() -> Promise.apply());
-  }
 
-
-  private final <T> InterruptHandler handler(final Promise<T> p, final BackendKeyData data) {
-    return ex -> channelSupplier.get().flatMap(channel -> Exchange
-        .send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.CLOSE)
-        .run(channel))
-        .onFailure(e -> logger.warning("Can't cancel request. Reason: " + e))
-        .ensure(() -> p.setException(ex));
+  private final <T> InterruptHandler handler(final Promise<T> p) {
+    return ex -> 
+      backendKeyData.ifPresent(data -> 
+        channelSupplier.get().flatMap(channel -> Exchange
+            .send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.CLOSE)
+            .run(channel))
+            .onFailure(e -> logger.warning("Can't cancel request. Reason: " + e))
+            .ensure(() -> p.setException(ex)));
   }
 }
