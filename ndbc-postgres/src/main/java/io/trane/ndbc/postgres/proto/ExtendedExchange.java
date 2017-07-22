@@ -36,7 +36,7 @@ public final class ExtendedExchange {
                 .thenReceive(BindComplete.class)
                 .then(readResult)
                 .thenReceive(CloseComplete.class)
-                .thenReceive(ReadyForQuery.class);
+                .thenWaitFor(ReadyForQuery.class);
   }
 
   private final <T> Exchange<T> withParsing(final String query,

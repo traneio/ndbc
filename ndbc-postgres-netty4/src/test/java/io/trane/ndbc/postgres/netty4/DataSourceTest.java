@@ -170,13 +170,24 @@ public class DataSourceTest extends TestEnv {
   }
 
   @Test
-  public void transactionFailure() throws CheckedFutureException {
+  public void transactionLocalFailure() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?")
         .setString("s");
 
     ds.transactional(() -> ds.execute(ps).map(v -> {
       throw new IllegalStateException();
     })).join(timeout);
+
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertTrue(rows.hasNext());
+  }
+  
+  @Test
+  public void transactionDBFailure() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM INVALID_TABLE WHERE s = ?")
+        .setString("s");
+
+    ds.transactional(() -> ds.execute(ps)).join(timeout);
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertTrue(rows.hasNext());

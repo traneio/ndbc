@@ -20,6 +20,6 @@ public final class SimpleQueryExchange implements Function<String, Exchange<List
   @Override
   public final Exchange<List<Row>> apply(final String query) {
     return Exchange.send(new Query(query)).then(queryResultExchange.apply())
-        .thenReceive(ReadyForQuery.class);
+        .thenWaitFor(ReadyForQuery.class);
   }
 }

@@ -2,6 +2,7 @@ package io.trane.ndbc.postgres;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -96,17 +97,24 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
     });
   }
 
+  private AtomicReference<Future<?>> mutex = new AtomicReference<>();
+  
   private final <T> Future<T> run(final Exchange<T> exchange) {
-    return cancellable(exchange.run(channel));
+    Promise<T> next = cancellablePromise();
+    Future<?> previous = mutex.getAndSet(next);
+    if(previous == null) 
+      next.become(exchange.run(channel));
+     else 
+      previous.ensure(() -> next.become(exchange.run(channel)));
+    return next;
+  }
+  
+  private final <T> Promise<T> cancellablePromise() {
+    return backendKeyData
+        .map(data -> Promise.<T>create(p -> handler(p, data)))
+        .orElseGet(() -> Promise.apply());
   }
 
-  private final <T> Future<T> cancellable(final Future<T> fut) {
-    return backendKeyData.map(data -> {
-      final Promise<T> p = Promise.create(v -> handler(v, data));
-      p.become(fut);
-      return (Future<T>) p;
-    }).orElse(fut);
-  }
 
   private final <T> InterruptHandler handler(final Promise<T> p, final BackendKeyData data) {
     return ex -> channelSupplier.get().flatMap(channel -> Exchange
