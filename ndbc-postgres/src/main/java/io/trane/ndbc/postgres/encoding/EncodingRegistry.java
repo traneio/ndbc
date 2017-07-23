@@ -45,11 +45,16 @@ public final class EncodingRegistry {
     else
       throw new UnsupportedOperationException("Can't decode value of type " + oid);
   }
+  
+  public final Integer oid(Value<?> value) {
+    return byValueClass.get(value.getClass()).oid();
+  }
 
   private void registerEncodings(final Set<Encoding<?>> encodings) {
     for (final Encoding<?> enc : encodings) {
       byValueClass.put(enc.valueClass(), enc);
-      for (final Integer oid : enc.oids())
+      byOid.put(enc.oid(), enc);
+      for (final Integer oid : enc.additionalOids())
         byOid.put(oid, enc);
     }
   }

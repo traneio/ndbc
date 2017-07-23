@@ -72,7 +72,7 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
     return new Marshaller(new BindMarshaller(encoding), new CancelRequestMarshaller(),
         new CloseMarshaller(),
         new DescribeMarshaller(), new ExecuteMarshaller(), new FlushMarshaller(),
-        new ParseMarshaller(),
+        new ParseMarshaller(encoding),
         new QueryMarshaller(), new PasswordMessageMarshaller(), new StartupMessageMarshaller(),
         new SyncMarshaller(),
         new TerminateMarshaller(), new SSLRequestMarshaller());

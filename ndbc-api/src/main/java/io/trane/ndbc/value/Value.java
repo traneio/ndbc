@@ -86,7 +86,7 @@ public abstract class Value<T> {
   }
 
   private final <U> U cantRead(final String type) {
-    throw new UnsupportedOperationException("Can't read `" + get() + "` as `" + type + "`");
+    throw new UnsupportedOperationException("Can't read `" + this + "` as `" + type + "`");
   }
 
   @Override

@@ -24,11 +24,10 @@ public final class ExtendedExchange {
   private final short[]      binary      = { Format.BINARY.getCode() };
   private final Sync         sync        = new Sync();
   private final Set<Integer> prepared    = new HashSet<>();
-  private final int[]        emptyParams = new int[0];
 
   public final <T> Exchange<T> apply(final String query, final List<Value<?>> params,
       final Exchange<T> readResult) {
-    return withParsing(query,
+    return withParsing(query, params,
         id -> Exchange.send(new Bind(id, id, binary, params, binary))
             .thenSend(new Describe.DescribePortal(id)).thenSend(new Execute(id, 0))
             .thenSend(new Close.ClosePortal(id))
@@ -39,17 +38,24 @@ public final class ExtendedExchange {
                 .thenWaitFor(ReadyForQuery.class);
   }
 
-  private final <T> Exchange<T> withParsing(final String query,
+  private final <T> Exchange<T> withParsing(final String query, final List<Value<?>> params,
       final Function<String, Exchange<T>> f) {
-    final int id = query.hashCode();
+    final int id = id(query, params);
     final String idString = Integer.toString(id);
     if (prepared.contains(id))
       return f.apply(idString);
     else
-      return Exchange.send(new Parse(Integer.toString(id), positional(query), emptyParams))
+      return Exchange.send(new Parse(Integer.toString(id), positional(query), params))
           .then(f.apply(idString))
           .thenReceive(ParseComplete.class)
           .onSuccess(ign -> Exchange.value(prepared.add(id)));
+  }
+  
+  private final int id(final String query, final List<Value<?>> params) {
+    int id = query.hashCode();
+    for(Value<?> v : params) 
+      id = 31 * id + v.getClass().hashCode();
+    return id;
   }
 
   // TODO handle quotes, comments, etc.

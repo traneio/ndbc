@@ -1758,15 +1758,15 @@ public interface Message {
      * Specifies the object ID of the parameter data type. Placing a zero here
      * is equivalent to leaving the type unspecified.
      */
-    public final int[]  parameterTypes;
+    public final List<Value<?>> params;
 
     /** The query string to be parsed. */
     public final String query;
 
-    public Parse(final String destinationName, final String query, final int[] parameterTypes) {
+    public Parse(final String destinationName, final String query, final List<Value<?>> params) {
       this.destinationName = destinationName;
       this.query = query;
-      this.parameterTypes = parameterTypes;
+      this.params = params;
     }
 
     @Override
@@ -1774,7 +1774,7 @@ public interface Message {
       final int prime = 31;
       int result = 1;
       result = prime * result + (destinationName == null ? 0 : destinationName.hashCode());
-      result = prime * result + Arrays.hashCode(parameterTypes);
+      result = prime * result + params.hashCode();
       result = prime * result + (query == null ? 0 : query.hashCode());
       return result;
     }
@@ -1793,7 +1793,7 @@ public interface Message {
           return false;
       } else if (!destinationName.equals(other.destinationName))
         return false;
-      if (!Arrays.equals(parameterTypes, other.parameterTypes))
+      if (params != other.params)
         return false;
       if (query == null) {
         if (other.query != null)
@@ -1805,9 +1805,8 @@ public interface Message {
 
     @Override
     public String toString() {
-      return "Parse [destinationName=" + destinationName + ", parameterTypes="
-          + Arrays.toString(parameterTypes)
-          + ", query=" + query + "]";
+      return "Parse [destinationName=" + destinationName + ", params="
+          + params + ", query=" + query + "]";
     }
   }
 

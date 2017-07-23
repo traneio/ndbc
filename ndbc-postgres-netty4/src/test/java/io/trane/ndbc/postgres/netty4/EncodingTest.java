@@ -103,18 +103,6 @@ public class EncodingTest extends TestEnv {
     testString("varchar", 100);
   }
 
-  @Test
-  public void stringJson() throws CheckedFutureException {
-    this.<String>test("json", (ps, v) -> ps.setString(v), Value::getString,
-        r -> "{ \"test\": " + r.nextInt(100) + " }");
-  }
-
-  @Test
-  public void stringXml() throws CheckedFutureException {
-    this.<String>test("xml", (ps, v) -> ps.setString(v), Value::getString,
-        r -> "<a/>");
-  }
-
   private LocalDateTime randomLocalDateTime(final Random r) {
     return LocalDateTime.of(r.nextInt(5000 - 1971) + 1971, r.nextInt(12) + 1, r.nextInt(28) + 1,
         r.nextInt(24),

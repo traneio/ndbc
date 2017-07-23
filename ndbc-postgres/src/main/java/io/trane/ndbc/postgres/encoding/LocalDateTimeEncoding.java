@@ -5,11 +5,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoField;
-import java.util.Set;
 
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
-import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.LocalDateTimeValue;
 
 final class LocalDateTimeEncoding extends Encoding<LocalDateTimeValue> {
@@ -17,8 +15,8 @@ final class LocalDateTimeEncoding extends Encoding<LocalDateTimeValue> {
   private static final long POSTGRES_EPOCH_MICROS = 946684800000000L;
 
   @Override
-  public final Set<Integer> oids() {
-    return Collections.toImmutableSet(Oid.TIMESTAMP);
+  public final Integer oid() {
+    return Oid.TIMESTAMP;
   }
 
   @Override

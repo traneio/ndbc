@@ -1,17 +1,14 @@
 package io.trane.ndbc.postgres.encoding;
 
-import java.util.Set;
-
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
-import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.FloatValue;
 
 final class FloatEncoding extends Encoding<FloatValue> {
 
   @Override
-  public final Set<Integer> oids() {
-    return Collections.toImmutableSet(Oid.FLOAT4);
+  public final Integer oid() {
+    return Oid.FLOAT4;
   }
 
   @Override

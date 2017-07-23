@@ -10,9 +10,13 @@ import io.trane.ndbc.value.StringValue;
 final class StringEncoding extends Encoding<StringValue> {
 
   @Override
-  public final Set<Integer> oids() {
-    return Collections.toImmutableSet(Oid.TEXT, Oid.NAME, Oid.VARCHAR, Oid.XML, Oid.JSON,
-        Oid.BPCHAR);
+  public Integer oid() {
+    return Oid.TEXT;
+  }
+  
+  @Override
+  public final Set<Integer> additionalOids() {
+    return Collections.toImmutableSet(Oid.NAME, Oid.VARCHAR, Oid.BPCHAR);
   }
 
   @Override

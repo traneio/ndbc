@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
 import java.util.Optional;
-import java.util.Set;
 
 import org.junit.Test;
 
@@ -62,7 +61,7 @@ public class EncodingRegistryTest {
     reg.encode(Format.BINARY, value, new TestBufferWriter(buf));
     buf.limit(buf.position());
     buf.rewind();
-    final Value<?> decoded = reg.decode(enc.oids().iterator().next(), Format.BINARY,
+    final Value<?> decoded = reg.decode(enc.oid(), Format.BINARY,
         new TestBufferReader(buf));
     assertEquals(value, decoded);
   }
@@ -81,8 +80,8 @@ public class EncodingRegistryTest {
   class TestValueEncoding extends Encoding<TestValue> {
 
     @Override
-    public Set<Integer> oids() {
-      return Collections.toImmutableSet(9999);
+    public Integer oid() {
+      return 9999;
     }
 
     @Override

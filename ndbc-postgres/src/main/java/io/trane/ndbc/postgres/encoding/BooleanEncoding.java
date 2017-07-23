@@ -1,10 +1,7 @@
 package io.trane.ndbc.postgres.encoding;
 
-import java.util.Set;
-
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
-import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.BooleanValue;
 
 final class BooleanEncoding extends Encoding<BooleanValue> {
@@ -13,8 +10,8 @@ final class BooleanEncoding extends Encoding<BooleanValue> {
   private static final BooleanValue FALSE = new BooleanValue(false);
 
   @Override
-  public final Set<Integer> oids() {
-    return Collections.toImmutableSet(Oid.BOOL);
+  public final Integer oid() {
+    return Oid.BOOL;
   }
 
   @Override

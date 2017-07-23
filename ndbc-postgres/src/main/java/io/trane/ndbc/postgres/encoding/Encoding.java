@@ -1,5 +1,7 @@
 package io.trane.ndbc.postgres.encoding;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import io.trane.ndbc.proto.BufferReader;
@@ -22,7 +24,13 @@ public abstract class Encoding<V extends Value<?>> {
       return decodeBinary(reader);
   }
 
-  public abstract Set<Integer> oids();
+  public abstract Integer oid();
+  
+  private static Set<Integer> emptyOids = Collections.unmodifiableSet(new HashSet<>());
+  
+  public Set<Integer> additionalOids() {
+    return emptyOids;
+  }
 
   public abstract Class<V> valueClass();
 

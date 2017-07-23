@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
 import java.util.Random;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -19,30 +18,30 @@ public abstract class EncodingTest<V extends Value<?>, E extends Encoding<V>> {
   private static final int          SAMPLES = 1000;
 
   private final E                   enc;
-  private final Set<Integer>        expectedOids;
+  private final Integer             expectedOid;
   private final Class<V>            expectedValueClass;
   private final Function<Random, V> generator;
   private final BiConsumer<V, V>    verify;
 
-  public EncodingTest(final E enc, final Set<Integer> expectedOids,
+  public EncodingTest(final E enc, final Integer expectedOid,
       final Class<V> expectedValueClass, final Function<Random, V> generator) {
-    this(enc, expectedOids, expectedValueClass, generator, Assert::assertEquals);
+    this(enc, expectedOid, expectedValueClass, generator, Assert::assertEquals);
   }
 
-  public EncodingTest(final E enc, final Set<Integer> expectedOids,
+  public EncodingTest(final E enc, final Integer expectedOid,
       final Class<V> expectedValueClass, final Function<Random, V> generator,
       final BiConsumer<V, V> verify) {
     super();
     this.enc = enc;
-    this.expectedOids = expectedOids;
+    this.expectedOid = expectedOid;
     this.expectedValueClass = expectedValueClass;
     this.generator = generator;
     this.verify = verify;
   }
 
   @Test
-  public void iods() {
-    assertEquals(expectedOids, enc.oids());
+  public void oi() {
+    assertEquals(expectedOid, enc.oid());
   }
 
   @Test

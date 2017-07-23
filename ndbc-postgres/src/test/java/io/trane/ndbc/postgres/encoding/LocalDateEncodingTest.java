@@ -1,7 +1,5 @@
 package io.trane.ndbc.postgres.encoding;
 
-import static io.trane.ndbc.util.Collections.toImmutableSet;
-
 import io.trane.ndbc.value.LocalDateValue;
 
 public class LocalDateEncodingTest
@@ -10,7 +8,7 @@ public class LocalDateEncodingTest
   public LocalDateEncodingTest() {
     super(
         new LocalDateEncoding(),
-        toImmutableSet(Oid.DATE),
+        Oid.DATE,
         LocalDateValue.class,
         r -> new LocalDateValue(randomLocalDateTime(r).toLocalDate()));
   }

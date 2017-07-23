@@ -5,11 +5,9 @@ import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.util.Set;
 
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
-import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.OffsetTimeValue;
 
 final class OffsetTimeEncoding extends Encoding<OffsetTimeValue> {
@@ -23,8 +21,8 @@ final class OffsetTimeEncoding extends Encoding<OffsetTimeValue> {
       .toFormatter();
 
   @Override
-  public final Set<Integer> oids() {
-    return Collections.toImmutableSet(Oid.TIMETZ);
+  public final Integer oid() {
+    return Oid.TIMETZ;
   }
 
   @Override

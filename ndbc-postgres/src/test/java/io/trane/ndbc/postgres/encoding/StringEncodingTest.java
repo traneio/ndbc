@@ -1,7 +1,5 @@
 package io.trane.ndbc.postgres.encoding;
 
-import static io.trane.ndbc.util.Collections.toImmutableSet;
-
 import io.trane.ndbc.value.StringValue;
 
 public class StringEncodingTest extends EncodingTest<StringValue, StringEncoding> {
@@ -9,7 +7,7 @@ public class StringEncodingTest extends EncodingTest<StringValue, StringEncoding
   public StringEncodingTest() {
     super(
         new StringEncoding(),
-        toImmutableSet(Oid.TEXT, Oid.NAME, Oid.VARCHAR, Oid.XML, Oid.JSON, Oid.BPCHAR),
+        Oid.TEXT,
         StringValue.class,
         r -> {
           final int length = r.nextInt(1000) + 1;

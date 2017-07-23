@@ -1,7 +1,5 @@
 package io.trane.ndbc.postgres.encoding;
 
-import static io.trane.ndbc.util.Collections.toImmutableSet;
-
 import org.junit.Assert;
 
 import io.trane.ndbc.value.ByteArrayValue;
@@ -11,7 +9,7 @@ public class ByteArrayEncodingTest extends EncodingTest<ByteArrayValue, ByteArra
   public ByteArrayEncodingTest() {
     super(
         new ByteArrayEncoding(),
-        toImmutableSet(Oid.BYTEA),
+        Oid.BYTEA,
         ByteArrayValue.class,
         r -> {
           final byte[] bytes = new byte[r.nextInt(5)];

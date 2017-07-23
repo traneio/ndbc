@@ -1,17 +1,14 @@
 package io.trane.ndbc.postgres.encoding;
 
-import java.util.Set;
-
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
-import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.LongValue;
 
 final class LongEncoding extends Encoding<LongValue> {
 
   @Override
-  public final Set<Integer> oids() {
-    return Collections.toImmutableSet(Oid.INT8);
+  public final Integer oid() {
+    return Oid.INT8;
   }
 
   @Override
