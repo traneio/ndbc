@@ -11,12 +11,12 @@ final class StringEncoding extends Encoding<StringValue> {
 
   @Override
   public Integer oid() {
-    return Oid.TEXT;
+    return Oid.VARCHAR;
   }
   
   @Override
   public final Set<Integer> additionalOids() {
-    return Collections.toImmutableSet(Oid.NAME, Oid.VARCHAR, Oid.BPCHAR);
+    return Collections.toImmutableSet(Oid.NAME, Oid.TEXT, Oid.BPCHAR);
   }
 
   @Override

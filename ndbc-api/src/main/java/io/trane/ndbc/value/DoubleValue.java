@@ -12,6 +12,11 @@ public final class DoubleValue extends Value<Double> {
   public final Double getDouble() {
     return get();
   }
+  
+  @Override
+  public final Float getFloat() {
+    return get().floatValue();
+  }
 
   @Override
   public final BigDecimal getBigDecimal() {

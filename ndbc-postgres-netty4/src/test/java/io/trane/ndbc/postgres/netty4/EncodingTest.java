@@ -90,6 +90,11 @@ public class EncodingTest extends TestEnv {
   public void short_() throws CheckedFutureException {
     test("int2", (ps, v) -> ps.setShort(v), Value::getShort, r -> (short) r.nextInt());
   }
+  
+  @Test
+  public void byte_() throws CheckedFutureException {
+    test("smallint", (ps, v) -> ps.setByte(v), Value::getByte, r -> (byte) r.nextInt());
+  }
 
   private void testString(final String columnType, final int maxLength)
       throws CheckedFutureException {

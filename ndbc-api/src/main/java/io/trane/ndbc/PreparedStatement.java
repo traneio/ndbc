@@ -8,10 +8,12 @@ import java.time.OffsetTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import io.trane.ndbc.value.BigDecimalValue;
 import io.trane.ndbc.value.BooleanValue;
 import io.trane.ndbc.value.ByteArrayValue;
+import io.trane.ndbc.value.ByteValue;
 import io.trane.ndbc.value.DoubleValue;
 import io.trane.ndbc.value.FloatValue;
 import io.trane.ndbc.value.IntegerValue;
@@ -22,6 +24,7 @@ import io.trane.ndbc.value.LongValue;
 import io.trane.ndbc.value.OffsetTimeValue;
 import io.trane.ndbc.value.ShortValue;
 import io.trane.ndbc.value.StringValue;
+import io.trane.ndbc.value.UUIDValue;
 import io.trane.ndbc.value.Value;
 
 public final class PreparedStatement {
@@ -128,6 +131,14 @@ public final class PreparedStatement {
   public final PreparedStatement setOffsetTime(final int index, final OffsetTime value) {
     return set(value == null ? Value.NULL : new OffsetTimeValue(value));
   }
+  
+  public final PreparedStatement setByte(final Byte value) {
+    return setByte(params.length, value);
+  }
+
+  public final PreparedStatement setByte(final int index, final Byte value) {
+    return set(index, value == null ? Value.NULL : new ByteValue(value));
+  }
 
   public final PreparedStatement setShort(final Short value) {
     return setShort(params.length, value);
@@ -139,6 +150,14 @@ public final class PreparedStatement {
 
   public final PreparedStatement setString(final String value) {
     return setString(params.length, value);
+  }
+
+  public final PreparedStatement setUUID(final int index, final UUID value) {
+    return set(index, value == null ? Value.NULL : new UUIDValue(value));
+  }
+  
+  public final PreparedStatement setUUID(final UUID value) {
+    return setUUID(params.length, value);
   }
 
   public final PreparedStatement setString(final int index, final String value) {

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetTime;
+import java.util.UUID;
 
 public abstract class Value<T> {
 
@@ -48,6 +49,10 @@ public abstract class Value<T> {
   public Long getLong() {
     return cantRead("Long");
   }
+  
+  public Byte getByte() {
+    return cantRead("Byte");
+  }
 
   public Short getShort() {
     return cantRead("Long");
@@ -83,6 +88,10 @@ public abstract class Value<T> {
 
   public OffsetTime getOffsetTime() {
     return cantRead("OffsetTime");
+  }
+  
+  public UUID getUUID() {
+    return cantRead("UUID");
   }
 
   private final <U> U cantRead(final String type) {

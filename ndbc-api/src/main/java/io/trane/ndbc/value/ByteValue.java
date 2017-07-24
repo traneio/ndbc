@@ -2,20 +2,15 @@ package io.trane.ndbc.value;
 
 import java.math.BigDecimal;
 
-public final class ShortValue extends Value<Short> {
+public final class ByteValue extends Value<Byte> {
 
-  public ShortValue(final Short value) {
+  public ByteValue(final Byte value) {
     super(value);
   }
 
   @Override
-  public final Short getShort() {
-    return get();
-  }
-  
-  @Override
   public final Byte getByte() {
-    return new Byte(get().byteValue());
+    return get();
   }
 
   @Override
@@ -45,6 +40,6 @@ public final class ShortValue extends Value<Short> {
 
   @Override
   public final Boolean getBoolean() {
-    return get() == (short) 1;
+    return get() == (byte) 1;
   }
 }

@@ -1,27 +1,27 @@
 package io.trane.ndbc.postgres.encoding;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
-import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.Value;
 
 public final class EncodingRegistry {
 
-  private static final Set<Encoding<?>>    defaultEncodings = Collections.toImmutableSet(
+  private static final List<Encoding<?>>    defaultEncodings = Arrays.asList(
       new BigDecimalEncoding(), new BooleanEncoding(), new ByteArrayEncoding(),
       new DoubleEncoding(), new FloatEncoding(), new IntegerEncoding(), new LocalDateEncoding(),
-      new LocalDateTimeEncoding(), new LocalTimeEncoding(), new LongEncoding(),
-      new OffsetTimeEncoding(), new ShortEncoding(), new StringEncoding());
+      new LocalDateTimeEncoding(), new LocalTimeEncoding(), new LongEncoding(), new UUIDEncoding(),
+      new OffsetTimeEncoding(), new ByteEncoding(), new ShortEncoding(), new StringEncoding());
 
   private final Map<Class<?>, Encoding<?>> byValueClass;
   private final Map<Integer, Encoding<?>>  byOid;
 
-  public EncodingRegistry(final Optional<Set<Encoding<?>>> customEncodings) {
+  public EncodingRegistry(final Optional<List<Encoding<?>>> customEncodings) {
     byValueClass = new HashMap<>();
     byOid = new HashMap<>();
     registerEncodings(defaultEncodings);
@@ -47,10 +47,13 @@ public final class EncodingRegistry {
   }
   
   public final Integer oid(Value<?> value) {
-    return byValueClass.get(value.getClass()).oid();
+    if(value.isNull())
+      return Oid.UNSPECIFIED;
+    else
+      return byValueClass.get(value.getClass()).oid();
   }
 
-  private void registerEncodings(final Set<Encoding<?>> encodings) {
+  private void registerEncodings(final List<Encoding<?>> encodings) {
     for (final Encoding<?> enc : encodings) {
       byValueClass.put(enc.valueClass(), enc);
       byOid.put(enc.oid(), enc);

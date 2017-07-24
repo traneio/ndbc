@@ -3,13 +3,13 @@ package io.trane.ndbc.postgres.encoding;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.junit.Test;
 
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
-import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.IntegerValue;
 import io.trane.ndbc.value.Value;
 
@@ -56,7 +56,7 @@ public class EncodingRegistryTest {
   public void customEncoding() {
     final TestValueEncoding enc = new TestValueEncoding();
     final TestValue value = new TestValue("str");
-    final EncodingRegistry reg = new EncodingRegistry(Optional.of(Collections.toImmutableSet(enc)));
+    final EncodingRegistry reg = new EncodingRegistry(Optional.of(Arrays.asList(enc)));
     final ByteBuffer buf = ByteBuffer.allocate(1000);
     reg.encode(Format.BINARY, value, new TestBufferWriter(buf));
     buf.limit(buf.position());

@@ -1,5 +1,6 @@
 package io.trane.ndbc.postgres.proto.marshaller;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.trane.ndbc.postgres.proto.Message.Bind;
@@ -104,7 +105,7 @@ public class Marshaller {
       else
         log.severe("Invalid client message: " + msg);
     } catch (final Exception e) {
-      log.severe("Can't serialize msg " + msg + " " + e);
+      log.log(Level.SEVERE, "Can't serialize client message " + msg, e);
       throw e;
     }
   }
