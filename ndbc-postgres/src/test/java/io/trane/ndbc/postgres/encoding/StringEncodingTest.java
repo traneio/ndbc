@@ -7,7 +7,7 @@ public class StringEncodingTest extends EncodingTest<StringValue, StringEncoding
   public StringEncodingTest() {
     super(
         new StringEncoding(),
-        Oid.TEXT,
+        Oid.VARCHAR,
         StringValue.class,
         r -> {
           final int length = r.nextInt(1000) + 1;
