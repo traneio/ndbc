@@ -17,4 +17,9 @@ public final class LongValue extends Value<Long> {
   public final BigDecimal getBigDecimal() {
     return new BigDecimal(get());
   }
+  
+  @Override
+  public final Integer getInteger() {
+    return new Integer(get().intValue());
+  }
 }

@@ -21,7 +21,7 @@ final class CommandCompleteUnmarshaller {
     final String[] words = string.split(" ");
     switch (words[0]) {
       case "INSERT":
-        return new InsertComplete(parseLong(words[1]), parseInt(words[2]));
+        return new InsertComplete(parseLong(words[2]), parseInt(words[1]));
       case "DELETE":
         return new DeleteComplete(parseLong(words[1]));
       case "UPDATE":
