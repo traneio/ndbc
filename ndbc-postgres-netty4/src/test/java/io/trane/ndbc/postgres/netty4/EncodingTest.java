@@ -7,8 +7,10 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -53,8 +55,18 @@ public class EncodingTest extends TestEnv {
   }
 
   @Test
-  public void integer_() throws CheckedFutureException {
+  public void integer() throws CheckedFutureException {
     test("int4", (ps, v) -> ps.setInteger(v), Value::getInteger, Random::nextInt);
+  }
+  
+  @Test
+  public void integerArray() throws CheckedFutureException {
+    test("int4[]", (ps, v) -> ps.setIntegerArray(v), Value::getIntegerArray, r -> {
+      Integer[] array = new Integer[r.nextInt(10)];
+      for(int i = 0; i < array.length; i++) 
+        array[i] = r.nextInt();
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
   }
 
   @Test
@@ -144,12 +156,14 @@ public class EncodingTest extends TestEnv {
     test(columnType, set, get, gen, verify, 20);
   }
 
+  private static AtomicInteger tableSuffix = new AtomicInteger(0);
+  
   private <T> void test(final String columnType,
       final BiFunction<PreparedStatement, T, PreparedStatement> set,
       final Function<Value<?>, T> get, final Function<Random, T> gen, final BiConsumer<T, T> verify,
       final int iterations)
       throws CheckedFutureException {
-    final String table = "test_" + columnType;
+    final String table = "test_encoding_" + tableSuffix.incrementAndGet();
     ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
     ds.execute("CREATE TABLE " + table + " (c " + columnType + ")").get(timeout);
 
@@ -164,8 +178,13 @@ public class EncodingTest extends TestEnv {
         final T actual = get.apply(query(PreparedStatement.apply("SELECT c FROM " + table)));
         verify.accept(expected, actual);
       } catch (final Exception e) {
+        String s;
+        if(expected.getClass().isArray())
+          s = Arrays.toString((Object[]) expected);
+        else
+          s = expected.toString();
         throw new RuntimeException(
-            "Failure. columnType '" + columnType + "', value '" + expected + "'", e);
+            "Failure. columnType '" + columnType + "', value '" + s + "'", e);
       }
     }
   }

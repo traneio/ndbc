@@ -16,6 +16,7 @@ import io.trane.ndbc.value.ByteArrayValue;
 import io.trane.ndbc.value.ByteValue;
 import io.trane.ndbc.value.DoubleValue;
 import io.trane.ndbc.value.FloatValue;
+import io.trane.ndbc.value.IntegerArrayValue;
 import io.trane.ndbc.value.IntegerValue;
 import io.trane.ndbc.value.LocalDateTimeValue;
 import io.trane.ndbc.value.LocalDateValue;
@@ -92,6 +93,22 @@ public final class PreparedStatement {
     return set(index, value == null ? Value.NULL : new IntegerValue(value));
   }
 
+  public final PreparedStatement setIntegerArray(final Integer[] value) {
+    return setIntegerArray(params.length, value);
+  }
+
+  public final PreparedStatement setIntegerArray(final int index, final Integer[] value) {
+    Value<?>[] array = new Value<?>[value.length];
+    for (int i = 0; i < value.length; i++) {
+      Integer v = value[i];
+      if (v == null)
+        array[i] = Value.NULL;
+      else
+        array[i] = new IntegerValue(value[i]);
+    }
+    return set(index, value == null ? Value.NULL : new IntegerArrayValue(array));
+  }
+
   public final PreparedStatement setLocalDate(final LocalDate value) {
     return setLocalDate(params.length, value);
   }
@@ -131,7 +148,7 @@ public final class PreparedStatement {
   public final PreparedStatement setOffsetTime(final int index, final OffsetTime value) {
     return set(value == null ? Value.NULL : new OffsetTimeValue(value));
   }
-  
+
   public final PreparedStatement setByte(final Byte value) {
     return setByte(params.length, value);
   }
@@ -155,7 +172,7 @@ public final class PreparedStatement {
   public final PreparedStatement setUUID(final int index, final UUID value) {
     return set(index, value == null ? Value.NULL : new UUIDValue(value));
   }
-  
+
   public final PreparedStatement setUUID(final UUID value) {
     return setUUID(params.length, value);
   }

@@ -34,6 +34,14 @@ public class DataSourceTest extends TestEnv {
   public void close() throws CheckedFutureException {
     ds.close().get(timeout);
   }
+  
+  @Test
+  public void array() throws CheckedFutureException {
+    final Iterator<Row> rows = ds.query(PreparedStatement.apply("SELECT ARRAY[1, 2, 3]")).get(timeout).iterator();
+
+//    assertEquals(rows.next().column(0).getString(), "s");
+//    assertFalse(rows.hasNext());
+  }
 
   @Test
   public void simpleQuery() throws CheckedFutureException {

@@ -18,7 +18,7 @@ public abstract class Value<T> {
     this.value = value;
   }
 
-  protected T get() {
+  public T get() {
     return value;
   }
 
@@ -40,6 +40,10 @@ public abstract class Value<T> {
 
   public Integer getInteger() {
     return cantRead("Integer");
+  }
+  
+  public Integer[] getIntegerArray() {
+    return cantRead("Integer[]");
   }
 
   public Boolean getBoolean() {
@@ -94,6 +98,10 @@ public abstract class Value<T> {
     return cantRead("UUID");
   }
 
+  public Value<?>[] getValueArray() {
+    return cantRead("Value<?>[]");
+  }
+  
   private final <U> U cantRead(final String type) {
     throw new UnsupportedOperationException("Can't read `" + this + "` as `" + type + "`");
   }

@@ -14,7 +14,7 @@ public final class EncodingRegistry {
 
   private static final List<Encoding<?>>    defaultEncodings = Arrays.asList(
       new BigDecimalEncoding(), new BooleanEncoding(), new ByteArrayEncoding(),
-      new DoubleEncoding(), new FloatEncoding(), new IntegerEncoding(), new LocalDateEncoding(),
+      new DoubleEncoding(), new FloatEncoding(), new IntegerEncoding(), new IntegerArrayEncoding(new IntegerEncoding()), new LocalDateEncoding(),
       new LocalDateTimeEncoding(), new LocalTimeEncoding(), new LongEncoding(), new UUIDEncoding(),
       new OffsetTimeEncoding(), new ByteEncoding(), new ShortEncoding(), new StringEncoding());
 

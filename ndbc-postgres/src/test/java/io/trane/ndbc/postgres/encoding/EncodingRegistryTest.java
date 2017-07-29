@@ -83,7 +83,7 @@ public class EncodingRegistryTest {
     public Integer oid() {
       return 9999;
     }
-
+    
     @Override
     public Class<TestValue> valueClass() {
       return TestValue.class;
