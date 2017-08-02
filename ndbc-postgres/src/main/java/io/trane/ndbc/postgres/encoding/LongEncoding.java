@@ -4,7 +4,7 @@ import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.LongValue;
 
-final class LongEncoding extends Encoding<LongValue> {
+final class LongEncoding extends Encoding<Long, LongValue> {
 
   @Override
   public final Integer oid() {
@@ -17,22 +17,32 @@ final class LongEncoding extends Encoding<LongValue> {
   }
 
   @Override
-  public final String encodeText(final LongValue value) {
-    return Long.toString(value.getLong());
+  public final String encodeText(final Long value) {
+    return Long.toString(value);
   }
 
   @Override
-  public final LongValue decodeText(final String value) {
-    return new LongValue(Long.valueOf(value));
+  public final Long decodeText(final String value) {
+    return Long.valueOf(value);
   }
 
   @Override
-  public final void encodeBinary(final LongValue value, final BufferWriter b) {
-    b.writeLong(value.getLong());
+  public final void encodeBinary(final Long value, final BufferWriter b) {
+    b.writeLong(value);
   }
 
   @Override
-  public final LongValue decodeBinary(final BufferReader b) {
-    return new LongValue(b.readLong());
+  public final Long decodeBinary(final BufferReader b) {
+    return b.readLong();
+  }
+
+  @Override
+  protected LongValue box(Long value) {
+    return new LongValue(value);
+  }
+
+  @Override
+  protected Long unbox(LongValue value) {
+    return value.getLong();
   }
 }

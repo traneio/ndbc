@@ -8,20 +8,20 @@ import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.Value;
 
-public abstract class Encoding<V extends Value<?>> {
+public abstract class Encoding<T, V extends Value<T>> {
 
   public void encode(final Format format, final V value, final BufferWriter writer) {
     if (format == Format.TEXT)
-      writer.writeString(encodeText(value));
+      writer.writeString(encodeText(unbox(value)));
     else
-      encodeBinary(value, writer);
+      encodeBinary(unbox(value), writer);
   }
 
   public V decode(final Format format, final BufferReader reader) {
     if (format == Format.TEXT)
-      return decodeText(reader.readString());
+      return box(decodeText(reader.readString()));
     else
-      return decodeBinary(reader);
+      return box(decodeBinary(reader));
   }
 
   public abstract Integer oid();
@@ -33,12 +33,16 @@ public abstract class Encoding<V extends Value<?>> {
   }
 
   public abstract Class<V> valueClass();
+  
+  protected abstract V box(T value);
+  
+  protected abstract T unbox(V value);
 
-  protected abstract String encodeText(V value);
+  protected abstract String encodeText(T value);
 
-  protected abstract V decodeText(String value);
+  protected abstract T decodeText(String value);
 
-  protected abstract void encodeBinary(V value, BufferWriter b);
+  protected abstract void encodeBinary(T value, BufferWriter b);
 
-  protected abstract V decodeBinary(BufferReader b);
+  protected abstract T decodeBinary(BufferReader b);
 }

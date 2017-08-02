@@ -4,7 +4,7 @@ import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.DoubleValue;
 
-final class DoubleEncoding extends Encoding<DoubleValue> {
+final class DoubleEncoding extends Encoding<Double, DoubleValue> {
 
   @Override
   public final Integer oid() {
@@ -17,22 +17,32 @@ final class DoubleEncoding extends Encoding<DoubleValue> {
   }
 
   @Override
-  public final String encodeText(final DoubleValue value) {
-    return Double.toString(value.getDouble());
+  public final String encodeText(final Double value) {
+    return Double.toString(value);
   }
 
   @Override
-  public final DoubleValue decodeText(final String value) {
-    return new DoubleValue(Double.valueOf(value));
+  public final Double decodeText(final String value) {
+    return Double.valueOf(value);
   }
 
   @Override
-  public final void encodeBinary(final DoubleValue value, final BufferWriter b) {
-    b.writeDouble(value.getDouble());
+  public final void encodeBinary(final Double value, final BufferWriter b) {
+    b.writeDouble(value);
   }
 
   @Override
-  public final DoubleValue decodeBinary(final BufferReader b) {
-    return new DoubleValue(b.readDouble());
+  public final Double decodeBinary(final BufferReader b) {
+    return b.readDouble();
+  }
+
+  @Override
+  protected DoubleValue box(Double value) {
+    return new DoubleValue(value);
+  }
+
+  @Override
+  protected Double unbox(DoubleValue value) {
+    return value.getDouble();
   }
 }

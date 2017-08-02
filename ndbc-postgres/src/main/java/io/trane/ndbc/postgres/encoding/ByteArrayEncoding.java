@@ -4,7 +4,7 @@ import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.ByteArrayValue;
 
-final class ByteArrayEncoding extends Encoding<ByteArrayValue> {
+final class ByteArrayEncoding extends Encoding<byte[], ByteArrayValue> {
 
   private static final String PREFIX = "\\x";
 
@@ -19,30 +19,40 @@ final class ByteArrayEncoding extends Encoding<ByteArrayValue> {
   }
 
   @Override
-  public final String encodeText(final ByteArrayValue value) {
+  public final String encodeText(final byte[] value) {
     final StringBuilder sb = new StringBuilder();
     sb.append(PREFIX);
-    for (final byte b : value.getByteArray())
+    for (final byte b : value)
       sb.append(String.format("%02x", b));
     return sb.toString();
   }
 
   @Override
-  public final ByteArrayValue decodeText(final String value) {
+  public final byte[] decodeText(final String value) {
     final char[] chars = value.substring(PREFIX.length()).toCharArray();
     final byte[] result = new byte[chars.length / 2];
     for (int i = 0; i < result.length; i++)
       result[i] = (byte) Integer.parseInt(String.valueOf(chars, i * 2, 2), 16);
-    return new ByteArrayValue(result);
+    return result;
   }
 
   @Override
-  public final void encodeBinary(final ByteArrayValue value, final BufferWriter b) {
-    b.writeBytes(value.getByteArray());
+  public final void encodeBinary(final byte[] value, final BufferWriter b) {
+    b.writeBytes(value);
   }
 
   @Override
-  public final ByteArrayValue decodeBinary(final BufferReader b) {
-    return new ByteArrayValue(b.readBytes());
+  public final byte[] decodeBinary(final BufferReader b) {
+    return b.readBytes();
+  }
+
+  @Override
+  protected ByteArrayValue box(byte[] value) {
+    return new ByteArrayValue(value);
+  }
+
+  @Override
+  protected byte[] unbox(ByteArrayValue value) {
+    return value.getByteArray();
   }
 }

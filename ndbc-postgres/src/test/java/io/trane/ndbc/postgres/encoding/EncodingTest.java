@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import io.trane.ndbc.value.Value;
 
-public abstract class EncodingTest<V extends Value<?>, E extends Encoding<V>> {
+public abstract class EncodingTest<V extends Value<?>, E extends Encoding<?, V>> {
 
   private static final int          SAMPLES = 1000;
 

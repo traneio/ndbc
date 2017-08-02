@@ -59,9 +59,9 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
         config.host(), config.port());
   }
 
-  private final Encoding<?> loadEncoding(final String cls) {
+  private final Encoding<?, ?> loadEncoding(final String cls) {
     try {
-      return (Encoding<?>) Class.forName(cls).newInstance();
+      return (Encoding<?, ?>) Class.forName(cls).newInstance();
     } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
       throw new RuntimeException(
           "Can't load encoding " + cls + ". Make sure to provide an empty constructor.", e);

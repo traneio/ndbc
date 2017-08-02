@@ -23,6 +23,7 @@ import io.trane.ndbc.value.LocalDateValue;
 import io.trane.ndbc.value.LocalTimeValue;
 import io.trane.ndbc.value.LongValue;
 import io.trane.ndbc.value.OffsetTimeValue;
+import io.trane.ndbc.value.ShortArrayValue;
 import io.trane.ndbc.value.ShortValue;
 import io.trane.ndbc.value.StringValue;
 import io.trane.ndbc.value.UUIDValue;
@@ -98,15 +99,7 @@ public final class PreparedStatement {
   }
 
   public final PreparedStatement setIntegerArray(final int index, final Integer[] value) {
-    Value<?>[] array = new Value<?>[value.length];
-    for (int i = 0; i < value.length; i++) {
-      Integer v = value[i];
-      if (v == null)
-        array[i] = Value.NULL;
-      else
-        array[i] = new IntegerValue(value[i]);
-    }
-    return set(index, value == null ? Value.NULL : new IntegerArrayValue(array));
+    return set(index, value == null ? Value.NULL : new IntegerArrayValue(value));
   }
 
   public final PreparedStatement setLocalDate(final LocalDate value) {
@@ -163,6 +156,14 @@ public final class PreparedStatement {
 
   public final PreparedStatement setShort(final int index, final Short value) {
     return set(index, value == null ? Value.NULL : new ShortValue(value));
+  }
+  
+  public final PreparedStatement setShortArray(final Short[] value) {
+    return setShortArray(params.length, value);
+  }
+
+  public final PreparedStatement setShortArray(final int index, final Short[] value) {
+    return set(index, value == null ? Value.NULL : new ShortArrayValue(value));
   }
 
   public final PreparedStatement setString(final String value) {

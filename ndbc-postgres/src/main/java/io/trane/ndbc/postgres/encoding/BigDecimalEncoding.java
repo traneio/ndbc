@@ -11,16 +11,16 @@ import io.trane.ndbc.value.BigDecimalValue;
  * Java version of finagle-postgres' Numerics
  * (https://github.com/finagle/finagle-postgres/blob/69ab3983d6acc6aa4a8e029c96cc1cb224d6c40d/src/main/scala/com/twitter/finagle/postgres/values/Numerics.scala)
  */
-final class BigDecimalEncoding extends Encoding<BigDecimalValue> {
+final class BigDecimalEncoding extends Encoding<BigDecimal, BigDecimalValue> {
 
-  private static final BigInteger      BI_BASE           = BigInteger.valueOf(10000);
-  private static final short[]         EMPTY_SHORT_ARRAY = new short[0];
-  private static final short           NUMERIC_POS       = 0x0000;
-  private static final short           NUMERIC_NEG       = 0x4000;
-  private static final int             NUMERIC_NAN       = 0xC000;
-  private static final int             NUMERIC_NULL      = 0xF000;
-  private static final int             EXPONENT          = 4;
-  private static final BigDecimalValue ZERO              = new BigDecimalValue(new BigDecimal(0));
+  private static final BigInteger BI_BASE           = BigInteger.valueOf(10000);
+  private static final short[]    EMPTY_SHORT_ARRAY = new short[0];
+  private static final short      NUMERIC_POS       = 0x0000;
+  private static final short      NUMERIC_NEG       = 0x4000;
+  private static final int        NUMERIC_NAN       = 0xC000;
+  private static final int        NUMERIC_NULL      = 0xF000;
+  private static final int        EXPONENT          = 4;
+  private static final BigDecimal ZERO              = new BigDecimal(0);
 
   @Override
   public final Integer oid() {
@@ -31,20 +31,30 @@ final class BigDecimalEncoding extends Encoding<BigDecimalValue> {
   public final Class<BigDecimalValue> valueClass() {
     return BigDecimalValue.class;
   }
-
+  
   @Override
-  public final String encodeText(final BigDecimalValue value) {
-    return value.getBigDecimal().toPlainString();
+  protected BigDecimalValue box(BigDecimal value) {
+    return new BigDecimalValue(value);
   }
 
   @Override
-  public final BigDecimalValue decodeText(final String value) {
-    return new BigDecimalValue(new BigDecimal(value));
+  protected BigDecimal unbox(BigDecimalValue value) {
+    return value.getBigDecimal();
   }
 
   @Override
-  public final void encodeBinary(final BigDecimalValue value, final BufferWriter b) {
-    final BigDecimal minimized = value.getBigDecimal().stripTrailingZeros();
+  public final String encodeText(final BigDecimal value) {
+    return value.toPlainString();
+  }
+
+  @Override
+  public final BigDecimal decodeText(final String value) {
+    return new BigDecimal(value);
+  }
+
+  @Override
+  public final void encodeBinary(final BigDecimal value, final BufferWriter b) {
+    final BigDecimal minimized = value.stripTrailingZeros();
     final BigInteger unscaled = minimized.abs().unscaledValue();
     final int sign = minimized.signum();
 
@@ -78,13 +88,13 @@ final class BigDecimalEncoding extends Encoding<BigDecimalValue> {
     b.writeShort((short) digits.length);
     b.writeShort((short) weight);
     b.writeShort(sign < 0 ? NUMERIC_NEG : NUMERIC_POS);
-    b.writeShort((short) value.getBigDecimal().scale());
+    b.writeShort((short) value.scale());
     for (final short digit : digits)
       b.writeShort(digit);
   }
 
   @Override
-  public final BigDecimalValue decodeBinary(final BufferReader b) {
+  public final BigDecimal decodeBinary(final BufferReader b) {
 
     final int len = getUnsignedShort(b);
     final short weight = b.readShort();
@@ -116,15 +126,14 @@ final class BigDecimalEncoding extends Encoding<BigDecimalValue> {
         firstDigitSize = 4;
 
       final int scaleFactor = weight * EXPONENT + firstDigitSize;
-      final BigDecimal unsigned = unscaled.movePointLeft(unscaled.precision())
-          .movePointRight(scaleFactor)
+      final BigDecimal unsigned = unscaled.movePointLeft(unscaled.precision()).movePointRight(scaleFactor)
           .setScale(displayScale);
 
       switch (sign) {
         case NUMERIC_POS:
-          return new BigDecimalValue(unsigned);
+          return unsigned;
         case NUMERIC_NEG:
-          return new BigDecimalValue(unsigned.negate());
+          return unsigned.negate();
         case NUMERIC_NAN:
           throw new NumberFormatException("Decimal is NaN");
         case NUMERIC_NULL:

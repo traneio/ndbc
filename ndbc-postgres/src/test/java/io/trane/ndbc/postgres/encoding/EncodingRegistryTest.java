@@ -22,8 +22,8 @@ public class EncodingRegistryTest {
     final ByteBuffer buf = ByteBuffer.allocate(1000);
     reg.encode(Format.BINARY, expected, new TestBufferWriter(buf));
     buf.rewind();
-    final IntegerValue actual = (new IntegerEncoding()).decodeBinary(new TestBufferReader(buf));
-    assertEquals(expected, actual);
+    final Integer actual = (new IntegerEncoding()).decodeBinary(new TestBufferReader(buf));
+    assertEquals(expected.getInteger(), actual);
   }
 
   @Test(expected = UnsupportedOperationException.class)
@@ -77,7 +77,7 @@ public class EncodingRegistryTest {
     }
   }
 
-  class TestValueEncoding extends Encoding<TestValue> {
+  class TestValueEncoding extends Encoding<String, TestValue> {
 
     @Override
     public Integer oid() {
@@ -90,23 +90,33 @@ public class EncodingRegistryTest {
     }
 
     @Override
-    public String encodeText(final TestValue value) {
-      return value.getString();
+    public String encodeText(final String value) {
+      return value;
     }
 
     @Override
-    public TestValue decodeText(final String value) {
+    public String decodeText(final String value) {
+      return value;
+    }
+
+    @Override
+    public void encodeBinary(final String value, final BufferWriter b) {
+      b.writeString(value);
+    }
+
+    @Override
+    public String decodeBinary(final BufferReader b) {
+      return b.readString();
+    }
+
+    @Override
+    protected TestValue box(String value) {
       return new TestValue(value);
     }
 
     @Override
-    public void encodeBinary(final TestValue value, final BufferWriter b) {
-      b.writeString(value.getString());
-    }
-
-    @Override
-    public TestValue decodeBinary(final BufferReader b) {
-      return new TestValue(b.readString());
+    protected String unbox(TestValue value) {
+      return value.getString();
     }
   }
 }

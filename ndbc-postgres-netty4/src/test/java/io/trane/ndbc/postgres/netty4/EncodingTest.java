@@ -104,6 +104,16 @@ public class EncodingTest extends TestEnv {
   }
   
   @Test
+  public void shortArray() throws CheckedFutureException {
+    test("int2[]", (ps, v) -> ps.setShortArray(v), Value::getShortArray, r -> {
+      Short[] array = new Short[r.nextInt(10)];
+      for(int i = 0; i < array.length; i++) 
+        array[i] = (short) r.nextInt();
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
+  }
+  
+  @Test
   public void byte_() throws CheckedFutureException {
     test("smallint", (ps, v) -> ps.setByte(v), Value::getByte, r -> (byte) r.nextInt());
   }

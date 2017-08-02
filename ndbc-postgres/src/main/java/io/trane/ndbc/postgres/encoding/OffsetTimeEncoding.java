@@ -10,7 +10,7 @@ import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.OffsetTimeValue;
 
-final class OffsetTimeEncoding extends Encoding<OffsetTimeValue> {
+final class OffsetTimeEncoding extends Encoding<OffsetTime, OffsetTimeValue> {
 
   private static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
       .parseCaseInsensitive()
@@ -31,26 +31,35 @@ final class OffsetTimeEncoding extends Encoding<OffsetTimeValue> {
   }
 
   @Override
-  public final String encodeText(final OffsetTimeValue value) {
-    return value.getOffsetTime().toString();
+  public final String encodeText(final OffsetTime value) {
+    return value.toString();
   }
 
   @Override
-  public final OffsetTimeValue decodeText(final String value) {
-    return new OffsetTimeValue(OffsetTime.parse(value, formatter));
+  public final OffsetTime decodeText(final String value) {
+    return OffsetTime.parse(value, formatter);
   }
 
   @Override
-  public final void encodeBinary(final OffsetTimeValue value, final BufferWriter b) {
-    final OffsetTime time = value.getOffsetTime();
-    b.writeLong(time.toLocalTime().toNanoOfDay() / 1000);
-    b.writeInt(-time.getOffset().getTotalSeconds());
+  public final void encodeBinary(final OffsetTime value, final BufferWriter b) {
+    b.writeLong(value.toLocalTime().toNanoOfDay() / 1000);
+    b.writeInt(-value.getOffset().getTotalSeconds());
   }
 
   @Override
-  public final OffsetTimeValue decodeBinary(final BufferReader b) {
+  public final OffsetTime decodeBinary(final BufferReader b) {
     final LocalTime time = LocalTime.ofNanoOfDay(b.readLong() * 1000);
     final ZoneOffset zone = ZoneOffset.ofTotalSeconds(-b.readInt());
-    return new OffsetTimeValue(time.atOffset(zone));
+    return time.atOffset(zone);
+  }
+
+  @Override
+  protected OffsetTimeValue box(OffsetTime value) {
+    return new OffsetTimeValue(value);
+  }
+
+  @Override
+  protected OffsetTime unbox(OffsetTimeValue value) {
+    return value.getOffsetTime();
   }
 }

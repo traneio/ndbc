@@ -43,7 +43,7 @@ public abstract class Value<T> {
   }
   
   public Integer[] getIntegerArray() {
-    return cantRead("Integer[]");
+    return cantRead("IntegerArray");
   }
 
   public Boolean getBoolean() {
@@ -60,6 +60,10 @@ public abstract class Value<T> {
 
   public Short getShort() {
     return cantRead("Long");
+  }
+  
+  public Short[] getShortArray() {
+    return cantRead("ShortArray");
   }
 
   public BigDecimal getBigDecimal() {
@@ -98,10 +102,6 @@ public abstract class Value<T> {
     return cantRead("UUID");
   }
 
-  public Value<?>[] getValueArray() {
-    return cantRead("Value<?>[]");
-  }
-  
   private final <U> U cantRead(final String type) {
     throw new UnsupportedOperationException("Can't read `" + this + "` as `" + type + "`");
   }

@@ -1,15 +1,11 @@
 package io.trane.ndbc.postgres.encoding;
 
-import java.lang.reflect.Array;
-
-import io.trane.ndbc.proto.BufferReader;
-import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.IntegerArrayValue;
-import io.trane.ndbc.value.Value;
 
-final class IntegerArrayEncoding extends Encoding<IntegerArrayValue> {
+final class IntegerArrayEncoding extends ArrayEncoding<Integer, IntegerArrayValue> {
 
   private final IntegerEncoding integerEncoding;
+  private final Integer[]       emptyArray = new Integer[0];
 
   public IntegerArrayEncoding(IntegerEncoding integerEncoding) {
     this.integerEncoding = integerEncoding;
@@ -26,59 +22,27 @@ final class IntegerArrayEncoding extends Encoding<IntegerArrayValue> {
   }
 
   @Override
-  public final String encodeText(final IntegerArrayValue value) {
-    return null;
+  protected Integer[] newArray(int length) {
+    return new Integer[length];
   }
 
   @Override
-  public final IntegerArrayValue decodeText(final String value) {
-    return null;
+  protected Integer[] emptyArray() {
+    return emptyArray;
   }
 
   @Override
-  public final void encodeBinary(final IntegerArrayValue value, final BufferWriter b) {
-    Value<?>[] array = value.getValueArray();
-    b.writeInt(1); // dimensions
-    b.writeInt(0); // flags
-    b.writeInt(Oid.INT4);
-    b.writeInt(array.length);
-    b.writeInt(1); // lbound
-    for (Value<?> v : array) {
-      if (v.isNull())
-        b.writeInt(-1);
-      else {
-        b.writeInt(4);
-        int lengthPos = b.writerIndex();
-        b.writeInt(v.getInteger());
-        // b.writeLength(lengthPos);
-      }
-    }
+  protected Encoding<Integer, ?> itemEncoding() {
+    return integerEncoding;
   }
 
   @Override
-  public final IntegerArrayValue decodeBinary(final BufferReader b) {
-    int dimensions = b.readInt();
-    assert (dimensions <= 1);
-    b.readInt(); // flags bit 0: 0=no-nulls, 1=has-nulls
-    b.readInt(); // elementOid
-    if (dimensions == 0)
-      return IntegerArrayValue.EMPTY;
-    else {
-      int length = b.readInt();
-      int lbound = b.readInt();
-      assert (lbound == 1);
+  protected IntegerArrayValue box(Integer[] value) {
+    return new IntegerArrayValue(value);
+  }
 
-      Value<?>[] result = (Value<?>[]) Array.newInstance(Value.class, length);
-
-      for (int i = 0; i < length; i++) {
-        int elemLength = b.readInt();
-        if (elemLength == -1)
-          result[i] = Value.NULL;
-        else {
-          result[i] = integerEncoding.decodeBinary(b.readSlice(elemLength));
-        }
-      }
-      return new IntegerArrayValue(result);
-    }
+  @Override
+  protected Integer[] unbox(IntegerArrayValue value) {
+    return value.getIntegerArray();
   }
 }

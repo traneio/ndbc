@@ -6,7 +6,7 @@ import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.UUIDValue;
 
-final class UUIDEncoding extends Encoding<UUIDValue> {
+final class UUIDEncoding extends Encoding<UUID, UUIDValue> {
 
   @Override
   public final Integer oid() {
@@ -19,23 +19,33 @@ final class UUIDEncoding extends Encoding<UUIDValue> {
   }
 
   @Override
-  public final String encodeText(final UUIDValue value) {
-    return value.getUUID().toString();
+  public final String encodeText(final UUID value) {
+    return value.toString();
   }
 
   @Override
-  public final UUIDValue decodeText(final String value) {
-    return new UUIDValue(UUID.fromString(value));
+  public final UUID decodeText(final String value) {
+    return UUID.fromString(value);
   }
 
   @Override
-  public final void encodeBinary(final UUIDValue value, final BufferWriter b) {
-    b.writeLong(value.getUUID().getMostSignificantBits());
-    b.writeLong(value.getUUID().getLeastSignificantBits());
+  public final void encodeBinary(final UUID value, final BufferWriter b) {
+    b.writeLong(value.getMostSignificantBits());
+    b.writeLong(value.getLeastSignificantBits());
   }
 
   @Override
-  public final UUIDValue decodeBinary(final BufferReader b) {
-    return new UUIDValue(new UUID(b.readLong(), b.readLong()));
+  public final UUID decodeBinary(final BufferReader b) {
+    return new UUID(b.readLong(), b.readLong());
+  }
+
+  @Override
+  protected UUIDValue box(UUID value) {
+    return new UUIDValue(value);
+  }
+
+  @Override
+  protected UUID unbox(UUIDValue value) {
+    return value.getUUID();
   }
 }

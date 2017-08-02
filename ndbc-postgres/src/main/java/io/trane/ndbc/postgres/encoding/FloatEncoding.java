@@ -4,7 +4,7 @@ import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.FloatValue;
 
-final class FloatEncoding extends Encoding<FloatValue> {
+final class FloatEncoding extends Encoding<Float, FloatValue> {
 
   @Override
   public final Integer oid() {
@@ -17,22 +17,32 @@ final class FloatEncoding extends Encoding<FloatValue> {
   }
 
   @Override
-  public final String encodeText(final FloatValue value) {
-    return Float.toString(value.getFloat());
+  public final String encodeText(final Float value) {
+    return Float.toString(value);
   }
 
   @Override
-  public final FloatValue decodeText(final String value) {
-    return new FloatValue(Float.valueOf(value));
+  public final Float decodeText(final String value) {
+    return Float.valueOf(value);
   }
 
   @Override
-  public final void encodeBinary(final FloatValue value, final BufferWriter b) {
-    b.writeFloat(value.getFloat());
+  public final void encodeBinary(final Float value, final BufferWriter b) {
+    b.writeFloat(value);
   }
 
   @Override
-  public final FloatValue decodeBinary(final BufferReader b) {
-    return new FloatValue(b.readFloat());
+  public final Float decodeBinary(final BufferReader b) {
+    return b.readFloat();
+  }
+
+  @Override
+  protected FloatValue box(Float value) {
+    return new FloatValue(value);
+  }
+
+  @Override
+  protected Float unbox(FloatValue value) {
+    return value.getFloat();
   }
 }

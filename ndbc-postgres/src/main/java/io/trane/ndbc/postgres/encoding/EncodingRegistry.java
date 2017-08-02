@@ -12,16 +12,16 @@ import io.trane.ndbc.value.Value;
 
 public final class EncodingRegistry {
 
-  private static final List<Encoding<?>>    defaultEncodings = Arrays.asList(
-      new BigDecimalEncoding(), new BooleanEncoding(), new ByteArrayEncoding(),
-      new DoubleEncoding(), new FloatEncoding(), new IntegerEncoding(), new IntegerArrayEncoding(new IntegerEncoding()), new LocalDateEncoding(),
-      new LocalDateTimeEncoding(), new LocalTimeEncoding(), new LongEncoding(), new UUIDEncoding(),
-      new OffsetTimeEncoding(), new ByteEncoding(), new ShortEncoding(), new StringEncoding());
+  private static final List<Encoding<?, ?>> defaultEncodings = Arrays.asList(new BigDecimalEncoding(),
+      new BooleanEncoding(), new ByteArrayEncoding(), new DoubleEncoding(), new FloatEncoding(), new IntegerEncoding(),
+      new LocalDateEncoding(), new LocalDateTimeEncoding(), new LocalTimeEncoding(), new LongEncoding(),
+      new UUIDEncoding(), new OffsetTimeEncoding(), new ByteEncoding(), new ShortEncoding(), new StringEncoding(),
+      new IntegerArrayEncoding(new IntegerEncoding()), new ShortArrayEncoding(new ShortEncoding()));
 
-  private final Map<Class<?>, Encoding<?>> byValueClass;
-  private final Map<Integer, Encoding<?>>  byOid;
+  private final Map<Class<?>, Encoding<?, ?>> byValueClass;
+  private final Map<Integer, Encoding<?, ?>>  byOid;
 
-  public EncodingRegistry(final Optional<List<Encoding<?>>> customEncodings) {
+  public EncodingRegistry(final Optional<List<Encoding<?, ?>>> customEncodings) {
     byValueClass = new HashMap<>();
     byOid = new HashMap<>();
     registerEncodings(defaultEncodings);
@@ -29,32 +29,31 @@ public final class EncodingRegistry {
   }
 
   @SuppressWarnings("unchecked")
-  public final <T> void encode(final Format format, final Value<T> value,
-      final BufferWriter writer) {
-    Encoding<Value<T>> enc;
-    if ((enc = (Encoding<Value<T>>) byValueClass.get(value.getClass())) != null)
+  public final <T> void encode(final Format format, final Value<T> value, final BufferWriter writer) {
+    Encoding<T, Value<T>> enc;
+    if ((enc = (Encoding<T, Value<T>>) byValueClass.get(value.getClass())) != null)
       enc.encode(format, value, writer);
     else
       throw new UnsupportedOperationException("Can't encode value: " + value);
   }
 
   public final Value<?> decode(final int oid, final Format format, final BufferReader reader) {
-    Encoding<?> enc;
+    Encoding<?, ?> enc;
     if ((enc = byOid.get(oid)) != null)
       return enc.decode(format, reader);
     else
       throw new UnsupportedOperationException("Can't decode value of type " + oid);
   }
-  
+
   public final Integer oid(Value<?> value) {
-    if(value.isNull())
+    if (value.isNull())
       return Oid.UNSPECIFIED;
     else
       return byValueClass.get(value.getClass()).oid();
   }
 
-  private void registerEncodings(final List<Encoding<?>> encodings) {
-    for (final Encoding<?> enc : encodings) {
+  private void registerEncodings(final List<Encoding<?, ?>> encodings) {
+    for (final Encoding<?, ?> enc : encodings) {
       byValueClass.put(enc.valueClass(), enc);
       byOid.put(enc.oid(), enc);
       for (final Integer oid : enc.additionalOids())
