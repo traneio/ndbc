@@ -4,11 +4,11 @@ import io.trane.ndbc.value.ShortArrayValue;
 
 final class ShortArrayEncoding extends ArrayEncoding<Short, ShortArrayValue> {
 
-  private final ShortEncoding ShortEncoding;
+  private final ShortEncoding shortEncoding;
   private final Short[]       emptyArray = new Short[0];
 
-  public ShortArrayEncoding(ShortEncoding ShortEncoding) {
-    this.ShortEncoding = ShortEncoding;
+  public ShortArrayEncoding(ShortEncoding shortEncoding) {
+    this.shortEncoding = shortEncoding;
   }
 
   @Override
@@ -33,7 +33,7 @@ final class ShortArrayEncoding extends ArrayEncoding<Short, ShortArrayValue> {
 
   @Override
   protected Encoding<Short, ?> itemEncoding() {
-    return ShortEncoding;
+    return shortEncoding;
   }
 
   @Override

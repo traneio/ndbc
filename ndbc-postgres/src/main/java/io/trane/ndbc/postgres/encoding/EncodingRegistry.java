@@ -16,10 +16,17 @@ public final class EncodingRegistry {
       new BooleanEncoding(), new ByteArrayEncoding(), new DoubleEncoding(), new FloatEncoding(), new IntegerEncoding(),
       new LocalDateEncoding(), new LocalDateTimeEncoding(), new LocalTimeEncoding(), new LongEncoding(),
       new UUIDEncoding(), new OffsetTimeEncoding(), new ByteEncoding(), new ShortEncoding(), new StringEncoding(),
-      new IntegerArrayEncoding(new IntegerEncoding()), new ShortArrayEncoding(new ShortEncoding()));
+
+      new BigDecimalArrayEncoding(new BigDecimalEncoding()), new BooleanArrayEncoding(new BooleanEncoding()),
+      new ByteArrayArrayEncoding(new ByteArrayEncoding()), new DoubleArrayEncoding(new DoubleEncoding()),
+      new FloatArrayEncoding(new FloatEncoding()), new IntegerArrayEncoding(new IntegerEncoding()),
+      new LocalDateArrayEncoding(new LocalDateEncoding()), new LocalDateTimeArrayEncoding(new LocalDateTimeEncoding()),
+      new LocalTimeArrayEncoding(new LocalTimeEncoding()), new LongArrayEncoding(new LongEncoding()),
+      new UUIDArrayEncoding(new UUIDEncoding()), new OffsetTimeArrayEncoding(new OffsetTimeEncoding()),
+      new ShortArrayEncoding(new ShortEncoding()), new StringArrayEncoding(new StringEncoding()));
 
   private final Map<Class<?>, Encoding<?, ?>> byValueClass;
-  private final Map<Integer, Encoding<?, ?>>  byOid;
+  private final Map<Integer, Encoding<?, ?>> byOid;
 
   public EncodingRegistry(final Optional<List<Encoding<?, ?>>> customEncodings) {
     byValueClass = new HashMap<>();

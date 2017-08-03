@@ -29,6 +29,16 @@ public class EncodingTest extends TestEnv {
     test("numeric", (ps, v) -> ps.setBigDecimal(v), Value::getBigDecimal,
         r -> BigDecimal.valueOf(r.nextLong(), r.nextInt(100)));
   }
+  
+  @Test
+  public void bigDecimalArray() throws CheckedFutureException {
+    test("numeric[]", (ps, v) -> ps.setBigDecimalArray(v), Value::getBigDecimalArray, r -> {
+      BigDecimal[] array = new BigDecimal[r.nextInt(10)];
+      for(int i = 0; i < array.length; i++) 
+        array[i] = BigDecimal.valueOf(r.nextLong(), r.nextInt(100));
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
+  }
 
   @Test
   public void _boolean() throws CheckedFutureException {
