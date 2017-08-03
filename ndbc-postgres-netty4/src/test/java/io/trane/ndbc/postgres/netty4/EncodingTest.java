@@ -5,7 +5,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -44,6 +47,16 @@ public class EncodingTest extends TestEnv {
   public void _boolean() throws CheckedFutureException {
     test("bool", (ps, v) -> ps.setBoolean(v), Value::getBoolean, Random::nextBoolean);
   }
+  
+  @Test
+  public void booleanArray() throws CheckedFutureException {
+    test("bool[]", (ps, v) -> ps.setBooleanArray(v), Value::getBooleanArray, r -> {
+      Boolean[] array = new Boolean[r.nextInt(10)];
+      for(int i = 0; i < array.length; i++) 
+        array[i] = r.nextBoolean();
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
+  }
 
   @Test
   public void byteArray() throws CheckedFutureException {
@@ -53,17 +66,50 @@ public class EncodingTest extends TestEnv {
       return bytes;
     }, (a, b) -> assertArrayEquals(a, b));
   }
+  
+  @Test
+  public void booleanArrayArray() throws CheckedFutureException {
+    test("bytea[]", (ps, v) -> ps.setByteArrayArray(v), Value::getByteArrayArray, r -> {
+      byte[][] array = new byte[r.nextInt(10)][];
+      for(int i = 0; i < array.length; i++) {
+        final byte[] bytes = new byte[r.nextInt(5)];
+        r.nextBytes(bytes);
+        array[i] = bytes;
+      }
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
+  }
 
   @Test
   public void double_() throws CheckedFutureException {
     test("float8", (ps, v) -> ps.setDouble(v), Value::getDouble, Random::nextDouble);
+  }
+  
+  @Test
+  public void doubleArray() throws CheckedFutureException {
+    test("float8[]", (ps, v) -> ps.setDoubleArray(v), Value::getDoubleArray, r -> {
+      Double[] array = new Double[r.nextInt(10)];
+      for(int i = 0; i < array.length; i++) 
+        array[i] = r.nextDouble();
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
   }
 
   @Test
   public void float_() throws CheckedFutureException {
     test("float4", (ps, v) -> ps.setFloat(v), Value::getFloat, Random::nextFloat);
   }
-
+  
+  @Test
+  public void floatArray() throws CheckedFutureException {
+    test("float4[]", (ps, v) -> ps.setFloatArray(v), Value::getFloatArray, r -> {
+      Float[] array = new Float[r.nextInt(10)];
+      for(int i = 0; i < array.length; i++) 
+        array[i] = r.nextFloat();
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
+  }
+  
   @Test
   public void integer() throws CheckedFutureException {
     test("int4", (ps, v) -> ps.setInteger(v), Value::getInteger, Random::nextInt);
@@ -84,11 +130,31 @@ public class EncodingTest extends TestEnv {
     test("date", (ps, v) -> ps.setLocalDate(v), Value::getLocalDate,
         r -> randomLocalDateTime(r).toLocalDate());
   }
+  
+  @Test
+  public void localDateArray() throws CheckedFutureException {
+    test("date[]", (ps, v) -> ps.setLocalDateArray(v), Value::getLocalDateArray, r -> {
+      LocalDate[] array = new LocalDate[r.nextInt(10)];
+      for(int i = 0; i < array.length; i++) 
+        array[i] = randomLocalDateTime(r).toLocalDate();
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
+  }
 
   @Test
   public void localDateTime() throws CheckedFutureException {
     test("timestamp", (ps, v) -> ps.setLocalDateTime(v), Value::getLocalDateTime,
         r -> randomLocalDateTime(r));
+  }
+  
+  @Test
+  public void localDateTimeArray() throws CheckedFutureException {
+    test("timestamp[]", (ps, v) -> ps.setLocalDateTimeArray(v), Value::getLocalDateTimeArray, r -> {
+      LocalDateTime[] array = new LocalDateTime[r.nextInt(10)];
+      for(int i = 0; i < array.length; i++) 
+        array[i] = randomLocalDateTime(r);
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
   }
 
   @Test
@@ -98,14 +164,44 @@ public class EncodingTest extends TestEnv {
   }
 
   @Test
+  public void localTimeArray() throws CheckedFutureException {
+    test("time[]", (ps, v) -> ps.setLocalTimeArray(v), Value::getLocalTimeArray, r -> {
+      LocalTime[] array = new LocalTime[r.nextInt(10)];
+      for(int i = 0; i < array.length; i++) 
+        array[i] = randomLocalDateTime(r).toLocalTime();
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
+  }
+  
+  @Test
   public void long_() throws CheckedFutureException {
     test("int8", (ps, v) -> ps.setLong(v), Value::getLong, Random::nextLong);
+  }
+  
+  @Test
+  public void longArray() throws CheckedFutureException {
+    test("int8[]", (ps, v) -> ps.setLongArray(v), Value::getLongArray, r -> {
+      Long[] array = new Long[r.nextInt(10)];
+      for(int i = 0; i < array.length; i++) 
+        array[i] = r.nextLong();
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
   }
 
   @Test
   public void offsetTime() throws CheckedFutureException {
     test("timetz", (ps, v) -> ps.setOffsetTime(v), Value::getOffsetTime,
         r -> randomLocalDateTime(r).toLocalTime().atOffset(randomZoneOffset(r)));
+  }
+  
+  @Test
+  public void offsetTimeArray() throws CheckedFutureException {
+    test("timetz[]", (ps, v) -> ps.setOffsetTimeArray(v), Value::getOffsetTimeArray, r -> {
+      OffsetTime[] array = new OffsetTime[r.nextInt(10)];
+      for(int i = 0; i < array.length; i++) 
+        array[i] = randomLocalDateTime(r).toLocalTime().atOffset(randomZoneOffset(r));
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
   }
 
   @Test
@@ -138,6 +234,23 @@ public class EncodingTest extends TestEnv {
     testString("text", 100);
     testString("name", 64);
     testString("varchar", 100);
+  }
+  
+  private void testStringArray(final String columnType, final int maxLength) 
+      throws CheckedFutureException {
+    test(columnType, (ps, v) -> ps.setStringArray(v), Value::getStringArray, r -> {
+      String[] array = new String[r.nextInt(10)];
+      for(int i = 0; i < array.length; i++) 
+        array[i] = radomString(r, maxLength);
+      return array;
+    }, (a, b) -> assertArrayEquals(a, b));
+  }
+  
+  @Test
+  public void stringArray() throws CheckedFutureException {
+    testStringArray("text[]", 100);
+    testStringArray("name[]", 64);
+    testStringArray("varchar[]", 100);
   }
 
   private LocalDateTime randomLocalDateTime(final Random r) {
