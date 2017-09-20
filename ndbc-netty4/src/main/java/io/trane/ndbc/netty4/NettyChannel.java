@@ -1,6 +1,4 @@
-package io.trane.ndbc.postgres.netty4;
-
-import java.util.concurrent.atomic.AtomicReference;
+package io.trane.ndbc.netty4;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -11,7 +9,9 @@ import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.ClientMessage;
 import io.trane.ndbc.proto.ServerMessage;
 
-final class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> implements Channel {
+import java.util.concurrent.atomic.AtomicReference;
+
+final public class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> implements Channel {
 
   private Promise<ChannelHandlerContext>                ctx                = Promise.apply();
   private final AtomicReference<Promise<ServerMessage>> nextMessagePromise = new AtomicReference<>(

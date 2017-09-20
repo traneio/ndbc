@@ -5,15 +5,15 @@
     <artifactId>ndbc</artifactId>
     <version>0.0.2-SNAPSHOT</version>
   </parent>
-  <artifactId>ndbc-postgres-netty4</artifactId>
+  <artifactId>ndbc-mysql-netty4</artifactId>
   <packaging>jar</packaging>
 
-  <name>ndbc-postgres-netty4</name>
+  <name>ndbc-mysql-netty4</name>
 
   <dependencies>
     <dependency>
       <groupId>io.trane</groupId>
-      <artifactId>ndbc-postgres</artifactId>
+      <artifactId>ndbc-mysql</artifactId>
       <version>0.0.2-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -31,11 +31,6 @@
       <artifactId>junit</artifactId>
       <version>4.12</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>42.0.0</version>
     </dependency>
   </dependencies>
 

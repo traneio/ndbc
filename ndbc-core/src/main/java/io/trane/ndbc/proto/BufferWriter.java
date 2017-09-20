@@ -4,6 +4,7 @@ public interface BufferWriter {
 
   void writeInt(int i);
 
+
   void writeByte(byte b);
 
   void writeChar(char b);

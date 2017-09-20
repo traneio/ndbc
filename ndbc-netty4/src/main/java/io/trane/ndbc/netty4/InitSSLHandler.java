@@ -1,13 +1,4 @@
-package io.trane.ndbc.postgres.netty4;
-
-import java.io.FileInputStream;
-import java.security.KeyStore;
-import java.util.Optional;
-
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLParameters;
-import javax.net.ssl.TrustManagerFactory;
+package io.trane.ndbc.netty4;
 
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -16,6 +7,14 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.Config.SSL.Mode;
+
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.FileInputStream;
+import java.security.KeyStore;
+import java.util.Optional;
 
 public class InitSSLHandler {
 
