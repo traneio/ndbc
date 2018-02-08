@@ -13,3 +13,4 @@ local.*
 *.releaseBackup
 .pem
 .gpg
+/.metadata/
