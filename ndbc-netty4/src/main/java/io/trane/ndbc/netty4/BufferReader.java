@@ -1,10 +1,10 @@
-package io.trane.ndbc.postgres.netty4;
+package io.trane.ndbc.netty4;
 
 import java.nio.charset.Charset;
 
 import io.netty.buffer.ByteBuf;
 
-final class BufferReader implements io.trane.ndbc.proto.BufferReader {
+public final class BufferReader implements io.trane.ndbc.proto.BufferReader {
 
   private final Charset charset;
   private final ByteBuf bb;

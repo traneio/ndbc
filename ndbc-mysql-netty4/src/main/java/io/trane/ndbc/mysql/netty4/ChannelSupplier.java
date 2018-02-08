@@ -1,9 +1,4 @@
-package io.trane.ndbc.postgres.netty4;
-
-import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.function.Supplier;
+package io.trane.ndbc.mysql.netty4;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -12,15 +7,24 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.ByteToMessageDecoder;
-import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.flow.FlowControlHandler;
 import io.trane.future.Future;
 import io.trane.future.Promise;
-import io.trane.ndbc.postgres.proto.marshaller.Marshaller;
-import io.trane.ndbc.postgres.proto.unmarshaller.Unmarshaller;
-import io.trane.ndbc.proto.ClientMessage;
-import io.trane.ndbc.netty4.*;
+import io.trane.ndbc.mysql.proto.Message;
+import io.trane.ndbc.netty4.BufferReader;
+import io.trane.ndbc.netty4.BufferWriter;
+import io.trane.ndbc.netty4.NettyChannel;
+import io.trane.ndbc.mysql.proto.marshaller.Marshaller;
+import io.trane.ndbc.mysql.proto.unmarshaller.Unmarshaller;
+
+//
+import static io.trane.ndbc.mysql.proto.Message.*;
+
+import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.function.Supplier;
 
 final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
 
@@ -32,8 +36,8 @@ final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
   private final Charset        charset;
 
   public ChannelSupplier(final Charset charset, final Marshaller encoder,
-      final Unmarshaller decoder,
-      final EventLoopGroup eventLoopGroup, final String host, final int port) {
+                         final Unmarshaller decoder,
+                         final EventLoopGroup eventLoopGroup, final String host, final int port) {
     super();
     this.charset = charset;
     this.encoder = encoder;
@@ -49,23 +53,17 @@ final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
     return bootstrap(channel).map(v -> channel);
   }
 
-  private class MessageDecoder extends ByteToMessageDecoder {
-    boolean firstMessage = true;
-
+  private class MessageCodec extends ByteToMessageCodec<Message> {
+    ClientMessage previousClientMessage = new NoCommand();
     @Override
-    protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
-        throws Exception {
-      decoder.decode(firstMessage, new BufferReader(charset, in)).ifPresent(out::add);
-      firstMessage = false;
-    }
-  }
-
-  private class MessageEncoder extends MessageToByteEncoder<ClientMessage> {
-    @Override
-    protected void encode(final ChannelHandlerContext ctx, final ClientMessage msg,
-        final ByteBuf out)
-        throws Exception {
+    protected void encode(ChannelHandlerContext ctx, Message msg, ByteBuf out) throws Exception {
       encoder.encode(msg, new BufferWriter(charset, out));
+      this.previousClientMessage = (ClientMessage) msg;
+    }
+
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+      decoder.decode(previousClientMessage, new BufferReader(charset, in)).ifPresent(out::add);
     }
   }
 
@@ -73,11 +71,11 @@ final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
     final Promise<Void> p = Promise.apply();
     new Bootstrap().group(eventLoopGroup).channel(NioSocketChannel.class)
         .option(ChannelOption.SO_KEEPALIVE, true)
-        .option(ChannelOption.AUTO_READ, false)
+        .option(ChannelOption.AUTO_READ, true)
         .handler(new ChannelInitializer<io.netty.channel.Channel>() {
           @Override
           protected void initChannel(final io.netty.channel.Channel ch) throws Exception {
-            ch.pipeline().addLast(new MessageDecoder(), new MessageEncoder(),
+            ch.pipeline().addLast(new MessageCodec(),
                 new FlowControlHandler(), channel);
           }
         })

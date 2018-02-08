@@ -38,6 +38,7 @@ import io.trane.ndbc.postgres.proto.marshaller.StartupMessageMarshaller;
 import io.trane.ndbc.postgres.proto.marshaller.SyncMarshaller;
 import io.trane.ndbc.postgres.proto.marshaller.TerminateMarshaller;
 import io.trane.ndbc.postgres.proto.unmarshaller.Unmarshaller;
+import io.trane.ndbc.netty4.*;
 
 public final class DataSourceSupplier implements Supplier<DataSource> {
 

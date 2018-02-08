@@ -1,10 +1,10 @@
-package io.trane.ndbc.postgres.netty4;
+package io.trane.ndbc.netty4;
 
 import java.nio.charset.Charset;
 
 import io.netty.buffer.ByteBuf;
 
-final class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
+public final class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
 
   private final ByteBuf b;
   private final Charset charset;
