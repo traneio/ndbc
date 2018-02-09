@@ -486,44 +486,4 @@ public interface Message {
               '}';
     }
   }
-
-  public static final class BackendKeyData implements ServerMessage {
-    public final int processId;
-    public final int secretKey;
-
-    public BackendKeyData(final int processId, final int secretKey) {
-      this.processId = processId;
-      this.secretKey = secretKey;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + processId;
-      result = prime * result + secretKey;
-      return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (!(obj instanceof BackendKeyData))
-        return false;
-      final BackendKeyData other = (BackendKeyData) obj;
-      if (processId != other.processId)
-        return false;
-      if (secretKey != other.secretKey)
-        return false;
-      return true;
-    }
-
-    @Override
-    public String toString() {
-      return "BackendKeyData [processId=" + processId + ", secretKey=" + secretKey + "]";
-    }
-  }
 }

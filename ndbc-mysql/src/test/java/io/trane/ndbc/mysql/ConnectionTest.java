@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -17,17 +16,13 @@ import io.trane.future.CheckedFutureException;
 import io.trane.future.Future;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
-import io.trane.ndbc.mysql.proto.Message.BackendKeyData;
-import io.trane.ndbc.proto.Channel;
-import io.trane.ndbc.proto.ClientMessage;
-import io.trane.ndbc.proto.Exchange;
-import io.trane.ndbc.proto.ServerMessage;
+import io.trane.ndbc.proto.*;
 import io.trane.ndbc.value.IntegerValue;
 import io.trane.ndbc.value.Value;
 
 public class ConnectionTest {
 
-  private Duration timeout = Duration.ofSeconds(1);
+  private final Duration timeout = Duration.ofSeconds(1);
 
   @Test
   public void query() throws CheckedFutureException {
@@ -124,10 +119,6 @@ public class ConnectionTest {
 
     Supplier<? extends Future<? extends Channel>> channelSupplier() {
       return () -> notExpected();
-    }
-
-    Optional<BackendKeyData> backendKeyData() {
-      return Optional.empty();
     }
 
     Function<String, Exchange<List<Row>>> simpleQueryExchange() {
