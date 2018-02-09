@@ -19,16 +19,22 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   private final Channel channel;
   private final Supplier<? extends Future<? extends Channel>> channelSupplier;
-  private Function<String, Exchange<List<Row>>> simpleQueryExchange;
+  private final Function<String, Exchange<List<Row>>> simpleQueryExchange;
+  private final Function<String, Exchange<Long>> simpleExecuteExchange;
   private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
+  private final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange;
 
   public Connection(final Channel channel, final Supplier<? extends Future<? extends Channel>> channelSupplier,
       final Function<String, Exchange<List<Row>>> simpleQueryExchange,
-      final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange) {
+      final Function<String, Exchange<Long>> simpleExecuteExchange,
+      final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange,
+      final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange) {
     this.channel = channel;
     this.channelSupplier = channelSupplier;
     this.simpleQueryExchange = simpleQueryExchange;
+    this.simpleExecuteExchange = simpleExecuteExchange;
     this.extendedQueryExchange = extendedQueryExchange;
+    this.extendedExecuteExchange = extendedExecuteExchange;
   }
 
   @Override
@@ -47,8 +53,8 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   }
 
   @Override
-  public Future<Long> execute(String query) {
-    return Future.exception(new RuntimeException("Not implemented"));
+  public Future<Long> execute(String command) {
+    return run(simpleExecuteExchange.apply(command));
   }
 
   @Override
@@ -57,8 +63,8 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   }
 
   @Override
-  public Future<Long> execute(PreparedStatement query) {
-    return Future.exception(new RuntimeException("Not implemented"));
+  public Future<Long> execute(PreparedStatement command) {
+    return run(extendedExecuteExchange.apply(command.query(), command.params()));
   }
 
   @Override

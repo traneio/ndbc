@@ -26,98 +26,134 @@ import io.trane.ndbc.value.IntegerValue;
 import io.trane.ndbc.value.Value;
 
 public class ConnectionTest {
-	
-	private Duration timeout = Duration.ofSeconds(1);
 
-	@Test
-	public void query() throws CheckedFutureException {
-		final List<Row> result = new ArrayList<>();
-		final String query = "query";
-		final Supplier<Connection> sup = new ConnectionSupplier() {
-			@Override
-			Function<String, Exchange<List<Row>>> simpleQueryExchange() {
-				return q -> {
-					assertEquals(query, q);
-					return Exchange.value(result);
-				};
-			}
-		};
-		assertEquals(result, sup.get().query(query).get(timeout));
-	}
-	
-	@Test
-	  public void queryPreparedStatement() throws CheckedFutureException {
-	    final List<Row> result = new ArrayList<>();
-	    final String query = "query";
-	    final Integer set = 123;
-	    final PreparedStatement ps = PreparedStatement.apply(query).setInteger(set);
-	    final Supplier<Connection> sup = new ConnectionSupplier() {
-	      @Override
-	      BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange() {
-	        return (q, b) -> {
-	          assertEquals(query, q);
-	          assertEquals(Arrays.asList(new IntegerValue(set)), b);
-	          return Exchange.value(result);
-	        };
-	      }
-	    };
-	    assertEquals(result, sup.get().query(ps).get(timeout));
-	  }
+  private Duration timeout = Duration.ofSeconds(1);
 
-	class TestChannel implements Channel {
+  @Test
+  public void query() throws CheckedFutureException {
+    final List<Row> result = new ArrayList<>();
+    final String query = "query";
+    final Supplier<Connection> sup = new ConnectionSupplier() {
+      @Override
+      Function<String, Exchange<List<Row>>> simpleQueryExchange() {
+        return q -> {
+          assertEquals(query, q);
+          return Exchange.value(result);
+        };
+      }
+    };
+    assertEquals(result, sup.get().query(query).get(timeout));
+  }
 
-		@Override
-		public Future<Void> send(final ClientMessage msg) {
-			return notExpected();
-		}
+  @Test
+  public void queryPreparedStatement() throws CheckedFutureException {
+    final List<Row> result = new ArrayList<>();
+    final String query = "query";
+    final Integer set = 123;
+    final PreparedStatement ps = PreparedStatement.apply(query).setInteger(set);
+    final Supplier<Connection> sup = new ConnectionSupplier() {
+      @Override
+      BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange() {
+        return (q, b) -> {
+          assertEquals(query, q);
+          assertEquals(Arrays.asList(new IntegerValue(set)), b);
+          return Exchange.value(result);
+        };
+      }
+    };
+    assertEquals(result, sup.get().query(ps).get(timeout));
+  }
 
-		@Override
-		public Future<ServerMessage> receive() {
-			return notExpected();
-		}
+  @Test
+  public void execute() throws CheckedFutureException {
+    final Long result = 33L;
+    final String command = "command";
+    final Supplier<Connection> sup = new ConnectionSupplier() {
+      @Override
+      Function<String, Exchange<Long>> simpleExecuteExchange() {
+        return q -> {
+          assertEquals(command, q);
+          return Exchange.value(result);
+        };
+      }
+    };
+    assertEquals(result, sup.get().execute(command).get(timeout));
+  }
 
-		@Override
-		public Future<Void> close() {
-			return notExpected();
-		}
-	};
+  @Test
+  public void executePreparedStatement() throws CheckedFutureException {
+    final Long result = 413L;
+    final String command = "command";
+    final Integer set = 223;
+    final PreparedStatement ps = PreparedStatement.apply(command).setInteger(set);
+    final Supplier<Connection> sup = new ConnectionSupplier() {
+      @Override
+      BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange() {
+        return (c, b) -> {
+          assertEquals(command, c);
+          assertEquals(Arrays.asList(new IntegerValue(set)), b);
+          return Exchange.value(result);
+        };
+      }
+    };
+    assertEquals(result, sup.get().execute(ps).get(timeout));
+  }
 
-	class ConnectionSupplier implements Supplier<Connection> {
-		Channel channel() {
-			return new TestChannel();
-		}
+  class TestChannel implements Channel {
 
-		Supplier<? extends Future<? extends Channel>> channelSupplier() {
-			return () -> notExpected();
-		}
+    @Override
+    public Future<Void> send(final ClientMessage msg) {
+      return notExpected();
+    }
 
-		Optional<BackendKeyData> backendKeyData() {
-			return Optional.empty();
-		}
+    @Override
+    public Future<ServerMessage> receive() {
+      return notExpected();
+    }
 
-		Function<String, Exchange<List<Row>>> simpleQueryExchange() {
-			return v -> notExpected();
-		}
+    @Override
+    public Future<Void> close() {
+      return notExpected();
+    }
+  };
 
-		Function<String, Exchange<Long>> simpleExecuteExchange() {
-			return v -> notExpected();
-		}
+  class ConnectionSupplier implements Supplier<Connection> {
+    Channel channel() {
+      return new TestChannel();
+    }
 
-		BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange() {
-			return (a, b) -> notExpected();
-		}
+    Supplier<? extends Future<? extends Channel>> channelSupplier() {
+      return () -> notExpected();
+    }
 
-		BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange() {
-			return (a, b) -> notExpected();
-		}
+    Optional<BackendKeyData> backendKeyData() {
+      return Optional.empty();
+    }
 
-		@Override
-		public Connection get() {
-			return new Connection(channel(), channelSupplier(), simpleQueryExchange(), extendedQueryExchange());
-		}
-	}
+    Function<String, Exchange<List<Row>>> simpleQueryExchange() {
+      return v -> notExpected();
+    }
 
-	private <T> T notExpected() {
-		throw new IllegalStateException("Unexpected");
-	}
+    Function<String, Exchange<Long>> simpleExecuteExchange() {
+      return v -> notExpected();
+    }
+
+    BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange() {
+      return (a, b) -> notExpected();
+    }
+
+    BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange() {
+      return (a, b) -> notExpected();
+    }
+
+    @Override
+    public Connection get() {
+      return new Connection(channel(), channelSupplier(), simpleQueryExchange(), simpleExecuteExchange(),
+          extendedQueryExchange(), extendedExecuteExchange());
+    }
+  }
+
+  private <T> T notExpected() {
+    throw new IllegalStateException("Unexpected");
+  }
 }
