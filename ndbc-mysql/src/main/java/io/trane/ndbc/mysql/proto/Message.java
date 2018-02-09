@@ -21,7 +21,7 @@ public interface Message {
     final public byte[] seed;
     final public String authenticationMethod;
 
-    public HandshakeResponseMessage(int sequence, String username, Optional<String> password, Optional<String> database, String encoding, byte[] seed, String authenticationMethod) {
+    public HandshakeResponseMessage(final int sequence, final String username, final Optional<String> password, final Optional<String> database, final String encoding, final byte[] seed, final String authenticationMethod) {
       this.sequence = sequence;
       this.username = username;
       this.password = password;
@@ -32,7 +32,7 @@ public interface Message {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
@@ -83,7 +83,7 @@ public interface Message {
     final public int statusFlag;
     final public String authenticationMethod;
 
-    public InitialHandshakeMessage(int sequence, int protocolVersion, String serverVersion, long connectionId, byte[] seed, int serverCapabilites, int characterSet, int statusFlag, String authenticationMethod) {
+    public InitialHandshakeMessage(final int sequence, final int protocolVersion, final String serverVersion, final long connectionId, final byte[] seed, final int serverCapabilites, final int characterSet, final int statusFlag, final String authenticationMethod) {
       this.sequence = sequence;
       this.protocolVersion = protocolVersion;
       this.serverVersion = serverVersion;
@@ -96,7 +96,7 @@ public interface Message {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
@@ -152,7 +152,7 @@ public interface Message {
     public int warningCount;
     public String message;
 
-    public OkResponseMessage(long affectedRows, long insertId, int serverStatus, int warningCount, String message) {
+    public OkResponseMessage(final long affectedRows, final long insertId, final int serverStatus, final int warningCount, final String message) {
       this.affectedRows = affectedRows;
       this.insertId = insertId;
       this.serverStatus = serverStatus;
@@ -161,7 +161,7 @@ public interface Message {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
@@ -199,12 +199,12 @@ public interface Message {
   public static class ErrorResponseMessage implements ServerResponseMessage {
     public String errorMessage;
 
-    public ErrorResponseMessage(String errorMessage) {
+    public ErrorResponseMessage(final String errorMessage) {
       this.errorMessage = errorMessage;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
@@ -230,7 +230,7 @@ public interface Message {
     public int warnings;
     public int serverStatus;
 
-    public EofResponseMessage(int warnings, int serverStatus) {
+    public EofResponseMessage(final int warnings, final int serverStatus) {
       this.warnings = warnings;
       this.serverStatus = serverStatus;
     }
@@ -251,10 +251,10 @@ public interface Message {
   }
 
   public static class QueryCommand implements TextCommand {
-    private byte command = (byte) 0x03;
-    private String sqlStatement;
+    private final byte command = (byte) 0x03;
+    private final String sqlStatement;
 
-    public QueryCommand(String sqlStatement) {
+    public QueryCommand(final String sqlStatement) {
       this.sqlStatement = sqlStatement;
     }
 
@@ -269,7 +269,7 @@ public interface Message {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
@@ -281,7 +281,7 @@ public interface Message {
 
     @Override
     public int hashCode() {
-      int result = (int) command;
+      int result = command;
       result = 31 * result + sqlStatement.hashCode();
       return result;
     }
@@ -289,6 +289,51 @@ public interface Message {
     @Override
     public String toString() {
       return "QueryCommand{" +
+              "command=" + command +
+              ", sqlStatement='" + sqlStatement + '\'' +
+              '}';
+    }
+  }
+
+  public static class StatementCommand implements TextCommand {
+    private final byte command = (byte) 0x03;
+    private final String sqlStatement;
+
+    public StatementCommand(final String sqlStatement) {
+      this.sqlStatement = sqlStatement;
+    }
+
+    @Override
+    public byte getCommand() {
+      return command;
+    }
+
+    @Override
+    public String getSqlStatement() {
+      return sqlStatement;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      StatementCommand that = (StatementCommand) o;
+
+      if (command != that.command) return false;
+      return sqlStatement.equals(that.sqlStatement);
+    }
+
+    @Override
+    public int hashCode() {
+      int result = command;
+      result = 31 * result + sqlStatement.hashCode();
+      return result;
+    }
+
+    @Override
+    public String toString() {
+      return "StatementCommand{" +
               "command=" + command +
               ", sqlStatement='" + sqlStatement + '\'' +
               '}';
@@ -308,7 +353,7 @@ public interface Message {
     public int flags;
     public int decimals;
 
-    public Field(String catalog, String db, String table, String origTable, String name, String origName, int charset, long displayLength, int fieldType, int flags, int decimals) {
+    public Field(final String catalog, final String db, final String table, final String origTable, final String name, final String origName, final int charset, final long displayLength, final int fieldType, final int flags, final int decimals) {
       this.catalog = catalog;
       this.db = db;
       this.table = table;
@@ -323,7 +368,7 @@ public interface Message {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
@@ -379,12 +424,12 @@ public interface Message {
   public static class TextRow implements ServerMessage {
     public List<String> values;
 
-    public TextRow(List<String> values) {
+    public TextRow(final List<String> values) {
       this.values = values;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
@@ -410,13 +455,13 @@ public interface Message {
     public List<TextRow> textRows;
     public List<Field> fields;
 
-    public ResultSet(List<Field> fields, List<TextRow> textRows) {
+    public ResultSet(final List<Field> fields, final List<TextRow> textRows) {
       this.textRows = textRows;
       this.fields = fields;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
 
