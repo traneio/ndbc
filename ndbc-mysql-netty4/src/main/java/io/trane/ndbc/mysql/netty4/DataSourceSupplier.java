@@ -9,6 +9,7 @@ import io.trane.ndbc.datasource.LockFreePool;
 import io.trane.ndbc.datasource.Pool;
 import io.trane.ndbc.datasource.PooledDataSource;
 import io.trane.ndbc.datasource.Connection;
+import io.trane.ndbc.mysql.proto.ExtendedQueryExchange;
 import io.trane.ndbc.mysql.proto.SimpleQueryExchange;
 import io.trane.ndbc.mysql.proto.StartupExchange;
 import io.trane.ndbc.mysql.proto.marshaller.Marshaller;
@@ -52,7 +53,9 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
                        .apply(config.user(), config.password(), config.database(), "utf8")
                        .run(channel)
                        .map(backendKeyData -> new io.trane.ndbc.mysql.Connection(channel,
-                            channelSupplier, new SimpleQueryExchange())));
+                            channelSupplier,
+                            new SimpleQueryExchange(),
+                            new ExtendedQueryExchange())));
 
   }
 }
