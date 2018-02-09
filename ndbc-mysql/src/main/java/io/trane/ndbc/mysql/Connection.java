@@ -1,65 +1,70 @@
 package io.trane.ndbc.mysql;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import io.trane.future.Future;
 import io.trane.future.InterruptHandler;
 import io.trane.future.Promise;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
-import io.trane.ndbc.mysql.proto.SimpleQueryExchange;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.Exchange;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
+import io.trane.ndbc.value.Value;
 
 public final class Connection implements io.trane.ndbc.datasource.Connection {
 
-  private final Channel                                                 channel;
-  private final Supplier<? extends Future<? extends Channel>>           channelSupplier;
-  private SimpleQueryExchange simpleQueryExchange;
+  private final Channel channel;
+  private final Supplier<? extends Future<? extends Channel>> channelSupplier;
+  private Function<String, Exchange<List<Row>>> simpleQueryExchange;
+  private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
 
-    public Connection(Channel channel, final Supplier<? extends Future<? extends Channel>> channelSupplier, SimpleQueryExchange simpleQueryExchange) {
-      this.channel = channel;
-      this.channelSupplier = channelSupplier;
-      this.simpleQueryExchange = simpleQueryExchange;
-    }
+  public Connection(final Channel channel, final Supplier<? extends Future<? extends Channel>> channelSupplier,
+      final Function<String, Exchange<List<Row>>> simpleQueryExchange,
+      final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange) {
+    this.channel = channel;
+    this.channelSupplier = channelSupplier;
+    this.simpleQueryExchange = simpleQueryExchange;
+    this.extendedQueryExchange = extendedQueryExchange;
+  }
 
-    @Override
-    public Future<Boolean> isValid() {
-        return Future.value(true);
-    }
+  @Override
+  public Future<Boolean> isValid() {
+    return Future.value(true);
+  }
 
-    @Override
-    public Future<Void> close() {
-        return Future.VOID;
-    }
+  @Override
+  public Future<Void> close() {
+    return Future.VOID;
+  }
 
-    @Override
-    public Future<List<Row>> query(String query) {
-      return run(simpleQueryExchange.apply(query));
-    }
+  @Override
+  public Future<List<Row>> query(String query) {
+    return run(simpleQueryExchange.apply(query));
+  }
 
-    @Override
-    public Future<Long> execute(String query) {
-        return Future.exception(new RuntimeException("Not implemented"));
-    }
+  @Override
+  public Future<Long> execute(String query) {
+    return Future.exception(new RuntimeException("Not implemented"));
+  }
 
-    @Override
-    public Future<List<Row>> query(PreparedStatement query) {
-        return Future.exception(new RuntimeException("Not implemented"));
-    }
+  @Override
+  public final Future<List<Row>> query(final PreparedStatement query) {
+    return run(extendedQueryExchange.apply(query.query(), query.params()));
+  }
 
-    @Override
-    public Future<Long> execute(PreparedStatement query) {
-        return Future.exception(new RuntimeException("Not implemented"));
-    }
+  @Override
+  public Future<Long> execute(PreparedStatement query) {
+    return Future.exception(new RuntimeException("Not implemented"));
+  }
 
-    @Override
-    public <R> Future<R> withTransaction(Supplier<Future<R>> sup) {
-        return Future.exception(new RuntimeException("Not implemented"));
-    }
+  @Override
+  public <R> Future<R> withTransaction(Supplier<Future<R>> sup) {
+    return Future.exception(new RuntimeException("Not implemented"));
+  }
 
   private AtomicReference<Future<?>> mutex = new AtomicReference<>();
 
@@ -74,6 +79,6 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   }
 
   private final <T> InterruptHandler handler(final Promise<T> p) {
-    return ex -> { };
+    return ex -> {};
   }
 }
