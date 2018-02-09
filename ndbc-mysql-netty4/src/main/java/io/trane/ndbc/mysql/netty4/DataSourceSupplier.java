@@ -9,7 +9,9 @@ import io.trane.ndbc.datasource.LockFreePool;
 import io.trane.ndbc.datasource.Pool;
 import io.trane.ndbc.datasource.PooledDataSource;
 import io.trane.ndbc.datasource.Connection;
+import io.trane.ndbc.mysql.proto.ExtendedExecuteExchange;
 import io.trane.ndbc.mysql.proto.ExtendedQueryExchange;
+import io.trane.ndbc.mysql.proto.SimpleExecuteExchange;
 import io.trane.ndbc.mysql.proto.SimpleQueryExchange;
 import io.trane.ndbc.mysql.proto.StartupExchange;
 import io.trane.ndbc.mysql.proto.marshaller.Marshaller;
@@ -18,7 +20,6 @@ import io.trane.ndbc.netty4.NettyChannel;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.function.Supplier;
-
 
 public final class DataSourceSupplier implements Supplier<DataSource> {
 
@@ -55,7 +56,9 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
                        .map(backendKeyData -> new io.trane.ndbc.mysql.Connection(channel,
                             channelSupplier,
                             new SimpleQueryExchange(),
-                            new ExtendedQueryExchange())));
+                            new SimpleExecuteExchange(),
+                            new ExtendedQueryExchange(),
+                            new ExtendedExecuteExchange())));
 
   }
 }
