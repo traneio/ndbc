@@ -10,8 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
+import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 
+//use to test locally docker run -e MYSQL_ROOT_PASSWORD=mysql -p 3306:3306 -d mysql
 public class DataSourceTest extends TestEnv {
 
   private static int tableSuffix = 1;
@@ -31,11 +33,9 @@ public class DataSourceTest extends TestEnv {
 
   @Test
   public void simpleQuery() throws CheckedFutureException {
-    // use to test locally docker run -e MYSQL_ROOT_PASSWORD=mysql -p 3306:3306 -d mysql
-    final Iterator<Row> rows = ds.query("SELECT 'TEST' as testRow").get(timeout).iterator();
-    Row row = rows.next();
-    assertEquals(row.column(0).getString(), "TEST");
-    assertEquals(row.columnNames().get(0), "testRow");
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+
+    assertEquals(rows.next().column(0).getString(), "s");
     assertFalse(rows.hasNext());
   }
 
@@ -63,6 +63,18 @@ public class DataSourceTest extends TestEnv {
     ds.execute("DELETE FROM " + table).get(timeout);
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertFalse(rows.hasNext());
+  }
+
+  @Test
+  public void extendedExecuteInsertNoParam() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES ('z')");
+
+    ds.execute(ps).get(timeout);
+
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertEquals(rows.next().column(0).getString(), "s");
+    assertEquals(rows.next().column(0).getString(), "z");
     assertFalse(rows.hasNext());
   }
 }

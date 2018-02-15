@@ -10,6 +10,7 @@ public class Unmarshaller {
     private final InitialHandshakePacketUnmarshaller initialHandshakePacketUnmarshaller = new InitialHandshakePacketUnmarshaller();
     private final ServerResponseUnmarshaller serverResponseUnmarshaller = new ServerResponseUnmarshaller();
     private final TextResultSetUnmarshaller textResultSetUnmarshaller = new TextResultSetUnmarshaller();
+    private final PrepareStatementOkUnmarshaller prepareStatementOkUnmarshaller = new PrepareStatementOkUnmarshaller();
 
     public final Optional<Message> decode(final ClientMessage previousClientMessage, final BufferReader b) throws Exception {
         if(previousClientMessage instanceof NoCommand) {
@@ -19,6 +20,10 @@ public class Unmarshaller {
         } if(previousClientMessage instanceof QueryCommand) {
           return Optional.of(textResultSetUnmarshaller.decode(b));
         } if(previousClientMessage instanceof StatementCommand) {
+          return Optional.of(serverResponseUnmarshaller.decode(b));
+        } if (previousClientMessage instanceof PrepareStatementCommand) {
+          return Optional.of(prepareStatementOkUnmarshaller.decode(b));
+        } if (previousClientMessage instanceof ExecuteStatementCommand) {
           return Optional.of(serverResponseUnmarshaller.decode(b));
         } else {
           throw new IllegalStateException("Unknown message");

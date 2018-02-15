@@ -250,6 +250,138 @@ public interface Message {
     public String getSqlStatement();
   }
 
+  public static class PrepareStatementCommand implements TextCommand {
+    private final byte command = (byte) 0x16;
+    private final String sqlStatement;
+
+    public PrepareStatementCommand(final String sqlStatement) {
+      this.sqlStatement = sqlStatement;
+    }
+
+    @Override
+    public byte getCommand() {
+      return command;
+    }
+
+    @Override
+    public String getSqlStatement() {
+      return sqlStatement;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      PrepareStatementCommand that = (PrepareStatementCommand) o;
+
+      if (command != that.command) return false;
+      return sqlStatement.equals(that.sqlStatement);
+    }
+
+    @Override
+    public int hashCode() {
+      int result = command;
+      result = 31 * result + sqlStatement.hashCode();
+      return result;
+    }
+
+    @Override
+    public String toString() {
+      return "PrepareStatementCommand{" +
+              "command=" + command +
+              ", sqlStatement='" + sqlStatement + '\'' +
+              '}';
+    }
+  }
+
+  public static class OkPrepareStatement implements ServerResponseMessage {
+    public final long statementId;
+    private final int numOfColumns;
+    private final int numOfParameters;
+    private final int warningCount;
+
+    public OkPrepareStatement(final long statementId, final int numOfColumns, final int numOfParameters, final int warningCount) {
+      this.statementId = statementId;
+      this.numOfColumns = numOfColumns;
+      this.numOfParameters = numOfParameters;
+      this.warningCount = warningCount;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      OkPrepareStatement that = (OkPrepareStatement) o;
+
+      if (statementId != that.statementId) return false;
+      if (numOfColumns != that.numOfColumns) return false;
+      if (numOfParameters != that.numOfParameters) return false;
+      if (warningCount != that.warningCount) return false;
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      int result = (int) (statementId ^ (statementId >>> 32));
+      result = 31 * result + (numOfColumns ^ (numOfColumns >>> 32));
+      result = 31 * result + numOfParameters;
+      result = 31 * result + warningCount;
+      return result;
+    }
+
+    @Override
+    public String toString() {
+      return "OkPrepareStatement{" +
+              "statementId=" + statementId +
+              ", numOfColumns=" + numOfColumns +
+              ", numOfParameters=" + numOfParameters +
+              ", warningsCount=" + warningCount +
+              '}';
+    }
+  }
+
+  public static class ExecuteStatementCommand implements Command {
+    public final byte command = (byte) 0x17;
+    public final long statementId;
+    public final byte flags = (byte) 0x01; // CURSOR_TYPE_READ_ONLY
+    public final int iterationCount = 1;
+
+    public ExecuteStatementCommand(final long statementId) {
+      this.statementId = statementId;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      ExecuteStatementCommand that = (ExecuteStatementCommand) o;
+
+      if (command != that.command)
+      if (statementId != that.statementId) return false;
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      int result = command;
+      result = (int) (31 * result + statementId);
+      return result;
+    }
+
+    @Override
+    public String toString() {
+      return "ExecuteStatementCommand{" +
+              "command=" + command +
+              ", statementId=" + statementId +
+              ", flags=" + flags +
+              ", iterationCount=" + iterationCount +
+              '}';
+    }
+  }
+
   public static class QueryCommand implements TextCommand {
     private final byte command = (byte) 0x03;
     private final String sqlStatement;
