@@ -39,7 +39,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   @Override
   public Future<Boolean> isValid() {
-    return Future.value(true);
+    return Future.value(true); // TODO
   }
 
   @Override

@@ -45,6 +45,7 @@
 	<modules>
 		<module>ndbc-api</module>
 		<module>ndbc-core</module>
+		<module>ndbc-test</module>
 		<module>ndbc-postgres</module>
 		<module>ndbc-postgres-netty4</module>
 		<module>ndbc-netty4</module>
