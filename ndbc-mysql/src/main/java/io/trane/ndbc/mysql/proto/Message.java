@@ -382,6 +382,42 @@ public interface Message {
     }
   }
 
+  public static class CloseStatementCommand implements Command {
+	    public final byte command = (byte) 0x19;
+	    public final long statementId;
+
+	    public CloseStatementCommand(final long statementId) {
+	      this.statementId = statementId;
+	    }
+
+	    @Override
+	    public boolean equals(final Object o) {
+	      if (this == o) return true;
+	      if (o == null || getClass() != o.getClass()) return false;
+
+	      ExecuteStatementCommand that = (ExecuteStatementCommand) o;
+
+	      if (command != that.command)
+	      if (statementId != that.statementId) return false;
+	      return true;
+	    }
+
+	    @Override
+	    public int hashCode() {
+	      int result = command;
+	      result = (int) (31 * result + statementId);
+	      return result;
+	    }
+
+	    @Override
+	    public String toString() {
+	      return "CloseStatementCommand{" +
+	              "command=" + command +
+	              ", statementId=" + statementId +
+	              '}';
+	    }
+	  }
+
   public static class QueryCommand implements TextCommand {
     private final byte command = (byte) 0x03;
     private final String sqlStatement;
