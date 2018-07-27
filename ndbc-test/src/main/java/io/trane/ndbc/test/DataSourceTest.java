@@ -34,14 +34,13 @@ public class DataSourceTest {
 		this.ds = DataSource.fromConfig(config);
 	}
 
-	// @Test
-	// public void array() throws CheckedFutureException {
-	// final Iterator<Row> rows = ds.query(PreparedStatement.apply("SELECT ARRAY[1,
-	// 2, 3]")).get(timeout).iterator();
+	@Test
+	public void array() throws CheckedFutureException {
+	final Iterator<Row> rows = ds.query(PreparedStatement.apply("SELECT ARRAY[1,2, 3]")).get(timeout).iterator();
 	//
-	//// assertEquals(rows.next().column(0).getString(), "s");
-	//// assertFalse(rows.hasNext());
-	// }
+	//assertEquals(rows.next().column(0).getString(), "s");
+	//assertFalse(rows.hasNext());
+	}
 
 	@Test
 	public void simpleQuery() throws CheckedFutureException {
