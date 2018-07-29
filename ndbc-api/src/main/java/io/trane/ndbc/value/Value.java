@@ -9,182 +9,182 @@ import java.util.UUID;
 
 public abstract class Value<T> {
 
-  public static final NullValue NULL = new NullValue();
+	public static final NullValue NULL = new NullValue();
 
-  private final T               value;
+	private final T value;
 
-  public Value(final T value) {
-    super();
-    this.value = value;
-  }
+	public Value(final T value) {
+		super();
+		this.value = value;
+	}
 
-  public T get() {
-    return value;
-  }
+	public T get() {
+		return value;
+	}
 
-  public <U> U unsafeGetAs(final Class<U> cls) {
-    return cls.cast(value);
-  }
+	public <U> U unsafeGetAs(final Class<U> cls) {
+		return cls.cast(value);
+	}
 
-  public boolean isNull() {
-    return false;
-  }
+	public boolean isNull() {
+		return false;
+	}
 
-  public Character getCharacter() {
-    return cantRead("Character");
-  }
-  
-  public Character[] getCharacterArray() {
-    return cantRead("Character[]");
-  }
+	public Character getCharacter() {
+		return cantRead("Character");
+	}
 
-  public String getString() {
-    return cantRead("String");
-  }
-  
-  public String[] getStringArray() {
-    return cantRead("String[]");
-  }
+	public Character[] getCharacterArray() {
+		return cantRead("Character[]");
+	}
 
-  public Integer getInteger() {
-    return cantRead("Integer");
-  }
-  
-  public Integer[] getIntegerArray() {
-    return cantRead("Integer[]");
-  }
+	public String getString() {
+		return cantRead("String");
+	}
 
-  public Boolean getBoolean() {
-    return cantRead("Boolean");
-  }
-  
-  public Boolean[] getBooleanArray() {
-    return cantRead("Boolean[]");
-  }
+	public String[] getStringArray() {
+		return cantRead("String[]");
+	}
 
-  public Long getLong() {
-    return cantRead("Long");
-  }
-  
-  public Long[] getLongArray() {
-    return cantRead("Long[]");
-  }
-  
-  public Byte getByte() {
-    return cantRead("Byte");
-  }
+	public Integer getInteger() {
+		return cantRead("Integer");
+	}
 
-  public Short getShort() {
-    return cantRead("Long");
-  }
-  
-  public Short[] getShortArray() {
-    return cantRead("Short[]");
-  }
+	public Integer[] getIntegerArray() {
+		return cantRead("Integer[]");
+	}
 
-  public BigDecimal getBigDecimal() {
-    return cantRead("BigDecimal");
-  }
-  
-  public BigDecimal[] getBigDecimalArray() {
-    return cantRead("BigDecimal[]");
-  }
+	public Boolean getBoolean() {
+		return cantRead("Boolean");
+	}
 
-  public Float getFloat() {
-    return cantRead("Float");
-  }
+	public Boolean[] getBooleanArray() {
+		return cantRead("Boolean[]");
+	}
 
-  public Float[] getFloatArray() {
-    return cantRead("Float[]");
-  }
-  
-  public Double getDouble() {
-    return cantRead("Double");
-  }
-  
-  public Double[] getDoubleArray() {
-    return cantRead("Double[]");
-  }
+	public Long getLong() {
+		return cantRead("Long");
+	}
 
-  public LocalDateTime getLocalDateTime() {
-    return cantRead("LocalDateTime");
-  }
-  
-  public LocalDateTime[] getLocalDateTimeArray() {
-    return cantRead("LocalDateTime[]");
-  }
+	public Long[] getLongArray() {
+		return cantRead("Long[]");
+	}
 
-  public byte[] getByteArray() {
-    return cantRead("byte[]");
-  }
-  
-  public byte[][] getByteArrayArray() {
-    return cantRead("byte[][]");
-  }
+	public Byte getByte() {
+		return cantRead("Byte");
+	}
 
-  public LocalDate getLocalDate() {
-    return cantRead("LocalDate");
-  }
-  
-  public LocalDate[] getLocalDateArray() {
-    return cantRead("LocalDate[]");
-  }
+	public Short getShort() {
+		return cantRead("Long");
+	}
 
-  public LocalTime getLocalTime() {
-    return cantRead("LocalTime");
-  }
-  
-  public LocalTime[] getLocalTimeArray() {
-    return cantRead("LocalTime[]");
-  }
+	public Short[] getShortArray() {
+		return cantRead("Short[]");
+	}
 
-  public OffsetTime getOffsetTime() {
-    return cantRead("OffsetTime");
-  }
-  
-  public OffsetTime[] getOffsetTimeArray() {
-    return cantRead("OffsetTime[]");
-  }
-  
-  public UUID getUUID() {
-    return cantRead("UUID");
-  }
-  
-  public UUID[] getUUIDArray() {
-    return cantRead("UUID[]");
-  }
+	public BigDecimal getBigDecimal() {
+		return cantRead("BigDecimal");
+	}
 
-  private final <U> U cantRead(final String type) {
-    throw new UnsupportedOperationException("Can't read `" + this + "` as `" + type + "`");
-  }
+	public BigDecimal[] getBigDecimalArray() {
+		return cantRead("BigDecimal[]");
+	}
 
-  @Override
-  public final int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + (value == null ? 0 : value.hashCode());
-    return result;
-  }
+	public Float getFloat() {
+		return cantRead("Float");
+	}
 
-  @Override
-  public final boolean equals(final Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (!getClass().isInstance(obj))
-      return false;
-    final Value<?> other = (Value<?>) obj;
-    if (value == null) {
-      if (other.value != null)
-        return false;
-    } else if (!value.equals(other.value))
-      return false;
-    return true;
-  }
+	public Float[] getFloatArray() {
+		return cantRead("Float[]");
+	}
 
-  @Override
-  public String toString() {
-    return getClass().getSimpleName() + " [value=" + value + "]";
-  }
+	public Double getDouble() {
+		return cantRead("Double");
+	}
+
+	public Double[] getDoubleArray() {
+		return cantRead("Double[]");
+	}
+
+	public LocalDateTime getLocalDateTime() {
+		return cantRead("LocalDateTime");
+	}
+
+	public LocalDateTime[] getLocalDateTimeArray() {
+		return cantRead("LocalDateTime[]");
+	}
+
+	public byte[] getByteArray() {
+		return cantRead("byte[]");
+	}
+
+	public byte[][] getByteArrayArray() {
+		return cantRead("byte[][]");
+	}
+
+	public LocalDate getLocalDate() {
+		return cantRead("LocalDate");
+	}
+
+	public LocalDate[] getLocalDateArray() {
+		return cantRead("LocalDate[]");
+	}
+
+	public LocalTime getLocalTime() {
+		return cantRead("LocalTime");
+	}
+
+	public LocalTime[] getLocalTimeArray() {
+		return cantRead("LocalTime[]");
+	}
+
+	public OffsetTime getOffsetTime() {
+		return cantRead("OffsetTime");
+	}
+
+	public OffsetTime[] getOffsetTimeArray() {
+		return cantRead("OffsetTime[]");
+	}
+
+	public UUID getUUID() {
+		return cantRead("UUID");
+	}
+
+	public UUID[] getUUIDArray() {
+		return cantRead("UUID[]");
+	}
+
+	private final <U> U cantRead(final String type) {
+		throw new UnsupportedOperationException("Can't read `" + this + "` as `" + type + "`");
+	}
+
+	@Override
+	public final int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (value == null ? 0 : value.hashCode());
+		return result;
+	}
+
+	@Override
+	public final boolean equals(final Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!getClass().isInstance(obj))
+			return false;
+		final Value<?> other = (Value<?>) obj;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " [value=" + value + "]";
+	}
 }

@@ -5,11 +5,11 @@ import io.trane.ndbc.proto.BufferWriter;
 
 public final class CancelRequestMarshaller {
 
-  public final void encode(final CancelRequest msg, final BufferWriter b) {
-    b.writeInt(0);
-    b.writeInt(80877102);
-    b.writeInt(msg.processId);
-    b.writeInt(msg.secretKey);
-    b.writeLength(0);
-  }
+	public final void encode(final CancelRequest msg, final BufferWriter b) {
+		b.writeInt(0);
+		b.writeInt(80877102);
+		b.writeInt(msg.processId);
+		b.writeInt(msg.secretKey);
+		b.writeLength(0);
+	}
 }

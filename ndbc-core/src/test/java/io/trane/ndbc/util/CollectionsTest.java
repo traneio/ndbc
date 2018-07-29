@@ -9,18 +9,18 @@ import org.junit.Test;
 
 public class CollectionsTest {
 
-  @Test
-  public void toImmutableSet() {
-    final Set<Integer> set = Collections.toImmutableSet(1, 2, 3);
-    assertEquals(3, set.size());
-    assertTrue(set.contains(1));
-    assertTrue(set.contains(2));
-    assertTrue(set.contains(3));
-  }
+	@Test
+	public void toImmutableSet() {
+		final Set<Integer> set = Collections.toImmutableSet(1, 2, 3);
+		assertEquals(3, set.size());
+		assertTrue(set.contains(1));
+		assertTrue(set.contains(2));
+		assertTrue(set.contains(3));
+	}
 
-  @Test(expected = UnsupportedOperationException.class)
-  public void toImmutableSetUnmodifiable() {
-    final Set<Integer> set = Collections.toImmutableSet(1, 2, 3);
-    set.add(4);
-  }
+	@Test(expected = UnsupportedOperationException.class)
+	public void toImmutableSetUnmodifiable() {
+		final Set<Integer> set = Collections.toImmutableSet(1, 2, 3);
+		set.add(4);
+	}
 }

@@ -7,23 +7,23 @@ import io.trane.ndbc.value.Value;
 
 public final class ParseMarshaller {
 
-  private final EncodingRegistry encoding;
+	private final EncodingRegistry encoding;
 
-  public ParseMarshaller(final EncodingRegistry encoding) {
-    this.encoding = encoding;
-  }
-  
-  public final void encode(final Parse msg, final BufferWriter b) {
-    b.writeChar('P');
-    b.writeInt(0);
+	public ParseMarshaller(final EncodingRegistry encoding) {
+		this.encoding = encoding;
+	}
 
-    b.writeCString(msg.destinationName);
-    b.writeCString(msg.query);
-    b.writeShort((short) msg.params.size());
+	public final void encode(final Parse msg, final BufferWriter b) {
+		b.writeChar('P');
+		b.writeInt(0);
 
-    for (final Value<?> v : msg.params)
-      b.writeInt(encoding.oid(v));
+		b.writeCString(msg.destinationName);
+		b.writeCString(msg.query);
+		b.writeShort((short) msg.params.size());
 
-    b.writeLength(1);
-  }
+		for (final Value<?> v : msg.params)
+			b.writeInt(encoding.oid(v));
+
+		b.writeLength(1);
+	}
 }

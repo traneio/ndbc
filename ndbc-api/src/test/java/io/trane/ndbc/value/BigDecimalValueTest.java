@@ -8,17 +8,17 @@ import org.junit.Test;
 
 public class BigDecimalValueTest {
 
-  @Test
-  public void getBigDecimal() {
-    final BigDecimal value = new BigDecimal(1.2D);
-    final BigDecimalValue wrapper = new BigDecimalValue(value);
-    assertEquals(value, wrapper.getBigDecimal());
-  }
+	@Test
+	public void getBigDecimal() {
+		final BigDecimal value = new BigDecimal(1.2D);
+		final BigDecimalValue wrapper = new BigDecimalValue(value);
+		assertEquals(value, wrapper.getBigDecimal());
+	}
 
-  @Test
-  public void getString() {
-    final BigDecimal value = new BigDecimal(1.2D);
-    final BigDecimalValue wrapper = new BigDecimalValue(value);
-    assertEquals(value.toPlainString(), wrapper.getString());
-  }
+	@Test
+	public void getString() {
+		final BigDecimal value = new BigDecimal(1.2D);
+		final BigDecimalValue wrapper = new BigDecimalValue(value);
+		assertEquals(value.toPlainString(), wrapper.getString());
+	}
 }

@@ -44,71 +44,63 @@ import io.trane.ndbc.postgres.proto.unmarshaller.PostgresUnmarshaller;
 
 public final class DataSourceSupplier implements Supplier<DataSource> {
 
-  private final Config                         config;
-  private final Supplier<Future<NettyChannel>> channelSupplier;
-  private final StartupExchange                startup         = new StartupExchange();
-  private final EncodingRegistry               encoding;
-  private final InitSSLExchange                initSSLExchange = new InitSSLExchange();
-  private final InitSSLHandler                 initSSLHandler  = new InitSSLHandler();
+	private final Config config;
+	private final Supplier<Future<NettyChannel>> channelSupplier;
+	private final StartupExchange startup = new StartupExchange();
+	private final EncodingRegistry encoding;
+	private final InitSSLExchange initSSLExchange = new InitSSLExchange();
+	private final InitSSLHandler initSSLHandler = new InitSSLHandler();
 
-  public DataSourceSupplier(final Config config) {
-    this.config = config;
-    encoding = new EncodingRegistry(
-        config.encodingClasses()
-            .map(l -> l.stream().map(this::loadEncoding).collect(Collectors.toList())));
-    channelSupplier = new ChannelSupplier(config.charset(), createMarshaller(), new PostgresUnmarshaller(),
-        new NioEventLoopGroup(config.nioThreads().orElse(0),
-            new DefaultThreadFactory("ndbc-netty4", true)),
-        config.host(), config.port());
-  }
+	public DataSourceSupplier(final Config config) {
+		this.config = config;
+		encoding = new EncodingRegistry(
+				config.encodingClasses().map(l -> l.stream().map(this::loadEncoding).collect(Collectors.toList())));
+		channelSupplier = new ChannelSupplier(config.charset(), createMarshaller(), new PostgresUnmarshaller(),
+				new NioEventLoopGroup(config.nioThreads().orElse(0), new DefaultThreadFactory("ndbc-netty4", true)),
+				config.host(), config.port());
+	}
 
-  private final Encoding<?, ?> loadEncoding(final String cls) {
-    try {
-      return (Encoding<?, ?>) Class.forName(cls).newInstance();
-    } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-      throw new RuntimeException(
-          "Can't load encoding " + cls + ". Make sure to provide an empty constructor.", e);
-    }
-  }
+	private final Encoding<?, ?> loadEncoding(final String cls) {
+		try {
+			return (Encoding<?, ?>) Class.forName(cls).newInstance();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			throw new RuntimeException("Can't load encoding " + cls + ". Make sure to provide an empty constructor.",
+					e);
+		}
+	}
 
-  private final PostgresMarshaller createMarshaller() {
-    return new PostgresMarshaller(new BindMarshaller(encoding), new CancelRequestMarshaller(),
-        new CloseMarshaller(),
-        new DescribeMarshaller(), new ExecuteMarshaller(), new FlushMarshaller(),
-        new ParseMarshaller(encoding),
-        new QueryMarshaller(), new PasswordMessageMarshaller(), new StartupMessageMarshaller(),
-        new SyncMarshaller(),
-        new TerminateMarshaller(), new SSLRequestMarshaller());
-  }
+	private final PostgresMarshaller createMarshaller() {
+		return new PostgresMarshaller(new BindMarshaller(encoding), new CancelRequestMarshaller(),
+				new CloseMarshaller(), new DescribeMarshaller(), new ExecuteMarshaller(), new FlushMarshaller(),
+				new ParseMarshaller(encoding), new QueryMarshaller(), new PasswordMessageMarshaller(),
+				new StartupMessageMarshaller(), new SyncMarshaller(), new TerminateMarshaller(),
+				new SSLRequestMarshaller());
+	}
 
-  private final Supplier<Future<Connection>> createConnection() {
-    final QueryResultExchange queryResultExchange = new QueryResultExchange(encoding);
-    return () -> {
-      final ExtendedExchange extendedExchange = new ExtendedExchange();
-      return channelSupplier.get()
-          .flatMap(
-              channel -> initSSLExchange.apply(config.ssl()).run(channel)
-                  .flatMap(ssl -> initSSLHandler.apply(config.host(), config.port(), ssl, channel))
-                  .flatMap(v -> startup
-                      .apply(config.charset(), config.user(), config.password(), config.database())
-                      .run(channel)
-                      .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel,
-                          channelSupplier, backendKeyData,
-                          new SimpleQueryExchange(queryResultExchange),
-                          new SimpleExecuteExchange(),
-                          new ExtendedQueryExchange(queryResultExchange, extendedExchange),
-                          new ExtendedExecuteExchange(extendedExchange)))));
-    };
-  }
+	private final Supplier<Future<Connection>> createConnection() {
+		final QueryResultExchange queryResultExchange = new QueryResultExchange(encoding);
+		return () -> {
+			final ExtendedExchange extendedExchange = new ExtendedExchange();
+			return channelSupplier.get().flatMap(channel -> initSSLExchange.apply(config.ssl()).run(channel)
+					.flatMap(ssl -> initSSLHandler.apply(config.host(), config.port(), ssl, channel))
+					.flatMap(v -> startup.apply(config.charset(), config.user(), config.password(), config.database())
+							.run(channel)
+							.map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, channelSupplier,
+									backendKeyData, new SimpleQueryExchange(queryResultExchange),
+									new SimpleExecuteExchange(),
+									new ExtendedQueryExchange(queryResultExchange, extendedExchange),
+									new ExtendedExecuteExchange(extendedExchange)))));
+		};
+	}
 
-  private final Pool<Connection> createPool() {
-    return LockFreePool.apply(createConnection(), config.poolMaxSize(), config.poolMaxWaiters(),
-        config.poolValidationInterval(),
-        new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("ndbc-pool-scheduler", true)));
-  }
+	private final Pool<Connection> createPool() {
+		return LockFreePool.apply(createConnection(), config.poolMaxSize(), config.poolMaxWaiters(),
+				config.poolValidationInterval(),
+				new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("ndbc-pool-scheduler", true)));
+	}
 
-  @Override
-  public final DataSource get() {
-    return new PooledDataSource(createPool());
-  }
+	@Override
+	public final DataSource get() {
+		return new PooledDataSource(createPool());
+	}
 }

@@ -6,7 +6,7 @@ import io.trane.future.Future;
 
 public interface Pool<T extends Connection> {
 
-  <R> Future<R> apply(Function<T, Future<R>> f);
+	<R> Future<R> apply(Function<T, Future<R>> f);
 
-  Future<Void> close();
+	Future<Void> close();
 }

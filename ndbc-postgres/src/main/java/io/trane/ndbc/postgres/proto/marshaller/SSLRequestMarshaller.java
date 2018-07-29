@@ -5,8 +5,8 @@ import io.trane.ndbc.proto.BufferWriter;
 
 public final class SSLRequestMarshaller {
 
-  public final void encode(final SSLRequest msg, final BufferWriter b) {
-    b.writeInt(8);
-    b.writeInt(80877103);
-  }
+	public final void encode(final SSLRequest msg, final BufferWriter b) {
+		b.writeInt(8);
+		b.writeInt(80877103);
+	}
 }

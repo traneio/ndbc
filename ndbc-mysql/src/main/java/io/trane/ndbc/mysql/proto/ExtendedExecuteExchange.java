@@ -15,15 +15,15 @@ import io.trane.ndbc.value.Value;
 
 public final class ExtendedExecuteExchange implements BiFunction<String, List<Value<?>>, Exchange<Long>> {
 
-  @Override
-  public Exchange<Long> apply(final String command, final List<Value<?>> params) {
-    return Exchange.send(new PrepareStatementCommand(command))
-        .thenReceive(PartialFunction.when(OkPrepareStatement.class,
-            msg -> Exchange.send(new ExecuteStatementCommand(msg.statementId)).thenReceive(commandComplete(msg))));
-  }
+	@Override
+	public Exchange<Long> apply(final String command, final List<Value<?>> params) {
+		return Exchange.send(new PrepareStatementCommand(command)).thenReceive(PartialFunction.when(
+				OkPrepareStatement.class,
+				msg -> Exchange.send(new ExecuteStatementCommand(msg.statementId)).thenReceive(commandComplete(msg))));
+	}
 
-  private PartialFunction<ServerMessage, Exchange<Long>> commandComplete(OkPrepareStatement ps) {
-    return PartialFunction.when(OkResponseMessage.class,
-        msg -> Exchange.send(new CloseStatementCommand(ps.statementId)).then(Exchange.value(msg.affectedRows)));
-  }
+	private PartialFunction<ServerMessage, Exchange<Long>> commandComplete(OkPrepareStatement ps) {
+		return PartialFunction.when(OkResponseMessage.class,
+				msg -> Exchange.send(new CloseStatementCommand(ps.statementId)).then(Exchange.value(msg.affectedRows)));
+	}
 }

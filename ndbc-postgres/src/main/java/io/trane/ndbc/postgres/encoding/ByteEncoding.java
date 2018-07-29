@@ -6,43 +6,43 @@ import io.trane.ndbc.value.ByteValue;
 
 final class ByteEncoding extends Encoding<Byte, ByteValue> {
 
-  @Override
-  public final Integer oid() {
-    return Oid.INT2;
-  }
-  
-  @Override
-  public final Class<ByteValue> valueClass() {
-    return ByteValue.class;
-  }
+	@Override
+	public final Integer oid() {
+		return Oid.INT2;
+	}
 
-  @Override
-  public final String encodeText(final Byte value) {
-    return Byte.toString(value);
-  }
+	@Override
+	public final Class<ByteValue> valueClass() {
+		return ByteValue.class;
+	}
 
-  @Override
-  public final Byte decodeText(final String value) {
-    return Byte.valueOf(value);
-  }
+	@Override
+	public final String encodeText(final Byte value) {
+		return Byte.toString(value);
+	}
 
-  @Override
-  public final void encodeBinary(final Byte value, final BufferWriter b) {
-    b.writeShort(value);
-  }
+	@Override
+	public final Byte decodeText(final String value) {
+		return Byte.valueOf(value);
+	}
 
-  @Override
-  public final Byte decodeBinary(final BufferReader b) {
-    return (byte) b.readShort();
-  }
+	@Override
+	public final void encodeBinary(final Byte value, final BufferWriter b) {
+		b.writeShort(value);
+	}
 
-  @Override
-  protected ByteValue box(Byte value) {
-    return new ByteValue(value);
-  }
+	@Override
+	public final Byte decodeBinary(final BufferReader b) {
+		return (byte) b.readShort();
+	}
 
-  @Override
-  protected Byte unbox(ByteValue value) {
-    return value.getByte();
-  }
+	@Override
+	protected ByteValue box(Byte value) {
+		return new ByteValue(value);
+	}
+
+	@Override
+	protected Byte unbox(ByteValue value) {
+		return value.getByte();
+	}
 }

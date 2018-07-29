@@ -9,17 +9,17 @@ import io.trane.ndbc.Row;
 
 public interface Connection {
 
-  Future<Boolean> isValid();
+	Future<Boolean> isValid();
 
-  Future<Void> close();
+	Future<Void> close();
 
-  Future<List<Row>> query(String query);
+	Future<List<Row>> query(String query);
 
-  Future<Long> execute(String query);
+	Future<Long> execute(String query);
 
-  Future<List<Row>> query(PreparedStatement query);
+	Future<List<Row>> query(PreparedStatement query);
 
-  Future<Long> execute(PreparedStatement query);
+	Future<Long> execute(PreparedStatement query);
 
-  <R> Future<R> withTransaction(final Supplier<Future<R>> sup);
+	<R> Future<R> withTransaction(final Supplier<Future<R>> sup);
 }

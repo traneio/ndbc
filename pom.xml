@@ -40,6 +40,7 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.language>java</sonar.language>
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<modules>
@@ -95,7 +96,23 @@
 					</execution>
 				</executions>
 			</plugin>
-		</plugins>
+	    <plugin>
+        <groupId>net.revelc.code.formatter</groupId>
+        <artifactId>formatter-maven-plugin</artifactId>
+        <version>2.7.4</version>
+        <configuration>
+			    <lineEnding>LF</lineEnding>
+			    <configFile>${project.basedir}/eclipse-formatter-config.xml</configFile>
+			  </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>format</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
 	</build>
 
 	<profiles>

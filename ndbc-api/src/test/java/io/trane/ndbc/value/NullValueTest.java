@@ -6,8 +6,8 @@ import org.junit.Test;
 
 public class NullValueTest {
 
-  @Test
-  public void isNull() {
-    assertTrue(Value.NULL.isNull());
-  }
+	@Test
+	public void isNull() {
+		assertTrue(Value.NULL.isNull());
+	}
 }

@@ -22,100 +22,94 @@ import io.trane.ndbc.value.Value;
 
 public final class Connection implements io.trane.ndbc.datasource.Connection {
 
-  private static final Logger                                           logger       = Logger
-      .getLogger(Connection.class.getName());
+	private static final Logger logger = Logger.getLogger(Connection.class.getName());
 
-  private static final PreparedStatement                                isValidQuery = PreparedStatement
-      .apply("SELECT 1");
+	private static final PreparedStatement isValidQuery = PreparedStatement.apply("SELECT 1");
 
-  private final Channel                                                 channel;
-  private final Supplier<? extends Future<? extends Channel>>           channelSupplier;
-  private final Optional<BackendKeyData>                                backendKeyData;
-  private final Function<String, Exchange<List<Row>>>                   simpleQueryExchange;
-  private final Function<String, Exchange<Long>>                        simpleExecuteExchange;
-  private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
-  private final BiFunction<String, List<Value<?>>, Exchange<Long>>      extendedExecuteExchange;
+	private final Channel channel;
+	private final Supplier<? extends Future<? extends Channel>> channelSupplier;
+	private final Optional<BackendKeyData> backendKeyData;
+	private final Function<String, Exchange<List<Row>>> simpleQueryExchange;
+	private final Function<String, Exchange<Long>> simpleExecuteExchange;
+	private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
+	private final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange;
 
-  public Connection(final Channel channel,
-      final Supplier<? extends Future<? extends Channel>> channelSupplier,
-      final Optional<BackendKeyData> backendKeyData,
-      final Function<String, Exchange<List<Row>>> simpleQueryExchange,
-      final Function<String, Exchange<Long>> simpleExecuteExchange,
-      final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange,
-      final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange) {
-    this.channel = channel;
-    this.channelSupplier = channelSupplier;
-    this.backendKeyData = backendKeyData;
-    this.simpleQueryExchange = simpleQueryExchange;
-    this.simpleExecuteExchange = simpleExecuteExchange;
-    this.extendedQueryExchange = extendedQueryExchange;
-    this.extendedExecuteExchange = extendedExecuteExchange;
-  }
+	public Connection(final Channel channel, final Supplier<? extends Future<? extends Channel>> channelSupplier,
+			final Optional<BackendKeyData> backendKeyData,
+			final Function<String, Exchange<List<Row>>> simpleQueryExchange,
+			final Function<String, Exchange<Long>> simpleExecuteExchange,
+			final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange,
+			final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange) {
+		this.channel = channel;
+		this.channelSupplier = channelSupplier;
+		this.backendKeyData = backendKeyData;
+		this.simpleQueryExchange = simpleQueryExchange;
+		this.simpleExecuteExchange = simpleExecuteExchange;
+		this.extendedQueryExchange = extendedQueryExchange;
+		this.extendedExecuteExchange = extendedExecuteExchange;
+	}
 
-  @Override
-  public final Future<List<Row>> query(final String query) {
-    return run(simpleQueryExchange.apply(query));
-  }
+	@Override
+	public final Future<List<Row>> query(final String query) {
+		return run(simpleQueryExchange.apply(query));
+	}
 
-  @Override
-  public final Future<Long> execute(final String command) {
-    return run(simpleExecuteExchange.apply(command));
-  }
+	@Override
+	public final Future<Long> execute(final String command) {
+		return run(simpleExecuteExchange.apply(command));
+	}
 
-  @Override
-  public final Future<List<Row>> query(final PreparedStatement query) {
-    return run(extendedQueryExchange.apply(query.query(), query.params()));
-  }
+	@Override
+	public final Future<List<Row>> query(final PreparedStatement query) {
+		return run(extendedQueryExchange.apply(query.query(), query.params()));
+	}
 
-  @Override
-  public final Future<Long> execute(final PreparedStatement command) {
-    return run(extendedExecuteExchange.apply(command.query(), command.params()));
-  }
+	@Override
+	public final Future<Long> execute(final PreparedStatement command) {
+		return run(extendedExecuteExchange.apply(command.query(), command.params()));
+	}
 
-  @Override
-  public final Future<Boolean> isValid() {
-    return query(isValidQuery).map(r -> true).rescue(e -> Future.FALSE);
-  }
+	@Override
+	public final Future<Boolean> isValid() {
+		return query(isValidQuery).map(r -> true).rescue(e -> Future.FALSE);
+	}
 
-  @Override
-  public final Future<Void> close() {
-    return Exchange.CLOSE.run(channel);
-  }
+	@Override
+	public final Future<Void> close() {
+		return Exchange.CLOSE.run(channel);
+	}
 
-  @Override
-  public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
-    return execute("BEGIN").flatMap(v -> sup.get()).transformWith(new Transformer<R, Future<R>>() {
-      @Override
-      public Future<R> onException(final Throwable ex) {
-        return execute("ROLLBACK").flatMap(v -> Future.exception(ex));
-      }
+	@Override
+	public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
+		return execute("BEGIN").flatMap(v -> sup.get()).transformWith(new Transformer<R, Future<R>>() {
+			@Override
+			public Future<R> onException(final Throwable ex) {
+				return execute("ROLLBACK").flatMap(v -> Future.exception(ex));
+			}
 
-      @Override
-      public Future<R> onValue(final R value) {
-        return execute("COMMIT").map(v -> value);
-      }
-    });
-  }
+			@Override
+			public Future<R> onValue(final R value) {
+				return execute("COMMIT").map(v -> value);
+			}
+		});
+	}
 
-  private AtomicReference<Future<?>> mutex = new AtomicReference<>();
-  
-  private final <T> Future<T> run(final Exchange<T> exchange) {
-    Promise<T> next = Promise.create(this::handler);
-    Future<?> previous = mutex.getAndSet(next);
-    if (previous == null)
-      next.become(exchange.run(channel));
-    else
-      previous.ensure(() -> next.become(exchange.run(channel)));
-    return next;
-  }
+	private AtomicReference<Future<?>> mutex = new AtomicReference<>();
 
-  private final <T> InterruptHandler handler(final Promise<T> p) {
-    return ex -> 
-      backendKeyData.ifPresent(data -> 
-        channelSupplier.get().flatMap(channel -> Exchange
-            .send(new CancelRequest(data.processId, data.secretKey)).then(Exchange.CLOSE)
-            .run(channel))
-            .onFailure(e -> logger.warning("Can't cancel request. Reason: " + e))
-            .ensure(() -> p.setException(ex)));
-  }
+	private final <T> Future<T> run(final Exchange<T> exchange) {
+		Promise<T> next = Promise.create(this::handler);
+		Future<?> previous = mutex.getAndSet(next);
+		if (previous == null)
+			next.become(exchange.run(channel));
+		else
+			previous.ensure(() -> next.become(exchange.run(channel)));
+		return next;
+	}
+
+	private final <T> InterruptHandler handler(final Promise<T> p) {
+		return ex -> backendKeyData.ifPresent(data -> channelSupplier.get()
+				.flatMap(channel -> Exchange.send(new CancelRequest(data.processId, data.secretKey))
+						.then(Exchange.CLOSE).run(channel))
+				.onFailure(e -> logger.warning("Can't cancel request. Reason: " + e)).ensure(() -> p.setException(ex)));
+	}
 }

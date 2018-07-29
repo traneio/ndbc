@@ -4,9 +4,9 @@ import io.trane.future.Future;
 
 public interface Channel {
 
-  Future<ServerMessage> receive();
+	Future<ServerMessage> receive();
 
-  Future<Void> send(ClientMessage msg);
+	Future<Void> send(ClientMessage msg);
 
-  Future<Void> close();
+	Future<Void> close();
 }

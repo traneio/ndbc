@@ -12,35 +12,35 @@ import io.trane.ndbc.proto.BufferReader;
  */
 public class InitialHandshakePacketUnmarshaller {
 
+	public final InitialHandshakeMessage decode(final BufferReader br) {
+		PacketBufferReader packet = new PacketBufferReader(br);
 
-  public final InitialHandshakeMessage decode(final BufferReader br) {
-    PacketBufferReader packet = new PacketBufferReader(br);
+		final int protocolVersion = packet.readByte() & 0xff;
+		String serverVersion = packet.readCString();
+		final long connectionId = packet.readUnsignedInt();
+		final byte[] salt1 = packet.readBytes(8);
+		packet.readByte();
+		int serverCapabilities = packet.readUnsignedShort();
+		final int defaultCollation = packet.readByte() & 0xff;
+		final int statusFlags = packet.readUnsignedShort();
+		final int serverCapabilitiesHi = packet.readUnsignedShort();
+		serverCapabilities |= serverCapabilitiesHi << 16;
 
-    final int protocolVersion = packet.readByte() & 0xff;
-    String serverVersion = packet.readCString();
-    final long connectionId = packet.readUnsignedInt();
-    final byte[] salt1 = packet.readBytes(8);
-    packet.readByte();
-    int serverCapabilities = packet.readUnsignedShort();
-    final int defaultCollation = packet.readByte() & 0xff;
-    final int statusFlags = packet.readUnsignedShort();
-    final int serverCapabilitiesHi = packet.readUnsignedShort();
-    serverCapabilities |= serverCapabilitiesHi << 16;
+		packet.readByte(); // auth plugin data, ignored
 
-    packet.readByte(); // auth plugin data, ignored
+		packet.readBytes(10); // padding
 
-    packet.readBytes(10); // padding
+		final byte[] salt2 = packet.readNullTerminatedBytes();
 
-    final byte[] salt2 = packet.readNullTerminatedBytes();
+		return new InitialHandshakeMessage(packet.getSequence(), protocolVersion, serverVersion, connectionId,
+				concat(salt1, salt2), serverCapabilities, defaultCollation, statusFlags, "mysql_native_password");
+	}
 
-    return new InitialHandshakeMessage(packet.getSequence(), protocolVersion, serverVersion, connectionId, concat(salt1, salt2), serverCapabilities, defaultCollation, statusFlags, "mysql_native_password");
-  }
-
-  private byte[] concat(byte[] a, byte[] b) {
-    byte[] c = new byte[a.length + b.length];
-    System.arraycopy(a, 0, c, 0, a.length);
-    System.arraycopy(b, 0, c, a.length, b.length);
-    return c;
-  }
+	private byte[] concat(byte[] a, byte[] b) {
+		byte[] c = new byte[a.length + b.length];
+		System.arraycopy(a, 0, c, 0, a.length);
+		System.arraycopy(b, 0, c, a.length, b.length);
+		return c;
+	}
 
 }

@@ -14,28 +14,29 @@ import java.util.stream.Collectors;
 
 import static io.trane.ndbc.mysql.proto.Message.*;
 
-public class SimpleQueryExchange implements Function<String, Exchange<List<Row>>>  {
+public class SimpleQueryExchange implements Function<String, Exchange<List<Row>>> {
 
-  @Override
-  public Exchange<List<Row>> apply(String sql) {
-    return Exchange
-            .send(new QueryCommand(sql))
-            .thenReceive(PartialFunction.when(ResultSet.class, this::handleResultSet))
-            .onFailure(ex -> Exchange.CLOSE);
-  }
+	@Override
+	public Exchange<List<Row>> apply(String sql) {
+		return Exchange.send(new QueryCommand(sql))
+				.thenReceive(PartialFunction.when(ResultSet.class, this::handleResultSet))
+				.onFailure(ex -> Exchange.CLOSE);
+	}
 
-  private Exchange<List<Row>> handleResultSet(ResultSet rs) {
-    AtomicInteger index = new AtomicInteger();
-    Map<String, Integer> positions = rs.fields.stream().collect(Collectors.toMap(t -> t.name, any -> index.getAndIncrement()));
-    List<Row> rows = rs.textRows.stream().map(row -> Row.apply(positions, textRowToValues(row))).collect(Collectors.toList());
-    return Exchange.value(rows);
-  }
+	private Exchange<List<Row>> handleResultSet(ResultSet rs) {
+		AtomicInteger index = new AtomicInteger();
+		Map<String, Integer> positions = rs.fields.stream()
+				.collect(Collectors.toMap(t -> t.name, any -> index.getAndIncrement()));
+		List<Row> rows = rs.textRows.stream().map(row -> Row.apply(positions, textRowToValues(row)))
+				.collect(Collectors.toList());
+		return Exchange.value(rows);
+	}
 
-  private Value<?>[] textRowToValues(TextRow textRow) {
-    Value<?>[] values = new Value<?>[textRow.values.size()];
-    for (int i = 0; i < values.length; i++) {
-      values[i] = new StringValue(textRow.values.get(i));
-    }
-    return values;
-  }
+	private Value<?>[] textRowToValues(TextRow textRow) {
+		Value<?>[] values = new Value<?>[textRow.values.size()];
+		for (int i = 0; i < values.length; i++) {
+			values[i] = new StringValue(textRow.values.get(i));
+		}
+		return values;
+	}
 }

@@ -5,10 +5,10 @@ import io.trane.ndbc.proto.BufferWriter;
 
 public final class QueryMarshaller {
 
-  public final void encode(final Query msg, final BufferWriter b) {
-    b.writeChar('Q');
-    b.writeInt(0);
-    b.writeCString(msg.string);
-    b.writeLength(1);
-  }
+	public final void encode(final Query msg, final BufferWriter b) {
+		b.writeChar('Q');
+		b.writeInt(0);
+		b.writeCString(msg.string);
+		b.writeLength(1);
+	}
 }
