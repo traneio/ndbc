@@ -22,10 +22,11 @@ import io.trane.ndbc.postgres.proto.Message.Sync;
 import io.trane.ndbc.postgres.proto.Message.Terminate;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.proto.ClientMessage;
+import io.trane.ndbc.proto.Marshaller;
 
-public class Marshaller {
+public class PostgresMarshaller implements Marshaller {
 
-  private static final Logger             log = Logger.getLogger(Marshaller.class.getName());
+  private static final Logger             log = Logger.getLogger(PostgresMarshaller.class.getName());
 
   private final BindMarshaller            bindMarshaller;
   private final CancelRequestMarshaller   cancelRequestMarshaller;
@@ -41,7 +42,7 @@ public class Marshaller {
   private final TerminateMarshaller       terminateMarshaller;
   private final SSLRequestMarshaller      sslRequestMarshaller;
 
-  public Marshaller(final BindMarshaller bindMarshaller,
+  public PostgresMarshaller(final BindMarshaller bindMarshaller,
       final CancelRequestMarshaller cancelRequestMarshaller,
       final CloseMarshaller closeMarshaller, final DescribeMarshaller describeMarshaller,
       final ExecuteMarshaller executeMarshaller, final FlushMarshaller flushMarshaller,

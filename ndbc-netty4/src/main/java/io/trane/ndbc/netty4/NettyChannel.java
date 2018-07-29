@@ -1,5 +1,6 @@
 package io.trane.ndbc.netty4;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -12,7 +13,7 @@ import io.trane.ndbc.proto.ClientMessage;
 import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.util.Try;
 
-final public class NettyChannel extends SimpleChannelInboundHandler<Try<ServerMessage>> implements Channel {
+final public class NettyChannel extends SimpleChannelInboundHandler<Try<Optional<ServerMessage>>> implements Channel {
 
   private Promise<ChannelHandlerContext> ctx = Promise.apply();
   private final AtomicReference<Promise<ServerMessage>> nextMessagePromise = new AtomicReference<>(
@@ -32,7 +33,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<Try<ServerMe
   }
 
   @Override
-  protected final void channelRead0(final ChannelHandlerContext ctx, final Try<ServerMessage> msg)
+  protected final void channelRead0(final ChannelHandlerContext ctx, final Try<Optional<ServerMessage>> msg)
       throws Exception {
     System.out.println(hashCode() + " received: " + msg);
     final Promise<ServerMessage> p = nextMessagePromise.get();
@@ -44,7 +45,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<Try<ServerMe
     if (!nextMessagePromise.compareAndSet(p, null))
       p.setException(new IllegalStateException(
           "Invalid `nextMessagePromise` state: " + nextMessagePromise.get()));
-    msg.ifSuccess(p::setValue).ifFailure(p::setException);
+    msg.ifSuccess(m -> m.ifPresent(p::setValue)).ifFailure(p::setException);
   }
 
   public final Future<Void> addSSLHandler(final SslHandler h) {

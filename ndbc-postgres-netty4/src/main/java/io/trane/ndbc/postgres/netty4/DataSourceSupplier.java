@@ -13,6 +13,9 @@ import io.trane.ndbc.datasource.Connection;
 import io.trane.ndbc.datasource.LockFreePool;
 import io.trane.ndbc.datasource.Pool;
 import io.trane.ndbc.datasource.PooledDataSource;
+import io.trane.ndbc.netty4.ChannelSupplier;
+import io.trane.ndbc.netty4.InitSSLHandler;
+import io.trane.ndbc.netty4.NettyChannel;
 import io.trane.ndbc.postgres.encoding.Encoding;
 import io.trane.ndbc.postgres.encoding.EncodingRegistry;
 import io.trane.ndbc.postgres.proto.ExtendedExchange;
@@ -29,7 +32,7 @@ import io.trane.ndbc.postgres.proto.marshaller.CloseMarshaller;
 import io.trane.ndbc.postgres.proto.marshaller.DescribeMarshaller;
 import io.trane.ndbc.postgres.proto.marshaller.ExecuteMarshaller;
 import io.trane.ndbc.postgres.proto.marshaller.FlushMarshaller;
-import io.trane.ndbc.postgres.proto.marshaller.Marshaller;
+import io.trane.ndbc.postgres.proto.marshaller.PostgresMarshaller;
 import io.trane.ndbc.postgres.proto.marshaller.ParseMarshaller;
 import io.trane.ndbc.postgres.proto.marshaller.PasswordMessageMarshaller;
 import io.trane.ndbc.postgres.proto.marshaller.QueryMarshaller;
@@ -37,8 +40,7 @@ import io.trane.ndbc.postgres.proto.marshaller.SSLRequestMarshaller;
 import io.trane.ndbc.postgres.proto.marshaller.StartupMessageMarshaller;
 import io.trane.ndbc.postgres.proto.marshaller.SyncMarshaller;
 import io.trane.ndbc.postgres.proto.marshaller.TerminateMarshaller;
-import io.trane.ndbc.postgres.proto.unmarshaller.Unmarshaller;
-import io.trane.ndbc.netty4.*;
+import io.trane.ndbc.postgres.proto.unmarshaller.PostgresUnmarshaller;
 
 public final class DataSourceSupplier implements Supplier<DataSource> {
 
@@ -54,7 +56,7 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
     encoding = new EncodingRegistry(
         config.encodingClasses()
             .map(l -> l.stream().map(this::loadEncoding).collect(Collectors.toList())));
-    channelSupplier = new ChannelSupplier(config.charset(), createMarshaller(), new Unmarshaller(),
+    channelSupplier = new ChannelSupplier(config.charset(), createMarshaller(), new PostgresUnmarshaller(),
         new NioEventLoopGroup(config.nioThreads().orElse(0),
             new DefaultThreadFactory("ndbc-netty4", true)),
         config.host(), config.port());
@@ -69,8 +71,8 @@ public final class DataSourceSupplier implements Supplier<DataSource> {
     }
   }
 
-  private final Marshaller createMarshaller() {
-    return new Marshaller(new BindMarshaller(encoding), new CancelRequestMarshaller(),
+  private final PostgresMarshaller createMarshaller() {
+    return new PostgresMarshaller(new BindMarshaller(encoding), new CancelRequestMarshaller(),
         new CloseMarshaller(),
         new DescribeMarshaller(), new ExecuteMarshaller(), new FlushMarshaller(),
         new ParseMarshaller(encoding),
