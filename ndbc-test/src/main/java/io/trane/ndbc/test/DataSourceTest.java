@@ -39,7 +39,7 @@ public class DataSourceTest {
     this.stringColumnType = stringColumnType;
     this.sleepQuery = sleepQuery;
   }
-  
+
   @Before
   public void recreateSchema() throws CheckedFutureException {
     ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
@@ -194,9 +194,13 @@ public class DataSourceTest {
   public void transactionLocalFailure() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
 
-    ds.transactional(() -> ds.execute(ps).map(v -> {
-      throw new IllegalStateException();
-    })).join(timeout);
+    try {
+      ds.transactional(() -> ds.execute(ps).map(v -> {
+        throw new IllegalStateException();
+      })).get(timeout);
+      assertTrue(false);
+    } catch (CheckedFutureException ex) {
+    }
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertTrue(rows.hasNext());

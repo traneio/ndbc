@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import io.trane.future.Future;
 import io.trane.future.InterruptHandler;
 import io.trane.future.Promise;
+import io.trane.future.Transformer;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 import io.trane.ndbc.proto.Channel;
@@ -18,7 +19,7 @@ import io.trane.ndbc.util.Try;
 import io.trane.ndbc.value.Value;
 
 public final class Connection implements io.trane.ndbc.datasource.Connection {
-  
+
   private static final Logger logger = Logger.getLogger(Connection.class.getName());
 
   private final Channel                                                 channel;
@@ -76,7 +77,17 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   @Override
   public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
-    return Future.exception(new RuntimeException("Not implemented"));
+    return execute("BEGIN").flatMap(v -> sup.get()).transformWith(new Transformer<R, Future<R>>() {
+      @Override
+      public Future<R> onException(final Throwable ex) {
+        return execute("ROLLBACK").flatMap(v -> Future.exception(ex));
+      }
+
+      @Override
+      public Future<R> onValue(final R value) {
+        return execute("COMMIT").map(v -> value);
+      }
+    });
   }
 
   private final AtomicReference<Future<?>> mutex = new AtomicReference<>();
