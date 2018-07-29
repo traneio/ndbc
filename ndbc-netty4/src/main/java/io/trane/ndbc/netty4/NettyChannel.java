@@ -1,5 +1,7 @@
 package io.trane.ndbc.netty4;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.ssl.SslHandler;
@@ -8,12 +10,11 @@ import io.trane.future.Promise;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.ClientMessage;
 import io.trane.ndbc.proto.ServerMessage;
+import io.trane.ndbc.util.Try;
 
-import java.util.concurrent.atomic.AtomicReference;
+final public class NettyChannel extends SimpleChannelInboundHandler<Try<ServerMessage>> implements Channel {
 
-final public class NettyChannel extends SimpleChannelInboundHandler<ServerMessage> implements Channel {
-
-  private Promise<ChannelHandlerContext>                ctx                = Promise.apply();
+  private Promise<ChannelHandlerContext> ctx = Promise.apply();
   private final AtomicReference<Promise<ServerMessage>> nextMessagePromise = new AtomicReference<>(
       null);
 
@@ -31,16 +32,19 @@ final public class NettyChannel extends SimpleChannelInboundHandler<ServerMessag
   }
 
   @Override
-  protected final void channelRead0(final ChannelHandlerContext ctx, final ServerMessage msg)
+  protected final void channelRead0(final ChannelHandlerContext ctx, final Try<ServerMessage> msg)
       throws Exception {
     System.out.println(hashCode() + " received: " + msg);
     final Promise<ServerMessage> p = nextMessagePromise.get();
-    if (p == null)
-      throw new IllegalStateException("Unexpected server message: " + msg);
+    if (p == null) {
+      // throw new IllegalStateException("Unexpected server message: " + msg);
+      // TODO logging
+      return;
+    }
     if (!nextMessagePromise.compareAndSet(p, null))
-      throw new IllegalStateException(
-          "Invalid `nextMessagePromise` state: " + nextMessagePromise.get());
-    p.setValue(msg);
+      p.setException(new IllegalStateException(
+          "Invalid `nextMessagePromise` state: " + nextMessagePromise.get()));
+    msg.ifSuccess(p::setValue).ifFailure(p::setException);
   }
 
   public final Future<Void> addSSLHandler(final SslHandler h) {

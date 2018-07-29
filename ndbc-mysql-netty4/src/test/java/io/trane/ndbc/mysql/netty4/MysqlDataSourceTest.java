@@ -7,13 +7,14 @@ import org.junit.Before;
 
 import io.trane.future.CheckedFutureException;
 import io.trane.ndbc.Config;
+import io.trane.ndbc.DataSource;
 import io.trane.ndbc.test.DataSourceTest;
 
 public class MysqlDataSourceTest extends DataSourceTest {
 
-	private static final Config config = Config
-	    .apply("io.trane.ndbc.mysql.netty4.DataSourceSupplier", "localhost", 3306, "root").password("mysql")
-	    .database("mysql").poolValidationInterval(Duration.ofSeconds(1)).poolMaxSize(1).poolMaxWaiters(0);
+  private static final Config config = Config
+      .apply("io.trane.ndbc.mysql.netty4.DataSourceSupplier", "localhost", 3306, "root")
+      .database("mysql").poolValidationInterval(Duration.ofSeconds(1)).poolMaxSize(1).poolMaxWaiters(0);
 
 	public MysqlDataSourceTest() {
 		super(config);

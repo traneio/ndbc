@@ -15,6 +15,7 @@ import io.trane.ndbc.mysql.proto.Message;
 import io.trane.ndbc.netty4.BufferReader;
 import io.trane.ndbc.netty4.BufferWriter;
 import io.trane.ndbc.netty4.NettyChannel;
+import io.trane.ndbc.util.Try;
 import io.trane.ndbc.mysql.proto.marshaller.Marshaller;
 import io.trane.ndbc.mysql.proto.unmarshaller.Unmarshaller;
 
@@ -28,16 +29,16 @@ import java.util.function.Supplier;
 
 final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
 
-  private final Marshaller     encoder;
-  private final Unmarshaller   decoder;
+  private final Marshaller encoder;
+  private final Unmarshaller decoder;
   private final EventLoopGroup eventLoopGroup;
-  private final String         host;
-  private final int            port;
-  private final Charset        charset;
+  private final String host;
+  private final int port;
+  private final Charset charset;
 
   public ChannelSupplier(final Charset charset, final Marshaller encoder,
-                         final Unmarshaller decoder,
-                         final EventLoopGroup eventLoopGroup, final String host, final int port) {
+      final Unmarshaller decoder,
+      final EventLoopGroup eventLoopGroup, final String host, final int port) {
     super();
     this.charset = charset;
     this.encoder = encoder;
@@ -54,7 +55,10 @@ final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
   }
 
   private class MessageCodec extends ByteToMessageCodec<Message> {
+
+    // TODO this isn't thread safe
     ClientMessage previousClientMessage = new NoCommand();
+
     @Override
     protected void encode(ChannelHandlerContext ctx, Message msg, ByteBuf out) throws Exception {
       encoder.encode(msg, new BufferWriter(charset, out));
@@ -63,7 +67,7 @@ final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-      decoder.decode(previousClientMessage, new BufferReader(charset, in)).ifPresent(out::add);
+      out.add(decoder.decode(previousClientMessage, new BufferReader(charset, in)));
     }
   }
 

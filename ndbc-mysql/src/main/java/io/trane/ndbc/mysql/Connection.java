@@ -13,6 +13,7 @@ import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.Exchange;
+import io.trane.ndbc.util.Try;
 import io.trane.ndbc.value.Value;
 
 public final class Connection implements io.trane.ndbc.datasource.Connection {
@@ -78,13 +79,18 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
     Promise<T> next = Promise.create(this::handler);
     Future<?> previous = mutex.getAndSet(next);
     if (previous == null)
-      next.become(exchange.run(channel));
+      next.become(execute(exchange));
     else
-      previous.ensure(() -> next.become(exchange.run(channel)));
+      previous.ensure(() -> next.become(execute(exchange)));
     return next;
   }
 
+  private final <T> Future<T> execute(final Exchange<T> exchange) {
+    return Try.apply(() -> exchange.run(channel)).getOrElse(Future::exception);
+  }
+
   private final <T> InterruptHandler handler(final Promise<T> p) {
-    return ex -> {};
+    return ex -> {
+    };
   }
 }
