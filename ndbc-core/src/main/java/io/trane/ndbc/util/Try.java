@@ -7,21 +7,21 @@ import java.util.function.Supplier;
 
 public interface Try<T> {
 
-	public static <T> Try<T> apply(Supplier<T> supplier) {
+	public static <T> Try<T> apply(final Supplier<T> supplier) {
 		try {
-			return new Success<T>(supplier.get());
-		} catch (Exception t) {
+			return new Success<>(supplier.get());
+		} catch (final Exception t) {
 			NonFatalException.verify(t);
-			return new Failure<T>(t);
+			return new Failure<>(t);
 		}
 	}
 
-	public static <T> Try<T> failure(Throwable failure) {
-		return new Failure<T>(failure);
+	public static <T> Try<T> failure(final Throwable failure) {
+		return new Failure<>(failure);
 	}
 
-	public static <T> Try<T> success(T result) {
-		return new Success<T>(result);
+	public static <T> Try<T> success(final T result) {
+		return new Success<>(result);
 	}
 
 	<U> Try<U> map(Function<T, U> f);
@@ -42,17 +42,17 @@ public interface Try<T> {
 class Success<T> implements Try<T> {
 	private final T result;
 
-	protected Success(T result) {
+	protected Success(final T result) {
 		this.result = result;
 	}
 
 	@Override
-	public <U> Try<U> map(Function<T, U> f) {
-		return new Success<U>(f.apply(result));
+	public <U> Try<U> map(final Function<T, U> f) {
+		return new Success<>(f.apply(result));
 	}
 
 	@Override
-	public <U> Try<U> flatMap(Function<T, Try<U>> f) {
+	public <U> Try<U> flatMap(final Function<T, Try<U>> f) {
 		return f.apply(result);
 	}
 
@@ -67,18 +67,18 @@ class Success<T> implements Try<T> {
 	}
 
 	@Override
-	public Try<T> ifSuccess(Consumer<T> c) {
+	public Try<T> ifSuccess(final Consumer<T> c) {
 		try {
 			c.accept(result);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			NonFatalException.verify(t);
-			return new Failure<T>(t);
+			return new Failure<>(t);
 		}
 		return this;
 	}
 
 	@Override
-	public Try<T> ifFailure(Consumer<Throwable> c) {
+	public Try<T> ifFailure(final Consumer<Throwable> c) {
 		return this;
 	}
 
@@ -88,7 +88,7 @@ class Success<T> implements Try<T> {
 	}
 
 	@Override
-	public T getOrElse(Function<Throwable, T> fallback) {
+	public T getOrElse(final Function<Throwable, T> fallback) {
 		return result;
 	}
 }
@@ -96,19 +96,19 @@ class Success<T> implements Try<T> {
 class Failure<T> implements Try<T> {
 	private final Throwable failure;
 
-	public Failure(Throwable failure) {
+	public Failure(final Throwable failure) {
 		this.failure = failure;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <U> Try<U> map(Function<T, U> f) {
+	public <U> Try<U> map(final Function<T, U> f) {
 		return (Try<U>) this;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <U> Try<U> flatMap(Function<T, Try<U>> f) {
+	public <U> Try<U> flatMap(final Function<T, Try<U>> f) {
 		return (Try<U>) this;
 	}
 
@@ -123,17 +123,17 @@ class Failure<T> implements Try<T> {
 	}
 
 	@Override
-	public Try<T> ifSuccess(Consumer<T> c) {
+	public Try<T> ifSuccess(final Consumer<T> c) {
 		return this;
 	}
 
 	@Override
-	public Try<T> ifFailure(Consumer<Throwable> c) {
+	public Try<T> ifFailure(final Consumer<Throwable> c) {
 		try {
 			c.accept(failure);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			NonFatalException.verify(t);
-			return new Failure<T>(t);
+			return new Failure<>(t);
 		}
 		return this;
 	}
@@ -144,7 +144,7 @@ class Failure<T> implements Try<T> {
 	}
 
 	@Override
-	public T getOrElse(Function<Throwable, T> fallback) {
+	public T getOrElse(final Function<Throwable, T> fallback) {
 		return fallback.apply(failure);
 	}
 }

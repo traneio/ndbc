@@ -20,7 +20,7 @@ public class MysqlMarshaller implements Marshaller {
 	private final Charset charset = Charset.forName("UTF-8"); // TODO: Move to config
 
 	@Override
-	public void encode(ClientMessage msg, BufferWriter bw) {
+	public void encode(final ClientMessage msg, final BufferWriter bw) {
 		if (msg instanceof HandshakeResponseMessage) {
 			handshakeResponsePacketMarshaller.encode((HandshakeResponseMessage) msg, bw, charset);
 		} else if (msg instanceof TextCommand) {

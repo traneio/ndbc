@@ -7,7 +7,7 @@ final class IntegerArrayEncoding extends ArrayEncoding<Integer, IntegerArrayValu
 	private final IntegerEncoding integerEncoding;
 	private final Integer[] emptyArray = new Integer[0];
 
-	public IntegerArrayEncoding(IntegerEncoding integerEncoding) {
+	public IntegerArrayEncoding(final IntegerEncoding integerEncoding) {
 		this.integerEncoding = integerEncoding;
 	}
 
@@ -22,7 +22,7 @@ final class IntegerArrayEncoding extends ArrayEncoding<Integer, IntegerArrayValu
 	}
 
 	@Override
-	protected Integer[] newArray(int length) {
+	protected Integer[] newArray(final int length) {
 		return new Integer[length];
 	}
 
@@ -37,12 +37,12 @@ final class IntegerArrayEncoding extends ArrayEncoding<Integer, IntegerArrayValu
 	}
 
 	@Override
-	protected IntegerArrayValue box(Integer[] value) {
+	protected IntegerArrayValue box(final Integer[] value) {
 		return new IntegerArrayValue(value);
 	}
 
 	@Override
-	protected Integer[] unbox(IntegerArrayValue value) {
+	protected Integer[] unbox(final IntegerArrayValue value) {
 		return value.getIntegerArray();
 	}
 }

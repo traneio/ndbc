@@ -109,12 +109,12 @@ public class EncodingRegistryTest {
 		}
 
 		@Override
-		protected TestValue box(String value) {
+		protected TestValue box(final String value) {
 			return new TestValue(value);
 		}
 
 		@Override
-		protected String unbox(TestValue value) {
+		protected String unbox(final TestValue value) {
 			return value.getString();
 		}
 	}

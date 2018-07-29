@@ -7,7 +7,7 @@ final class ShortArrayEncoding extends ArrayEncoding<Short, ShortArrayValue> {
 	private final ShortEncoding shortEncoding;
 	private final Short[] emptyArray = new Short[0];
 
-	public ShortArrayEncoding(ShortEncoding shortEncoding) {
+	public ShortArrayEncoding(final ShortEncoding shortEncoding) {
 		this.shortEncoding = shortEncoding;
 	}
 
@@ -22,7 +22,7 @@ final class ShortArrayEncoding extends ArrayEncoding<Short, ShortArrayValue> {
 	}
 
 	@Override
-	protected Short[] newArray(int length) {
+	protected Short[] newArray(final int length) {
 		return new Short[length];
 	}
 
@@ -37,12 +37,12 @@ final class ShortArrayEncoding extends ArrayEncoding<Short, ShortArrayValue> {
 	}
 
 	@Override
-	protected ShortArrayValue box(Short[] value) {
+	protected ShortArrayValue box(final Short[] value) {
 		return new ShortArrayValue(value);
 	}
 
 	@Override
-	protected Short[] unbox(ShortArrayValue value) {
+	protected Short[] unbox(final ShortArrayValue value) {
 		return value.getShortArray();
 	}
 }

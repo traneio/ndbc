@@ -40,12 +40,12 @@ final class LocalDateEncoding extends Encoding<LocalDate, LocalDateValue> {
 	}
 
 	@Override
-	protected LocalDateValue box(LocalDate value) {
+	protected LocalDateValue box(final LocalDate value) {
 		return new LocalDateValue(value);
 	}
 
 	@Override
-	protected LocalDate unbox(LocalDateValue value) {
+	protected LocalDate unbox(final LocalDateValue value) {
 		return value.getLocalDate();
 	}
 }

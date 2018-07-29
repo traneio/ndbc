@@ -1,7 +1,6 @@
 package io.trane.ndbc.mysql.proto.unmarshaller;
 
-import static io.trane.ndbc.mysql.proto.Message.*;
-
+import io.trane.ndbc.mysql.proto.Message.InitialHandshakeMessage;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.proto.BufferReader;
 
@@ -13,10 +12,10 @@ import io.trane.ndbc.proto.BufferReader;
 public class InitialHandshakePacketUnmarshaller {
 
 	public final InitialHandshakeMessage decode(final BufferReader br) {
-		PacketBufferReader packet = new PacketBufferReader(br);
+		final PacketBufferReader packet = new PacketBufferReader(br);
 
 		final int protocolVersion = packet.readByte() & 0xff;
-		String serverVersion = packet.readCString();
+		final String serverVersion = packet.readCString();
 		final long connectionId = packet.readUnsignedInt();
 		final byte[] salt1 = packet.readBytes(8);
 		packet.readByte();
@@ -36,8 +35,8 @@ public class InitialHandshakePacketUnmarshaller {
 				concat(salt1, salt2), serverCapabilities, defaultCollation, statusFlags, "mysql_native_password");
 	}
 
-	private byte[] concat(byte[] a, byte[] b) {
-		byte[] c = new byte[a.length + b.length];
+	private byte[] concat(final byte[] a, final byte[] b) {
+		final byte[] c = new byte[a.length + b.length];
 		System.arraycopy(a, 0, c, 0, a.length);
 		System.arraycopy(b, 0, c, a.length, b.length);
 		return c;

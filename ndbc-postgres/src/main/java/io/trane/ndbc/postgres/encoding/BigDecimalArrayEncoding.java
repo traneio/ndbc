@@ -9,7 +9,7 @@ final class BigDecimalArrayEncoding extends ArrayEncoding<BigDecimal, BigDecimal
 	private final BigDecimalEncoding bigDecimalEncoding;
 	private final BigDecimal[] emptyArray = new BigDecimal[0];
 
-	public BigDecimalArrayEncoding(BigDecimalEncoding bigDecimalEncoding) {
+	public BigDecimalArrayEncoding(final BigDecimalEncoding bigDecimalEncoding) {
 		this.bigDecimalEncoding = bigDecimalEncoding;
 	}
 
@@ -24,7 +24,7 @@ final class BigDecimalArrayEncoding extends ArrayEncoding<BigDecimal, BigDecimal
 	}
 
 	@Override
-	protected BigDecimal[] newArray(int length) {
+	protected BigDecimal[] newArray(final int length) {
 		return new BigDecimal[length];
 	}
 
@@ -39,12 +39,12 @@ final class BigDecimalArrayEncoding extends ArrayEncoding<BigDecimal, BigDecimal
 	}
 
 	@Override
-	protected BigDecimalArrayValue box(BigDecimal[] value) {
+	protected BigDecimalArrayValue box(final BigDecimal[] value) {
 		return new BigDecimalArrayValue(value);
 	}
 
 	@Override
-	protected BigDecimal[] unbox(BigDecimalArrayValue value) {
+	protected BigDecimal[] unbox(final BigDecimalArrayValue value) {
 		return value.getBigDecimalArray();
 	}
 }

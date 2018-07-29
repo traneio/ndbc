@@ -1,16 +1,20 @@
 package io.trane.ndbc.mysql.proto.marshaller;
 
-import static io.trane.ndbc.mysql.proto.Message.*;
-
-import io.trane.ndbc.mysql.proto.Collation;
-import io.trane.ndbc.mysql.proto.PacketBufferWriter;
-import io.trane.ndbc.proto.BufferWriter;
+import static io.trane.ndbc.mysql.proto.ClientCapabilities.CLIENT_CONNECT_WITH_DB;
+import static io.trane.ndbc.mysql.proto.ClientCapabilities.CLIENT_MULTI_RESULTS;
+import static io.trane.ndbc.mysql.proto.ClientCapabilities.CLIENT_PLUGIN_AUTH;
+import static io.trane.ndbc.mysql.proto.ClientCapabilities.CLIENT_PROTOCOL_41;
+import static io.trane.ndbc.mysql.proto.ClientCapabilities.CLIENT_SECURE_CONNECTION;
+import static io.trane.ndbc.mysql.proto.ClientCapabilities.CLIENT_TRANSACTIONS;
 
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import static io.trane.ndbc.mysql.proto.ClientCapabilities.*;
+import io.trane.ndbc.mysql.proto.Collation;
+import io.trane.ndbc.mysql.proto.Message.HandshakeResponseMessage;
+import io.trane.ndbc.mysql.proto.PacketBufferWriter;
+import io.trane.ndbc.proto.BufferWriter;
 
 /**
  * https://mariadb.com/kb/en/library/1-connecting-connecting/#handshake-response-packet
@@ -24,8 +28,8 @@ public class HandshakeResponsePacketMarshaller {
 	public static long BASE_CAPABILITIES = CLIENT_PLUGIN_AUTH | CLIENT_PROTOCOL_41 | CLIENT_TRANSACTIONS
 			| CLIENT_MULTI_RESULTS | CLIENT_SECURE_CONNECTION;
 
-	public void encode(HandshakeResponseMessage message, BufferWriter b, Charset charset) {
-		PacketBufferWriter packet = new PacketBufferWriter(b, message.sequence, charset);
+	public void encode(final HandshakeResponseMessage message, final BufferWriter b, final Charset charset) {
+		final PacketBufferWriter packet = new PacketBufferWriter(b, message.sequence, charset);
 		long clientCapabilities = BASE_CAPABILITIES;
 
 		if (message.database.isPresent()) {
@@ -34,7 +38,7 @@ public class HandshakeResponsePacketMarshaller {
 
 		packet.writeUnsignedInt(clientCapabilities);
 		packet.writeUnsignedInt(MAX_3_BYTES);
-		int collationId = Collation.getCollationByEncoding(message.encoding).id;
+		final int collationId = Collation.getCollationByEncoding(message.encoding).id;
 		packet.writeByte((byte) collationId);
 		packet.writeBytes(new byte[23]);
 		packet.writeCString(message.username);
@@ -42,7 +46,7 @@ public class HandshakeResponsePacketMarshaller {
 			if (message.authenticationMethod != "mysql_native_password") {
 				throw new IllegalArgumentException("authenticationMethod not supported"); // TODO create exception;
 			}
-			byte[] bytes = scramble411(message.password.get(), message.seed, charset);
+			final byte[] bytes = scramble411(message.password.get(), message.seed, charset);
 			packet.writeByte((byte) 0x14);
 			packet.writeBytes(bytes);
 		} else {
@@ -56,7 +60,7 @@ public class HandshakeResponsePacketMarshaller {
 
 	public static byte[] scramble411(final String password, final byte[] seed, final Charset charset) {
 		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
+			final MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
 			final byte[] initialDigest = messageDigest.digest(password.getBytes(charset));
 			final byte[] finalDigest = messageDigest.digest(initialDigest);
 			messageDigest.reset();
@@ -69,7 +73,7 @@ public class HandshakeResponsePacketMarshaller {
 				counter++;
 			}
 			return result;
-		} catch (NoSuchAlgorithmException e) {
+		} catch (final NoSuchAlgorithmException e) {
 			throw new RuntimeException("NoSuchAlgorithmException []", e); // TODO create exception
 		}
 	}

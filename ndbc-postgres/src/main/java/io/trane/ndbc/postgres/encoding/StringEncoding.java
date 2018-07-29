@@ -45,12 +45,12 @@ final class StringEncoding extends Encoding<String, StringValue> {
 	}
 
 	@Override
-	protected StringValue box(String value) {
+	protected StringValue box(final String value) {
 		return new StringValue(value);
 	}
 
 	@Override
-	protected String unbox(StringValue value) {
+	protected String unbox(final StringValue value) {
 		return value.getString();
 	}
 }

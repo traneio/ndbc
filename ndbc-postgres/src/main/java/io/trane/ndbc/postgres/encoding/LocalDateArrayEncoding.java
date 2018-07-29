@@ -9,7 +9,7 @@ final class LocalDateArrayEncoding extends ArrayEncoding<LocalDate, LocalDateArr
 	private final LocalDateEncoding localDateEncoding;
 	private final LocalDate[] emptyArray = new LocalDate[0];
 
-	public LocalDateArrayEncoding(LocalDateEncoding localDateEncoding) {
+	public LocalDateArrayEncoding(final LocalDateEncoding localDateEncoding) {
 		this.localDateEncoding = localDateEncoding;
 	}
 
@@ -24,7 +24,7 @@ final class LocalDateArrayEncoding extends ArrayEncoding<LocalDate, LocalDateArr
 	}
 
 	@Override
-	protected LocalDate[] newArray(int length) {
+	protected LocalDate[] newArray(final int length) {
 		return new LocalDate[length];
 	}
 
@@ -39,12 +39,12 @@ final class LocalDateArrayEncoding extends ArrayEncoding<LocalDate, LocalDateArr
 	}
 
 	@Override
-	protected LocalDateArrayValue box(LocalDate[] value) {
+	protected LocalDateArrayValue box(final LocalDate[] value) {
 		return new LocalDateArrayValue(value);
 	}
 
 	@Override
-	protected LocalDate[] unbox(LocalDateArrayValue value) {
+	protected LocalDate[] unbox(final LocalDateArrayValue value) {
 		return value.getLocalDateArray();
 	}
 }

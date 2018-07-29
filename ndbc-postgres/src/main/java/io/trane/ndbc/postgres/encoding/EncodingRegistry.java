@@ -54,7 +54,7 @@ public final class EncodingRegistry {
 			throw new UnsupportedOperationException("Can't decode value of type " + oid);
 	}
 
-	public final Integer oid(Value<?> value) {
+	public final Integer oid(final Value<?> value) {
 		if (value.isNull())
 			return Oid.UNSPECIFIED;
 		else

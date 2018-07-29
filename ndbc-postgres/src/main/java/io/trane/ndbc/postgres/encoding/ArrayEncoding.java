@@ -29,7 +29,7 @@ abstract class ArrayEncoding<I, V extends Value<I[]>> extends Encoding<I[], V> {
 		b.writeInt(itemEncoding().oid());
 		b.writeInt(value.length);
 		b.writeInt(1); // lbound
-		for (I v : value)
+		for (final I v : value)
 			if (v == null)
 				b.writeInt(-1);
 			else {
@@ -42,21 +42,21 @@ abstract class ArrayEncoding<I, V extends Value<I[]>> extends Encoding<I[], V> {
 
 	@Override
 	public final I[] decodeBinary(final BufferReader b) {
-		int dimensions = b.readInt();
+		final int dimensions = b.readInt();
 		assert (dimensions <= 1);
 		b.readInt(); // flags bit 0: 0=no-nulls, 1=has-nulls
 		b.readInt(); // elementOid
 		if (dimensions == 0)
 			return emptyArray();
 		else {
-			int length = b.readInt();
-			int lbound = b.readInt();
+			final int length = b.readInt();
+			final int lbound = b.readInt();
 			assert (lbound == 1);
 
-			I[] result = newArray(length);
+			final I[] result = newArray(length);
 
 			for (int i = 0; i < length; i++) {
-				int elemLength = b.readInt();
+				final int elemLength = b.readInt();
 				if (elemLength == -1)
 					result[i] = null;
 				else {

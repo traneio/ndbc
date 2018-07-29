@@ -40,12 +40,12 @@ final class UUIDEncoding extends Encoding<UUID, UUIDValue> {
 	}
 
 	@Override
-	protected UUIDValue box(UUID value) {
+	protected UUIDValue box(final UUID value) {
 		return new UUIDValue(value);
 	}
 
 	@Override
-	protected UUID unbox(UUIDValue value) {
+	protected UUID unbox(final UUIDValue value) {
 		return value.getUUID();
 	}
 }

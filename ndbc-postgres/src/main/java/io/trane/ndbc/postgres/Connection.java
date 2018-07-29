@@ -94,11 +94,11 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 		});
 	}
 
-	private AtomicReference<Future<?>> mutex = new AtomicReference<>();
+	private final AtomicReference<Future<?>> mutex = new AtomicReference<>();
 
 	private final <T> Future<T> run(final Exchange<T> exchange) {
-		Promise<T> next = Promise.create(this::handler);
-		Future<?> previous = mutex.getAndSet(next);
+		final Promise<T> next = Promise.create(this::handler);
+		final Future<?> previous = mutex.getAndSet(next);
 		if (previous == null)
 			next.become(exchange.run(channel));
 		else

@@ -7,7 +7,7 @@ final class FloatArrayEncoding extends ArrayEncoding<Float, FloatArrayValue> {
 	private final FloatEncoding floatEncoding;
 	private final Float[] emptyArray = new Float[0];
 
-	public FloatArrayEncoding(FloatEncoding floatEncoding) {
+	public FloatArrayEncoding(final FloatEncoding floatEncoding) {
 		this.floatEncoding = floatEncoding;
 	}
 
@@ -22,7 +22,7 @@ final class FloatArrayEncoding extends ArrayEncoding<Float, FloatArrayValue> {
 	}
 
 	@Override
-	protected Float[] newArray(int length) {
+	protected Float[] newArray(final int length) {
 		return new Float[length];
 	}
 
@@ -37,12 +37,12 @@ final class FloatArrayEncoding extends ArrayEncoding<Float, FloatArrayValue> {
 	}
 
 	@Override
-	protected FloatArrayValue box(Float[] value) {
+	protected FloatArrayValue box(final Float[] value) {
 		return new FloatArrayValue(value);
 	}
 
 	@Override
-	protected Float[] unbox(FloatArrayValue value) {
+	protected Float[] unbox(final FloatArrayValue value) {
 		return value.getFloatArray();
 	}
 }

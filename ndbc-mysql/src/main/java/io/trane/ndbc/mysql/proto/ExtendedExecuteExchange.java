@@ -22,7 +22,7 @@ public final class ExtendedExecuteExchange implements BiFunction<String, List<Va
 				msg -> Exchange.send(new ExecuteStatementCommand(msg.statementId)).thenReceive(commandComplete(msg))));
 	}
 
-	private PartialFunction<ServerMessage, Exchange<Long>> commandComplete(OkPrepareStatement ps) {
+	private PartialFunction<ServerMessage, Exchange<Long>> commandComplete(final OkPrepareStatement ps) {
 		return PartialFunction.when(OkResponseMessage.class,
 				msg -> Exchange.send(new CloseStatementCommand(ps.statementId)).then(Exchange.value(msg.affectedRows)));
 	}

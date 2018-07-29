@@ -10,7 +10,7 @@ final class StringArrayEncoding extends ArrayEncoding<String, StringArrayValue> 
 	private final StringEncoding stringEncoding;
 	private final String[] emptyArray = new String[0];
 
-	public StringArrayEncoding(StringEncoding stringEncoding) {
+	public StringArrayEncoding(final StringEncoding stringEncoding) {
 		this.stringEncoding = stringEncoding;
 	}
 
@@ -30,7 +30,7 @@ final class StringArrayEncoding extends ArrayEncoding<String, StringArrayValue> 
 	}
 
 	@Override
-	protected String[] newArray(int length) {
+	protected String[] newArray(final int length) {
 		return new String[length];
 	}
 
@@ -45,12 +45,12 @@ final class StringArrayEncoding extends ArrayEncoding<String, StringArrayValue> 
 	}
 
 	@Override
-	protected StringArrayValue box(String[] value) {
+	protected StringArrayValue box(final String[] value) {
 		return new StringArrayValue(value);
 	}
 
 	@Override
-	protected String[] unbox(StringArrayValue value) {
+	protected String[] unbox(final StringArrayValue value) {
 		return value.getStringArray();
 	}
 }

@@ -1,6 +1,9 @@
 package io.trane.ndbc.mysql.proto.unmarshaller;
 
-import static io.trane.ndbc.mysql.proto.Message.*;
+import io.trane.ndbc.mysql.proto.Message.EofResponseMessage;
+import io.trane.ndbc.mysql.proto.Message.ErrorResponseMessage;
+import io.trane.ndbc.mysql.proto.Message.OkResponseMessage;
+import io.trane.ndbc.mysql.proto.Message.ServerResponseMessage;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.proto.BufferReader;
 
@@ -10,8 +13,8 @@ public class ServerResponseUnmarshaller {
 	public final static int EOF_BYTE = 0xFE;
 
 	public final ServerResponseMessage decode(final BufferReader br) {
-		PacketBufferReader packet = new PacketBufferReader(br);
-		int responseType = packet.readByte() & 0xFF;
+		final PacketBufferReader packet = new PacketBufferReader(br);
+		final int responseType = packet.readByte() & 0xFF;
 		switch (responseType) {
 			case (OK_BYTE) :
 				return decodeOk(packet);
@@ -24,23 +27,23 @@ public class ServerResponseUnmarshaller {
 		}
 	}
 
-	public static EofResponseMessage decodeEof(PacketBufferReader packet) {
+	public static EofResponseMessage decodeEof(final PacketBufferReader packet) {
 		packet.readByte();
 		return new EofResponseMessage(packet.readUnsignedShort(), packet.readUnsignedShort());
 	}
 
-	public static OkResponseMessage decodeOk(PacketBufferReader packet) {
-		long affectedRows = packet.readVariableLong();
-		long insertedId = packet.readVariableLong();
-		int serverStatus = packet.readUnsignedShort();
-		int warningCount = packet.readUnsignedShort();
-		String message = new String(packet.readBytes());
+	public static OkResponseMessage decodeOk(final PacketBufferReader packet) {
+		final long affectedRows = packet.readVariableLong();
+		final long insertedId = packet.readVariableLong();
+		final int serverStatus = packet.readUnsignedShort();
+		final int warningCount = packet.readUnsignedShort();
+		final String message = new String(packet.readBytes());
 		return new OkResponseMessage(affectedRows, insertedId, serverStatus, warningCount, message);
 	}
 
-	public static ErrorResponseMessage decodeError(PacketBufferReader packet) {
-		byte[] bytes = packet.readBytes();
-		String errorMessage = new String(bytes);
+	public static ErrorResponseMessage decodeError(final PacketBufferReader packet) {
+		final byte[] bytes = packet.readBytes();
+		final String errorMessage = new String(bytes);
 		return new ErrorResponseMessage(errorMessage);
 	}
 

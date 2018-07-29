@@ -76,7 +76,7 @@ public final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
 				.option(ChannelOption.AUTO_READ, false).handler(new ChannelInitializer<io.netty.channel.Channel>() {
 					@Override
 					protected void initChannel(final io.netty.channel.Channel ch) throws Exception {
-						MessageEncoding enc = new MessageEncoding();
+						final MessageEncoding enc = new MessageEncoding();
 						ch.pipeline().addLast(enc.messageDecoder, enc.messageEncoder, new FlowControlHandler(),
 								channel);
 					}

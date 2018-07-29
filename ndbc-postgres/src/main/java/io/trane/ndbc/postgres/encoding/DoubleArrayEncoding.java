@@ -7,7 +7,7 @@ final class DoubleArrayEncoding extends ArrayEncoding<Double, DoubleArrayValue> 
 	private final DoubleEncoding doubleEncoding;
 	private final Double[] emptyArray = new Double[0];
 
-	public DoubleArrayEncoding(DoubleEncoding doubleEncoding) {
+	public DoubleArrayEncoding(final DoubleEncoding doubleEncoding) {
 		this.doubleEncoding = doubleEncoding;
 	}
 
@@ -22,7 +22,7 @@ final class DoubleArrayEncoding extends ArrayEncoding<Double, DoubleArrayValue> 
 	}
 
 	@Override
-	protected Double[] newArray(int length) {
+	protected Double[] newArray(final int length) {
 		return new Double[length];
 	}
 
@@ -37,12 +37,12 @@ final class DoubleArrayEncoding extends ArrayEncoding<Double, DoubleArrayValue> 
 	}
 
 	@Override
-	protected DoubleArrayValue box(Double[] value) {
+	protected DoubleArrayValue box(final Double[] value) {
 		return new DoubleArrayValue(value);
 	}
 
 	@Override
-	protected Double[] unbox(DoubleArrayValue value) {
+	protected Double[] unbox(final DoubleArrayValue value) {
 		return value.getDoubleArray();
 	}
 }

@@ -7,7 +7,7 @@ final class BooleanArrayEncoding extends ArrayEncoding<Boolean, BooleanArrayValu
 	private final BooleanEncoding booleanEncoding;
 	private final Boolean[] emptyArray = new Boolean[0];
 
-	public BooleanArrayEncoding(BooleanEncoding booleanEncoding) {
+	public BooleanArrayEncoding(final BooleanEncoding booleanEncoding) {
 		this.booleanEncoding = booleanEncoding;
 	}
 
@@ -22,7 +22,7 @@ final class BooleanArrayEncoding extends ArrayEncoding<Boolean, BooleanArrayValu
 	}
 
 	@Override
-	protected Boolean[] newArray(int length) {
+	protected Boolean[] newArray(final int length) {
 		return new Boolean[length];
 	}
 
@@ -37,12 +37,12 @@ final class BooleanArrayEncoding extends ArrayEncoding<Boolean, BooleanArrayValu
 	}
 
 	@Override
-	protected BooleanArrayValue box(Boolean[] value) {
+	protected BooleanArrayValue box(final Boolean[] value) {
 		return new BooleanArrayValue(value);
 	}
 
 	@Override
-	protected Boolean[] unbox(BooleanArrayValue value) {
+	protected Boolean[] unbox(final BooleanArrayValue value) {
 		return value.getBooleanArray();
 	}
 }

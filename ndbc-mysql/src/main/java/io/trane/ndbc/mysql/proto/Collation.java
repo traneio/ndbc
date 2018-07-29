@@ -9,14 +9,14 @@ public class Collation {
 	final public String charset;
 	final public boolean isDefault;
 
-	public Collation(int id, String name, String charset, boolean isDefault) {
+	public Collation(final int id, final String name, final String charset, final boolean isDefault) {
 		this.id = id;
 		this.name = name;
 		this.charset = charset;
 		this.isDefault = isDefault;
 	}
 
-	public static Collation getCollationById(int collationId) {
+	public static Collation getCollationById(final int collationId) {
 		if (collationId > 250 || collationId < 1)
 			throw new IllegalArgumentException("Invalid collationId");
 
@@ -28,7 +28,7 @@ public class Collation {
 		return collation;
 	}
 
-	public static Collation getCollationByEncoding(String encoding) {
+	public static Collation getCollationByEncoding(final String encoding) {
 		if (encoding == null)
 			throw new IllegalArgumentException("charset cannot be null");
 
@@ -44,7 +44,7 @@ public class Collation {
 	final static private Map<String, Collation> collationByName = new HashMap();
 	final static private Map<String, Collation> collationByCharset = new HashMap();
 
-	private static void addCollation(Collation collation) {
+	private static void addCollation(final Collation collation) {
 		collationById[collation.id] = collation;
 		collationByName.put(collation.name, collation);
 		if (collation.isDefault) {

@@ -39,12 +39,12 @@ final class LocalTimeEncoding extends Encoding<LocalTime, LocalTimeValue> {
 	}
 
 	@Override
-	protected LocalTimeValue box(LocalTime value) {
+	protected LocalTimeValue box(final LocalTime value) {
 		return new LocalTimeValue(value);
 	}
 
 	@Override
-	protected LocalTime unbox(LocalTimeValue value) {
+	protected LocalTime unbox(final LocalTimeValue value) {
 		return value.getLocalTime();
 	}
 }

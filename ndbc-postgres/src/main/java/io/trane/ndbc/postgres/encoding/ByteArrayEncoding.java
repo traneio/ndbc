@@ -47,12 +47,12 @@ final class ByteArrayEncoding extends Encoding<byte[], ByteArrayValue> {
 	}
 
 	@Override
-	protected ByteArrayValue box(byte[] value) {
+	protected ByteArrayValue box(final byte[] value) {
 		return new ByteArrayValue(value);
 	}
 
 	@Override
-	protected byte[] unbox(ByteArrayValue value) {
+	protected byte[] unbox(final ByteArrayValue value) {
 		return value.getByteArray();
 	}
 }

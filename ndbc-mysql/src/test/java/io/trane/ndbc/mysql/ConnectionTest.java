@@ -16,7 +16,10 @@ import io.trane.future.CheckedFutureException;
 import io.trane.future.Future;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
-import io.trane.ndbc.proto.*;
+import io.trane.ndbc.proto.Channel;
+import io.trane.ndbc.proto.ClientMessage;
+import io.trane.ndbc.proto.Exchange;
+import io.trane.ndbc.proto.ServerMessage;
 import io.trane.ndbc.value.IntegerValue;
 import io.trane.ndbc.value.Value;
 

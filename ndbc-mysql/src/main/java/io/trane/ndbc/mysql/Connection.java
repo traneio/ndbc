@@ -49,12 +49,12 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 	}
 
 	@Override
-	public Future<List<Row>> query(String query) {
+	public Future<List<Row>> query(final String query) {
 		return run(simpleQueryExchange.apply(query));
 	}
 
 	@Override
-	public Future<Long> execute(String command) {
+	public Future<Long> execute(final String command) {
 		return run(simpleExecuteExchange.apply(command));
 	}
 
@@ -64,20 +64,20 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 	}
 
 	@Override
-	public Future<Long> execute(PreparedStatement command) {
+	public Future<Long> execute(final PreparedStatement command) {
 		return run(extendedExecuteExchange.apply(command.query(), command.params()));
 	}
 
 	@Override
-	public <R> Future<R> withTransaction(Supplier<Future<R>> sup) {
+	public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
 		return Future.exception(new RuntimeException("Not implemented"));
 	}
 
-	private AtomicReference<Future<?>> mutex = new AtomicReference<>();
+	private final AtomicReference<Future<?>> mutex = new AtomicReference<>();
 
 	private final <T> Future<T> run(final Exchange<T> exchange) {
-		Promise<T> next = Promise.create(this::handler);
-		Future<?> previous = mutex.getAndSet(next);
+		final Promise<T> next = Promise.create(this::handler);
+		final Future<?> previous = mutex.getAndSet(next);
 		if (previous == null)
 			next.become(execute(exchange));
 		else

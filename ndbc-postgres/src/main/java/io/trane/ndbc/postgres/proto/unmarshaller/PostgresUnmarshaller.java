@@ -3,7 +3,6 @@ package io.trane.ndbc.postgres.proto.unmarshaller;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import io.trane.ndbc.postgres.proto.Message;
 import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
 import io.trane.ndbc.postgres.proto.Message.BindComplete;
 import io.trane.ndbc.postgres.proto.Message.CloseComplete;
@@ -58,10 +57,10 @@ public final class PostgresUnmarshaller implements Unmarshaller {
 	}
 
 	@Override
-	public Try<Optional<ServerMessage>> decode(Optional<Class<? extends ClientMessage>> previousClientMessageClass,
-			BufferReader b) {
+	public Try<Optional<ServerMessage>> decode(final Optional<Class<? extends ClientMessage>> previousClientMessageClass,
+			final BufferReader b) {
 		try {
-			boolean ssl = previousClientMessageClass.map(cls -> SSLRequest.class.isAssignableFrom(cls)).orElse(false);
+			final boolean ssl = previousClientMessageClass.map(cls -> SSLRequest.class.isAssignableFrom(cls)).orElse(false);
 			if (b.readableBytes() == 1 && ssl)
 				return Try.apply(() -> Optional.of(decode(b.readByte(), b.readSlice(0))));
 			else if (b.readableBytes() >= 5) {

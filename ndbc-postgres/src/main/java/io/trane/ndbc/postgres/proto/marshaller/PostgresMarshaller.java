@@ -65,7 +65,8 @@ public class PostgresMarshaller implements Marshaller {
 		this.sslRequestMarshaller = sslRequestMarshaller;
 	}
 
-	public final void encode(final ClientMessage msg, final BufferWriter b) {
+	@Override
+  public final void encode(final ClientMessage msg, final BufferWriter b) {
 		try {
 			if (msg instanceof Bind)
 				bindMarshaller.encode((Bind) msg, b);

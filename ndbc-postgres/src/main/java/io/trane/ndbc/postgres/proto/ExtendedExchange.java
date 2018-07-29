@@ -46,7 +46,7 @@ public final class ExtendedExchange {
 
 	private final int id(final String query, final List<Value<?>> params) {
 		int id = query.hashCode();
-		for (Value<?> v : params)
+		for (final Value<?> v : params)
 			id = 31 * id + v.getClass().hashCode();
 		return id;
 	}

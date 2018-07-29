@@ -11,8 +11,8 @@ public class PrepareStatementOkUnmarshaller {
 	public final static int ERROR_BYTE = 0xFF;
 
 	public final ServerResponseMessage decode(final BufferReader br) {
-		PacketBufferReader packet = new PacketBufferReader(br);
-		int responseType = packet.readByte() & 0xFF;
+		final PacketBufferReader packet = new PacketBufferReader(br);
+		final int responseType = packet.readByte() & 0xFF;
 		switch (responseType) {
 			case (OK_BYTE) :
 				return decodeOk(packet);
@@ -24,18 +24,18 @@ public class PrepareStatementOkUnmarshaller {
 	}
 
 	private OkPrepareStatement decodeOk(final PacketBufferReader packet) {
-		long statementId = packet.readUnsignedInt();
-		int numOfColumns = packet.readUnsignedShort();
-		int numOfParameters = packet.readUnsignedShort();
+		final long statementId = packet.readUnsignedInt();
+		final int numOfColumns = packet.readUnsignedShort();
+		final int numOfParameters = packet.readUnsignedShort();
 		packet.readByte();
-		int warningCount = packet.readUnsignedShort();
+		final int warningCount = packet.readUnsignedShort();
 
 		return new OkPrepareStatement(statementId, numOfColumns, numOfParameters, warningCount);
 	}
 
 	public static ErrorResponseMessage decodeError(final PacketBufferReader packet) {
-		byte[] bytes = packet.readBytes();
-		String errorMessage = new String(bytes);
+		final byte[] bytes = packet.readBytes();
+		final String errorMessage = new String(bytes);
 		return new ErrorResponseMessage(errorMessage);
 	}
 }

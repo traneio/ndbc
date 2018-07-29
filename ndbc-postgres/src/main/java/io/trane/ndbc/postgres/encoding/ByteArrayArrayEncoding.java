@@ -7,7 +7,7 @@ final class ByteArrayArrayEncoding extends ArrayEncoding<byte[], ByteArrayArrayV
 	private final ByteArrayEncoding byteArrayEncoding;
 	private final byte[][] emptyArray = new byte[0][0];
 
-	public ByteArrayArrayEncoding(ByteArrayEncoding byteArrayEncoding) {
+	public ByteArrayArrayEncoding(final ByteArrayEncoding byteArrayEncoding) {
 		this.byteArrayEncoding = byteArrayEncoding;
 	}
 
@@ -22,7 +22,7 @@ final class ByteArrayArrayEncoding extends ArrayEncoding<byte[], ByteArrayArrayV
 	}
 
 	@Override
-	protected byte[][] newArray(int length) {
+	protected byte[][] newArray(final int length) {
 		return new byte[length][];
 	}
 
@@ -37,12 +37,12 @@ final class ByteArrayArrayEncoding extends ArrayEncoding<byte[], ByteArrayArrayV
 	}
 
 	@Override
-	protected ByteArrayArrayValue box(byte[][] value) {
+	protected ByteArrayArrayValue box(final byte[][] value) {
 		return new ByteArrayArrayValue(value);
 	}
 
 	@Override
-	protected byte[][] unbox(ByteArrayArrayValue value) {
+	protected byte[][] unbox(final ByteArrayArrayValue value) {
 		return value.getByteArrayArray();
 	}
 }

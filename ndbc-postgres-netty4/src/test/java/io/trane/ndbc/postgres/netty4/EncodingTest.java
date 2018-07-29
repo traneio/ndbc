@@ -36,7 +36,7 @@ public class EncodingTest extends TestEnv {
 	@Test
 	public void bigDecimalArray() throws CheckedFutureException {
 		test("numeric[]", (ps, v) -> ps.setBigDecimalArray(v), Value::getBigDecimalArray, r -> {
-			BigDecimal[] array = new BigDecimal[r.nextInt(10)];
+			final BigDecimal[] array = new BigDecimal[r.nextInt(10)];
 			for (int i = 0; i < array.length; i++)
 				array[i] = BigDecimal.valueOf(r.nextLong(), r.nextInt(100));
 			return array;
@@ -51,7 +51,7 @@ public class EncodingTest extends TestEnv {
 	@Test
 	public void booleanArray() throws CheckedFutureException {
 		test("bool[]", (ps, v) -> ps.setBooleanArray(v), Value::getBooleanArray, r -> {
-			Boolean[] array = new Boolean[r.nextInt(10)];
+			final Boolean[] array = new Boolean[r.nextInt(10)];
 			for (int i = 0; i < array.length; i++)
 				array[i] = r.nextBoolean();
 			return array;
@@ -70,7 +70,7 @@ public class EncodingTest extends TestEnv {
 	@Test
 	public void booleanArrayArray() throws CheckedFutureException {
 		test("bytea[]", (ps, v) -> ps.setByteArrayArray(v), Value::getByteArrayArray, r -> {
-			byte[][] array = new byte[r.nextInt(10)][];
+			final byte[][] array = new byte[r.nextInt(10)][];
 			for (int i = 0; i < array.length; i++) {
 				final byte[] bytes = new byte[r.nextInt(5)];
 				r.nextBytes(bytes);
@@ -88,7 +88,7 @@ public class EncodingTest extends TestEnv {
 	@Test
 	public void doubleArray() throws CheckedFutureException {
 		test("float8[]", (ps, v) -> ps.setDoubleArray(v), Value::getDoubleArray, r -> {
-			Double[] array = new Double[r.nextInt(10)];
+			final Double[] array = new Double[r.nextInt(10)];
 			for (int i = 0; i < array.length; i++)
 				array[i] = r.nextDouble();
 			return array;
@@ -103,7 +103,7 @@ public class EncodingTest extends TestEnv {
 	@Test
 	public void floatArray() throws CheckedFutureException {
 		test("float4[]", (ps, v) -> ps.setFloatArray(v), Value::getFloatArray, r -> {
-			Float[] array = new Float[r.nextInt(10)];
+			final Float[] array = new Float[r.nextInt(10)];
 			for (int i = 0; i < array.length; i++)
 				array[i] = r.nextFloat();
 			return array;
@@ -118,7 +118,7 @@ public class EncodingTest extends TestEnv {
 	@Test
 	public void integerArray() throws CheckedFutureException {
 		test("int4[]", (ps, v) -> ps.setIntegerArray(v), Value::getIntegerArray, r -> {
-			Integer[] array = new Integer[r.nextInt(10)];
+			final Integer[] array = new Integer[r.nextInt(10)];
 			for (int i = 0; i < array.length; i++)
 				array[i] = r.nextInt();
 			return array;
@@ -133,7 +133,7 @@ public class EncodingTest extends TestEnv {
 	@Test
 	public void localDateArray() throws CheckedFutureException {
 		test("date[]", (ps, v) -> ps.setLocalDateArray(v), Value::getLocalDateArray, r -> {
-			LocalDate[] array = new LocalDate[r.nextInt(10)];
+			final LocalDate[] array = new LocalDate[r.nextInt(10)];
 			for (int i = 0; i < array.length; i++)
 				array[i] = randomLocalDateTime(r).toLocalDate();
 			return array;
@@ -148,7 +148,7 @@ public class EncodingTest extends TestEnv {
 	@Test
 	public void localDateTimeArray() throws CheckedFutureException {
 		test("timestamp[]", (ps, v) -> ps.setLocalDateTimeArray(v), Value::getLocalDateTimeArray, r -> {
-			LocalDateTime[] array = new LocalDateTime[r.nextInt(10)];
+			final LocalDateTime[] array = new LocalDateTime[r.nextInt(10)];
 			for (int i = 0; i < array.length; i++)
 				array[i] = randomLocalDateTime(r);
 			return array;
@@ -163,7 +163,7 @@ public class EncodingTest extends TestEnv {
 	@Test
 	public void localTimeArray() throws CheckedFutureException {
 		test("time[]", (ps, v) -> ps.setLocalTimeArray(v), Value::getLocalTimeArray, r -> {
-			LocalTime[] array = new LocalTime[r.nextInt(10)];
+			final LocalTime[] array = new LocalTime[r.nextInt(10)];
 			for (int i = 0; i < array.length; i++)
 				array[i] = randomLocalDateTime(r).toLocalTime();
 			return array;
@@ -178,7 +178,7 @@ public class EncodingTest extends TestEnv {
 	@Test
 	public void longArray() throws CheckedFutureException {
 		test("int8[]", (ps, v) -> ps.setLongArray(v), Value::getLongArray, r -> {
-			Long[] array = new Long[r.nextInt(10)];
+			final Long[] array = new Long[r.nextInt(10)];
 			for (int i = 0; i < array.length; i++)
 				array[i] = r.nextLong();
 			return array;
@@ -194,7 +194,7 @@ public class EncodingTest extends TestEnv {
 	@Test
 	public void offsetTimeArray() throws CheckedFutureException {
 		test("timetz[]", (ps, v) -> ps.setOffsetTimeArray(v), Value::getOffsetTimeArray, r -> {
-			OffsetTime[] array = new OffsetTime[r.nextInt(10)];
+			final OffsetTime[] array = new OffsetTime[r.nextInt(10)];
 			for (int i = 0; i < array.length; i++)
 				array[i] = randomLocalDateTime(r).toLocalTime().atOffset(randomZoneOffset(r));
 			return array;
@@ -209,7 +209,7 @@ public class EncodingTest extends TestEnv {
 	@Test
 	public void shortArray() throws CheckedFutureException {
 		test("int2[]", (ps, v) -> ps.setShortArray(v), Value::getShortArray, r -> {
-			Short[] array = new Short[r.nextInt(10)];
+			final Short[] array = new Short[r.nextInt(10)];
 			for (int i = 0; i < array.length; i++)
 				array[i] = (short) r.nextInt();
 			return array;
@@ -234,7 +234,7 @@ public class EncodingTest extends TestEnv {
 
 	private void testStringArray(final String columnType, final int maxLength) throws CheckedFutureException {
 		test(columnType, (ps, v) -> ps.setStringArray(v), Value::getStringArray, r -> {
-			String[] array = new String[r.nextInt(10)];
+			final String[] array = new String[r.nextInt(10)];
 			for (int i = 0; i < array.length; i++)
 				array[i] = radomString(r, maxLength);
 			return array;

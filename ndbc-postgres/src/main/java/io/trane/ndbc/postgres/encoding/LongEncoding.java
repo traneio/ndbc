@@ -37,12 +37,12 @@ final class LongEncoding extends Encoding<Long, LongValue> {
 	}
 
 	@Override
-	protected LongValue box(Long value) {
+	protected LongValue box(final Long value) {
 		return new LongValue(value);
 	}
 
 	@Override
-	protected Long unbox(LongValue value) {
+	protected Long unbox(final LongValue value) {
 		return value.getLong();
 	}
 }

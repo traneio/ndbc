@@ -9,8 +9,6 @@ import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
@@ -30,7 +28,7 @@ public class DataSourceTest {
 
 	protected final String table = "table_" + tableSuffix++;
 
-	public DataSourceTest(Config config) {
+	public DataSourceTest(final Config config) {
 		this.ds = DataSource.fromConfig(config);
 	}
 

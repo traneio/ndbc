@@ -9,7 +9,7 @@ final class OffsetTimeArrayEncoding extends ArrayEncoding<OffsetTime, OffsetTime
 	private final OffsetTimeEncoding offsetTimeEncoding;
 	private final OffsetTime[] emptyArray = new OffsetTime[0];
 
-	public OffsetTimeArrayEncoding(OffsetTimeEncoding offsetTimeEncoding) {
+	public OffsetTimeArrayEncoding(final OffsetTimeEncoding offsetTimeEncoding) {
 		this.offsetTimeEncoding = offsetTimeEncoding;
 	}
 
@@ -24,7 +24,7 @@ final class OffsetTimeArrayEncoding extends ArrayEncoding<OffsetTime, OffsetTime
 	}
 
 	@Override
-	protected OffsetTime[] newArray(int length) {
+	protected OffsetTime[] newArray(final int length) {
 		return new OffsetTime[length];
 	}
 
@@ -39,12 +39,12 @@ final class OffsetTimeArrayEncoding extends ArrayEncoding<OffsetTime, OffsetTime
 	}
 
 	@Override
-	protected OffsetTimeArrayValue box(OffsetTime[] value) {
+	protected OffsetTimeArrayValue box(final OffsetTime[] value) {
 		return new OffsetTimeArrayValue(value);
 	}
 
 	@Override
-	protected OffsetTime[] unbox(OffsetTimeArrayValue value) {
+	protected OffsetTime[] unbox(final OffsetTimeArrayValue value) {
 		return value.getOffsetTimeArray();
 	}
 }

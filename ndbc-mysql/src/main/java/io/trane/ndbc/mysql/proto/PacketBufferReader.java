@@ -3,12 +3,12 @@ package io.trane.ndbc.mysql.proto;
 import io.trane.ndbc.proto.BufferReader;
 
 public class PacketBufferReader implements BufferReader {
-	private BufferReader b;
-	private int packetLength;
-	private int sequence;
+	private final BufferReader b;
+	private final int packetLength;
+	private final int sequence;
 
-	public PacketBufferReader(BufferReader b) {
-		byte[] packetHeader = b.readBytes(4);
+	public PacketBufferReader(final BufferReader b) {
+		final byte[] packetHeader = b.readBytes(4);
 		this.packetLength = (packetHeader[0] & 0xff) + ((packetHeader[1] & 0xff) << 8)
 				+ ((packetHeader[2] & 0xff) << 16);
 		this.sequence = packetHeader[3];
@@ -19,16 +19,18 @@ public class PacketBufferReader implements BufferReader {
 		return sequence;
 	}
 
-	public int readableBytes() {
+	@Override
+  public int readableBytes() {
 		return b.readableBytes();
 	}
 
-	public int readInt() {
+	@Override
+  public int readInt() {
 		return b.readInt();
 	}
 
 	public long readVariableLong() {
-		int len = Byte.toUnsignedInt(readByte());
+		final int len = Byte.toUnsignedInt(readByte());
 		if (len < 251) {
 			return len;
 		} else if (len == 251) {
@@ -57,107 +59,127 @@ public class PacketBufferReader implements BufferReader {
 	}
 
 	private int readUnsignedMiddle() {
-		byte[] bytes = readBytes(3);
-		int value = ((bytes[0] & 0xFF) << 0) | ((bytes[1] & 0xFF) << 8) | ((bytes[2] & 0xFF) << 16);
+		final byte[] bytes = readBytes(3);
+		final int value = ((bytes[0] & 0xFF) << 0) | ((bytes[1] & 0xFF) << 8) | ((bytes[2] & 0xFF) << 16);
 		return value;
 	}
 
 	public long readUnsignedInt() {
-		byte[] bytes = readBytes(4);
-		long value = ((bytes[0] & 0xFF) << 0) | ((bytes[1] & 0xFF) << 8) | ((bytes[2] & 0xFF) << 16)
+		final byte[] bytes = readBytes(4);
+		final long value = ((bytes[0] & 0xFF) << 0) | ((bytes[1] & 0xFF) << 8) | ((bytes[2] & 0xFF) << 16)
 				| ((bytes[3] & 0xFF) << 24);
 		return value;
 	}
 
 	public byte[] readLengthCodedBytes() {
-		byte lengthByte = readByte();
-		int length = lengthByte & 0xFF;
+		final byte lengthByte = readByte();
+		final int length = lengthByte & 0xFF;
 		return readBytes(length);
 	}
 
-	public byte readByte() {
+	@Override
+  public byte readByte() {
 		return b.readByte();
 	}
 
-	public short readShort() {
+	@Override
+  public short readShort() {
 		return b.readShort();
 	}
 
 	public int readUnsignedShort() {
-		byte[] bytes = readBytes(2);
-		int value = ((bytes[0] & 0xFF) << 0) | ((bytes[1] & 0xFF) << 8);
+		final byte[] bytes = readBytes(2);
+		final int value = ((bytes[0] & 0xFF) << 0) | ((bytes[1] & 0xFF) << 8);
 		return value;
 	}
 
-	public String readCString() {
+	@Override
+  public String readCString() {
 		return b.readCString();
 	}
 
-	public String readCString(int length) {
+	@Override
+  public String readCString(final int length) {
 		return b.readCString(length);
 	}
 
-	public String readString() {
+	@Override
+  public String readString() {
 		return b.readString();
 	}
 
-	public String readString(int length) {
+	@Override
+  public String readString(final int length) {
 		return b.readString(length);
 	}
 
-	public byte[] readBytes() {
+	@Override
+  public byte[] readBytes() {
 		return b.readBytes();
 	}
 
-	public byte[] readBytes(int length) {
+	@Override
+  public byte[] readBytes(final int length) {
 		return b.readBytes(length);
 	}
 
-	public int[] readInts() {
+	@Override
+  public int[] readInts() {
 		return b.readInts();
 	}
 
-	public int[] readInts(int length) {
+	@Override
+  public int[] readInts(final int length) {
 		return b.readInts(length);
 	}
 
-	public short[] readShorts() {
+	@Override
+  public short[] readShorts() {
 		return b.readShorts();
 	}
 
-	public short[] readShorts(int length) {
+	@Override
+  public short[] readShorts(final int length) {
 		return b.readShorts(length);
 	}
 
-	public BufferReader readSlice(int length) {
+	@Override
+  public BufferReader readSlice(final int length) {
 		return b.readSlice(length);
 	}
 
-	public void markReaderIndex() {
+	@Override
+  public void markReaderIndex() {
 		b.markReaderIndex();
 	}
 
-	public void resetReaderIndex() {
+	@Override
+  public void resetReaderIndex() {
 		b.resetReaderIndex();
 	}
 
-	public void retain() {
+	@Override
+  public void retain() {
 		b.retain();
 	}
 
-	public void release() {
+	@Override
+  public void release() {
 		b.release();
 	}
 
-	public Long readLong() {
+	@Override
+  public Long readLong() {
 		return b.readLong();
 	}
 
-	public Float readFloat() {
+	@Override
+  public Float readFloat() {
 		return b.readFloat();
 	}
 
-	public Double readDouble() {
+	@Override
+  public Double readDouble() {
 		return b.readDouble();
 	}
 }

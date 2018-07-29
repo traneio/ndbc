@@ -33,12 +33,12 @@ final class BigDecimalEncoding extends Encoding<BigDecimal, BigDecimalValue> {
 	}
 
 	@Override
-	protected BigDecimalValue box(BigDecimal value) {
+	protected BigDecimalValue box(final BigDecimal value) {
 		return new BigDecimalValue(value);
 	}
 
 	@Override
-	protected BigDecimal unbox(BigDecimalValue value) {
+	protected BigDecimal unbox(final BigDecimalValue value) {
 		return value.getBigDecimal();
 	}
 

@@ -9,7 +9,7 @@ import io.trane.ndbc.proto.BufferWriter;
 public class ExecuteStatementCommandMarshaller {
 
 	public void encode(final ExecuteStatementCommand command, final BufferWriter bw, final Charset charset) {
-		PacketBufferWriter packet = new PacketBufferWriter(bw, 0, charset);
+		final PacketBufferWriter packet = new PacketBufferWriter(bw, 0, charset);
 		packet.writeByte(command.command);
 		packet.writeUnsignedInt(command.statementId);
 		packet.writeByte(command.flags);

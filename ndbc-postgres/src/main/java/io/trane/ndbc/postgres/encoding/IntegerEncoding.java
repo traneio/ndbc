@@ -37,12 +37,12 @@ final class IntegerEncoding extends Encoding<Integer, IntegerValue> {
 	}
 
 	@Override
-	protected IntegerValue box(Integer value) {
+	protected IntegerValue box(final Integer value) {
 		return new IntegerValue(value);
 	}
 
 	@Override
-	protected Integer unbox(IntegerValue value) {
+	protected Integer unbox(final IntegerValue value) {
 		return value.getInteger();
 	}
 }

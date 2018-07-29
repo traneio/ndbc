@@ -1,11 +1,11 @@
 package io.trane.ndbc.mysql.proto;
 
-import io.trane.ndbc.proto.BufferWriter;
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+
+import io.trane.ndbc.proto.BufferWriter;
 
 public class PacketBufferWriter implements BufferWriter {
 
@@ -15,7 +15,7 @@ public class PacketBufferWriter implements BufferWriter {
 	final private int sequence;
 	final private Charset charset;
 
-	public PacketBufferWriter(BufferWriter bw, int sequence, Charset charset) {
+	public PacketBufferWriter(final BufferWriter bw, final int sequence, final Charset charset) {
 		this.baos = new ByteArrayOutputStream();
 		this.dos = new DataOutputStream(baos);
 		this.bw = bw;
@@ -23,141 +23,156 @@ public class PacketBufferWriter implements BufferWriter {
 		this.charset = charset;
 	}
 
-	public void writeInt(int i) {
+	@Override
+  public void writeInt(final int i) {
 		try {
 			dos.writeInt(i);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void writeUnsignedInt(long ui) {
-		byte[] bytes = {((byte) (ui)), ((byte) (ui >> 8)), ((byte) (ui >> 16)), ((byte) (ui >> 24))};
+	public void writeUnsignedInt(final long ui) {
+		final byte[] bytes = {((byte) (ui)), ((byte) (ui >> 8)), ((byte) (ui >> 16)), ((byte) (ui >> 24))};
 		writeBytes(bytes);
 	}
 
-	public void writeByte(byte b) {
+	@Override
+  public void writeByte(final byte b) {
 		try {
 			dos.writeByte(b);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void writeChar(char b) {
+	@Override
+  public void writeChar(final char b) {
 		try {
 			dos.writeChar(b);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void writeShort(short s) {
+	@Override
+  public void writeShort(final short s) {
 
 		try {
 			dos.writeShort(s);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void writeCString(String s) {
+	@Override
+  public void writeCString(final String s) {
 		try {
 			dos.write(s.getBytes(charset));
 			dos.writeByte(0);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void writeString(String s) {
+	@Override
+  public void writeString(final String s) {
 		try {
 			dos.write(s.getBytes(charset));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void writeBytes(byte[] b) {
+	@Override
+  public void writeBytes(final byte[] b) {
 		try {
 			dos.write(b);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
-	public void writeInts(int[] is) {
+	@Override
+  public void writeInts(final int[] is) {
 		try {
-			for (int i : is) {
+			for (final int i : is) {
 				dos.writeInt(i);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void writeShorts(short[] ss) {
+	@Override
+  public void writeShorts(final short[] ss) {
 		try {
-			for (short s : ss) {
+			for (final short s : ss) {
 				dos.writeShort(s);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void writeLength(int position) {
+	@Override
+  public void writeLength(final int position) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void writeLengthNoSelf(int position) {
+	@Override
+  public void writeLengthNoSelf(final int position) {
 		throw new UnsupportedOperationException();
 	}
 
-	public int writerIndex() {
+	@Override
+  public int writerIndex() {
 		throw new UnsupportedOperationException();
 
 	}
 
-	public void writeLong(Long value) {
+	@Override
+  public void writeLong(final Long value) {
 		try {
 			dos.writeLong(value);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void writeFloat(Float value) {
+	@Override
+  public void writeFloat(final Float value) {
 		try {
 			dos.writeFloat(value);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
-	public void writeDouble(Double value) {
+	@Override
+  public void writeDouble(final Double value) {
 
 		try {
 			dos.writeDouble(value);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public void flush() {
 
-		int packetLength = baos.size();
+		final int packetLength = baos.size();
 
-		byte[] header = {(byte) (packetLength & 0xff), (byte) ((packetLength >> 8) & 0xff),
+		final byte[] header = {(byte) (packetLength & 0xff), (byte) ((packetLength >> 8) & 0xff),
 				(byte) ((packetLength >> 16) & 0xff), (byte) (this.sequence)};
 		bw.writeBytes(concat(header, baos.toByteArray()));
 
 	}
 
-	private byte[] concat(byte[] a, byte[] b) {
-		byte[] c = new byte[a.length + b.length];
+	private byte[] concat(final byte[] a, final byte[] b) {
+		final byte[] c = new byte[a.length + b.length];
 		System.arraycopy(a, 0, c, 0, a.length);
 		System.arraycopy(b, 0, c, a.length, b.length);
 		return c;

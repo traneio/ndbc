@@ -7,7 +7,7 @@ final class LongArrayEncoding extends ArrayEncoding<Long, LongArrayValue> {
 	private final LongEncoding longEncoding;
 	private final Long[] emptyArray = new Long[0];
 
-	public LongArrayEncoding(LongEncoding longEncoding) {
+	public LongArrayEncoding(final LongEncoding longEncoding) {
 		this.longEncoding = longEncoding;
 	}
 
@@ -22,7 +22,7 @@ final class LongArrayEncoding extends ArrayEncoding<Long, LongArrayValue> {
 	}
 
 	@Override
-	protected Long[] newArray(int length) {
+	protected Long[] newArray(final int length) {
 		return new Long[length];
 	}
 
@@ -37,12 +37,12 @@ final class LongArrayEncoding extends ArrayEncoding<Long, LongArrayValue> {
 	}
 
 	@Override
-	protected LongArrayValue box(Long[] value) {
+	protected LongArrayValue box(final Long[] value) {
 		return new LongArrayValue(value);
 	}
 
 	@Override
-	protected Long[] unbox(LongArrayValue value) {
+	protected Long[] unbox(final LongArrayValue value) {
 		return value.getLongArray();
 	}
 }

@@ -51,12 +51,12 @@ final class OffsetTimeEncoding extends Encoding<OffsetTime, OffsetTimeValue> {
 	}
 
 	@Override
-	protected OffsetTimeValue box(OffsetTime value) {
+	protected OffsetTimeValue box(final OffsetTime value) {
 		return new OffsetTimeValue(value);
 	}
 
 	@Override
-	protected OffsetTime unbox(OffsetTimeValue value) {
+	protected OffsetTime unbox(final OffsetTimeValue value) {
 		return value.getOffsetTime();
 	}
 }

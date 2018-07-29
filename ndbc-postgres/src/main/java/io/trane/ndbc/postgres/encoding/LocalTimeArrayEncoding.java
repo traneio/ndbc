@@ -9,7 +9,7 @@ final class LocalTimeArrayEncoding extends ArrayEncoding<LocalTime, LocalTimeArr
 	private final LocalTimeEncoding localTimeEncoding;
 	private final LocalTime[] emptyArray = new LocalTime[0];
 
-	public LocalTimeArrayEncoding(LocalTimeEncoding localTimeEncoding) {
+	public LocalTimeArrayEncoding(final LocalTimeEncoding localTimeEncoding) {
 		this.localTimeEncoding = localTimeEncoding;
 	}
 
@@ -24,7 +24,7 @@ final class LocalTimeArrayEncoding extends ArrayEncoding<LocalTime, LocalTimeArr
 	}
 
 	@Override
-	protected LocalTime[] newArray(int length) {
+	protected LocalTime[] newArray(final int length) {
 		return new LocalTime[length];
 	}
 
@@ -39,12 +39,12 @@ final class LocalTimeArrayEncoding extends ArrayEncoding<LocalTime, LocalTimeArr
 	}
 
 	@Override
-	protected LocalTimeArrayValue box(LocalTime[] value) {
+	protected LocalTimeArrayValue box(final LocalTime[] value) {
 		return new LocalTimeArrayValue(value);
 	}
 
 	@Override
-	protected LocalTime[] unbox(LocalTimeArrayValue value) {
+	protected LocalTime[] unbox(final LocalTimeArrayValue value) {
 		return value.getLocalTimeArray();
 	}
 }

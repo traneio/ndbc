@@ -20,7 +20,7 @@ public class MysqlUnmarshaller implements Unmarshaller {
 
 	@Override
 	public Try<Optional<ServerMessage>> decode(
-			Optional<Class<? extends io.trane.ndbc.proto.ClientMessage>> previousClientMessageClass, BufferReader b) {
+			final Optional<Class<? extends io.trane.ndbc.proto.ClientMessage>> previousClientMessageClass, final BufferReader b) {
 		return previousClientMessageClass.<Try<ServerMessage>>map(p -> {
 			if (HandshakeResponseMessage.class.isAssignableFrom(p)) {
 				return Try.apply(() -> serverResponseUnmarshaller.decode(b));

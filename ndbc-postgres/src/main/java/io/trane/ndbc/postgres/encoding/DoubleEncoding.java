@@ -37,12 +37,12 @@ final class DoubleEncoding extends Encoding<Double, DoubleValue> {
 	}
 
 	@Override
-	protected DoubleValue box(Double value) {
+	protected DoubleValue box(final Double value) {
 		return new DoubleValue(value);
 	}
 
 	@Override
-	protected Double unbox(DoubleValue value) {
+	protected Double unbox(final DoubleValue value) {
 		return value.getDouble();
 	}
 }

@@ -40,7 +40,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			HandshakeResponseMessage that = (HandshakeResponseMessage) o;
+			final HandshakeResponseMessage that = (HandshakeResponseMessage) o;
 
 			if (!username.equals(that.username))
 				return false;
@@ -107,7 +107,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			InitialHandshakeMessage that = (InitialHandshakeMessage) o;
+			final InitialHandshakeMessage that = (InitialHandshakeMessage) o;
 
 			if (protocolVersion != that.protocolVersion)
 				return false;
@@ -176,7 +176,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			OkResponseMessage that = (OkResponseMessage) o;
+			final OkResponseMessage that = (OkResponseMessage) o;
 
 			if (affectedRows != that.affectedRows)
 				return false;
@@ -220,7 +220,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			ErrorResponseMessage that = (ErrorResponseMessage) o;
+			final ErrorResponseMessage that = (ErrorResponseMessage) o;
 
 			return errorMessage != null ? errorMessage.equals(that.errorMessage) : that.errorMessage == null;
 		}
@@ -285,7 +285,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			PrepareStatementCommand that = (PrepareStatementCommand) o;
+			final PrepareStatementCommand that = (PrepareStatementCommand) o;
 
 			if (command != that.command)
 				return false;
@@ -326,7 +326,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			OkPrepareStatement that = (OkPrepareStatement) o;
+			final OkPrepareStatement that = (OkPrepareStatement) o;
 
 			if (statementId != that.statementId)
 				return false;
@@ -372,7 +372,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			ExecuteStatementCommand that = (ExecuteStatementCommand) o;
+			final ExecuteStatementCommand that = (ExecuteStatementCommand) o;
 
 			if (command != that.command)
 				if (statementId != that.statementId)
@@ -409,7 +409,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			ExecuteStatementCommand that = (ExecuteStatementCommand) o;
+			final ExecuteStatementCommand that = (ExecuteStatementCommand) o;
 
 			if (command != that.command)
 				if (statementId != that.statementId)
@@ -455,7 +455,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			QueryCommand that = (QueryCommand) o;
+			final QueryCommand that = (QueryCommand) o;
 
 			if (command != that.command)
 				return false;
@@ -500,7 +500,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			StatementCommand that = (StatementCommand) o;
+			final StatementCommand that = (StatementCommand) o;
 
 			if (command != that.command)
 				return false;
@@ -556,7 +556,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			Field field = (Field) o;
+			final Field field = (Field) o;
 
 			if (charset != field.charset)
 				return false;
@@ -620,7 +620,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			TextRow textRow = (TextRow) o;
+			final TextRow textRow = (TextRow) o;
 
 			return values.equals(textRow.values);
 		}
@@ -652,7 +652,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			ResultSet resultSet = (ResultSet) o;
+			final ResultSet resultSet = (ResultSet) o;
 
 			if (!textRows.equals(resultSet.textRows))
 				return false;

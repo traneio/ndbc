@@ -37,12 +37,12 @@ final class ByteEncoding extends Encoding<Byte, ByteValue> {
 	}
 
 	@Override
-	protected ByteValue box(Byte value) {
+	protected ByteValue box(final Byte value) {
 		return new ByteValue(value);
 	}
 
 	@Override
-	protected Byte unbox(ByteValue value) {
+	protected Byte unbox(final ByteValue value) {
 		return value.getByte();
 	}
 }

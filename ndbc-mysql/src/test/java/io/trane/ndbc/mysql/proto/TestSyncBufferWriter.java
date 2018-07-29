@@ -1,118 +1,118 @@
 package io.trane.ndbc.mysql.proto;
 
-import io.trane.ndbc.proto.BufferWriter;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+
+import io.trane.ndbc.proto.BufferWriter;
 
 public class TestSyncBufferWriter implements BufferWriter {
 
 	final private DataOutputStream dos;
 	final private Charset charset;
 
-	public TestSyncBufferWriter(OutputStream os, Charset charset) {
+	public TestSyncBufferWriter(final OutputStream os, final Charset charset) {
 		this.dos = new DataOutputStream(os);
 		this.charset = charset;
 	}
 
 	@Override
-	public void writeInt(int i) {
+	public void writeInt(final int i) {
 		try {
 			dos.writeInt(i);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public void writeByte(byte b) {
+	public void writeByte(final byte b) {
 		try {
 			dos.writeByte(b);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
 	@Override
-	public void writeChar(char b) {
+	public void writeChar(final char b) {
 		try {
 			dos.writeChar(b);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public void writeShort(short s) {
+	public void writeShort(final short s) {
 
 		try {
 			dos.writeShort(s);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public void writeCString(String s) {
+	public void writeCString(final String s) {
 		try {
 			dos.write(s.getBytes(charset));
 			dos.writeByte(0 & 0xFF);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public void writeString(String s) {
+	public void writeString(final String s) {
 		try {
 			dos.write(s.getBytes(charset));
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public void writeBytes(byte[] b) {
+	public void writeBytes(final byte[] b) {
 		try {
 			dos.write(b);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
 	@Override
-	public void writeInts(int[] is) {
+	public void writeInts(final int[] is) {
 		try {
-			for (int i : is) {
+			for (final int i : is) {
 				dos.writeInt(i);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public void writeShorts(short[] ss) {
+	public void writeShorts(final short[] ss) {
 		try {
-			for (short s : ss) {
+			for (final short s : ss) {
 				dos.writeShort(s);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public void writeLength(int position) {
+	public void writeLength(final int position) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void writeLengthNoSelf(int position) {
+	public void writeLengthNoSelf(final int position) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -123,30 +123,30 @@ public class TestSyncBufferWriter implements BufferWriter {
 	}
 
 	@Override
-	public void writeLong(Long value) {
+	public void writeLong(final Long value) {
 		try {
 			dos.writeLong(value);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
-	public void writeFloat(Float value) {
+	public void writeFloat(final Float value) {
 		try {
 			dos.writeFloat(value);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
 	@Override
-	public void writeDouble(Double value) {
+	public void writeDouble(final Double value) {
 
 		try {
 			dos.writeDouble(value);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

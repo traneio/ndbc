@@ -1,38 +1,40 @@
 package io.trane.ndbc.mysql.proto.unmarshaller;
 
-import static io.trane.ndbc.mysql.proto.Message.*;
-
-import io.trane.ndbc.mysql.proto.PacketBufferReader;
-import io.trane.ndbc.proto.BufferReader;
-
 import java.util.LinkedList;
 import java.util.List;
+
+import io.trane.ndbc.mysql.proto.Message.EofResponseMessage;
+import io.trane.ndbc.mysql.proto.Message.Field;
+import io.trane.ndbc.mysql.proto.Message.ResultSet;
+import io.trane.ndbc.mysql.proto.Message.TextRow;
+import io.trane.ndbc.mysql.proto.PacketBufferReader;
+import io.trane.ndbc.proto.BufferReader;
 
 public class TextResultSetUnmarshaller {
 
 	public ResultSet decode(final BufferReader br) {
-		PacketBufferReader packet = new PacketBufferReader(br);
+		final PacketBufferReader packet = new PacketBufferReader(br);
 		// int returnCode = packet.readByte();
-		long numCols = packet.readVariableLong();
-		List<Field> fields = new LinkedList<>();
+		final long numCols = packet.readVariableLong();
+		final List<Field> fields = new LinkedList<>();
 		for (int i = 0; i < numCols; i++) {
 			fields.add(decodeField(new PacketBufferReader(br)));
 		}
 
-		EofResponseMessage eof1 = ServerResponseUnmarshaller.decodeEof(new PacketBufferReader(br));
+		final EofResponseMessage eof1 = ServerResponseUnmarshaller.decodeEof(new PacketBufferReader(br));
 
-		List<TextRow> rows = new LinkedList<>();
+		final List<TextRow> rows = new LinkedList<>();
 		boolean eof = false;
 		while (!eof) {
-			PacketBufferReader rowPacket = new PacketBufferReader(br);
+			final PacketBufferReader rowPacket = new PacketBufferReader(br);
 			rowPacket.markReaderIndex();
 			if ((rowPacket.readByte() & 0xFF) == ServerResponseUnmarshaller.EOF_BYTE) {
 				rowPacket.resetReaderIndex();
-				EofResponseMessage eof2 = ServerResponseUnmarshaller.decodeEof(rowPacket);
+				final EofResponseMessage eof2 = ServerResponseUnmarshaller.decodeEof(rowPacket);
 				eof = true;
 			} else {
 				rowPacket.resetReaderIndex();
-				List<String> values = new LinkedList<>();
+				final List<String> values = new LinkedList<>();
 				for (int i = 0; i < numCols; i++) {
 					values.add(new String(rowPacket.readLengthCodedBytes())); // TODO user correct charset
 				}
@@ -42,25 +44,25 @@ public class TextResultSetUnmarshaller {
 		return new ResultSet(fields, rows);
 	}
 
-	public Field decodeField(PacketBufferReader br) {
-		byte[] bytesCatalog = br.readLengthCodedBytes();
-		byte[] bytesDb = br.readLengthCodedBytes();
-		byte[] bytesTable = br.readLengthCodedBytes();
-		byte[] bytesOrigTable = br.readLengthCodedBytes();
-		byte[] bytesName = br.readLengthCodedBytes();
-		byte[] bytesOrigName = br.readLengthCodedBytes();
+	public Field decodeField(final PacketBufferReader br) {
+		final byte[] bytesCatalog = br.readLengthCodedBytes();
+		final byte[] bytesDb = br.readLengthCodedBytes();
+		final byte[] bytesTable = br.readLengthCodedBytes();
+		final byte[] bytesOrigTable = br.readLengthCodedBytes();
+		final byte[] bytesName = br.readLengthCodedBytes();
+		final byte[] bytesOrigName = br.readLengthCodedBytes();
 		br.readVariableLong(); // length of the following fields (always 0x0c)
-		int charset = br.readUnsignedShort();
-		String catalog = new String(bytesCatalog); // TODO consider charset
-		String db = new String(bytesDb);
-		String table = new String(bytesTable);
-		String origTable = new String(bytesOrigTable);
-		String name = new String(bytesName);
-		String origName = new String(bytesOrigName);
-		long length = br.readUnsignedInt();
-		int fieldType = br.readByte() & 0xFF;
-		int flags = br.readUnsignedShort();
-		int decimals = br.readByte() & 0xFF;
+		final int charset = br.readUnsignedShort();
+		final String catalog = new String(bytesCatalog); // TODO consider charset
+		final String db = new String(bytesDb);
+		final String table = new String(bytesTable);
+		final String origTable = new String(bytesOrigTable);
+		final String name = new String(bytesName);
+		final String origName = new String(bytesOrigName);
+		final long length = br.readUnsignedInt();
+		final int fieldType = br.readByte() & 0xFF;
+		final int flags = br.readUnsignedShort();
+		final int decimals = br.readByte() & 0xFF;
 		return new Field(catalog, db, table, origTable, name, origName, charset, length, fieldType, flags, decimals);
 	}
 }

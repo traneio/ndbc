@@ -9,7 +9,7 @@ final class UUIDArrayEncoding extends ArrayEncoding<UUID, UUIDArrayValue> {
 	private final UUIDEncoding uuidEncoding;
 	private final UUID[] emptyArray = new UUID[0];
 
-	public UUIDArrayEncoding(UUIDEncoding uuidEncoding) {
+	public UUIDArrayEncoding(final UUIDEncoding uuidEncoding) {
 		this.uuidEncoding = uuidEncoding;
 	}
 
@@ -24,7 +24,7 @@ final class UUIDArrayEncoding extends ArrayEncoding<UUID, UUIDArrayValue> {
 	}
 
 	@Override
-	protected UUID[] newArray(int length) {
+	protected UUID[] newArray(final int length) {
 		return new UUID[length];
 	}
 
@@ -39,12 +39,12 @@ final class UUIDArrayEncoding extends ArrayEncoding<UUID, UUIDArrayValue> {
 	}
 
 	@Override
-	protected UUIDArrayValue box(UUID[] value) {
+	protected UUIDArrayValue box(final UUID[] value) {
 		return new UUIDArrayValue(value);
 	}
 
 	@Override
-	protected UUID[] unbox(UUIDArrayValue value) {
+	protected UUID[] unbox(final UUIDArrayValue value) {
 		return value.getUUIDArray();
 	}
 }
