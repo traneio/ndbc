@@ -142,7 +142,7 @@ public class ConnectionTest {
 
 		@Override
 		public Connection get() {
-			return new Connection(channel(), channelSupplier(), simpleQueryExchange(), simpleExecuteExchange(),
+			return new Connection(channel(), "0", channelSupplier(), simpleQueryExchange(), simpleExecuteExchange(),
 					extendedQueryExchange(), extendedExecuteExchange());
 		}
 	}

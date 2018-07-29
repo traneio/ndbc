@@ -2,6 +2,7 @@ package io.trane.ndbc;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,4 +40,19 @@ public final class Row {
 	public final List<Value<?>> columns() {
 		return Collections.unmodifiableList(Arrays.asList(columns));
 	}
+
+  @Override
+  public String toString() {
+    Iterator<String> names = columnNames().iterator();
+    Iterator<Value<?>> values = Arrays.asList(columns).iterator();
+    String result = "Row [";
+    while(names.hasNext()) {
+      String name = names.next();
+      Value<?> value = values.next();
+      result += name + "= " + value.get();
+      if(names.hasNext())
+        result += ", ";
+    }
+    return result + "]";
+  }
 }

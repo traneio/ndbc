@@ -18,7 +18,7 @@ import io.trane.ndbc.netty4.NettyChannel;
 
 public final class DataSourceSupplier extends Netty4DataSourceSupplier {
 
-  private static final StartupExchange startup = new StartupExchange();
+  private static final StartupExchange startup = new StartupExchange(new SimpleQueryExchange());
 
   public DataSourceSupplier(Config config) {
     super(config, new MysqlMarshaller(), new MysqlUnmarshaller(), createConnection(config));
@@ -29,7 +29,7 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
     return (channelSupplier) -> () -> channelSupplier.get()
         .flatMap(channel -> startup.apply(config.user(), config.password(), config.database(), "utf8")
             .run(channel)
-            .map(backendKeyData -> new io.trane.ndbc.mysql.Connection(channel, channelSupplier,
+            .map(connectionId -> new io.trane.ndbc.mysql.Connection(channel, connectionId, channelSupplier,
                 new SimpleQueryExchange(), new SimpleExecuteExchange(), new ExtendedQueryExchange(),
                 new ExtendedExecuteExchange())));
 

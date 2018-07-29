@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
@@ -28,17 +30,36 @@ public class DataSourceTest {
 
   protected final String table = "table_" + tableSuffix++;
 
-  public DataSourceTest(final Config config) {
+  private final String stringColumnType;
+
+  private final String sleepQuery;
+
+  public DataSourceTest(final Config config, final String stringColumnType, final String sleepQuery) {
     this.ds = DataSource.fromConfig(config);
+    this.stringColumnType = stringColumnType;
+    this.sleepQuery = sleepQuery;
+  }
+  
+  @Before
+  public void recreateSchema() throws CheckedFutureException {
+    ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
+    ds.execute("CREATE TABLE " + table + " (s " + stringColumnType + ")").get(timeout);
+    ds.execute("INSERT INTO " + table + " VALUES ('s')").get(timeout);
   }
 
-//  @Test
-//  public void array() throws CheckedFutureException {
-//    final Iterator<Row> rows = ds.query(PreparedStatement.apply("SELECT ARRAY[1,2, 3]")).get(timeout).iterator();
-//
-//    assertEquals(rows.next().column(0).getString(), "s");
-//    assertFalse(rows.hasNext());
-//  }
+  @After
+  public void close() throws CheckedFutureException {
+    ds.close().get(timeout);
+  }
+
+  // @Test
+  // public void array() throws CheckedFutureException {
+  // final Iterator<Row> rows = ds.query(PreparedStatement.apply("SELECT
+  // ARRAY[1,2, 3]")).get(timeout).iterator();
+  //
+  // assertEquals(rows.next().column(0).getString(), "s");
+  // assertFalse(rows.hasNext());
+  // }
 
   @Test
   public void simpleQuery() throws CheckedFutureException {
@@ -191,13 +212,21 @@ public class DataSourceTest {
     assertTrue(rows.hasNext());
   }
 
-  @Test(expected = RuntimeException.class)
-  public void cancellation() throws CheckedFutureException {
+  class CancellationException extends Exception {
+    private static final long serialVersionUID = 1L;
+  }
+
+  @Test(expected = CancellationException.class)
+  public void cancellation() throws Throwable {
     final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     try {
-      final Future<Long> f = ds.execute("SELECT pg_sleep(999)");
-      f.raise(new RuntimeException());
-      f.get(timeout);
+      final Future<Long> f = ds.execute(sleepQuery);
+      f.raise(new CancellationException());
+      try {
+        f.get(timeout);
+      } catch (CheckedFutureException e) {
+        throw e.getCause();
+      }
     } finally {
       scheduler.shutdown();
     }

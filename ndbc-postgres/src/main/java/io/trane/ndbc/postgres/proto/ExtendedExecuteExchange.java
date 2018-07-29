@@ -15,7 +15,6 @@ public final class ExtendedExecuteExchange implements BiFunction<String, List<Va
 	private final ExtendedExchange extendedExchange;
 
 	public ExtendedExecuteExchange(final ExtendedExchange extendedExchange) {
-		super();
 		this.extendedExchange = extendedExchange;
 	}
 

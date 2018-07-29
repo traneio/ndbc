@@ -64,5 +64,4 @@ public class InitSSLHandler {
 			}).voided();
 		}).orElse(Future.VOID);
 	}
-
 }
