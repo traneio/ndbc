@@ -57,24 +57,24 @@ public final class PostgresUnmarshaller implements Unmarshaller {
 	}
 
 	@Override
-	public Try<Optional<ServerMessage>> decode(final Optional<Class<? extends ClientMessage>> previousClientMessageClass,
+	public Optional<Try<ServerMessage>> decode(final Optional<Class<? extends ClientMessage>> previousClientMessageClass,
 			final BufferReader b) {
 		try {
 			final boolean ssl = previousClientMessageClass.map(cls -> SSLRequest.class.isAssignableFrom(cls)).orElse(false);
 			if (b.readableBytes() == 1 && ssl)
-				return Try.apply(() -> Optional.of(decode(b.readByte(), b.readSlice(0))));
+				return Optional.of(Try.apply(() -> decode(b.readByte(), b.readSlice(0))));
 			else if (b.readableBytes() >= 5) {
 				b.markReaderIndex();
 				final byte tpe = b.readByte();
 				final int length = b.readInt() - 4;
 				if (b.readableBytes() >= length)
-					return Try.apply(() -> Optional.of(decode(tpe, b.readSlice(length))));
+					return Optional.of(Try.apply(() -> decode(tpe, b.readSlice(length))));
 				else {
 					b.resetReaderIndex();
-					return Try.success(Optional.empty());
+					return Optional.empty();
 				}
 			} else
-				return Try.success(Optional.empty());
+				return Optional.empty();
 		} catch (final Exception e) {
 			log.severe("Can't parse msg " + e);
 			throw e;

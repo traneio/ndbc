@@ -6,6 +6,6 @@ import io.trane.ndbc.util.Try;
 
 public interface Unmarshaller {
 
-	Try<Optional<ServerMessage>> decode(Optional<Class<? extends ClientMessage>> previousClientMessageClass,
+  Optional<Try<ServerMessage>> decode(Optional<Class<? extends ClientMessage>> previousClientMessageClass,
 			BufferReader bufferReader);
 }

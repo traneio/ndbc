@@ -19,7 +19,6 @@ import io.trane.ndbc.value.Value;
 public final class Connection implements io.trane.ndbc.datasource.Connection {
 
 	private final Channel channel;
-	private final Supplier<? extends Future<? extends Channel>> channelSupplier;
 	private final Function<String, Exchange<List<Row>>> simpleQueryExchange;
 	private final Function<String, Exchange<Long>> simpleExecuteExchange;
 	private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
@@ -31,7 +30,6 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 			final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange,
 			final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange) {
 		this.channel = channel;
-		this.channelSupplier = channelSupplier;
 		this.simpleQueryExchange = simpleQueryExchange;
 		this.simpleExecuteExchange = simpleExecuteExchange;
 		this.extendedQueryExchange = extendedQueryExchange;

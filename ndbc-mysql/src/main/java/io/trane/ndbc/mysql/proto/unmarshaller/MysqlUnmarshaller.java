@@ -19,9 +19,9 @@ public class MysqlUnmarshaller implements Unmarshaller {
 	private final PrepareStatementOkUnmarshaller prepareStatementOkUnmarshaller = new PrepareStatementOkUnmarshaller();
 
 	@Override
-	public Try<Optional<ServerMessage>> decode(
+	public Optional<Try<ServerMessage>> decode(
 			final Optional<Class<? extends io.trane.ndbc.proto.ClientMessage>> previousClientMessageClass, final BufferReader b) {
-		return previousClientMessageClass.<Try<ServerMessage>>map(p -> {
+		return Optional.of(previousClientMessageClass.<Try<ServerMessage>>map(p -> {
 			if (HandshakeResponseMessage.class.isAssignableFrom(p)) {
 				return Try.apply(() -> serverResponseUnmarshaller.decode(b));
 			} else if (QueryCommand.class.isAssignableFrom(p)) {
@@ -37,6 +37,6 @@ public class MysqlUnmarshaller implements Unmarshaller {
 			}
 		}).orElseGet(() -> {
 			return Try.apply(() -> initialHandshakePacketUnmarshaller.decode(b));
-		}).map(Optional::of); // TODO review
+		})); // TODO review
 	}
 }

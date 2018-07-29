@@ -3,7 +3,6 @@ package io.trane.ndbc.mysql.proto.unmarshaller;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.trane.ndbc.mysql.proto.Message.EofResponseMessage;
 import io.trane.ndbc.mysql.proto.Message.Field;
 import io.trane.ndbc.mysql.proto.Message.ResultSet;
 import io.trane.ndbc.mysql.proto.Message.TextRow;
@@ -21,7 +20,7 @@ public class TextResultSetUnmarshaller {
 			fields.add(decodeField(new PacketBufferReader(br)));
 		}
 
-		final EofResponseMessage eof1 = ServerResponseUnmarshaller.decodeEof(new PacketBufferReader(br));
+		ServerResponseUnmarshaller.decodeEof(new PacketBufferReader(br));
 
 		final List<TextRow> rows = new LinkedList<>();
 		boolean eof = false;
@@ -30,7 +29,7 @@ public class TextResultSetUnmarshaller {
 			rowPacket.markReaderIndex();
 			if ((rowPacket.readByte() & 0xFF) == ServerResponseUnmarshaller.EOF_BYTE) {
 				rowPacket.resetReaderIndex();
-				final EofResponseMessage eof2 = ServerResponseUnmarshaller.decodeEof(rowPacket);
+				ServerResponseUnmarshaller.decodeEof(rowPacket);
 				eof = true;
 			} else {
 				rowPacket.resetReaderIndex();

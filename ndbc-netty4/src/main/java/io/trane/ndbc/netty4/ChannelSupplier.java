@@ -56,7 +56,7 @@ public final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
 			@Override
 			protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
 					throws Exception {
-				out.add(decoder.decode(previousClientMessageClass, new BufferReader(charset, in)));
+			  decoder.decode(previousClientMessageClass, new BufferReader(charset, in)).ifPresent(out::add);
 			}
 		};
 

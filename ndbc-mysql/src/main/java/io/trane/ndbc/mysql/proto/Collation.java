@@ -41,8 +41,8 @@ public class Collation {
 	}
 
 	final static private Collation[] collationById = new Collation[251];
-	final static private Map<String, Collation> collationByName = new HashMap();
-	final static private Map<String, Collation> collationByCharset = new HashMap();
+	final static private Map<String, Collation> collationByName = new HashMap<>();
+	final static private Map<String, Collation> collationByCharset = new HashMap<>();
 
 	private static void addCollation(final Collation collation) {
 		collationById[collation.id] = collation;
