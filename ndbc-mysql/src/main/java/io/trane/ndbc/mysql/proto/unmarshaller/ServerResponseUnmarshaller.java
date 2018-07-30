@@ -23,7 +23,7 @@ public class ServerResponseUnmarshaller {
 			case (EOF_BYTE) :
 				return decodeEof(packet);
 			default :
-				throw new UnsupportedOperationException("Unsupported response from server - buggy");
+				throw new UnsupportedOperationException("Unsupported response from server " + responseType);
 		}
 	}
 

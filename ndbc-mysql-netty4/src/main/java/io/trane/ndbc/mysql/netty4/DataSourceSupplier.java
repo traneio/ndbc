@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.datasource.Connection;
+import io.trane.ndbc.mysql.proto.ExtendedExchange;
 import io.trane.ndbc.mysql.proto.ExtendedExecuteExchange;
 import io.trane.ndbc.mysql.proto.ExtendedQueryExchange;
 import io.trane.ndbc.mysql.proto.SimpleExecuteExchange;
@@ -20,6 +21,12 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
 
   private static final StartupExchange startup = new StartupExchange(new SimpleQueryExchange());
 
+  private static final SimpleQueryExchange     simpleQueryExchange     = new SimpleQueryExchange();
+  private static final SimpleExecuteExchange   simpleExecuteExchange   = new SimpleExecuteExchange();
+  private static final ExtendedExchange        extendedExchange        = new ExtendedExchange();
+  private static final ExtendedQueryExchange   extendedQueryExchange   = new ExtendedQueryExchange(extendedExchange);
+  private static final ExtendedExecuteExchange extendedExecuteExchange = new ExtendedExecuteExchange(extendedExchange);
+
   public DataSourceSupplier(Config config) {
     super(config, new MysqlMarshaller(), new MysqlUnmarshaller(), createConnection(config));
   }
@@ -29,9 +36,10 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
     return (channelSupplier) -> () -> channelSupplier.get()
         .flatMap(channel -> startup.apply(config.user(), config.password(), config.database(), "utf8")
             .run(channel)
-            .map(connectionId -> new io.trane.ndbc.mysql.Connection(channel, connectionId, channelSupplier,
-                new SimpleQueryExchange(), new SimpleExecuteExchange(), new ExtendedQueryExchange(),
-                new ExtendedExecuteExchange())));
-
+            .map(connectionId -> {
+              return new io.trane.ndbc.mysql.Connection(channel, connectionId, channelSupplier,
+                  simpleQueryExchange, simpleExecuteExchange, extendedQueryExchange,
+                  extendedExecuteExchange);
+            }));
   }
 }

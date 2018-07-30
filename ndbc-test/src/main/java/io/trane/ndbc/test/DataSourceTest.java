@@ -118,7 +118,7 @@ public class DataSourceTest {
   public void extendedExecuteInsertNoParam() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES ('u')");
 
-    ds.execute(ps).get(timeout);
+    assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
@@ -130,7 +130,7 @@ public class DataSourceTest {
   public void extendedExecuteUpdateNoParam() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = 'u'");
 
-    ds.execute(ps).get(timeout);
+    assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "u");
@@ -141,7 +141,7 @@ public class DataSourceTest {
   public void extendedExecuteDeleteNoParam() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = 's'");
 
-    ds.execute(ps).get(timeout);
+    assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertFalse(rows.hasNext());
@@ -151,7 +151,7 @@ public class DataSourceTest {
   public void extendedExecuteInsertWithParam() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)").setString("u");
 
-    ds.execute(ps).get(timeout);
+    assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
@@ -163,7 +163,7 @@ public class DataSourceTest {
   public void extendedExecuteUpdateWithParam() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = ?").setString("u");
 
-    ds.execute(ps).get(timeout);
+    assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "u");
@@ -174,7 +174,7 @@ public class DataSourceTest {
   public void extendedExecuteDeleteWithParam() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
 
-    ds.execute(ps).get(timeout);
+    assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertFalse(rows.hasNext());
@@ -184,7 +184,9 @@ public class DataSourceTest {
   public void transactionSuccess() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
 
-    ds.transactional(() -> ds.execute(ps)).get(timeout);
+    final long affectedRows = ds.transactional(() -> ds.execute(ps)).get(timeout);
+    
+    assertEquals(affectedRows, 1L);
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertFalse(rows.hasNext());
@@ -199,7 +201,7 @@ public class DataSourceTest {
         throw new IllegalStateException();
       })).get(timeout);
       assertTrue(false);
-    } catch (CheckedFutureException ex) {
+    } catch (IllegalStateException ex) {
     }
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();

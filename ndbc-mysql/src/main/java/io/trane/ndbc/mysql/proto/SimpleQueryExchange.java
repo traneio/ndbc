@@ -20,8 +20,7 @@ public class SimpleQueryExchange implements Function<String, Exchange<List<Row>>
 	@Override
 	public Exchange<List<Row>> apply(final String sql) {
 		return Exchange.send(new QueryCommand(sql))
-				.thenReceive(PartialFunction.when(ResultSet.class, this::handleResultSet))
-				.onFailure(ex -> Exchange.CLOSE);
+				.thenReceive(PartialFunction.when(ResultSet.class, this::handleResultSet));
 	}
 
 	private Exchange<List<Row>> handleResultSet(final ResultSet rs) {

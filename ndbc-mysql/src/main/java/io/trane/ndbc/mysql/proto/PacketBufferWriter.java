@@ -153,7 +153,6 @@ public class PacketBufferWriter implements BufferWriter {
 
 	@Override
   public void writeDouble(final Double value) {
-
 		try {
 			dos.writeDouble(value);
 		} catch (final IOException e) {
