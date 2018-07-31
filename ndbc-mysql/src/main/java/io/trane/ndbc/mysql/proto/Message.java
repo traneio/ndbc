@@ -636,11 +636,11 @@ public interface Message {
 		}
 	}
 
-	public static class ResultSet implements ServerMessage {
+	public static class TextResultSet implements ServerMessage {
 		public List<TextRow> textRows;
 		public List<Field> fields;
 
-		public ResultSet(final List<Field> fields, final List<TextRow> textRows) {
+		public TextResultSet(final List<Field> fields, final List<TextRow> textRows) {
 			this.textRows = textRows;
 			this.fields = fields;
 		}
@@ -652,7 +652,7 @@ public interface Message {
 			if (o == null || getClass() != o.getClass())
 				return false;
 
-			final ResultSet resultSet = (ResultSet) o;
+			final TextResultSet resultSet = (TextResultSet) o;
 
 			if (!textRows.equals(resultSet.textRows))
 				return false;
@@ -669,6 +669,108 @@ public interface Message {
 		@Override
 		public String toString() {
 			return "ResultSet{" + "textRows=" + textRows + ", fields=" + fields + '}';
+		}
+	}
+
+	public static class BinaryRow implements ServerMessage {
+		public List<String> values;
+
+		public BinaryRow(final List<String> values) {
+			this.values = values;
+		}
+
+		@Override
+		public boolean equals(final Object o) {
+			if (this == o)
+				return true;
+			if (o == null || getClass() != o.getClass())
+				return false;
+
+			final TextRow textRow = (TextRow) o;
+
+			return values.equals(textRow.values);
+		}
+
+		@Override
+		public int hashCode() {
+			return values.hashCode();
+		}
+
+		@Override
+		public String toString() {
+			return "TextRow{" + "values=" + values + '}';
+		}
+	}
+
+	public static class BinaryResultSet implements ServerMessage {
+		public List<BinaryRow> binaryRows;
+		public List<Field> fields;
+
+		public BinaryResultSet(final List<Field> fields, final List<BinaryRow> binaryRows) {
+			this.binaryRows = binaryRows;
+			this.fields = fields;
+		}
+
+		@Override
+		public boolean equals(final Object o) {
+			if (this == o)
+				return true;
+			if (o == null || getClass() != o.getClass())
+				return false;
+
+			final BinaryResultSet resultSet = (BinaryResultSet) o;
+
+			if (!binaryRows.equals(resultSet.binaryRows))
+				return false;
+			return fields.equals(resultSet.fields);
+		}
+
+		@Override
+		public int hashCode() {
+			int result = binaryRows.hashCode();
+			result = 31 * result + fields.hashCode();
+			return result;
+		}
+
+		@Override
+		public String toString() {
+			return "ResultSet{" + "binaryRows=" + binaryRows + ", fields=" + fields + '}';
+		}
+	}
+
+	public final static class ColumnCount implements ServerMessage {
+		public final int count;
+
+		public ColumnCount(int count) {
+			super();
+			this.count = count;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + count;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ColumnCount other = (ColumnCount) obj;
+			if (count != other.count)
+				return false;
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "ColumnCount [count=" + count + "]";
 		}
 	}
 }

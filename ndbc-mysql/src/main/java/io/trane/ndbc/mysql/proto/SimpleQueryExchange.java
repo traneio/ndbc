@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import io.trane.ndbc.Row;
 import io.trane.ndbc.mysql.proto.Message.QueryCommand;
-import io.trane.ndbc.mysql.proto.Message.ResultSet;
+import io.trane.ndbc.mysql.proto.Message.TextResultSet;
 import io.trane.ndbc.mysql.proto.Message.TextRow;
 import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.util.PartialFunction;
@@ -20,10 +20,10 @@ public class SimpleQueryExchange implements Function<String, Exchange<List<Row>>
 	@Override
 	public Exchange<List<Row>> apply(final String sql) {
 		return Exchange.send(new QueryCommand(sql))
-				.thenReceive(PartialFunction.when(ResultSet.class, this::handleResultSet));
+				.thenReceive(PartialFunction.when(TextResultSet.class, this::handleResultSet));
 	}
 
-	private Exchange<List<Row>> handleResultSet(final ResultSet rs) {
+	private Exchange<List<Row>> handleResultSet(final TextResultSet rs) {
 		final AtomicInteger index = new AtomicInteger();
 		final Map<String, Integer> positions = rs.fields.stream()
 				.collect(Collectors.toMap(t -> t.name, any -> index.getAndIncrement()));

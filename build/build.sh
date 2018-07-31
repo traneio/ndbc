@@ -27,19 +27,18 @@ then
 		git commit -m "[skip ci] [release] remove release.version"
 		git push
 
-		mvn -B clean release:prepare --settings build/settings.xml -DreleaseVersion=$RELEASE_VERSION
-		mvn release:perform --settings build/settings.xml
+		mvn -pl $PROJECTS -B clean release:prepare --settings build/settings.xml -DreleaseVersion=$RELEASE_VERSION
+		mvn -pl $PROJECTS release:perform --settings build/settings.xml
 	elif [[ $TRAVIS_BRANCH == "master" ]]
 	then
 		echo "Publishing a snapshot..."
-		mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package deploy --settings build/settings.xml
-
+		mvn -pl $PROJECTS clean org.jacoco:jacoco-maven-plugin:prepare-agent package deploy --settings build/settings.xml
 	else
 		echo "Publishing a branch snapshot..."
-		mvn clean versions:set -DnewVersion=$TRAVIS_BRANCH-SNAPSHOT
-		mvn org.jacoco:jacoco-maven-plugin:prepare-agent package deploy --settings build/settings.xml 
+		mvn -pl $PROJECTS clean versions:set -DnewVersion=$TRAVIS_BRANCH-SNAPSHOT
+		mvn -pl $PROJECTS org.jacoco:jacoco-maven-plugin:prepare-agent package deploy --settings build/settings.xml 
 	fi
 else
 	echo "Running build..."
-	mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package
+	mvn -pl $PROJECTS clean org.jacoco:jacoco-maven-plugin:prepare-agent package
 fi

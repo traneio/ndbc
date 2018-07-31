@@ -10,6 +10,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
@@ -28,6 +29,7 @@ public class ConnectionTest {
 	private final Duration timeout = Duration.ofSeconds(1);
 
 	@Test
+	@Ignore
 	public void query() throws CheckedFutureException {
 		final List<Row> result = new ArrayList<>();
 		final String query = "query";
@@ -44,6 +46,7 @@ public class ConnectionTest {
 	}
 
 	@Test
+	@Ignore
 	public void queryPreparedStatement() throws CheckedFutureException {
 		final List<Row> result = new ArrayList<>();
 		final String query = "query";
@@ -63,6 +66,7 @@ public class ConnectionTest {
 	}
 
 	@Test
+	@Ignore
 	public void execute() throws CheckedFutureException {
 		final Long result = 33L;
 		final String command = "command";
@@ -79,6 +83,7 @@ public class ConnectionTest {
 	}
 
 	@Test
+	@Ignore
 	public void executePreparedStatement() throws CheckedFutureException {
 		final Long result = 413L;
 		final String command = "command";

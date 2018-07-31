@@ -66,7 +66,7 @@ public class PostgresMarshaller implements Marshaller {
 	}
 
 	@Override
-  public final void encode(final ClientMessage msg, final BufferWriter b) {
+	public final void encode(final ClientMessage msg, final BufferWriter b) {
 		try {
 			if (msg instanceof Bind)
 				bindMarshaller.encode((Bind) msg, b);

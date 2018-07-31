@@ -20,12 +20,12 @@ public class PacketBufferReader implements BufferReader {
 	}
 
 	@Override
-  public int readableBytes() {
+	public int readableBytes() {
 		return b.readableBytes();
 	}
 
 	@Override
-  public int readInt() {
+	public int readInt() {
 		return b.readInt();
 	}
 
@@ -78,12 +78,12 @@ public class PacketBufferReader implements BufferReader {
 	}
 
 	@Override
-  public byte readByte() {
+	public byte readByte() {
 		return b.readByte();
 	}
 
 	@Override
-  public short readShort() {
+	public short readShort() {
 		return b.readShort();
 	}
 
@@ -94,92 +94,92 @@ public class PacketBufferReader implements BufferReader {
 	}
 
 	@Override
-  public String readCString() {
+	public String readCString() {
 		return b.readCString();
 	}
 
 	@Override
-  public String readCString(final int length) {
+	public String readCString(final int length) {
 		return b.readCString(length);
 	}
 
 	@Override
-  public String readString() {
+	public String readString() {
 		return b.readString();
 	}
 
 	@Override
-  public String readString(final int length) {
+	public String readString(final int length) {
 		return b.readString(length);
 	}
 
 	@Override
-  public byte[] readBytes() {
+	public byte[] readBytes() {
 		return b.readBytes();
 	}
 
 	@Override
-  public byte[] readBytes(final int length) {
+	public byte[] readBytes(final int length) {
 		return b.readBytes(length);
 	}
 
 	@Override
-  public int[] readInts() {
+	public int[] readInts() {
 		return b.readInts();
 	}
 
 	@Override
-  public int[] readInts(final int length) {
+	public int[] readInts(final int length) {
 		return b.readInts(length);
 	}
 
 	@Override
-  public short[] readShorts() {
+	public short[] readShorts() {
 		return b.readShorts();
 	}
 
 	@Override
-  public short[] readShorts(final int length) {
+	public short[] readShorts(final int length) {
 		return b.readShorts(length);
 	}
 
 	@Override
-  public BufferReader readSlice(final int length) {
+	public BufferReader readSlice(final int length) {
 		return b.readSlice(length);
 	}
 
 	@Override
-  public void markReaderIndex() {
+	public void markReaderIndex() {
 		b.markReaderIndex();
 	}
 
 	@Override
-  public void resetReaderIndex() {
+	public void resetReaderIndex() {
 		b.resetReaderIndex();
 	}
 
 	@Override
-  public void retain() {
+	public void retain() {
 		b.retain();
 	}
 
 	@Override
-  public void release() {
+	public void release() {
 		b.release();
 	}
 
 	@Override
-  public Long readLong() {
+	public Long readLong() {
 		return b.readLong();
 	}
 
 	@Override
-  public Float readFloat() {
+	public Float readFloat() {
 		return b.readFloat();
 	}
 
 	@Override
-  public Double readDouble() {
+	public Double readDouble() {
 		return b.readDouble();
 	}
 }

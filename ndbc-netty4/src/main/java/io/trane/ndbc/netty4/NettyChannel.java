@@ -31,8 +31,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<Try<ServerMe
 	}
 
 	@Override
-	protected final void channelRead0(final ChannelHandlerContext ctx, final Try<ServerMessage> msg)
-			throws Exception {
+	protected final void channelRead0(final ChannelHandlerContext ctx, final Try<ServerMessage> msg) throws Exception {
 		System.out.println(hashCode() + " received: " + msg);
 		final Promise<ServerMessage> p = nextMessagePromise.get();
 		if (p == null) {

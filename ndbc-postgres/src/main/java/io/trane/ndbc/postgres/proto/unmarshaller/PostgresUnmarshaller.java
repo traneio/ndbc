@@ -57,10 +57,11 @@ public final class PostgresUnmarshaller implements Unmarshaller {
 	}
 
 	@Override
-	public Optional<Try<ServerMessage>> decode(final Optional<Class<? extends ClientMessage>> previousClientMessageClass,
-			final BufferReader b) {
+	public Optional<Try<ServerMessage>> decode(
+			final Optional<Class<? extends ClientMessage>> previousClientMessageClass, final BufferReader b) {
 		try {
-			final boolean ssl = previousClientMessageClass.map(cls -> SSLRequest.class.isAssignableFrom(cls)).orElse(false);
+			final boolean ssl = previousClientMessageClass.map(cls -> SSLRequest.class.isAssignableFrom(cls))
+					.orElse(false);
 			if (b.readableBytes() == 1 && ssl)
 				return Optional.of(Try.apply(() -> decode(b.readByte(), b.readSlice(0))));
 			else if (b.readableBytes() >= 5) {

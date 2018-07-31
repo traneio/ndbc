@@ -18,23 +18,23 @@ import io.trane.ndbc.proto.Unmarshaller;
 
 public abstract class Netty4DataSourceSupplier implements Supplier<DataSource> {
 
-  protected final Config                     config;
-  private final Supplier<Future<Connection>> createConnection;
+	protected final Config config;
+	private final Supplier<Future<Connection>> createConnection;
 
-  public Netty4DataSourceSupplier(final Config config, Marshaller marshaller, Unmarshaller unmarshaller,
-      Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnectionSupplier) {
-    this.config = config;
-    ChannelSupplier channelSupplier = new ChannelSupplier(config.charset(), marshaller, unmarshaller,
-        new NioEventLoopGroup(config.nioThreads().orElse(0), new DefaultThreadFactory("ndbc-netty4", true)),
-        config.host(), config.port());
-    this.createConnection = createConnectionSupplier.apply(channelSupplier);
-  }
+	public Netty4DataSourceSupplier(final Config config, Marshaller marshaller, Unmarshaller unmarshaller,
+			Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnectionSupplier) {
+		this.config = config;
+		ChannelSupplier channelSupplier = new ChannelSupplier(config.charset(), marshaller, unmarshaller,
+				new NioEventLoopGroup(config.nioThreads().orElse(0), new DefaultThreadFactory("ndbc-netty4", true)),
+				config.host(), config.port());
+		this.createConnection = createConnectionSupplier.apply(channelSupplier);
+	}
 
-  @Override
-  public final DataSource get() {
-    Pool<Connection> pool = LockFreePool.apply(createConnection, config.poolMaxSize(), config.poolMaxWaiters(),
-        config.poolValidationInterval(),
-        new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("ndbc-pool-scheduler", true)));
-    return new PooledDataSource(pool);
-  }
+	@Override
+	public final DataSource get() {
+		Pool<Connection> pool = LockFreePool.apply(createConnection, config.poolMaxSize(), config.poolMaxWaiters(),
+				config.poolValidationInterval(),
+				new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("ndbc-pool-scheduler", true)));
+		return new PooledDataSource(pool);
+	}
 }

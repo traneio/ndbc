@@ -10,17 +10,17 @@ import io.trane.ndbc.value.Value;
 
 public final class ExtendedExecuteExchange implements BiFunction<String, List<Value<?>>, Exchange<Long>> {
 
-  private final ExtendedExchange extendedExchange;
+	private final ExtendedExchange extendedExchange;
 
-  public ExtendedExecuteExchange(ExtendedExchange extendedExchange) {
-    this.extendedExchange = extendedExchange;
-  }
+	public ExtendedExecuteExchange(ExtendedExchange extendedExchange) {
+		this.extendedExchange = extendedExchange;
+	}
 
-  @Override
-  public Exchange<Long> apply(final String command, final List<Value<?>> params) {
-    return extendedExchange.apply(command, params, commandComplete);
-  }
+	@Override
+	public Exchange<Long> apply(final String command, final List<Value<?>> params) {
+		return extendedExchange.apply(command, params, commandComplete);
+	}
 
-  private final Exchange<Long> commandComplete = Exchange.receive(
-      PartialFunction.when(OkResponseMessage.class, msg -> Exchange.value(msg.affectedRows)));
+	private final Exchange<Long> commandComplete = Exchange
+			.receive(PartialFunction.when(OkResponseMessage.class, msg -> Exchange.value(msg.affectedRows)));
 }

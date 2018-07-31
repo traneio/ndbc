@@ -12,13 +12,14 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import io.trane.ndbc.mysql.proto.Message.HandshakeResponseMessage;
 import io.trane.ndbc.mysql.proto.Message.InitialHandshakeMessage;
 import io.trane.ndbc.mysql.proto.Message.OkResponseMessage;
 import io.trane.ndbc.mysql.proto.Message.QueryCommand;
-import io.trane.ndbc.mysql.proto.Message.ResultSet;
+import io.trane.ndbc.mysql.proto.Message.TextResultSet;
 import io.trane.ndbc.mysql.proto.Message.ServerResponseMessage;
 import io.trane.ndbc.mysql.proto.marshaller.HandshakeResponsePacketMarshaller;
 import io.trane.ndbc.mysql.proto.marshaller.TextCommandMarshaller;
@@ -44,6 +45,7 @@ public class HandshakeTest {
 	}
 
 	@Test
+	@Ignore
 	public void handShakeAndQuery() throws IOException {
 		// use to test locally docker run -e MYSQL_ROOT_PASSWORD=mysql -p 3306:3306 -d
 		// mysql
@@ -71,7 +73,7 @@ public class HandshakeTest {
 		final QueryCommand queryCommand = new QueryCommand("SELECT 'TEST' as test");
 		textCommandMarshaller.encode(queryCommand, bw, utf8);
 		info("SENT:" + queryCommand);
-		final ResultSet resultSet = textResultSetUnmarshaller.decode(br);
+		final TextResultSet resultSet = textResultSetUnmarshaller.decode(br);
 		info("RECEIVED:" + resultSet);
 		assertEquals(1, resultSet.fields.size());
 		assertEquals(1, resultSet.textRows.size());
@@ -82,14 +84,14 @@ public class HandshakeTest {
 
 	@Test
 	public void initalHandshakePacket() {
-		final byte[] binary = {(byte) 0x36, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0a, (byte) 0x35, (byte) 0x2e,
-				(byte) 0x35, (byte) 0x2e, (byte) 0x32, (byte) 0x2d, (byte) 0x6d, (byte) 0x32, (byte) 0x00, (byte) 0x0b,
-				(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x64, (byte) 0x76, (byte) 0x48, (byte) 0x40, (byte) 0x49,
-				(byte) 0x2d, (byte) 0x43, (byte) 0x4a, (byte) 0x00, (byte) 0xff, (byte) 0xf7, (byte) 0x21, (byte) 0x02,
-				(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-				(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x2a, (byte) 0x34,
-				(byte) 0x64, (byte) 0x7c, (byte) 0x63, (byte) 0x5a, (byte) 0x77, (byte) 0x6b, (byte) 0x34, (byte) 0x5e,
-				(byte) 0x5d, (byte) 0x3a, (byte) 0x00};
+		final byte[] binary = {(byte) 0x36, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0a, (byte) 0x35,
+				(byte) 0x2e, (byte) 0x35, (byte) 0x2e, (byte) 0x32, (byte) 0x2d, (byte) 0x6d, (byte) 0x32, (byte) 0x00,
+				(byte) 0x0b, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x64, (byte) 0x76, (byte) 0x48, (byte) 0x40,
+				(byte) 0x49, (byte) 0x2d, (byte) 0x43, (byte) 0x4a, (byte) 0x00, (byte) 0xff, (byte) 0xf7, (byte) 0x21,
+				(byte) 0x02, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+				(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x2a,
+				(byte) 0x34, (byte) 0x64, (byte) 0x7c, (byte) 0x63, (byte) 0x5a, (byte) 0x77, (byte) 0x6b, (byte) 0x34,
+				(byte) 0x5e, (byte) 0x5d, (byte) 0x3a, (byte) 0x00};
 		final TestSyncBufferReader br = new TestSyncBufferReader(new ByteArrayInputStream(binary), utf8);
 		final InitialHandshakeMessage initialHandshake = initialHandshakePacketUnmarshaller.decode(br);
 		assertEquals(initialHandshake.protocolVersion, 10);
@@ -98,7 +100,8 @@ public class HandshakeTest {
 		assertEquals(initialHandshake.serverCapabilites, 0xf7ff);
 		assertEquals(initialHandshake.statusFlag, 2);
 		assertEquals(initialHandshake.seed.length, 20);
-		final byte[] expectedSalt = {100, 118, 72, 64, 73, 45, 67, 74, 42, 52, 100, 124, 99, 90, 119, 107, 52, 94, 93, 58};
+		final byte[] expectedSalt = {100, 118, 72, 64, 73, 45, 67, 74, 42, 52, 100, 124, 99, 90, 119, 107, 52, 94, 93,
+				58};
 
 		assertTrue(Arrays.equals(expectedSalt, initialHandshake.seed));
 	}

@@ -37,38 +37,38 @@ import io.trane.ndbc.proto.Marshaller;
 
 public final class DataSourceSupplier extends Netty4DataSourceSupplier {
 
-  private final static StartupExchange startup         = new StartupExchange();
-  private final static InitSSLExchange initSSLExchange = new InitSSLExchange();
-  private final static InitSSLHandler  initSSLHandler  = new InitSSLHandler();
+	private final static StartupExchange startup = new StartupExchange();
+	private final static InitSSLExchange initSSLExchange = new InitSSLExchange();
+	private final static InitSSLHandler initSSLHandler = new InitSSLHandler();
 
-  public DataSourceSupplier(final Config config) {
-    super(config, createMarshaller(config), new PostgresUnmarshaller(), createConnection(config));
-  }
+	public DataSourceSupplier(final Config config) {
+		super(config, createMarshaller(config), new PostgresUnmarshaller(), createConnection(config));
+	}
 
-  private static final Marshaller createMarshaller(Config config) {
-    EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings());
-    return new PostgresMarshaller(new BindMarshaller(encoding), new CancelRequestMarshaller(),
-        new CloseMarshaller(), new DescribeMarshaller(), new ExecuteMarshaller(), new FlushMarshaller(),
-        new ParseMarshaller(encoding), new QueryMarshaller(), new PasswordMessageMarshaller(),
-        new StartupMessageMarshaller(), new SyncMarshaller(), new TerminateMarshaller(),
-        new SSLRequestMarshaller());
-  }
+	private static final Marshaller createMarshaller(Config config) {
+		EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings());
+		return new PostgresMarshaller(new BindMarshaller(encoding), new CancelRequestMarshaller(),
+				new CloseMarshaller(), new DescribeMarshaller(), new ExecuteMarshaller(), new FlushMarshaller(),
+				new ParseMarshaller(encoding), new QueryMarshaller(), new PasswordMessageMarshaller(),
+				new StartupMessageMarshaller(), new SyncMarshaller(), new TerminateMarshaller(),
+				new SSLRequestMarshaller());
+	}
 
-  private static Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnection(
-      Config config) {
-    EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings());
-    final QueryResultExchange queryResultExchange = new QueryResultExchange(encoding);
-    return (channelSupplier) -> () -> {
-      final ExtendedExchange extendedExchange = new ExtendedExchange();
-      return channelSupplier.get().flatMap(channel -> initSSLExchange.apply(config.ssl()).run(channel)
-          .flatMap(ssl -> initSSLHandler.apply(config.host(), config.port(), ssl, channel))
-          .flatMap(v -> startup.apply(config.charset(), config.user(), config.password(), config.database())
-              .run(channel)
-              .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, channelSupplier,
-                  backendKeyData, new SimpleQueryExchange(queryResultExchange),
-                  new SimpleExecuteExchange(),
-                  new ExtendedQueryExchange(queryResultExchange, extendedExchange),
-                  new ExtendedExecuteExchange(extendedExchange)))));
-    };
-  }
+	private static Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnection(
+			Config config) {
+		EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings());
+		final QueryResultExchange queryResultExchange = new QueryResultExchange(encoding);
+		return (channelSupplier) -> () -> {
+			final ExtendedExchange extendedExchange = new ExtendedExchange();
+			return channelSupplier.get().flatMap(channel -> initSSLExchange.apply(config.ssl()).run(channel)
+					.flatMap(ssl -> initSSLHandler.apply(config.host(), config.port(), ssl, channel))
+					.flatMap(v -> startup.apply(config.charset(), config.user(), config.password(), config.database())
+							.run(channel)
+							.map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, channelSupplier,
+									backendKeyData, new SimpleQueryExchange(queryResultExchange),
+									new SimpleExecuteExchange(),
+									new ExtendedQueryExchange(queryResultExchange, extendedExchange),
+									new ExtendedExecuteExchange(extendedExchange)))));
+		};
+	}
 }

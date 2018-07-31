@@ -3,15 +3,16 @@ package io.trane.ndbc.mysql.proto.unmarshaller;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.trane.ndbc.mysql.proto.Message.ColumnCount;
 import io.trane.ndbc.mysql.proto.Message.Field;
 import io.trane.ndbc.mysql.proto.Message.TextResultSet;
 import io.trane.ndbc.mysql.proto.Message.TextRow;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.proto.BufferReader;
 
-public class TextResultSetUnmarshaller {
+public class ColumnCountUnmarshaller {
 
-	public TextResultSet decode(final BufferReader br) {
+	public ColumnCount decode(final BufferReader br) {
 		final PacketBufferReader packet = new PacketBufferReader(br);
 		// int returnCode = packet.readByte();
 		final long numCols = packet.readVariableLong();
@@ -40,7 +41,7 @@ public class TextResultSetUnmarshaller {
 				rows.add(new TextRow(values));
 			}
 		}
-		return new TextResultSet(fields, rows);
+		return null;
 	}
 
 	public Field decodeField(final PacketBufferReader br) {

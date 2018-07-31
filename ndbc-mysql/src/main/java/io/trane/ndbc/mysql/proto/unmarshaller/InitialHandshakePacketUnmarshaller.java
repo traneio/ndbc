@@ -41,5 +41,4 @@ public class InitialHandshakePacketUnmarshaller {
 		System.arraycopy(b, 0, c, a.length, b.length);
 		return c;
 	}
-
 }
