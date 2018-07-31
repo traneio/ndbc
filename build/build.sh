@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e # Any subsequent(*) commands which fail will cause the shell script to exit immediately
 
+mvn install -Dmaven.test.skip=true
+
 if [[ $TRAVIS_PULL_REQUEST == "false" ]]
 then
 	openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $BUILD_DIR/pubring.gpg.enc -out $BUILD_DIR/pubring.gpg -d
