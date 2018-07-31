@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e # Any subsequent(*) commands which fail will cause the shell script to exit immediately
 
-mvn install -Dmaven.test.skip=true
+MVN="mvn -Dmaven.test.skip=true --settings build/settings.xml "
 
 if [[ $TRAVIS_PULL_REQUEST == "false" ]]
 then
@@ -29,18 +29,17 @@ then
 		git commit -m "[skip ci] [release] remove release.version"
 		git push
 
-		mvn -pl $PROJECTS -B clean release:prepare --settings build/settings.xml -DreleaseVersion=$RELEASE_VERSION
-		mvn -pl $PROJECTS release:perform --settings build/settings.xml
+		$MVN -B clean release:prepare -DreleaseVersion=$RELEASE_VERSION
+		$MVN release:perform
 	elif [[ $TRAVIS_BRANCH == "master" ]]
 	then
 		echo "Publishing a snapshot..."
-		mvn -pl $PROJECTS clean org.jacoco:jacoco-maven-plugin:prepare-agent package deploy --settings build/settings.xml
+		$MVN clean package deploy
 	else
 		echo "Publishing a branch snapshot..."
-		mvn -pl $PROJECTS clean versions:set -DnewVersion=$TRAVIS_BRANCH-SNAPSHOT
-		mvn -pl $PROJECTS org.jacoco:jacoco-maven-plugin:prepare-agent package deploy --settings build/settings.xml 
+		$MVN clean versions:set -DnewVersion=$TRAVIS_BRANCH-SNAPSHOT
+		$MVN package deploy
 	fi
 else
-	echo "Running build..."
-	mvn -pl $PROJECTS clean org.jacoco:jacoco-maven-plugin:prepare-agent package
+	echo "Nothing to publish"
 fi

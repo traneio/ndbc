@@ -3,8 +3,6 @@ sudo: false
 install: true
 jdk:
 - oraclejdk8
-script:
-- ./build/build.sh
 cache:
   directories:
   - $HOME/.m2/repository
@@ -16,11 +14,13 @@ env:
   - secure: NZEO9/bbVzB19XNkjUTKdLOhOYFLWJxvdXJCK2klo4hAml8Qsp+As8NTtSFbPwKraWgxyhM0OkTpfzJpGpL7Fz1veWw6vc3Xu7ds9N+sv8JA/QcZfqh6ZHgi5it/8VeAQ47yVcBVe1OV/a3TLVNqBeZXj65MVuxKddSHvgK5qPpNYTnqEYqrmLb6++kfzANP00MJzAkbHo3BUYfO4F5eNqlpJF3fJ4M/f6R8qvQwa+xErifO8z8i/bp3lwuBetePKk3HcuDLEK6ecSUd2kQpN2SnfYt6KdC9uSIcShJJmliu3gSGvqtuqDWPFkOMkQxBckI82auCsDZnY/SawLdquu+ceQ/+vFR/hZabHa3m2yTeX0ynjIdlPHD4O8h5lo+brqCmISKWs93CzXcPy85Dp55+9iVAxpyVt4nbscNnVLE+RxC1bojwTdN7Umgu9KsdzIA/AqwWemEqYbFmq1ANjvGr9dn7um36VjJOhpM9pTC53bQOmIhOK9+4GMFN2kY3N2LeQ0MJyCMQL8wzDyOwzdsgeMGBAW/HluSIjQlBheam6z93P1LcvMNIcOE9M5o5iGwck5sgBxiDAEcjSM3Ykb0/sBWMMCXn+O2VwDHW84Z8PnVpgAQ65QywjsGbb+x9PnvnWr1bjyCcAHqRjbfDHhyUBgZD9OzCcJPtZx9GIsc=
   - secure: l08anoXuRPSV3K4P1qpaYxXt/kCA77w2Tsu1cdUnx0+GzvjEnfNHF8cw0OvgwJs0vMOcNMId2dP1XGZljnXhZOx3EoPcOx2ankrnvrft7L6GOUCyXpUi9QZPXboO+RK95Ynce1A0iz1HeWmR+TRpD1bQBK7BkW5zwho/1nWqCZeUtFUDYI3QUDudA21VSocrFk7djuhMctjRiZByC8XvCpzVudTA1RC69Xn7rOnF6K1xKQz8z6ZRZieSMIWbnWkF1zNy8Q8K+rr0gRFj4HfZBnXb3IMPSB3A9DlWRQ0+GkT2TW+zifBqLBL4H4aEqg2l/YAYdDyL+hOSxzgsB8OQ8COjrnYTC4z6DJv38ih8fXsW+ciL/iBCB1W2klRdcu94Hb3D7xCatlxaJehCv/gU5TtwQwD1MIae+SpSHufAOFf4lqCLQT/fJDMqjtuLavmbm4vvOWjUn/ywcAA3dZEQzIljs/4KTmxADiBNdfQ0e9cuRPOo8azpzgBGqgAuBV+/7q9gGJtjYWoGVyel7vGhWqZoNud8XYCZ54BjGp46T5Z10GHWQ7gvNU9XaJXAuTddZuDRRSrW8EpAJJ6JMV0hqBAyRSSl6mO+xhu0R+Dbj1AuiqSgdGNeB5B5sDpR5SakLi3vTxeVM89X7KIrR1kiUysRwfgPrVQN6dWMxLs+EfA=
   - secure: TaSahaPnzbf7UfDvtO9qSxLzv5dLERrnkIYKmuVpcQ1LIe8K83JcqDF/FLnTQPNC/PEWmkMcXgJs6YVAtcTaoKCaLciU/ashnngAqqgjTi42Fi043pveSiyuJ9h9AHIwi6/75dC6Ks2e6MLgc8sYsJDC656FYCKK09TKf9P0STNNomllCE8+2WAySMPwWGBs/CHUoY0McolvnY+opLUV0WlyEcEBvbB1G3SLqBJ48+C8K0t719zIGN0HozhKLysroJ27aU4xoeA77BQyXQihrkooifPXbmg16PExaK5PixNe1XVNd7b96qWG/8goJX3TK4BR40FWlFHa1TRORfE9a69NdNPPH1vTK+pQ59OUPI6y9t7WFw/ZQK567okSzMHmNM4vqUcR4DTJQNZU1Bb2+LkA1JBteqG8kV9kBdtT/cF8QzxCqRZtEaJYUrZ3baELwNt+jMGEEbhP5fAVm/+trx4g00nzO/RgbT/90YGMtUvyUuSPsGSa/47Axn0O76IcfJtDJX92op35NIa+gJWNo3HulsdN93cgtHh1sM0k2Ypxxk12egln5kjjpbwf5tVhrS/HaCaY+eOAU3U+9Zt1sqqLTGubceFw89CsTru+OtIsEYE5XHgDSZN4GY6NS8ElmRK3TQzzE3K6Zgfq3ZA1jprNx+JBYvS6KtHHdRJ6GzU=
-matrix:
+jobs:
   include:
-  - name: "unit"
+  - stage: "test"
+    script: ./build/test.sh
+  - name: "pure"
     env: PROJECTS=ndbc-api,ndbc-core,ndbc-test,ndbc-postgres,ndbc-netty4,ndbc-mysql
-  - name: "integ: postgres 9.4"
+  - name: "postgres 9.4"
     env: PROJECTS=ndbc-postgres-netty4
     addons:
       postgresql: '9.4'
