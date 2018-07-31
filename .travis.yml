@@ -20,6 +20,14 @@ jobs:
   include:
   - name: "pure"
     env: PROJECTS=ndbc-api,ndbc-core,ndbc-test,ndbc-postgres,ndbc-netty4,ndbc-mysql
+  - name: "postgres 9.2"
+    env: PROJECTS=ndbc-postgres-netty4
+    addons:
+      postgresql: '9.2'
+  - name: "postgres 9.3"
+    env: PROJECTS=ndbc-postgres-netty4
+    addons:
+      postgresql: '9.3'
   - name: "postgres 9.4"
     env: PROJECTS=ndbc-postgres-netty4
     addons:
@@ -28,5 +36,13 @@ jobs:
     env: PROJECTS=ndbc-postgres-netty4
     addons:
       postgresql: '9.5'
+  - name: "postgres 9.6"
+    env: PROJECTS=ndbc-postgres-netty4
+    addons:
+      postgresql: '9.6'
+  - name: "postgres 10"
+    env: PROJECTS=ndbc-postgres-netty4
+    addons:
+      postgresql: '10'
   - stage: "release"
     script: ./build/release.sh
