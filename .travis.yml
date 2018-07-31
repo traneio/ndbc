@@ -28,3 +28,5 @@ jobs:
     env: PROJECTS=ndbc-postgres-netty4
     addons:
       postgresql: '9.5'
+  - stage: "release"
+    script: ./build/release.sh
