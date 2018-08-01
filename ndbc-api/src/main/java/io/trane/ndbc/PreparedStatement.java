@@ -53,7 +53,6 @@ public final class PreparedStatement {
 	private final Value<?>[] params;
 
 	private PreparedStatement(final String query, final Value<?>[] params) {
-		super();
 		this.query = query;
 		this.params = params;
 	}

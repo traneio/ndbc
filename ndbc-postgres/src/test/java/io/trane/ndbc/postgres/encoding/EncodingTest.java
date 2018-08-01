@@ -30,7 +30,6 @@ public abstract class EncodingTest<V extends Value<?>, E extends Encoding<?, V>>
 
 	public EncodingTest(final E enc, final Integer expectedOid, final Class<V> expectedValueClass,
 			final Function<Random, V> generator, final BiConsumer<V, V> verify) {
-		super();
 		this.enc = enc;
 		this.expectedOid = expectedOid;
 		this.expectedValueClass = expectedValueClass;

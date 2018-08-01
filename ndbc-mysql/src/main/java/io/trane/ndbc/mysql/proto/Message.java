@@ -742,7 +742,6 @@ public interface Message {
 		public final int count;
 
 		public ColumnCount(int count) {
-			super();
 			this.count = count;
 		}
 

@@ -48,7 +48,6 @@ public final class PostgresUnmarshaller implements Unmarshaller {
 	private final PortalSuspended portalSuspended = new PortalSuspended();
 
 	public PostgresUnmarshaller() {
-		super();
 		authenticationRequestUnmarshaller = new AuthenticationRequestUnmarshaller();
 		commandCompleteUnmarshaller = new CommandCompleteUnmarshaller();
 		dataRowUnmarshaller = new DataRowUnmarshaller();

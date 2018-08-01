@@ -14,7 +14,6 @@ public abstract class Value<T> {
 	private final T value;
 
 	public Value(final T value) {
-		super();
 		this.value = value;
 	}
 

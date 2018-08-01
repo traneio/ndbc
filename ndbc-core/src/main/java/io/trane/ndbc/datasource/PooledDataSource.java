@@ -17,7 +17,6 @@ public final class PooledDataSource implements DataSource {
 	private final Local<Connection> currentTransation;
 
 	public PooledDataSource(final Pool<Connection> pool) {
-		super();
 		this.pool = pool;
 		currentTransation = Local.apply();
 	}

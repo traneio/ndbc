@@ -131,7 +131,6 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
 		private final Function<T, Future<R>> f;
 
 		public Waiter(final Function<T, Future<R>> f) {
-			super();
 			this.f = f;
 		}
 

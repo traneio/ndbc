@@ -23,7 +23,6 @@ public final class QueryResultExchange {
 	private final EncodingRegistry encoding;
 
 	public QueryResultExchange(final EncodingRegistry encoding) {
-		super();
 		this.encoding = encoding;
 	}
 

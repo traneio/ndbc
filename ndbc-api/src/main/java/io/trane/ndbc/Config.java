@@ -55,7 +55,6 @@ public final class Config {
 		private final Optional<File> rootCert;
 
 		private SSL(final Mode mode, final Optional<File> rootCert) {
-			super();
 			this.mode = mode;
 			this.rootCert = rootCert;
 		}
@@ -205,7 +204,6 @@ public final class Config {
 			final Optional<Integer> poolMaxSize, final Optional<Integer> poolMaxWaiters,
 			final Optional<Duration> poolValidationInterval, final Optional<Set<String>> encodingClasses,
 			final Optional<Integer> nioThreads, final Optional<SSL> ssl) {
-		super();
 		this.dataSourceSupplierClass = dataSourceSupplierClass;
 		this.charset = charset;
 		this.user = user;

@@ -33,7 +33,6 @@ public final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
 
 	public ChannelSupplier(final Charset charset, final Marshaller encoder, final Unmarshaller decoder,
 			final EventLoopGroup eventLoopGroup, final String host, final int port) {
-		super();
 		this.charset = charset;
 		this.encoder = encoder;
 		this.decoder = decoder;

@@ -14,7 +14,6 @@ public final class ExtendedQueryExchange implements BiFunction<String, List<Valu
 
 	public ExtendedQueryExchange(final QueryResultExchange queryResultExchange,
 			final ExtendedExchange extendedExchange) {
-		super();
 		this.queryResultExchange = queryResultExchange;
 		this.extendedExchange = extendedExchange;
 	}

@@ -19,7 +19,6 @@ public final class Row {
 	}
 
 	private Row(final Map<String, Integer> positions, final Value<?>[] columns) {
-		super();
 		this.positions = positions;
 		this.columns = columns;
 	}

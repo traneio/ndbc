@@ -2125,7 +2125,6 @@ public interface Message {
 		public final boolean enabled;
 
 		public SSLResponse(final boolean enabled) {
-			super();
 			this.enabled = enabled;
 		}
 

@@ -10,7 +10,6 @@ public class TestBufferReader implements BufferReader {
 	private final ByteBuffer buf;
 
 	public TestBufferReader(final ByteBuffer buf) {
-		super();
 		this.buf = buf;
 	}
 

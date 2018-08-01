@@ -13,7 +13,6 @@ public final class SimpleQueryExchange implements Function<String, Exchange<List
 	private final QueryResultExchange queryResultExchange;
 
 	public SimpleQueryExchange(final QueryResultExchange queryResultExchange) {
-		super();
 		this.queryResultExchange = queryResultExchange;
 	}
 

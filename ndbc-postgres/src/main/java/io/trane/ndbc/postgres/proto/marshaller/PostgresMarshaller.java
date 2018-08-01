@@ -49,7 +49,6 @@ public class PostgresMarshaller implements Marshaller {
 			final QueryMarshaller queryMarshaller, final PasswordMessageMarshaller passwordMessageMarshaller,
 			final StartupMessageMarshaller startupMessageMarshaller, final SyncMarshaller syncMarshaller,
 			final TerminateMarshaller terminateMarshaller, final SSLRequestMarshaller sslRequestMarshaller) {
-		super();
 		this.bindMarshaller = bindMarshaller;
 		this.cancelRequestMarshaller = cancelRequestMarshaller;
 		this.closeMarshaller = closeMarshaller;

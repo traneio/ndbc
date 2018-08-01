@@ -10,7 +10,6 @@ public final class BufferWriter implements io.trane.ndbc.proto.BufferWriter {
 	private final Charset charset;
 
 	public BufferWriter(final Charset charset, final ByteBuf b) {
-		super();
 		this.charset = charset;
 		this.b = b;
 	}

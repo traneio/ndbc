@@ -11,7 +11,6 @@ public final class BindMarshaller {
 	private final EncodingRegistry encoding;
 
 	public BindMarshaller(final EncodingRegistry encoding) {
-		super();
 		this.encoding = encoding;
 	}
 

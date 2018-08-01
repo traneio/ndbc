@@ -10,7 +10,6 @@ public final class BufferReader implements io.trane.ndbc.proto.BufferReader {
 	private final ByteBuf bb;
 
 	public BufferReader(final Charset charset, final ByteBuf bb) {
-		super();
 		this.charset = charset;
 		this.bb = bb;
 	}

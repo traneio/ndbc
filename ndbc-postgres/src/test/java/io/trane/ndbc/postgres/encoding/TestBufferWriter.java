@@ -10,7 +10,6 @@ public class TestBufferWriter implements BufferWriter {
 	private final ByteBuffer buf;
 
 	public TestBufferWriter(final ByteBuffer buf) {
-		super();
 		this.buf = buf;
 	}
 
