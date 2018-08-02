@@ -1,11 +1,6 @@
 package io.trane.ndbc.proto;
 
-import java.util.Optional;
+public interface Unmarshaller<T extends ServerMessage> {
 
-import io.trane.ndbc.util.Try;
-
-public interface Unmarshaller {
-
-	Optional<Try<ServerMessage>> decode(Optional<Class<? extends ClientMessage>> previousClientMessageClass,
-			BufferReader bufferReader);
+  public T apply(BufferReader bufferReader);
 }

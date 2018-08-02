@@ -14,30 +14,36 @@ import io.trane.ndbc.postgres.proto.Message.CommandComplete.UnknownCommandComple
 import io.trane.ndbc.postgres.proto.Message.CommandComplete.UpdateComplete;
 import io.trane.ndbc.proto.BufferReader;
 
-final class CommandCompleteUnmarshaller {
+final class CommandCompleteUnmarshaller extends PostgresUnmarshaller<CommandComplete> {
 
-	public final CommandComplete decode(final BufferReader b) {
-		final String string = b.readCString();
-		final String[] words = string.split(" ");
-		switch (words[0]) {
-			case "INSERT" :
-				return new InsertComplete(parseLong(words[2]), parseInt(words[1]));
-			case "DELETE" :
-				return new DeleteComplete(parseLong(words[1]));
-			case "UPDATE" :
-				return new UpdateComplete(parseLong(words[1]));
-			case "SELECT" :
-				return new SelectorOrCreateTableAsComplete(parseLong(words[1]));
-			case "MOVE" :
-				return new MoveComplete(parseLong(words[1]));
-			case "FETCH" :
-				return new FetchComplete(parseLong(words[1]));
-			case "COPY" :
-				return new CopyComplete(parseLong(words[1]));
-			case "CREATE TABLE" :
-				return new SelectorOrCreateTableAsComplete(parseLong(words[1]));
-			default :
-				return new UnknownCommandComplete(0, string);
-		}
-	}
+  @Override
+  protected boolean acceptsType(byte tpe) {
+    return tpe == 'C';
+  }
+
+  @Override
+  public final CommandComplete decode(final byte tpe, final BufferReader b) {
+    final String string = b.readCString();
+    final String[] words = string.split(" ");
+    switch (words[0]) {
+      case "INSERT":
+        return new InsertComplete(parseLong(words[2]), parseInt(words[1]));
+      case "DELETE":
+        return new DeleteComplete(parseLong(words[1]));
+      case "UPDATE":
+        return new UpdateComplete(parseLong(words[1]));
+      case "SELECT":
+        return new SelectorOrCreateTableAsComplete(parseLong(words[1]));
+      case "MOVE":
+        return new MoveComplete(parseLong(words[1]));
+      case "FETCH":
+        return new FetchComplete(parseLong(words[1]));
+      case "COPY":
+        return new CopyComplete(parseLong(words[1]));
+      case "CREATE TABLE":
+        return new SelectorOrCreateTableAsComplete(parseLong(words[1]));
+      default:
+        return new UnknownCommandComplete(0, string);
+    }
+  }
 }

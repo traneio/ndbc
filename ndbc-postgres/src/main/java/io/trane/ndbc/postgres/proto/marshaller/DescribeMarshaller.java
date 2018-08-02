@@ -2,10 +2,11 @@ package io.trane.ndbc.postgres.proto.marshaller;
 
 import io.trane.ndbc.postgres.proto.Message.Describe;
 import io.trane.ndbc.proto.BufferWriter;
+import io.trane.ndbc.proto.Marshaller;
 
-public final class DescribeMarshaller {
+public final class DescribeMarshaller implements Marshaller<Describe> {
 
-	public final void encode(final Describe msg, final BufferWriter b) {
+	public final void apply(final Describe msg, final BufferWriter b) {
 		b.writeChar('D');
 		b.writeInt(0);
 

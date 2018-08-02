@@ -4,9 +4,10 @@ import io.trane.ndbc.postgres.encoding.EncodingRegistry;
 import io.trane.ndbc.postgres.encoding.Format;
 import io.trane.ndbc.postgres.proto.Message.Bind;
 import io.trane.ndbc.proto.BufferWriter;
+import io.trane.ndbc.proto.Marshaller;
 import io.trane.ndbc.value.Value;
 
-public final class BindMarshaller {
+public final class BindMarshaller implements Marshaller<Bind> {
 
 	private final EncodingRegistry encoding;
 
@@ -14,7 +15,7 @@ public final class BindMarshaller {
 		this.encoding = encoding;
 	}
 
-	public final void encode(final Bind msg, final BufferWriter b) {
+	public final void apply(final Bind msg, final BufferWriter b) {
 		b.writeChar('B');
 		b.writeInt(0);
 

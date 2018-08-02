@@ -1,6 +1,6 @@
 package io.trane.ndbc.proto;
 
-public interface Marshaller {
+public interface Marshaller<T extends ClientMessage> {
 
-	void encode(ClientMessage msg, BufferWriter bufferWriter);
+  public void apply(T msg, BufferWriter b);
 }
