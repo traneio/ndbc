@@ -1,17 +1,17 @@
 package io.trane.ndbc.mysql.proto.marshaller;
 
-import java.nio.charset.Charset;
-
 import io.trane.ndbc.mysql.proto.Message.TextCommand;
 import io.trane.ndbc.mysql.proto.PacketBufferWriter;
 import io.trane.ndbc.proto.BufferWriter;
+import io.trane.ndbc.proto.Marshaller;
 
-public class TextCommandMarshaller {
+public class TextCommandMarshaller implements Marshaller<TextCommand> {
 
-	public void encode(final TextCommand command, final BufferWriter bw, final Charset charset) {
-		final PacketBufferWriter packet = new PacketBufferWriter(bw, 0, charset);
-		packet.writeByte(command.getCommand());
-		packet.writeString(command.getSqlStatement());
-		packet.flush();
-	}
+  @Override
+  public void apply(final TextCommand command, final BufferWriter bw) {
+    final PacketBufferWriter packet = new PacketBufferWriter(bw, 0);
+    packet.writeByte(command.getCommand());
+    packet.writeString(command.getSqlStatement());
+    packet.flush();
+  }
 }

@@ -4,17 +4,27 @@ import java.util.function.Function;
 
 import io.trane.ndbc.mysql.proto.Message.OkResponseMessage;
 import io.trane.ndbc.mysql.proto.Message.StatementCommand;
+import io.trane.ndbc.mysql.proto.marshaller.Marshallers;
+import io.trane.ndbc.mysql.proto.unmarshaller.Unmarshallers;
 import io.trane.ndbc.proto.Exchange;
-import io.trane.ndbc.proto.ServerMessage;
-import io.trane.ndbc.util.PartialFunction;
 
 public final class SimpleExecuteExchange implements Function<String, Exchange<Long>> {
 
-	@Override
-	public Exchange<Long> apply(final String command) {
-		return Exchange.send(new StatementCommand(command)).thenReceive(okResponse);
-	}
+  private final Marshallers    marshallers;
+  private final Exchange<Long> okResponse;
 
-	private final PartialFunction<ServerMessage, Exchange<Long>> okResponse = PartialFunction
-			.when(OkResponseMessage.class, msg -> Exchange.value(msg.affectedRows));
+  public SimpleExecuteExchange(Marshallers marshallers, Unmarshallers unmarshallers) {
+    this.marshallers = marshallers;
+    this.okResponse = Exchange.receive(unmarshallers.serverResponse).flatMap(msg -> {
+      if (msg instanceof OkResponseMessage)
+        return Exchange.value(((OkResponseMessage) msg).affectedRows);
+      else
+        return Exchange.fail(msg.toString());
+    });
+  }
+
+  @Override
+  public Exchange<Long> apply(final String command) {
+    return Exchange.send(marshallers.textCommand, new StatementCommand(command)).then(okResponse);
+  }
 }

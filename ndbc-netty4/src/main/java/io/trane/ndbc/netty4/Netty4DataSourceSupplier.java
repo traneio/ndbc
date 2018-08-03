@@ -14,20 +14,19 @@ import io.trane.ndbc.datasource.Connection;
 import io.trane.ndbc.datasource.LockFreePool;
 import io.trane.ndbc.datasource.Pool;
 import io.trane.ndbc.datasource.PooledDataSource;
-import io.trane.ndbc.proto.MarshallerRegistry;
 
 public abstract class Netty4DataSourceSupplier implements Supplier<DataSource> {
 
   protected final Config                     config;
   private final Supplier<Future<Connection>> createConnection;
 
-  public Netty4DataSourceSupplier(final Config config, MarshallerRegistry marshaller,
+  public Netty4DataSourceSupplier(final Config config,
       Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnectionSupplier,
-      Function<io.trane.ndbc.proto.BufferReader, Optional<io.trane.ndbc.proto.BufferReader>> filterBufferReader) {
+      Function<io.trane.ndbc.proto.BufferReader, Optional<io.trane.ndbc.proto.BufferReader>> transformBufferReader) {
     this.config = config;
     ChannelSupplier channelSupplier = new ChannelSupplier(
         new NioEventLoopGroup(config.nioThreads().orElse(0), new DefaultThreadFactory("ndbc-netty4", true)),
-        config.host(), config.port(), config.charset(), filterBufferReader);
+        config.host(), config.port(), config.charset(), transformBufferReader);
     this.createConnection = createConnectionSupplier.apply(channelSupplier);
   }
 

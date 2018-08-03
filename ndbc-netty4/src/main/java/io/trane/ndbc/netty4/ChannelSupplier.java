@@ -26,16 +26,16 @@ public final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
   private final int            port;
   private final Charset        charset;
 
-  private final Function<io.trane.ndbc.proto.BufferReader, Optional<io.trane.ndbc.proto.BufferReader>> filterBufferReader;
+  private final Function<io.trane.ndbc.proto.BufferReader, Optional<io.trane.ndbc.proto.BufferReader>> transformBufferReader;
 
   public ChannelSupplier(final EventLoopGroup eventLoopGroup, final String host, final int port,
       final Charset charset,
-      Function<io.trane.ndbc.proto.BufferReader, Optional<io.trane.ndbc.proto.BufferReader>> filterBufferReader) {
+      Function<io.trane.ndbc.proto.BufferReader, Optional<io.trane.ndbc.proto.BufferReader>> transformBufferReader) {
     this.eventLoopGroup = eventLoopGroup;
     this.host = host;
     this.port = port;
     this.charset = charset;
-    this.filterBufferReader = filterBufferReader;
+    this.transformBufferReader = transformBufferReader;
   }
 
   @Override
@@ -49,7 +49,7 @@ public final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
       @Override
       protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
           throws Exception {
-        filterBufferReader.apply(new BufferReader(charset, in)).ifPresent(out::add);
+        transformBufferReader.apply(new BufferReader(charset, in)).ifPresent(out::add);
       }
     };
   }

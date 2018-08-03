@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import io.trane.ndbc.proto.BufferReader;
 
-public class FilterBufferReader implements Function<BufferReader, Optional<BufferReader>> {
+public class TransformBufferReader implements Function<BufferReader, Optional<BufferReader>> {
 
   @Override
   public Optional<BufferReader> apply(BufferReader b) {
