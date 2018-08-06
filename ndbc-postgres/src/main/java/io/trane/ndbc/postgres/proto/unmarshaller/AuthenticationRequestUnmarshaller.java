@@ -1,5 +1,7 @@
 package io.trane.ndbc.postgres.proto.unmarshaller;
 
+import java.nio.charset.Charset;
+
 import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest;
 import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest.AuthenticationCleartextPassword;
 import io.trane.ndbc.postgres.proto.Message.AuthenticationRequest.AuthenticationGSS;
@@ -19,6 +21,10 @@ public final class AuthenticationRequestUnmarshaller extends PostgresUnmarshalle
   private static final AuthenticationSCMCredential     authenticationSCMCredential     = new AuthenticationSCMCredential();
   private static final AuthenticationGSS               authenticationGSS               = new AuthenticationGSS();
   private static final AuthenticationSSPI              authenticationSSPI              = new AuthenticationSSPI();
+
+  public AuthenticationRequestUnmarshaller(Charset charset) {
+    super(charset);
+  }
 
   @Override
   protected boolean acceptsType(byte tpe) {

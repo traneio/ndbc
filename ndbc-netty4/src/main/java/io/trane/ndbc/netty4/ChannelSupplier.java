@@ -49,7 +49,7 @@ public final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
       @Override
       protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
           throws Exception {
-        transformBufferReader.apply(new BufferReader(charset, in)).ifPresent(out::add);
+        transformBufferReader.apply(new BufferReader(in)).ifPresent(out::add);
       }
     };
   }

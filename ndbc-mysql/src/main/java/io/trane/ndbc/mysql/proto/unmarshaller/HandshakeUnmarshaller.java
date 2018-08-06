@@ -1,23 +1,28 @@
 package io.trane.ndbc.mysql.proto.unmarshaller;
 
-import io.trane.ndbc.mysql.proto.Message.InitialHandshakeMessage;
+import java.nio.charset.Charset;
+
+import io.trane.ndbc.mysql.proto.Message.Handshake;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
-import io.trane.ndbc.proto.BufferReader;
-import io.trane.ndbc.proto.Unmarshaller;
 
 /**
  * https://mariadb.com/kb/en/library/1-connecting-connecting/#initial-handshake-packet
  * https://github.com/mysql/mysql-connector-j/blob/83c6dc41b96809df81444362933043b20a1d49d5/src/com/mysql/jdbc/MysqlIO.java#L1011
  * https://github.com/twitter/finagle/blob/7610016b6d01a267c4cc824a1753cce1eb81d2d2/finagle-mysql/src/main/scala/com/twitter/finagle/mysql/Result.scala
  */
-public class InitialHandshakePacketUnmarshaller implements Unmarshaller<InitialHandshakeMessage> {
+public class HandshakeUnmarshaller extends MysqlUnmarshaller<Handshake> {
+
+  private final Charset charset;
+
+  public HandshakeUnmarshaller(Charset charset) {
+    this.charset = charset;
+  }
 
   @Override
-  public final InitialHandshakeMessage apply(final BufferReader br) {
-    final PacketBufferReader packet = new PacketBufferReader(br);
+  public final Handshake decode(final int header, final PacketBufferReader packet) {
 
     final int protocolVersion = packet.readByte() & 0xff;
-    final String serverVersion = packet.readCString();
+    final String serverVersion = packet.readCString(charset);
     final long connectionId = packet.readUnsignedInt();
     final byte[] salt1 = packet.readBytes(8);
     packet.readByte();
@@ -33,7 +38,7 @@ public class InitialHandshakePacketUnmarshaller implements Unmarshaller<InitialH
 
     final byte[] salt2 = packet.readNullTerminatedBytes();
 
-    return new InitialHandshakeMessage(packet.getSequence(), protocolVersion, serverVersion, connectionId,
+    return new Handshake(packet.getSequence(), protocolVersion, serverVersion, connectionId,
         concat(salt1, salt2), serverCapabilities, defaultCollation, statusFlags, "mysql_native_password");
   }
 

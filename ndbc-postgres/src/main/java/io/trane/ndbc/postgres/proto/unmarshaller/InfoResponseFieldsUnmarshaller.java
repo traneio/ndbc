@@ -1,5 +1,6 @@
 package io.trane.ndbc.postgres.proto.unmarshaller;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,13 +9,19 @@ import io.trane.ndbc.proto.BufferReader;
 
 public final class InfoResponseFieldsUnmarshaller {
 
-  private final InfoResponse.Field[] emptyFieldArray = new InfoResponse.Field[0];
+  private static final InfoResponse.Field[] emptyFieldArray = new InfoResponse.Field[0];
+
+  private final Charset charset;
+
+  public InfoResponseFieldsUnmarshaller(Charset charset) {
+    this.charset = charset;
+  }
 
   public final InfoResponse.Field[] apply(final BufferReader b) {
     final List<InfoResponse.Field> fields = new ArrayList<>();
     byte type;
     while ((type = b.readByte()) != 0)
-      fields.add(new InfoResponse.Field(toTypeEnum(type), b.readCString()));
+      fields.add(new InfoResponse.Field(toTypeEnum(type), b.readCString(charset)));
     return fields.toArray(emptyFieldArray);
   }
 

@@ -1,11 +1,25 @@
 package io.trane.ndbc.mysql.proto.unmarshaller;
 
+import java.nio.charset.Charset;
+
 public class Unmarshallers {
 
-  public final BinaryResultSetUnmarshaller        binaryResultSet        = new BinaryResultSetUnmarshaller();
-  public final ColumnCountUnmarshaller            columnCount            = new ColumnCountUnmarshaller();
-  public final InitialHandshakePacketUnmarshaller initialHandshakePacket = new InitialHandshakePacketUnmarshaller();
-  public final PrepareStatementOkUnmarshaller     prepareStatementOk     = new PrepareStatementOkUnmarshaller();
-  public final ServerResponseUnmarshaller         serverResponse         = new ServerResponseUnmarshaller();
-  public final TextResultSetUnmarshaller          textResultSet          = new TextResultSetUnmarshaller();
+  private final Charset charset;
+
+  public final ColumnCountUnmarshaller columnCount;
+  public final FieldUnmarshaller       field;
+  public final HandshakeUnmarshaller   handshake;
+  public final TerminatorUnmarshaller  terminator;
+
+  public Unmarshallers(Charset charset) {
+    this.charset = charset;
+    this.columnCount = new ColumnCountUnmarshaller();
+    this.field = new FieldUnmarshaller();
+    this.handshake = new HandshakeUnmarshaller(charset);
+    this.terminator = new TerminatorUnmarshaller(charset);
+  }
+
+  public final TextRowUnmarshaller textRow(int columnCount) {
+    return new TextRowUnmarshaller(columnCount, charset);
+  }
 }

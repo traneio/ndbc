@@ -6,10 +6,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 import io.trane.ndbc.mysql.proto.Message.ExecuteStatementCommand;
-import io.trane.ndbc.mysql.proto.Message.OkPrepareStatement;
 import io.trane.ndbc.mysql.proto.Message.PrepareStatementCommand;
 import io.trane.ndbc.mysql.proto.marshaller.Marshallers;
-import io.trane.ndbc.mysql.proto.unmarshaller.Unmarshallers;
 import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.value.Value;
 
@@ -20,14 +18,9 @@ public final class ExtendedExchange {
   private final Marshallers    marshallers;
   private final Exchange<Long> readStatementId;
 
-  public ExtendedExchange(Marshallers marshallers, Unmarshallers unmarshallers) {
+  public ExtendedExchange(Marshallers marshallers, Exchange<Long> affectedRows) {
     this.marshallers = marshallers;
-    this.readStatementId = Exchange.receive(unmarshallers.prepareStatementOk).flatMap(msg -> {
-      if (msg instanceof OkPrepareStatement)
-        return Exchange.value(((OkPrepareStatement) msg).statementId);
-      else
-        return Exchange.fail(msg.toString());
-    });
+    this.readStatementId = affectedRows;
   }
 
   public final <T> Exchange<T> apply(final String query, final List<Value<?>> params, final Exchange<T> readResult) {
@@ -44,7 +37,9 @@ public final class ExtendedExchange {
       return f.apply(statementId);
     else
       return Exchange.send(marshallers.textCommand, new PrepareStatementCommand(query)).then(readStatementId)
-          .onSuccess(id -> Exchange.value(prepared.put(positionalQuery, statementId))).flatMap(f::apply);
+          .onSuccess(id -> Exchange.value(prepared.put(positionalQuery,
+              statementId)))
+          .flatMap(f::apply);
   }
 
   // TODO handle quotes, comments, etc.

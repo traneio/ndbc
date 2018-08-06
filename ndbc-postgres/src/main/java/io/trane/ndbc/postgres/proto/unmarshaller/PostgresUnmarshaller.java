@@ -1,5 +1,6 @@
 package io.trane.ndbc.postgres.proto.unmarshaller;
 
+import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
 import io.trane.ndbc.postgres.proto.Message.InfoResponse;
@@ -12,7 +13,13 @@ public abstract class PostgresUnmarshaller<T extends ServerMessage> implements U
 
   private static final Logger log = Logger.getLogger(PostgresUnmarshaller.class.getName());
 
-  private static final InfoResponseFieldsUnmarshaller infoResponseFieldsUnmarshaller = new InfoResponseFieldsUnmarshaller();
+  protected final Charset                      charset;
+  private final InfoResponseFieldsUnmarshaller infoResponseFieldsUnmarshaller;
+
+  public PostgresUnmarshaller(Charset charset) {
+    this.charset = charset;
+    this.infoResponseFieldsUnmarshaller = new InfoResponseFieldsUnmarshaller(charset);
+  }
 
   @Override
   public T apply(BufferReader b) {
@@ -38,8 +45,8 @@ public abstract class PostgresUnmarshaller<T extends ServerMessage> implements U
         log.info(notice.toString());
         return read(tpe, b);
       case 'A':
-        final NotificationResponse notification = new NotificationResponse(b.readInt(), b.readCString(),
-            b.readCString());
+        final NotificationResponse notification = new NotificationResponse(b.readInt(), b.readCString(charset),
+            b.readCString(charset));
         log.info(notification.toString());
         return read(tpe, b);
       default:
@@ -50,7 +57,7 @@ public abstract class PostgresUnmarshaller<T extends ServerMessage> implements U
   }
 
   public <U extends ServerMessage> PostgresUnmarshaller<ServerMessage> orElse(PostgresUnmarshaller<U> other) {
-    return new PostgresUnmarshaller<ServerMessage>() {
+    return new PostgresUnmarshaller<ServerMessage>(null) {
 
       @Override
       protected boolean acceptsType(byte tpe) {

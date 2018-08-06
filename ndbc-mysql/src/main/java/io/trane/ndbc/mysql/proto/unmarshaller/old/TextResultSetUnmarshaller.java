@@ -1,4 +1,4 @@
-package io.trane.ndbc.mysql.proto.unmarshaller;
+package io.trane.ndbc.mysql.proto.unmarshaller.old;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class TextResultSetUnmarshaller implements Unmarshaller<TextResultSet> {
                                                                     // correct
                                                                     // charset
         }
-        rows.add(new TextRow(values));
+        // rows.add(new TextRow(values));
       }
     }
     return new TextResultSet(fields, rows);

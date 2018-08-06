@@ -1,18 +1,18 @@
-package io.trane.ndbc.mysql.proto.unmarshaller;
+package io.trane.ndbc.mysql.proto.unmarshaller.old;
 
-import io.trane.ndbc.mysql.proto.Message.ErrorResponseMessage;
+import io.trane.ndbc.mysql.proto.Message.ErrPacketMessage;
 import io.trane.ndbc.mysql.proto.Message.OkPrepareStatement;
-import io.trane.ndbc.mysql.proto.Message.ServerResponseMessage;
+import io.trane.ndbc.mysql.proto.Message.Terminator;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.Unmarshaller;
 
-public class PrepareStatementOkUnmarshaller implements Unmarshaller<ServerResponseMessage> {
+public class PrepareStatementOkUnmarshaller implements Unmarshaller<Terminator> {
   public final static int OK_BYTE    = 0x00;
   public final static int ERROR_BYTE = 0xFF;
 
   @Override
-  public final ServerResponseMessage apply(final BufferReader br) {
+  public final Terminator apply(final BufferReader br) {
     final PacketBufferReader packet = new PacketBufferReader(br);
     final int responseType = packet.readByte() & 0xFF;
     switch (responseType) {
@@ -35,9 +35,9 @@ public class PrepareStatementOkUnmarshaller implements Unmarshaller<ServerRespon
     return new OkPrepareStatement(statementId, numOfColumns, numOfParameters, warningCount);
   }
 
-  public static ErrorResponseMessage decodeError(final PacketBufferReader packet) {
+  public static ErrPacketMessage decodeError(final PacketBufferReader packet) {
     final byte[] bytes = packet.readBytes();
     final String errorMessage = new String(bytes);
-    return new ErrorResponseMessage(errorMessage);
+    return new ErrPacketMessage(errorMessage);
   }
 }

@@ -3,6 +3,8 @@ package io.trane.ndbc.postgres.proto.unmarshaller;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
+import java.nio.charset.Charset;
+
 import io.trane.ndbc.postgres.proto.Message.CommandComplete;
 import io.trane.ndbc.postgres.proto.Message.CommandComplete.CopyComplete;
 import io.trane.ndbc.postgres.proto.Message.CommandComplete.DeleteComplete;
@@ -16,6 +18,10 @@ import io.trane.ndbc.proto.BufferReader;
 
 final class CommandCompleteUnmarshaller extends PostgresUnmarshaller<CommandComplete> {
 
+  public CommandCompleteUnmarshaller(Charset charset) {
+    super(charset);
+  }
+
   @Override
   protected boolean acceptsType(byte tpe) {
     return tpe == 'C';
@@ -23,7 +29,7 @@ final class CommandCompleteUnmarshaller extends PostgresUnmarshaller<CommandComp
 
   @Override
   public final CommandComplete decode(final byte tpe, final BufferReader b) {
-    final String string = b.readCString();
+    final String string = b.readCString(charset);
     final String[] words = string.split(" ");
     switch (words[0]) {
       case "INSERT":

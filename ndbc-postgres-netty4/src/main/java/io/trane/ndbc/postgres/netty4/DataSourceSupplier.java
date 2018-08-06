@@ -32,9 +32,9 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
 
   private static Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnection(
       Config config) {
-    final EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings());
+    final EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings(), config.charset());
     final Marshallers marshallers = new Marshallers(encoding);
-    final Unmarshallers unmarshallers = new Unmarshallers();
+    final Unmarshallers unmarshallers = new Unmarshallers(config.charset());
     final QueryResultExchange queryResultExchange = new QueryResultExchange(encoding, unmarshallers);
     final InitSSLExchange initSSLExchange = new InitSSLExchange(marshallers, unmarshallers);
     final StartupExchange startup = new StartupExchange(marshallers, unmarshallers);

@@ -1,9 +1,15 @@
 package io.trane.ndbc.postgres.proto.unmarshaller;
 
+import java.nio.charset.Charset;
+
 import io.trane.ndbc.postgres.proto.Message.DataRow;
 import io.trane.ndbc.proto.BufferReader;;
 
 public final class DataRowUnmarshaller extends PostgresUnmarshaller<DataRow> {
+
+  public DataRowUnmarshaller(Charset charset) {
+    super(charset);
+  }
 
   @Override
   protected boolean acceptsType(byte tpe) {

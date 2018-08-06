@@ -1,49 +1,55 @@
-// package io.trane.ndbc.mysql.proto.unmarshaller;
-//
-// import java.util.Optional;
-//
-// import io.trane.ndbc.mysql.proto.Message.ExecuteStatementCommand;
-// import io.trane.ndbc.mysql.proto.Message.HandshakeResponseMessage;
-// import io.trane.ndbc.mysql.proto.Message.PrepareStatementCommand;
-// import io.trane.ndbc.mysql.proto.Message.QueryCommand;
-// import io.trane.ndbc.mysql.proto.Message.StatementCommand;
-// import io.trane.ndbc.proto.BufferReader;
-// import io.trane.ndbc.proto.ServerMessage;
-// import io.trane.ndbc.proto.Unmarshaller;
-// import io.trane.ndbc.util.Try;
-//
-// public class MysqlUnmarshaller implements Unmarshaller {
-// private final InitialHandshakePacketUnmarshaller
-// initialHandshakePacketUnmarshaller = new
-// InitialHandshakePacketUnmarshaller();
-// private final ServerResponseUnmarshaller serverResponseUnmarshaller = new
-// ServerResponseUnmarshaller();
-// private final TextResultSetUnmarshaller textResultSetUnmarshaller = new
-// TextResultSetUnmarshaller();
-// private final PrepareStatementOkUnmarshaller prepareStatementOkUnmarshaller =
-// new PrepareStatementOkUnmarshaller();
-//
-// @Override
-// public Optional<Try<ServerMessage>> decode(
-// final Optional<Class<? extends io.trane.ndbc.proto.ClientMessage>>
-// previousClientMessageClass,
-// final BufferReader b) {
-// return Optional.of(previousClientMessageClass.<Try<ServerMessage>>map(p -> {
-// if (HandshakeResponseMessage.class.isAssignableFrom(p)) {
-// return Try.apply(() -> serverResponseUnmarshaller.decode(b));
-// } else if (QueryCommand.class.isAssignableFrom(p)) {
-// return Try.apply(() -> textResultSetUnmarshaller.decode(b));
-// } else if (StatementCommand.class.isAssignableFrom(p)) {
-// return Try.apply(() -> serverResponseUnmarshaller.decode(b));
-// } else if (PrepareStatementCommand.class.isAssignableFrom(p)) {
-// return Try.apply(() -> prepareStatementOkUnmarshaller.decode(b));
-// } else if (ExecuteStatementCommand.class.isAssignableFrom(p)) {
-// return Try.apply(() -> serverResponseUnmarshaller.decode(b));
-// } else {
-// return Try.failure(new IllegalStateException("Unknown message"));
-// }
-// }).orElseGet(() -> {
-// return Try.apply(() -> initialHandshakePacketUnmarshaller.decode(b));
-// })); // TODO review
-// }
-// }
+package io.trane.ndbc.mysql.proto.unmarshaller;
+
+import io.trane.ndbc.mysql.proto.Message.ServerMessage;
+import io.trane.ndbc.mysql.proto.PacketBufferReader;
+import io.trane.ndbc.proto.BufferReader;
+import io.trane.ndbc.proto.Unmarshaller;
+
+public abstract class MysqlUnmarshaller<T extends ServerMessage> implements Unmarshaller<T> {
+
+  @Override
+  public T apply(BufferReader bufferReader) {
+    PacketBufferReader p = new PacketBufferReader(bufferReader);
+    p.markReaderIndex();
+    final int header = p.readByte() & 0xFF;
+    if (!acceptsHeader(header))
+      throw new IllegalStateException("Invalid packet for " + getClass());
+    p.resetReaderIndex();
+    return decode(header, p);
+  }
+
+  public <U extends ServerMessage> MysqlUnmarshaller<ServerMessage> orElse(MysqlUnmarshaller<U> other) {
+
+    return new MysqlUnmarshaller<ServerMessage>() {
+
+      @Override
+      protected boolean acceptsHeader(int header) {
+        return MysqlUnmarshaller.this.acceptsHeader(header) || other.acceptsHeader(header);
+      }
+
+      @Override
+      protected ServerMessage decode(int header, PacketBufferReader packet) {
+        if (MysqlUnmarshaller.this.acceptsHeader(header))
+          return MysqlUnmarshaller.this.decode(header, packet);
+        else
+          return other.decode(header, packet);
+      }
+
+      @Override
+      public String toString() {
+        return MysqlUnmarshaller.this.toString() + ".orElse(" + other.toString() + ")";
+      }
+    };
+  }
+
+  protected boolean acceptsHeader(int header) {
+    return true;
+  }
+
+  protected abstract T decode(int header, PacketBufferReader packet);
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName();
+  }
+}

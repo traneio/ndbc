@@ -1,5 +1,6 @@
 package io.trane.ndbc.postgres.encoding;
 
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,39 +11,45 @@ import io.trane.ndbc.value.Value;
 
 public abstract class Encoding<T, V extends Value<T>> {
 
-	public void encode(final Format format, final V value, final BufferWriter writer) {
-		if (format == Format.TEXT)
-			writer.writeString(encodeText(unbox(value)));
-		else
-			encodeBinary(unbox(value), writer);
-	}
+  protected final Charset charset;
 
-	public V decode(final Format format, final BufferReader reader) {
-		if (format == Format.TEXT)
-			return box(decodeText(reader.readString()));
-		else
-			return box(decodeBinary(reader));
-	}
+  public Encoding(Charset charset) {
+    this.charset = charset;
+  }
 
-	public abstract Integer oid();
+  public void encode(final Format format, final V value, final BufferWriter writer) {
+    if (format == Format.TEXT)
+      writer.writeString(encodeText(unbox(value)));
+    else
+      encodeBinary(unbox(value), writer);
+  }
 
-	private static Set<Integer> emptyOids = Collections.unmodifiableSet(new HashSet<>());
+  public V decode(final Format format, final BufferReader reader) {
+    if (format == Format.TEXT)
+      return box(decodeText(reader.readString(charset)));
+    else
+      return box(decodeBinary(reader));
+  }
 
-	public Set<Integer> additionalOids() {
-		return emptyOids;
-	}
+  public abstract Integer oid();
 
-	public abstract Class<V> valueClass();
+  private static Set<Integer> emptyOids = Collections.unmodifiableSet(new HashSet<>());
 
-	protected abstract V box(T value);
+  public Set<Integer> additionalOids() {
+    return emptyOids;
+  }
 
-	protected abstract T unbox(V value);
+  public abstract Class<V> valueClass();
 
-	protected abstract String encodeText(T value);
+  protected abstract V box(T value);
 
-	protected abstract T decodeText(String value);
+  protected abstract T unbox(V value);
 
-	protected abstract void encodeBinary(T value, BufferWriter b);
+  protected abstract String encodeText(T value);
 
-	protected abstract T decodeBinary(BufferReader b);
+  protected abstract T decodeText(String value);
+
+  protected abstract void encodeBinary(T value, BufferWriter b);
+
+  protected abstract T decodeBinary(BufferReader b);
 }

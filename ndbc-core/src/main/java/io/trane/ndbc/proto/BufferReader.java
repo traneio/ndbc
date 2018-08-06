@@ -1,48 +1,51 @@
 package io.trane.ndbc.proto;
 
+import java.nio.charset.Charset;
+
 public interface BufferReader {
 
-	int readableBytes();
+  int readableBytes();
 
-	int readInt();
+  int readInt();
 
-	byte readByte();
+  byte readByte();
 
-	short readShort();
+  short readShort();
 
-	String readCString();
+  String readCString(Charset charset);
 
-	String readCString(int length);
+  String readCString(int length, Charset charset);
 
-	String readString();
+  String readString(Charset charset);
 
-	String readString(int length);
+  String readString(int length, Charset charset);
 
-	byte[] readBytes();
+  byte[] readBytes();
 
-	byte[] readBytes(int length);
+  byte[] readBytes(int length);
 
-	int[] readInts();
+  int[] readInts();
 
-	int[] readInts(int length);
+  int[] readInts(int length);
 
-	short[] readShorts();
+  short[] readShorts();
 
-	short[] readShorts(int length);
+  short[] readShorts(int length);
 
-	BufferReader readSlice(int length);
+  BufferReader readSlice(int length);
 
-	void markReaderIndex();
+  void markReaderIndex();
 
-	void resetReaderIndex();
+  void resetReaderIndex();
 
-	void retain();
+  void retain();
 
-	void release();
+  void release();
 
-	Long readLong();
+  Long readLong();
 
-	Float readFloat();
+  Float readFloat();
 
-	Double readDouble();
+  Double readDouble();
+
 }
