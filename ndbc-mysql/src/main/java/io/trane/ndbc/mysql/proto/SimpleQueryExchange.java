@@ -41,7 +41,7 @@ public class SimpleQueryExchange implements Function<String, Exchange<List<Row>>
   }
 
   private Value<?>[] textRowToValues(final TextRow textRow) {
-    final Value<?>[] values = new Value<?>[0]; // TODO
+    final Value<?>[] values = new Value<?>[textRow.values.length];
     for (int i = 0; i < values.length; i++) {
       values[i] = new StringValue(textRow.values[i]);
     }

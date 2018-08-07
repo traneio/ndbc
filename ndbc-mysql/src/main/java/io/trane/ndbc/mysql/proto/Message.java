@@ -244,6 +244,36 @@ public interface Message {
       this.warnings = warnings;
       this.serverStatus = serverStatus;
     }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + serverStatus;
+      result = prime * result + warnings;
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      EofResponse other = (EofResponse) obj;
+      if (serverStatus != other.serverStatus)
+        return false;
+      if (warnings != other.warnings)
+        return false;
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "EofResponse [warnings=" + warnings + ", serverStatus=" + serverStatus + "]";
+    }
   }
 
   public static interface Command extends ClientMessage {

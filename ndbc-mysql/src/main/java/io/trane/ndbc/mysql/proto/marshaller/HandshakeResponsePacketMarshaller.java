@@ -1,7 +1,6 @@
 package io.trane.ndbc.mysql.proto.marshaller;
 
 import static io.trane.ndbc.mysql.proto.ClientCapabilities.CLIENT_CONNECT_WITH_DB;
-import static io.trane.ndbc.mysql.proto.ClientCapabilities.CLIENT_DEPRECATE_EOF;
 import static io.trane.ndbc.mysql.proto.ClientCapabilities.CLIENT_MULTI_RESULTS;
 import static io.trane.ndbc.mysql.proto.ClientCapabilities.CLIENT_PLUGIN_AUTH;
 import static io.trane.ndbc.mysql.proto.ClientCapabilities.CLIENT_PROTOCOL_41;
@@ -28,7 +27,7 @@ public class HandshakeResponsePacketMarshaller implements Marshaller<HandshakeRe
   public static long MAX_3_BYTES = 255 * 255 * 255;
 
   public static long BASE_CAPABILITIES = CLIENT_PLUGIN_AUTH | CLIENT_PROTOCOL_41 | CLIENT_TRANSACTIONS
-      | CLIENT_MULTI_RESULTS | CLIENT_SECURE_CONNECTION | CLIENT_DEPRECATE_EOF;
+      | CLIENT_MULTI_RESULTS | CLIENT_SECURE_CONNECTION;
 
   @Override
   public void apply(final HandshakeResponseMessage message, final BufferWriter b) {

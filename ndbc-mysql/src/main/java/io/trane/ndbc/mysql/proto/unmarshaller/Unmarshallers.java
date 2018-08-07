@@ -14,7 +14,7 @@ public class Unmarshallers {
   public Unmarshallers(Charset charset) {
     this.charset = charset;
     this.columnCount = new ColumnCountUnmarshaller();
-    this.field = new FieldUnmarshaller();
+    this.field = new FieldUnmarshaller(charset);
     this.handshake = new HandshakeUnmarshaller(charset);
     this.terminator = new TerminatorUnmarshaller(charset);
   }
