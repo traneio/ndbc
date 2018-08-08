@@ -18,6 +18,6 @@ public final class SimpleExecuteExchange implements Function<String, Exchange<Lo
 
   @Override
   public Exchange<Long> apply(final String command) {
-    return Exchange.send(marshallers.textCommand, new StatementCommand(command)).then(affectedRows);
+    return Exchange.send(marshallers.textCommand, new StatementCommand(command)).thenWaitFor(affectedRows);
   }
 }

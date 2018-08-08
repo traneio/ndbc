@@ -4,7 +4,6 @@ import java.nio.charset.Charset;
 
 import io.trane.ndbc.mysql.proto.Message.TextRow;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
-import io.trane.ndbc.mysql.proto.unmarshaller.old.ServerResponseUnmarshaller;
 
 public class TextRowUnmarshaller extends MysqlUnmarshaller<TextRow> {
 
@@ -14,11 +13,6 @@ public class TextRowUnmarshaller extends MysqlUnmarshaller<TextRow> {
   public TextRowUnmarshaller(int columnCount, Charset charset) {
     this.columnCount = columnCount;
     this.charset = charset;
-  }
-
-  @Override
-  protected boolean acceptsHeader(int header) {
-    return header != ServerResponseUnmarshaller.OK_BYTE;
   }
 
   @Override

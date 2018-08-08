@@ -38,7 +38,7 @@ public class StartupExchange {
     return msg -> Exchange
         .send(marshallers.handshakeResponsePacket,
             handshakeResponse(msg.sequence + 1, username, password, database, encoding, msg.seed))
-        .then(okPacketVoid);
+        .thenWaitFor(okPacketVoid);
   }
 
   private HandshakeResponseMessage handshakeResponse(final int sequence, final String username,

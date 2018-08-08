@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.ssl.SslHandler;
 import io.trane.future.Future;
 import io.trane.future.Promise;
 import io.trane.ndbc.proto.Channel;
@@ -79,10 +78,6 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
   @Override
   public final void channelRead0(final ChannelHandlerContext ctx, final BufferReader msg) {
     nextMessageConsumer.getAndSet(null).accept(msg);
-  }
-
-  public final Future<Void> addSSLHandler(final SslHandler h) {
-    return ctx.onSuccess(c -> c.pipeline().addFirst(h)).voided();
   }
 
   @Override

@@ -3,7 +3,7 @@ package io.trane.ndbc.mysql.proto;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.trane.ndbc.mysql.proto.Message.EofResponse;
+import io.trane.ndbc.mysql.proto.Message.EofPacket;
 import io.trane.ndbc.mysql.proto.Message.Field;
 import io.trane.ndbc.mysql.proto.Message.OkPacket;
 import io.trane.ndbc.mysql.proto.Message.TextResultSet;
@@ -40,7 +40,7 @@ public class TextResultSetExchange {
 
   private Exchange<List<TextRow>> textRows(TextRowUnmarshaller u, List<TextRow> l) {
     return Exchange.receive(unmarshallers.terminator.orElse(u)).flatMap(msg -> {
-      if (msg instanceof OkPacket || msg instanceof EofResponse)
+      if (msg instanceof OkPacket || msg instanceof EofPacket)
         return Exchange.value(l);
       else {
         l.add((TextRow) msg);

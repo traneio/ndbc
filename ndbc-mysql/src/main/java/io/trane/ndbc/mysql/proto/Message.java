@@ -236,11 +236,11 @@ public interface Message {
     }
   }
 
-  public static class EofResponse implements Terminator {
+  public static class EofPacket implements Terminator {
     public int warnings;
     public int serverStatus;
 
-    public EofResponse(final int warnings, final int serverStatus) {
+    public EofPacket(final int warnings, final int serverStatus) {
       this.warnings = warnings;
       this.serverStatus = serverStatus;
     }
@@ -262,7 +262,7 @@ public interface Message {
         return false;
       if (getClass() != obj.getClass())
         return false;
-      EofResponse other = (EofResponse) obj;
+      EofPacket other = (EofPacket) obj;
       if (serverStatus != other.serverStatus)
         return false;
       if (warnings != other.warnings)
@@ -272,15 +272,11 @@ public interface Message {
 
     @Override
     public String toString() {
-      return "EofResponse [warnings=" + warnings + ", serverStatus=" + serverStatus + "]";
+      return "EofPacket [warnings=" + warnings + ", serverStatus=" + serverStatus + "]";
     }
   }
 
   public static interface Command extends ClientMessage {
-
-  }
-
-  public static class NoCommand implements Command {
 
   }
 

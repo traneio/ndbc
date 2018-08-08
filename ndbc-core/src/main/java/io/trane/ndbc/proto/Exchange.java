@@ -1,14 +1,11 @@
 package io.trane.ndbc.proto;
 
 import java.util.function.Function;
-import java.util.logging.Logger;
 
 import io.trane.future.Future;
 
 @FunctionalInterface
 public interface Exchange<T> {
-
-  static Logger log = Logger.getLogger(Exchange.class.getName());
 
   static Exchange<Void> VOID  = channel -> Future.VOID;
   static Exchange<Void> CLOSE = Channel::close;
@@ -58,6 +55,11 @@ public interface Exchange<T> {
 
   default public <R> Exchange<R> then(final Exchange<R> ex) {
     return channel -> run(channel).flatMap(v -> ex.run(channel));
+  }
+
+  default public <R> Exchange<R> thenWaitFor(final Exchange<R> result) {
+    return rescue(ex -> result.flatMap(v -> Exchange.fail(ex)))
+        .flatMap(r -> result);
   }
 
   default public <U extends ServerMessage> Exchange<T> thenReceive(final Unmarshaller<U> unmarshaller) {

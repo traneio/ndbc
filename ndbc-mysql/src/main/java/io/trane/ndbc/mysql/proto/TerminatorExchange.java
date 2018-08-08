@@ -1,24 +1,31 @@
 package io.trane.ndbc.mysql.proto;
 
+import io.trane.ndbc.mysql.proto.Message.EofPacket;
 import io.trane.ndbc.mysql.proto.Message.OkPacket;
 import io.trane.ndbc.mysql.proto.unmarshaller.Unmarshallers;
 import io.trane.ndbc.proto.Exchange;
 
 public class TerminatorExchange {
 
-  public final Exchange<OkPacket> okPacket;
-  public final Exchange<Void>     okPacketVoid;
-  public final Exchange<Long>     affectedRows;
+  public final Exchange<Void> okPacketVoid;
+  public final Exchange<Long> affectedRows;
 
   public TerminatorExchange(Unmarshallers unmarshallers) {
-    this.okPacket = Exchange.receive(unmarshallers.terminator)
+    this.okPacketVoid = Exchange.receive(unmarshallers.terminator)
         .flatMap(msg -> {
-          if (msg instanceof OkPacket)
-            return Exchange.value(((OkPacket) msg));
+          if (msg instanceof OkPacket || msg instanceof EofPacket)
+            return Exchange.VOID;
           else
             return Exchange.fail(msg.toString());
         });
-    this.okPacketVoid = okPacket.flatMap(ok -> Exchange.VOID);
-    this.affectedRows = okPacket.map(msg -> msg.affectedRows);
+    this.affectedRows = Exchange.receive(unmarshallers.terminator)
+        .flatMap(msg -> {
+          if (msg instanceof OkPacket)
+            return Exchange.value(((OkPacket) msg).affectedRows);
+          else if (msg instanceof EofPacket)
+            return Exchange.value(0L);
+          else
+            return Exchange.fail(msg.toString());
+        });
   }
 }

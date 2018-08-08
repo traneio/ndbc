@@ -26,7 +26,7 @@ public final class ExtendedExchange {
   public final <T> Exchange<T> apply(final String query, final List<Value<?>> params, final Exchange<T> readResult) {
     return withParsing(query, params,
         id -> Exchange.send(marshallers.executeStatementCommand, new ExecuteStatementCommand(id))
-            .then(readResult));
+            .thenWaitFor(readResult));
   }
 
   private final <T> Exchange<T> withParsing(final String query, final List<Value<?>> params,
@@ -36,9 +36,9 @@ public final class ExtendedExchange {
     if (statementId != null)
       return f.apply(statementId);
     else
-      return Exchange.send(marshallers.textCommand, new PrepareStatementCommand(query)).then(readStatementId)
-          .onSuccess(id -> Exchange.value(prepared.put(positionalQuery,
-              statementId)))
+      return Exchange.send(marshallers.textCommand, new PrepareStatementCommand(query))
+          .thenWaitFor(readStatementId)
+          .onSuccess(id -> Exchange.value(prepared.put(positionalQuery, statementId)))
           .flatMap(f::apply);
   }
 

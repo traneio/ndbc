@@ -2,7 +2,7 @@ package io.trane.ndbc.mysql.proto.unmarshaller;
 
 import java.nio.charset.Charset;
 
-import io.trane.ndbc.mysql.proto.Message.EofResponse;
+import io.trane.ndbc.mysql.proto.Message.EofPacket;
 import io.trane.ndbc.mysql.proto.Message.ErrPacketMessage;
 import io.trane.ndbc.mysql.proto.Message.OkPacket;
 import io.trane.ndbc.mysql.proto.Message.Terminator;
@@ -37,7 +37,7 @@ public class TerminatorUnmarshaller extends MysqlUnmarshaller<Terminator> {
       case ERROR_BYTE:
         return new ErrPacketMessage(p.readString(charset));
       case EOF_BYTE:
-        return new EofResponse(p.readUnsignedShort(), p.readUnsignedShort());
+        return new EofPacket(p.readUnsignedShort(), p.readUnsignedShort());
       default:
         throw new IllegalStateException("Can't decode terminator message");
     }

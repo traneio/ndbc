@@ -4,8 +4,6 @@ import java.nio.charset.Charset;
 
 public final class Unmarshallers {
 
-  private final Charset charset;
-
   public final AuthenticationRequestUnmarshaller authenticationRequest;
   public final BackendKeyDataUnmarshaller        backendKeyData;
   public final BindCompleteUnmarshaller          bindComplete;
@@ -24,7 +22,6 @@ public final class Unmarshallers {
   public final SSLResponseUnmarshaller           sslResponse;
 
   public Unmarshallers(Charset charset) {
-    this.charset = charset;
     this.authenticationRequest = new AuthenticationRequestUnmarshaller(charset);
     this.backendKeyData = new BackendKeyDataUnmarshaller(charset);
     this.bindComplete = new BindCompleteUnmarshaller(charset);
