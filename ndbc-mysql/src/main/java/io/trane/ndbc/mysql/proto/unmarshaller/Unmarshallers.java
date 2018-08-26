@@ -22,4 +22,8 @@ public class Unmarshallers {
   public final TextRowUnmarshaller textRow(int columnCount) {
     return new TextRowUnmarshaller(columnCount, charset);
   }
+
+  public final BinaryRowUnmarshaller binaryRow(int columnCount) {
+    return new BinaryRowUnmarshaller(columnCount, charset);
+  }
 }

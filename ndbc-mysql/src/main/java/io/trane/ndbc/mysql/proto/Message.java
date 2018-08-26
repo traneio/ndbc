@@ -704,9 +704,9 @@ public interface Message {
   }
 
   public static class BinaryRow implements ServerMessage {
-    public List<String> values;
+    public String[] values;
 
-    public BinaryRow(final List<String> values) {
+    public BinaryRow(final String[] values) {
       this.values = values;
     }
 

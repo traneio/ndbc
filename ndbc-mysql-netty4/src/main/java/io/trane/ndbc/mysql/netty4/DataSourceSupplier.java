@@ -6,9 +6,11 @@ import java.util.function.Supplier;
 import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.datasource.Connection;
+import io.trane.ndbc.mysql.proto.BinaryResultSetExchange;
 import io.trane.ndbc.mysql.proto.ExtendedExchange;
 import io.trane.ndbc.mysql.proto.ExtendedExecuteExchange;
 import io.trane.ndbc.mysql.proto.ExtendedQueryExchange;
+import io.trane.ndbc.mysql.proto.Message.BinaryResultSet;
 import io.trane.ndbc.mysql.proto.SimpleExecuteExchange;
 import io.trane.ndbc.mysql.proto.SimpleQueryExchange;
 import io.trane.ndbc.mysql.proto.StartupExchange;
@@ -32,6 +34,7 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
     final Unmarshallers unmarshallers = new Unmarshallers(config.charset());
     final TerminatorExchange terminatorExchange = new TerminatorExchange(unmarshallers);
     final TextResultSetExchange textResultSetExchange = new TextResultSetExchange(unmarshallers);
+    final BinaryResultSetExchange binaryResultSetExchange = new BinaryResultSetExchange(unmarshallers);
     final Marshallers marshallers = new Marshallers();
     final SimpleQueryExchange simpleQueryExchange = new SimpleQueryExchange(marshallers,
         textResultSetExchange.apply());
@@ -42,7 +45,8 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
         terminatorExchange.affectedRows);
     final ExtendedExchange extendedExchange = new ExtendedExchange(marshallers,
         terminatorExchange.affectedRows);
-    final ExtendedQueryExchange extendedQueryExchange = new ExtendedQueryExchange();
+    final ExtendedQueryExchange extendedQueryExchange = new ExtendedQueryExchange(
+        extendedExchange, binaryResultSetExchange.apply());
     final ExtendedExecuteExchange extendedExecuteExchange = new ExtendedExecuteExchange(
         extendedExchange, terminatorExchange.affectedRows);
 
