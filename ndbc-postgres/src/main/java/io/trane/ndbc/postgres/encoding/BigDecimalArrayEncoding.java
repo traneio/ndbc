@@ -44,9 +44,4 @@ final class BigDecimalArrayEncoding extends ArrayEncoding<BigDecimal, BigDecimal
   protected BigDecimalArrayValue box(final BigDecimal[] value) {
     return new BigDecimalArrayValue(value);
   }
-
-  @Override
-  protected BigDecimal[] unbox(final BigDecimalArrayValue value) {
-    return value.getBigDecimalArray();
-  }
 }

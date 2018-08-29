@@ -43,9 +43,4 @@ final class ShortArrayEncoding extends ArrayEncoding<Short, ShortArrayValue> {
   protected ShortArrayValue box(final Short[] value) {
     return new ShortArrayValue(value);
   }
-
-  @Override
-  protected Short[] unbox(final ShortArrayValue value) {
-    return value.getShortArray();
-  }
 }

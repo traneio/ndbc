@@ -13,7 +13,8 @@ public abstract class MysqlUnmarshaller<T extends ServerMessage> implements Unma
     p.markReaderIndex();
     final int header = p.readByte() & 0xFF;
     if (!acceptsHeader(header))
-      throw new IllegalStateException("Invalid packet for " + getClass());
+      throw new IllegalStateException(
+          "Invalid packet for " + getClass() + ". Remaining bytes: " + bufferReader.readableBytes());
     p.resetReaderIndex();
     return decode(header, p);
   }

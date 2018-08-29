@@ -46,9 +46,4 @@ final class ShortEncoding extends Encoding<Short, ShortValue> {
   protected ShortValue box(final Short value) {
     return new ShortValue(value);
   }
-
-  @Override
-  protected Short unbox(final ShortValue value) {
-    return value.getShort();
-  }
 }

@@ -43,9 +43,4 @@ final class DoubleArrayEncoding extends ArrayEncoding<Double, DoubleArrayValue> 
   protected DoubleArrayValue box(final Double[] value) {
     return new DoubleArrayValue(value);
   }
-
-  @Override
-  protected Double[] unbox(final DoubleArrayValue value) {
-    return value.getDoubleArray();
-  }
 }

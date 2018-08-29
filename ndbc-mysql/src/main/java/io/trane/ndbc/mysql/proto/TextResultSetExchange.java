@@ -24,7 +24,7 @@ public class TextResultSetExchange {
     return Exchange.receive(unmarshallers.columnCount)
         .map(c -> (int) c.count)
         .flatMap(c -> fields(c, new ArrayList<Field>(c))
-            .flatMap(fields -> textRows(unmarshallers.textRow(c), new ArrayList<TextRow>())
+            .flatMap(fields -> textRows(unmarshallers.textRow(fields), new ArrayList<TextRow>())
                 .map(rows -> new TextResultSet(fields, rows))));
   }
 

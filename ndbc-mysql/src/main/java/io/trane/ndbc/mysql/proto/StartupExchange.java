@@ -11,10 +11,10 @@ import io.trane.ndbc.proto.Exchange;
 
 public class StartupExchange {
 
-  private final Exchange<String> getConnectionIdExchange;
-  private final Marshallers      marshallers;
-  private final Unmarshallers    unmarshallers;
-  private final Exchange<Void>   okPacketVoid;
+  private final Exchange<Long> getConnectionIdExchange;
+  private final Marshallers    marshallers;
+  private final Unmarshallers  unmarshallers;
+  private final Exchange<Void> okPacketVoid;
 
   public StartupExchange(SimpleQueryExchange simpleQueryExchange, Marshallers marshallers,
       Unmarshallers unmarshallers, Exchange<Void> okPacketVoid) {
@@ -22,10 +22,10 @@ public class StartupExchange {
     this.unmarshallers = unmarshallers;
     this.okPacketVoid = okPacketVoid;
     this.getConnectionIdExchange = simpleQueryExchange.apply("SELECT CONNECTION_ID()")
-        .map(rows -> rows.get(0).column(0).getString());
+        .map(rows -> rows.get(0).column(0).getLong());
   }
 
-  public Exchange<String> apply(final String username, final Optional<String> password,
+  public Exchange<Long> apply(final String username, final Optional<String> password,
       final Optional<String> database, final String encoding) {
     return Exchange
         .receive(unmarshallers.handshake)
@@ -47,5 +47,4 @@ public class StartupExchange {
     return new HandshakeResponseMessage(sequence, username, password, database, encoding, seed,
         "mysql_native_password");
   }
-
 }

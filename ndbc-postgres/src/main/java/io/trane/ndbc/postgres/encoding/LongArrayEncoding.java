@@ -43,9 +43,4 @@ final class LongArrayEncoding extends ArrayEncoding<Long, LongArrayValue> {
   protected LongArrayValue box(final Long[] value) {
     return new LongArrayValue(value);
   }
-
-  @Override
-  protected Long[] unbox(final LongArrayValue value) {
-    return value.getLongArray();
-  }
 }

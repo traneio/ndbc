@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import io.trane.ndbc.value.Value;
+
 public interface Message {
 
   interface ServerMessage extends io.trane.ndbc.proto.ServerMessage, Message {
@@ -331,13 +333,13 @@ public interface Message {
     }
   }
 
-  public static class OkPrepareStatement implements Terminator {
+  public static class PrepareOk implements Terminator {
     public final long statementId;
-    private final int numOfColumns;
-    private final int numOfParameters;
-    private final int warningCount;
+    public final int  numOfColumns;
+    public final int  numOfParameters;
+    public final int  warningCount;
 
-    public OkPrepareStatement(final long statementId, final int numOfColumns, final int numOfParameters,
+    public PrepareOk(final long statementId, final int numOfColumns, final int numOfParameters,
         final int warningCount) {
       this.statementId = statementId;
       this.numOfColumns = numOfColumns;
@@ -352,7 +354,7 @@ public interface Message {
       if (o == null || getClass() != o.getClass())
         return false;
 
-      final OkPrepareStatement that = (OkPrepareStatement) o;
+      final PrepareOk that = (PrepareOk) o;
 
       if (statementId != that.statementId)
         return false;
@@ -376,47 +378,51 @@ public interface Message {
 
     @Override
     public String toString() {
-      return "OkPrepareStatement{" + "statementId=" + statementId + ", numOfColumns=" + numOfColumns
+      return "PrepareOk{" + "statementId=" + statementId + ", numOfColumns=" + numOfColumns
           + ", numOfParameters=" + numOfParameters + ", warningsCount=" + warningCount + '}';
     }
   }
 
   public static class ExecuteStatementCommand implements Command {
-    public final byte command        = (byte) 0x17;
-    public final long statementId;
-    public final byte flags          = (byte) 0x01; // CURSOR_TYPE_READ_ONLY
-    public final int  iterationCount = 1;
+    public final long           statementId;
+    public final List<Value<?>> values;
 
-    public ExecuteStatementCommand(final long statementId) {
+    public ExecuteStatementCommand(final long statementId, List<Value<?>> values) {
       this.statementId = statementId;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-      if (this == o)
-        return true;
-      if (o == null || getClass() != o.getClass())
-        return false;
-
-      final ExecuteStatementCommand that = (ExecuteStatementCommand) o;
-
-      if (command != that.command)
-        if (statementId != that.statementId)
-          return false;
-      return true;
+      this.values = values;
     }
 
     @Override
     public int hashCode() {
-      int result = command;
-      result = (int) (31 * result + statementId);
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + (int) (statementId ^ (statementId >>> 32));
+      result = prime * result + ((values == null) ? 0 : values.hashCode());
       return result;
     }
 
     @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      ExecuteStatementCommand other = (ExecuteStatementCommand) obj;
+      if (statementId != other.statementId)
+        return false;
+      if (values == null) {
+        if (other.values != null)
+          return false;
+      } else if (!values.equals(other.values))
+        return false;
+      return true;
+    }
+
+    @Override
     public String toString() {
-      return "ExecuteStatementCommand{" + "command=" + command + ", statementId=" + statementId + ", flags="
-          + flags + ", iterationCount=" + iterationCount + '}';
+      return "ExecuteStatementCommand [statementId=" + statementId + ", values=" + values + "]";
     }
   }
 
@@ -429,30 +435,33 @@ public interface Message {
     }
 
     @Override
-    public boolean equals(final Object o) {
-      if (this == o)
-        return true;
-      if (o == null || getClass() != o.getClass())
-        return false;
-
-      final ExecuteStatementCommand that = (ExecuteStatementCommand) o;
-
-      if (command != that.command)
-        if (statementId != that.statementId)
-          return false;
-      return true;
-    }
-
-    @Override
     public int hashCode() {
-      int result = command;
-      result = (int) (31 * result + statementId);
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + command;
+      result = prime * result + (int) (statementId ^ (statementId >>> 32));
       return result;
     }
 
     @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      CloseStatementCommand other = (CloseStatementCommand) obj;
+      if (command != other.command)
+        return false;
+      if (statementId != other.statementId)
+        return false;
+      return true;
+    }
+
+    @Override
     public String toString() {
-      return "CloseStatementCommand{" + "command=" + command + ", statementId=" + statementId + '}';
+      return "CloseStatementCommand [command=" + command + ", statementId=" + statementId + "]";
     }
   }
 
@@ -633,9 +642,9 @@ public interface Message {
   }
 
   public static class TextRow implements ServerMessage {
-    public String[] values;
+    public Value<?>[] values;
 
-    public TextRow(String[] values) {
+    public TextRow(Value<?>[] values) {
       this.values = values;
     }
 

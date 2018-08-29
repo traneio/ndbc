@@ -44,9 +44,4 @@ final class LocalDateArrayEncoding extends ArrayEncoding<LocalDate, LocalDateArr
   protected LocalDateArrayValue box(final LocalDate[] value) {
     return new LocalDateArrayValue(value);
   }
-
-  @Override
-  protected LocalDate[] unbox(final LocalDateArrayValue value) {
-    return value.getLocalDateArray();
-  }
 }

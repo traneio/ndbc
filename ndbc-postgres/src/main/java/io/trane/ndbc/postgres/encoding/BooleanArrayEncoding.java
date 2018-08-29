@@ -43,9 +43,4 @@ final class BooleanArrayEncoding extends ArrayEncoding<Boolean, BooleanArrayValu
   protected BooleanArrayValue box(final Boolean[] value) {
     return new BooleanArrayValue(value);
   }
-
-  @Override
-  protected Boolean[] unbox(final BooleanArrayValue value) {
-    return value.getBooleanArray();
-  }
 }

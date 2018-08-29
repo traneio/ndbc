@@ -19,9 +19,9 @@ public abstract class Encoding<T, V extends Value<T>> {
 
   public void encode(final Format format, final V value, final BufferWriter writer) {
     if (format == Format.TEXT)
-      writer.writeString(encodeText(unbox(value)));
+      writer.writeString(encodeText(value.get()));
     else
-      encodeBinary(unbox(value), writer);
+      encodeBinary(value.get(), writer);
   }
 
   public V decode(final Format format, final BufferReader reader) {
@@ -42,8 +42,6 @@ public abstract class Encoding<T, V extends Value<T>> {
   public abstract Class<V> valueClass();
 
   protected abstract V box(T value);
-
-  protected abstract T unbox(V value);
 
   protected abstract String encodeText(T value);
 

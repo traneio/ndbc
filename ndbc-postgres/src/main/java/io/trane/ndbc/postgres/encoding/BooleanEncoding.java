@@ -47,9 +47,4 @@ final class BooleanEncoding extends Encoding<Boolean, BooleanValue> {
   protected BooleanValue box(final Boolean value) {
     return new BooleanValue(value);
   }
-
-  @Override
-  protected Boolean unbox(final BooleanValue value) {
-    return value.getBoolean();
-  }
 }

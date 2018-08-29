@@ -61,9 +61,4 @@ final class LocalDateTimeEncoding extends Encoding<LocalDateTime, LocalDateTimeV
   protected LocalDateTimeValue box(final LocalDateTime value) {
     return new LocalDateTimeValue(value);
   }
-
-  @Override
-  protected LocalDateTime unbox(final LocalDateTimeValue value) {
-    return value.getLocalDateTime();
-  }
 }

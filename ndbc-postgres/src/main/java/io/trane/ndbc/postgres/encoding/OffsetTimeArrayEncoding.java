@@ -44,9 +44,4 @@ final class OffsetTimeArrayEncoding extends ArrayEncoding<OffsetTime, OffsetTime
   protected OffsetTimeArrayValue box(final OffsetTime[] value) {
     return new OffsetTimeArrayValue(value);
   }
-
-  @Override
-  protected OffsetTime[] unbox(final OffsetTimeArrayValue value) {
-    return value.getOffsetTimeArray();
-  }
 }

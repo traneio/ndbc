@@ -26,8 +26,8 @@ public class HandshakeResponsePacketMarshaller implements Marshaller<HandshakeRe
 
   public static long MAX_3_BYTES = 255 * 255 * 255;
 
-  public static long BASE_CAPABILITIES = CLIENT_PLUGIN_AUTH | CLIENT_PROTOCOL_41 | CLIENT_TRANSACTIONS
-      | CLIENT_MULTI_RESULTS | CLIENT_SECURE_CONNECTION;
+  public static long BASE_CAPABILITIES = CLIENT_PLUGIN_AUTH | CLIENT_PROTOCOL_41
+      | CLIENT_TRANSACTIONS | CLIENT_MULTI_RESULTS | CLIENT_SECURE_CONNECTION;
 
   @Override
   public void apply(final HandshakeResponseMessage message, final BufferWriter b) {

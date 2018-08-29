@@ -43,9 +43,4 @@ final class FloatArrayEncoding extends ArrayEncoding<Float, FloatArrayValue> {
   protected FloatArrayValue box(final Float[] value) {
     return new FloatArrayValue(value);
   }
-
-  @Override
-  protected Float[] unbox(final FloatArrayValue value) {
-    return value.getFloatArray();
-  }
 }

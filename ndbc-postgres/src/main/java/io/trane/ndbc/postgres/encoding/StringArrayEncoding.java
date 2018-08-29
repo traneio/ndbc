@@ -50,9 +50,4 @@ final class StringArrayEncoding extends ArrayEncoding<String, StringArrayValue> 
   protected StringArrayValue box(final String[] value) {
     return new StringArrayValue(value);
   }
-
-  @Override
-  protected String[] unbox(final StringArrayValue value) {
-    return value.getStringArray();
-  }
 }

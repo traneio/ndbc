@@ -44,9 +44,4 @@ final class LocalTimeArrayEncoding extends ArrayEncoding<LocalTime, LocalTimeArr
   protected LocalTimeArrayValue box(final LocalTime[] value) {
     return new LocalTimeArrayValue(value);
   }
-
-  @Override
-  protected LocalTime[] unbox(final LocalTimeArrayValue value) {
-    return value.getLocalTimeArray();
-  }
 }

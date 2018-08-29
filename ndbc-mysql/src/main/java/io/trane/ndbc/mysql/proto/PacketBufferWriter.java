@@ -35,6 +35,11 @@ public class PacketBufferWriter implements BufferWriter {
     writeBytes(bytes);
   }
 
+  public void writeUnsignedShort(final int s) {
+    final byte[] bytes = { (byte) (s & 0xff), (byte) ((s >> 8) & 0xff) };
+    writeBytes(bytes);
+  }
+
   @Override
   public void writeByte(final byte b) {
     try {
@@ -80,6 +85,27 @@ public class PacketBufferWriter implements BufferWriter {
     } catch (final IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private final void writeLength(long length) {
+    if (length < 251) {
+      writeByte((byte) length);
+    } else if (length < 65536) {
+      writeByte((byte) 252);
+      writeUnsignedShort((int) length);
+    } else if (length < 16777216) {
+      writeByte((byte) 253);
+      writeMediumLE(length);
+    } else {
+      writeByte((byte) 254);
+      writeLongLE(length)
+    }
+  }
+
+  public void writeLengthCodedString(Charset charset, String value) {
+    byte[] bytes = value.getBytes(bw.getCharset());
+    bw.writeByte((byte) (bytes.length | 0xFF));
+    bw.writeBytes(bytes);
   }
 
   @Override

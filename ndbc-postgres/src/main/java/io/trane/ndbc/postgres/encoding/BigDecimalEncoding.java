@@ -43,11 +43,6 @@ final class BigDecimalEncoding extends Encoding<BigDecimal, BigDecimalValue> {
   }
 
   @Override
-  protected BigDecimal unbox(final BigDecimalValue value) {
-    return value.getBigDecimal();
-  }
-
-  @Override
   public final String encodeText(final BigDecimal value) {
     return value.toPlainString();
   }

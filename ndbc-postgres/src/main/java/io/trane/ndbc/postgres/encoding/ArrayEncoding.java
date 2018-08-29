@@ -20,12 +20,14 @@ abstract class ArrayEncoding<I, V extends Value<I[]>> extends Encoding<I[], V> {
 
   @Override
   public final String encodeText(final I[] value) {
-    return null;
+    throw new UnsupportedOperationException(); // TODO see buildArrayList in
+                                               // PgArray.java
   }
 
   @Override
   public final I[] decodeText(final String value) {
-    return null;
+    throw new UnsupportedOperationException(); // TODO see buildArrayList in
+                                               // PgArray.java
   }
 
   @Override

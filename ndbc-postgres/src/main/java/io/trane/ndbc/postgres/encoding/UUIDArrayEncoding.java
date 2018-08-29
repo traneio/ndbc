@@ -44,9 +44,4 @@ final class UUIDArrayEncoding extends ArrayEncoding<UUID, UUIDArrayValue> {
   protected UUIDArrayValue box(final UUID[] value) {
     return new UUIDArrayValue(value);
   }
-
-  @Override
-  protected UUID[] unbox(final UUIDArrayValue value) {
-    return value.getUUIDArray();
-  }
 }

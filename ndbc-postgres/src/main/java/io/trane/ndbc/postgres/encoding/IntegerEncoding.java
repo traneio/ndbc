@@ -46,9 +46,4 @@ final class IntegerEncoding extends Encoding<Integer, IntegerValue> {
   protected IntegerValue box(final Integer value) {
     return new IntegerValue(value);
   }
-
-  @Override
-  protected Integer unbox(final IntegerValue value) {
-    return value.getInteger();
-  }
 }

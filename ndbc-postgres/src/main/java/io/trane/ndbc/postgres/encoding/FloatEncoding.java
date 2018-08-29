@@ -46,9 +46,4 @@ final class FloatEncoding extends Encoding<Float, FloatValue> {
   protected FloatValue box(final Float value) {
     return new FloatValue(value);
   }
-
-  @Override
-  protected Float unbox(final FloatValue value) {
-    return value.getFloat();
-  }
 }

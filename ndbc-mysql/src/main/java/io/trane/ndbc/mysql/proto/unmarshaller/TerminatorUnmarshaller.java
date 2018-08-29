@@ -13,7 +13,8 @@ public class TerminatorUnmarshaller extends MysqlUnmarshaller<Terminator> {
   private final static int OK_BYTE    = 0x00;
   private final static int ERROR_BYTE = 0xFF;
   private final static int EOF_BYTE   = 0xFE;
-  private final Charset    charset;
+
+  private final Charset charset;
 
   public TerminatorUnmarshaller(Charset charset) {
     this.charset = charset;

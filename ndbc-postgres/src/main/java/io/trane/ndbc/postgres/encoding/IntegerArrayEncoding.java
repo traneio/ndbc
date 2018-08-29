@@ -43,9 +43,4 @@ final class IntegerArrayEncoding extends ArrayEncoding<Integer, IntegerArrayValu
   protected IntegerArrayValue box(final Integer[] value) {
     return new IntegerArrayValue(value);
   }
-
-  @Override
-  protected Integer[] unbox(final IntegerArrayValue value) {
-    return value.getIntegerArray();
-  }
 }

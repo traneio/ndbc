@@ -30,7 +30,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private final BiFunction<String, List<Value<?>>, Exchange<Long>>      extendedExecuteExchange;
   private final Exchange<Void>                                          cancelQueryExchange;
 
-  public Connection(final Channel channel, final String connectionId,
+  public Connection(final Channel channel, final Long connectionId,
       final Supplier<? extends Future<? extends Channel>> channelSupplier,
       final Function<String, Exchange<List<Row>>> simpleQueryExchange,
       final Function<String, Exchange<Long>> simpleExecuteExchange,

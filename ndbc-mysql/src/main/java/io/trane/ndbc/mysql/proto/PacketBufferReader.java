@@ -6,8 +6,8 @@ import io.trane.ndbc.proto.BufferReader;
 
 public class PacketBufferReader implements BufferReader {
   private final BufferReader b;
-  private final int          packetLength;
-  private final int          sequence;
+  public final int           packetLength;
+  public final int           sequence;
 
   public PacketBufferReader(final BufferReader b) {
     final byte[] packetHeader = b.readBytes(4);
