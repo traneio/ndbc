@@ -26,7 +26,22 @@ jobs:
     env: PROJECTS=ndbc-mysql-netty4
     before_install:
       - sudo service mysql stop
-      - sudo docker run -d -p 3306:3306 mysql:5.7
+      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:5.7
+  - name: "mysql 5.6"
+    env: PROJECTS=ndbc-mysql-netty4
+    before_install:
+      - sudo service mysql stop
+      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:5.6
+  - name: "mysql 5.7"
+    env: PROJECTS=ndbc-mysql-netty4
+    before_install:
+      - sudo service mysql stop
+      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:5.7
+  - name: "mysql 8.0"
+    env: PROJECTS=ndbc-mysql-netty4
+    before_install:
+      - sudo service mysql stop
+      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:8.0
   - name: "postgres 9.2"
     env: PROJECTS=ndbc-postgres-netty4
     addons:
