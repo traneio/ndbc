@@ -7,19 +7,19 @@ import io.trane.ndbc.proto.BufferReader;;
 
 public final class CloseCompleteUnmarshaller extends PostgresUnmarshaller<CloseComplete> {
 
-  private static final CloseComplete closeComplete = new CloseComplete();
+	private static final CloseComplete closeComplete = new CloseComplete();
 
-  public CloseCompleteUnmarshaller(Charset charset) {
-    super(charset);
-  }
+	public CloseCompleteUnmarshaller(Charset charset) {
+		super(charset);
+	}
 
-  @Override
-  protected boolean acceptsType(byte tpe) {
-    return tpe == '3';
-  }
+	@Override
+	protected boolean acceptsType(byte tpe) {
+		return tpe == '3';
+	}
 
-  @Override
-  public final CloseComplete decode(final byte tpe, final BufferReader b) {
-    return closeComplete;
-  }
+	@Override
+	public final CloseComplete decode(final byte tpe, final BufferReader b) {
+		return closeComplete;
+	}
 }

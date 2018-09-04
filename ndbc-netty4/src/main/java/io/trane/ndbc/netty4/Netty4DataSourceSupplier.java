@@ -17,24 +17,24 @@ import io.trane.ndbc.datasource.PooledDataSource;
 
 public abstract class Netty4DataSourceSupplier implements Supplier<DataSource> {
 
-  protected final Config                     config;
-  private final Supplier<Future<Connection>> createConnection;
+	protected final Config config;
+	private final Supplier<Future<Connection>> createConnection;
 
-  public Netty4DataSourceSupplier(final Config config,
-      Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnectionSupplier,
-      Function<io.trane.ndbc.proto.BufferReader, Optional<io.trane.ndbc.proto.BufferReader>> transformBufferReader) {
-    this.config = config;
-    ChannelSupplier channelSupplier = new ChannelSupplier(
-        new NioEventLoopGroup(config.nioThreads().orElse(0), new DefaultThreadFactory("ndbc-netty4", true)),
-        config.host(), config.port(), config.charset(), transformBufferReader);
-    this.createConnection = createConnectionSupplier.apply(channelSupplier);
-  }
+	public Netty4DataSourceSupplier(final Config config,
+			Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnectionSupplier,
+			Function<io.trane.ndbc.proto.BufferReader, Optional<io.trane.ndbc.proto.BufferReader>> transformBufferReader) {
+		this.config = config;
+		ChannelSupplier channelSupplier = new ChannelSupplier(
+				new NioEventLoopGroup(config.nioThreads().orElse(0), new DefaultThreadFactory("ndbc-netty4", true)),
+				config.host(), config.port(), config.charset(), transformBufferReader);
+		this.createConnection = createConnectionSupplier.apply(channelSupplier);
+	}
 
-  @Override
-  public final DataSource get() {
-    Pool<Connection> pool = LockFreePool.apply(createConnection, config.poolMaxSize(), config.poolMaxWaiters(),
-        config.poolValidationInterval(),
-        new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("ndbc-pool-scheduler", true)));
-    return new PooledDataSource(pool);
-  }
+	@Override
+	public final DataSource get() {
+		Pool<Connection> pool = LockFreePool.apply(createConnection, config.poolMaxSize(), config.poolMaxWaiters(),
+				config.poolValidationInterval(),
+				new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("ndbc-pool-scheduler", true)));
+		return new PooledDataSource(pool);
+	}
 }

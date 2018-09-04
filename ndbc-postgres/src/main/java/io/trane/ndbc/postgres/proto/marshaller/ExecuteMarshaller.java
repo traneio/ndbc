@@ -6,12 +6,12 @@ import io.trane.ndbc.proto.Marshaller;
 
 public final class ExecuteMarshaller implements Marshaller<Execute> {
 
-  public final void apply(final Execute msg, final BufferWriter b) {
-    b.writeChar('E');
-    b.writeInt(0);
+	public final void apply(final Execute msg, final BufferWriter b) {
+		b.writeChar('E');
+		b.writeInt(0);
 
-    b.writeCString(msg.portalName);
-    b.writeInt(msg.maxNumberOfRows);
-    b.writeLength(1);
-  }
+		b.writeCString(msg.portalName);
+		b.writeInt(msg.maxNumberOfRows);
+		b.writeLength(1);
+	}
 }

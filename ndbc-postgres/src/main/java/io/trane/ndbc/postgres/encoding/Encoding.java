@@ -11,43 +11,43 @@ import io.trane.ndbc.value.Value;
 
 public abstract class Encoding<T, V extends Value<T>> {
 
-  protected final Charset charset;
+	protected final Charset charset;
 
-  public Encoding(Charset charset) {
-    this.charset = charset;
-  }
+	public Encoding(Charset charset) {
+		this.charset = charset;
+	}
 
-  public void encode(final Format format, final V value, final BufferWriter writer) {
-    if (format == Format.TEXT)
-      writer.writeString(encodeText(value.get()));
-    else
-      encodeBinary(value.get(), writer);
-  }
+	public void encode(final Format format, final V value, final BufferWriter writer) {
+		if (format == Format.TEXT)
+			writer.writeString(encodeText(value.get()));
+		else
+			encodeBinary(value.get(), writer);
+	}
 
-  public V decode(final Format format, final BufferReader reader) {
-    if (format == Format.TEXT)
-      return box(decodeText(reader.readString(charset)));
-    else
-      return box(decodeBinary(reader));
-  }
+	public V decode(final Format format, final BufferReader reader) {
+		if (format == Format.TEXT)
+			return box(decodeText(reader.readString(charset)));
+		else
+			return box(decodeBinary(reader));
+	}
 
-  public abstract Integer oid();
+	public abstract Integer oid();
 
-  private static Set<Integer> emptyOids = Collections.unmodifiableSet(new HashSet<>());
+	private static Set<Integer> emptyOids = Collections.unmodifiableSet(new HashSet<>());
 
-  public Set<Integer> additionalOids() {
-    return emptyOids;
-  }
+	public Set<Integer> additionalOids() {
+		return emptyOids;
+	}
 
-  public abstract Class<V> valueClass();
+	public abstract Class<V> valueClass();
 
-  protected abstract V box(T value);
+	protected abstract V box(T value);
 
-  protected abstract String encodeText(T value);
+	protected abstract String encodeText(T value);
 
-  protected abstract T decodeText(String value);
+	protected abstract T decodeText(String value);
 
-  protected abstract void encodeBinary(T value, BufferWriter b);
+	protected abstract void encodeBinary(T value, BufferWriter b);
 
-  protected abstract T decodeBinary(BufferReader b);
+	protected abstract T decodeBinary(BufferReader b);
 }

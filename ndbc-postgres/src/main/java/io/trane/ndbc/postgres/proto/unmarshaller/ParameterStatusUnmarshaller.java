@@ -7,17 +7,17 @@ import io.trane.ndbc.proto.BufferReader;;
 
 public final class ParameterStatusUnmarshaller extends PostgresUnmarshaller<ParameterStatus> {
 
-  public ParameterStatusUnmarshaller(Charset charset) {
-    super(charset);
-  }
+	public ParameterStatusUnmarshaller(Charset charset) {
+		super(charset);
+	}
 
-  @Override
-  protected boolean acceptsType(byte tpe) {
-    return tpe == 'S';
-  }
+	@Override
+	protected boolean acceptsType(byte tpe) {
+		return tpe == 'S';
+	}
 
-  @Override
-  public final ParameterStatus decode(final byte tpe, final BufferReader b) {
-    return new ParameterStatus(b.readCString(charset), b.readCString(charset));
-  }
+	@Override
+	public final ParameterStatus decode(final byte tpe, final BufferReader b) {
+		return new ParameterStatus(b.readCString(charset), b.readCString(charset));
+	}
 }

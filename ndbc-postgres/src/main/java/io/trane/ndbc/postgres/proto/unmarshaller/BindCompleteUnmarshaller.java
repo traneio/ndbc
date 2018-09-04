@@ -7,19 +7,19 @@ import io.trane.ndbc.proto.BufferReader;;
 
 public final class BindCompleteUnmarshaller extends PostgresUnmarshaller<BindComplete> {
 
-  private static final BindComplete bindComplete = new BindComplete();
+	private static final BindComplete bindComplete = new BindComplete();
 
-  public BindCompleteUnmarshaller(Charset charset) {
-    super(charset);
-  }
+	public BindCompleteUnmarshaller(Charset charset) {
+		super(charset);
+	}
 
-  @Override
-  protected boolean acceptsType(byte tpe) {
-    return tpe == '2';
-  }
+	@Override
+	protected boolean acceptsType(byte tpe) {
+		return tpe == '2';
+	}
 
-  @Override
-  public final BindComplete decode(final byte tpe, final BufferReader b) {
-    return bindComplete;
-  }
+	@Override
+	public final BindComplete decode(final byte tpe, final BufferReader b) {
+		return bindComplete;
+	}
 }

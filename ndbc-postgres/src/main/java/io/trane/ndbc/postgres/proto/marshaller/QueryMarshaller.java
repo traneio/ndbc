@@ -6,10 +6,10 @@ import io.trane.ndbc.proto.Marshaller;
 
 public final class QueryMarshaller implements Marshaller<Query> {
 
-  public final void apply(final Query msg, final BufferWriter b) {
-    b.writeChar('Q');
-    b.writeInt(0);
-    b.writeCString(msg.string);
-    b.writeLength(1);
-  }
+	public final void apply(final Query msg, final BufferWriter b) {
+		b.writeChar('Q');
+		b.writeInt(0);
+		b.writeCString(msg.string);
+		b.writeLength(1);
+	}
 }

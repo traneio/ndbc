@@ -7,11 +7,11 @@ import io.trane.ndbc.proto.Marshaller;
 
 public class TextCommandMarshaller implements Marshaller<TextCommand> {
 
-  @Override
-  public void apply(final TextCommand command, final BufferWriter bw) {
-    final PacketBufferWriter packet = new PacketBufferWriter(bw, 0);
-    packet.writeByte(command.getCommand());
-    packet.writeString(command.getSqlStatement());
-    packet.flush();
-  }
+	@Override
+	public void apply(final TextCommand command, final BufferWriter bw) {
+		final PacketBufferWriter packet = new PacketBufferWriter(bw, 0);
+		packet.writeByte(command.getCommand());
+		packet.writeString(command.getSqlStatement());
+		packet.flush();
+	}
 }

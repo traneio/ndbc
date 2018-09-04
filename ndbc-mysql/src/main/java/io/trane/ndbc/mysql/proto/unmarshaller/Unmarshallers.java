@@ -9,31 +9,27 @@ import io.trane.ndbc.mysql.proto.Message.Row;
 
 public class Unmarshallers {
 
-  private final EncodingRegistry encoding;
+	private final EncodingRegistry encoding;
 
-  public final ColumnCountUnmarshaller columnCount;
-  public final FieldUnmarshaller       field;
-  public final HandshakeUnmarshaller   handshake;
-  public final TerminatorUnmarshaller  terminator;
-  public final PrepareOkUnmarshaller   prepareOk;
+	public final ColumnCountUnmarshaller columnCount;
+	public final FieldUnmarshaller field;
+	public final HandshakeUnmarshaller handshake;
+	public final TerminatorUnmarshaller terminator;
+	public final PrepareOkUnmarshaller prepareOk;
 
-  public Unmarshallers(Charset charset, EncodingRegistry encoding) {
-    this.encoding = encoding;
-    this.columnCount = new ColumnCountUnmarshaller();
-    this.field = new FieldUnmarshaller(charset);
-    this.handshake = new HandshakeUnmarshaller(charset);
-    this.terminator = new TerminatorUnmarshaller(charset);
-    this.prepareOk = new PrepareOkUnmarshaller();
-  }
+	public Unmarshallers(Charset charset, EncodingRegistry encoding) {
+		this.encoding = encoding;
+		this.columnCount = new ColumnCountUnmarshaller();
+		this.field = new FieldUnmarshaller(charset);
+		this.handshake = new HandshakeUnmarshaller(charset);
+		this.terminator = new TerminatorUnmarshaller(charset);
+		this.prepareOk = new PrepareOkUnmarshaller();
+	}
 
-  public final MysqlUnmarshaller<Row> row(List<Field> fields, boolean binary) {
-    if (!binary)
-      return new TextRowUnmarshaller(fields, encoding);
-    else
-      return new BinaryRowUnmarshaller(fields, encoding);
-  }
-
-  public final BinaryRowUnmarshaller binaryRow(int columnCount) {
-    return new BinaryRowUnmarshaller(columnCount, charset);
-  }
+	public final MysqlUnmarshaller<Row> row(List<Field> fields, boolean binary) {
+		if (!binary)
+			return new TextRowUnmarshaller(fields, encoding);
+		else
+			return new BinaryRowUnmarshaller(fields, encoding);
+	}
 }

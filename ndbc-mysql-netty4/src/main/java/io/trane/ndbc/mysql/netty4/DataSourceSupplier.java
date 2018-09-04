@@ -23,36 +23,36 @@ import io.trane.ndbc.netty4.NettyChannel;
 
 public final class DataSourceSupplier extends Netty4DataSourceSupplier {
 
-  public DataSourceSupplier(Config config) {
-    super(config, createConnection(config), new TransformBufferReader()); // TODO
-  }
+	public DataSourceSupplier(Config config) {
+		super(config, createConnection(config), new TransformBufferReader()); // TODO
+	}
 
-  private static Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnection(
-      Config config) {
+	private static Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnection(
+			Config config) {
 
-    final EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings(), config.charset());
-    final Unmarshallers unmarshallers = new Unmarshallers(config.charset(), encoding);
-    final TerminatorExchange terminatorExchange = new TerminatorExchange(unmarshallers);
-    final ResultSetExchange resultSetExchange = new ResultSetExchange(unmarshallers);
-    final Marshallers marshallers = new Marshallers(encoding);
-    final SimpleQueryExchange simpleQueryExchange = new SimpleQueryExchange(marshallers,
-        resultSetExchange.apply(false));
-    final StartupExchange startup = new StartupExchange(simpleQueryExchange,
-        marshallers, unmarshallers, terminatorExchange.okPacketVoid);
+		final EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings(), config.charset());
+		final Unmarshallers unmarshallers = new Unmarshallers(config.charset(), encoding);
+		final TerminatorExchange terminatorExchange = new TerminatorExchange(unmarshallers);
+		final ResultSetExchange resultSetExchange = new ResultSetExchange(unmarshallers);
+		final Marshallers marshallers = new Marshallers(encoding);
+		final SimpleQueryExchange simpleQueryExchange = new SimpleQueryExchange(marshallers,
+				resultSetExchange.apply(false));
+		final StartupExchange startup = new StartupExchange(simpleQueryExchange, marshallers, unmarshallers,
+				terminatorExchange.okPacketVoid);
 
-    final SimpleExecuteExchange simpleExecuteExchange = new SimpleExecuteExchange(marshallers,
-        terminatorExchange.affectedRows);
-    final ExtendedExchange extendedExchange = new ExtendedExchange(marshallers, unmarshallers,
-        terminatorExchange.prepareOk, terminatorExchange.okPacketVoid);
-    final ExtendedQueryExchange extendedQueryExchange = new ExtendedQueryExchange(extendedExchange,
-        resultSetExchange.apply(true));
-    final ExtendedExecuteExchange extendedExecuteExchange = new ExtendedExecuteExchange(
-        extendedExchange, terminatorExchange.affectedRows);
+		final SimpleExecuteExchange simpleExecuteExchange = new SimpleExecuteExchange(marshallers,
+				terminatorExchange.affectedRows);
+		final ExtendedExchange extendedExchange = new ExtendedExchange(marshallers, unmarshallers,
+				terminatorExchange.prepareOk, terminatorExchange.okPacketVoid);
+		final ExtendedQueryExchange extendedQueryExchange = new ExtendedQueryExchange(extendedExchange,
+				resultSetExchange.apply(true));
+		final ExtendedExecuteExchange extendedExecuteExchange = new ExtendedExecuteExchange(extendedExchange,
+				terminatorExchange.affectedRows);
 
-    return (channelSupplier) -> () -> channelSupplier.get().flatMap(channel -> startup
-        .apply(config.user(), config.password(), config.database(), "utf8").run(channel).map(connectionId -> {
-          return new io.trane.ndbc.mysql.Connection(channel, connectionId, channelSupplier,
-              simpleQueryExchange, simpleExecuteExchange, extendedQueryExchange, extendedExecuteExchange);
-        }));
-  }
+		return (channelSupplier) -> () -> channelSupplier.get().flatMap(channel -> startup
+				.apply(config.user(), config.password(), config.database(), "utf8").run(channel).map(connectionId -> {
+					return new io.trane.ndbc.mysql.Connection(channel, connectionId, channelSupplier,
+							simpleQueryExchange, simpleExecuteExchange, extendedQueryExchange, extendedExecuteExchange);
+				}));
+	}
 }
