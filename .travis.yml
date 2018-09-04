@@ -56,11 +56,6 @@ jobs:
     before_install:
       - sudo service mysql stop
       - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mariadb:10.2.17
-  - name: "mariadb 10.3.9"
-    env: PROJECTS=ndbc-mysql-netty4
-    before_install:
-      - sudo service mysql stop
-      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mariadb:10.3.9
 
   - name: "postgres 9.2"
     env: PROJECTS=ndbc-postgres-netty4
