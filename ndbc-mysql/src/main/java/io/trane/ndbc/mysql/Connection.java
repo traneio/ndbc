@@ -1,6 +1,9 @@
 package io.trane.ndbc.mysql;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -25,6 +28,8 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private static final PreparedStatement isValidQuery = PreparedStatement.apply("SELECT 1");
 
   private final Channel                                                 channel;
+  private final Optional<Duration>                                      queryTimeout;
+  private final ScheduledExecutorService                                scheduler;
   private final Supplier<? extends Future<? extends Channel>>           channelSupplier;
   private final Function<String, Exchange<List<Row>>>                   simpleQueryExchange;
   private final Function<String, Exchange<Long>>                        simpleExecuteExchange;
@@ -33,12 +38,15 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private final Exchange<Void>                                          cancelQueryExchange;
 
   public Connection(final Channel channel, final Long connectionId,
+      final Optional<Duration> queryTimeout, final ScheduledExecutorService scheduler,
       final Supplier<? extends Future<? extends Channel>> channelSupplier,
       final Function<String, Exchange<List<Row>>> simpleQueryExchange,
       final Function<String, Exchange<Long>> simpleExecuteExchange,
       final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange,
       final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange) {
     this.channel = channel;
+    this.queryTimeout = queryTimeout;
+    this.scheduler = scheduler;
     this.channelSupplier = channelSupplier;
     this.simpleQueryExchange = simpleQueryExchange;
     this.simpleExecuteExchange = simpleExecuteExchange;
@@ -108,7 +116,8 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   private final <T> Future<T> execute(final Exchange<T> exchange) {
     try {
-      return exchange.run(channel);
+      Future<T> run = exchange.run(channel);
+      return queryTimeout.map(t -> run.within(t, scheduler)).orElse(run);
     } catch (Throwable t) {
       NonFatalException.verify(t);
       return Future.exception(t);

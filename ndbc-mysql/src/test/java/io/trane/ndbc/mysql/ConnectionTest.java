@@ -7,6 +7,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -199,7 +200,7 @@ public class ConnectionTest {
 
     @Override
     public Connection get() {
-      return new Connection(channel(), 0L, channelSupplier(),
+      return new Connection(channel(), 0L, Optional.empty(), null, channelSupplier(),
           simpleQueryExchange(), simpleExecuteExchange(),
           extendedQueryExchange(), extendedExecuteExchange());
     }

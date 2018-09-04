@@ -24,32 +24,33 @@ import io.trane.ndbc.postgres.proto.unmarshaller.Unmarshallers;
 
 public final class DataSourceSupplier extends Netty4DataSourceSupplier {
 
-	private final static InitSSLHandler initSSLHandler = new InitSSLHandler();
+  private final static InitSSLHandler initSSLHandler = new InitSSLHandler();
 
-	public DataSourceSupplier(final Config config) {
-		super(config, createConnection(config), new TransformBufferReader());
-	}
+  public DataSourceSupplier(final Config config) {
+    super(config, createConnection(config), new TransformBufferReader());
+  }
 
-	private static Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnection(
-			Config config) {
-		final EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings(), config.charset());
-		final Marshallers marshallers = new Marshallers(encoding);
-		final Unmarshallers unmarshallers = new Unmarshallers(config.charset());
-		final QueryResultExchange queryResultExchange = new QueryResultExchange(encoding, unmarshallers);
-		final InitSSLExchange initSSLExchange = new InitSSLExchange(marshallers, unmarshallers);
-		final StartupExchange startup = new StartupExchange(marshallers, unmarshallers);
-		return (channelSupplier) -> () -> {
-			final ExtendedExchange extendedExchange = new ExtendedExchange(marshallers, unmarshallers);
-			return channelSupplier.get().flatMap(channel -> initSSLExchange.apply(config.ssl()).run(channel)
-					.flatMap(ssl -> initSSLHandler.apply(config.host(), config.port(), ssl, channel))
-					.flatMap(v -> startup.apply(config.charset(), config.user(), config.password(), config.database())
-							.run(channel)
-							.map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, marshallers,
-									channelSupplier, backendKeyData,
-									new SimpleQueryExchange(queryResultExchange, marshallers, unmarshallers),
-									new SimpleExecuteExchange(marshallers, unmarshallers),
-									new ExtendedQueryExchange(queryResultExchange, extendedExchange),
-									new ExtendedExecuteExchange(extendedExchange, unmarshallers)))));
-		};
-	}
+  private static Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnection(
+      Config config) {
+    final EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings(), config.charset());
+    final Marshallers marshallers = new Marshallers(encoding);
+    final Unmarshallers unmarshallers = new Unmarshallers(config.charset());
+    final QueryResultExchange queryResultExchange = new QueryResultExchange(encoding, unmarshallers);
+    final InitSSLExchange initSSLExchange = new InitSSLExchange(marshallers, unmarshallers);
+    final StartupExchange startup = new StartupExchange(marshallers, unmarshallers);
+    return (channelSupplier) -> () -> {
+      final ExtendedExchange extendedExchange = new ExtendedExchange(marshallers, unmarshallers);
+      return channelSupplier.get().flatMap(channel -> initSSLExchange.apply(config.ssl()).run(channel)
+          .flatMap(ssl -> initSSLHandler.apply(config.host(), config.port(), ssl, channel))
+          .flatMap(v -> startup.apply(config.charset(), config.user(), config.password(), config.database())
+              .run(channel)
+              .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(channel, marshallers,
+                  config.queryTimeout(), config.scheduler(),
+                  channelSupplier, backendKeyData,
+                  new SimpleQueryExchange(queryResultExchange, marshallers, unmarshallers),
+                  new SimpleExecuteExchange(marshallers, unmarshallers),
+                  new ExtendedQueryExchange(queryResultExchange, extendedExchange),
+                  new ExtendedExecuteExchange(extendedExchange, unmarshallers)))));
+    };
+  }
 }

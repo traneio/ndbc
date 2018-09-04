@@ -11,363 +11,425 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class Config {
 
-	public static class SSL {
-		public static enum Mode {
-			/**
-			 * only try a non-SSL connection
-			 */
-			DISABLE,
-			/**
-			 * first try an SSL connection; if that fails, try a non-SSL connection
-			 */
-			PREFER,
-			/**
-			 * only try an SSL connection, but don't verify Certificate Authority
-			 */
-			REQUIRE,
-			/**
-			 * only try an SSL connection, and verify that the server certificate is issued
-			 * by a trusted certificate authority (CA)
-			 */
-			VERIFY_CA,
-			/**
-			 * only try an SSL connection, verify that the server certificate is issued by a
-			 * trusted CA and that the server host name matches that in the certificate
-			 */
-			VERIFY_FULL
-		}
+  public static class SSL {
+    public static enum Mode {
+      /**
+       * only try a non-SSL connection
+       */
+      DISABLE,
+      /**
+       * first try an SSL connection; if that fails, try a non-SSL connection
+       */
+      PREFER,
+      /**
+       * only try an SSL connection, but don't verify Certificate Authority
+       */
+      REQUIRE,
+      /**
+       * only try an SSL connection, and verify that the server certificate is
+       * issued by a trusted certificate authority (CA)
+       */
+      VERIFY_CA,
+      /**
+       * only try an SSL connection, verify that the server certificate is
+       * issued by a trusted CA and that the server host name matches that in
+       * the certificate
+       */
+      VERIFY_FULL
+    }
 
-		public static final SSL apply(final Mode mode) {
-			return new SSL(mode, Optional.empty());
-		}
+    public static final SSL apply(final Mode mode) {
+      return new SSL(mode, Optional.empty());
+    }
 
-		public static final SSL apply(final Mode mode, final File rootCert) {
-			return new SSL(mode, Optional.of(rootCert));
-		}
+    public static final SSL apply(final Mode mode, final File rootCert) {
+      return new SSL(mode, Optional.of(rootCert));
+    }
 
-		private final Mode mode;
-		private final Optional<File> rootCert;
+    private final Mode           mode;
+    private final Optional<File> rootCert;
 
-		private SSL(final Mode mode, final Optional<File> rootCert) {
-			this.mode = mode;
-			this.rootCert = rootCert;
-		}
+    private SSL(final Mode mode, final Optional<File> rootCert) {
+      this.mode = mode;
+      this.rootCert = rootCert;
+    }
 
-		public final Mode mode() {
-			return mode;
-		}
+    public final Mode mode() {
+      return mode;
+    }
 
-		public final Optional<File> rootCert() {
-			return rootCert;
-		}
+    public final Optional<File> rootCert() {
+      return rootCert;
+    }
 
-		public final SSL rootCert(final File file) {
-			return new SSL(mode, Optional.ofNullable(file));
-		}
+    public final SSL rootCert(final File file) {
+      return new SSL(mode, Optional.ofNullable(file));
+    }
 
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((mode == null) ? 0 : mode.hashCode());
-			result = prime * result + ((rootCert == null) ? 0 : rootCert.hashCode());
-			return result;
-		}
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((mode == null) ? 0 : mode.hashCode());
+      result = prime * result + ((rootCert == null) ? 0 : rootCert.hashCode());
+      return result;
+    }
 
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			final SSL other = (SSL) obj;
-			if (mode != other.mode)
-				return false;
-			if (rootCert == null) {
-				if (other.rootCert != null)
-					return false;
-			} else if (!rootCert.equals(other.rootCert))
-				return false;
-			return true;
-		}
-	}
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      final SSL other = (SSL) obj;
+      if (mode != other.mode)
+        return false;
+      if (rootCert == null) {
+        if (other.rootCert != null)
+          return false;
+      } else if (!rootCert.equals(other.rootCert))
+        return false;
+      return true;
+    }
+  }
 
-	public static final Config fromSystemProperties(final String prefix) {
-		return fromProperties(prefix, System.getProperties());
-	}
+  public static final Config fromSystemProperties(final String prefix) {
+    return fromProperties(prefix, System.getProperties());
+  }
 
-	public static Config fromPropertiesFile(final String prefix, final String file) throws IOException {
-		final Properties properties = new Properties();
-		final FileInputStream fis = new FileInputStream(file);
-		properties.load(fis);
-		fis.close();
-		return fromProperties(prefix, properties);
-	}
+  public static Config fromPropertiesFile(final String prefix, final String file) throws IOException {
+    final Properties properties = new Properties();
+    final FileInputStream fis = new FileInputStream(file);
+    properties.load(fis);
+    fis.close();
+    return fromProperties(prefix, properties);
+  }
 
-	public static final Config fromProperties(final String prefix, final Properties properties) {
+  public static final Config fromProperties(final String prefix, final Properties properties) {
 
-		final String dataSourceSupplierClass = getRequiredProperty(prefix, properties, "dataSourceSupplierClass");
-		final String host = getRequiredProperty(prefix, properties, "host");
-		final int port = getRequiredProperty(prefix, properties, "port", Integer::parseInt);
-		final String user = getRequiredProperty(prefix, properties, "user");
+    final String dataSourceSupplierClass = getRequiredProperty(prefix, properties, "dataSourceSupplierClass");
+    final String host = getRequiredProperty(prefix, properties, "host");
+    final int port = getRequiredProperty(prefix, properties, "port", Integer::parseInt);
+    final String user = getRequiredProperty(prefix, properties, "user");
 
-		Config config = Config.apply(dataSourceSupplierClass, host, port, user);
+    Config config = Config.apply(dataSourceSupplierClass, host, port, user);
 
-		config = config
-				.charset(getProperty(prefix, properties, "charset", Charset::forName).orElse(Charset.defaultCharset()));
-		config = config.password(getProperty(prefix, properties, "password"));
-		config = config.database(getProperty(prefix, properties, "database"));
-		config = config.poolMaxSize(getProperty(prefix, properties, "poolMaxSize", Integer::parseInt));
-		config = config.poolMaxWaiters(getProperty(prefix, properties, "poolMaxWaiters", Integer::parseInt));
+    config = config
+        .charset(getProperty(prefix, properties, "charset", Charset::forName).orElse(Charset.defaultCharset()));
+    config = config.password(getProperty(prefix, properties, "password"));
+    config = config.database(getProperty(prefix, properties, "database"));
+    config = config.poolMaxSize(getProperty(prefix, properties, "poolMaxSize", Integer::parseInt));
+    config = config.poolMaxWaiters(getProperty(prefix, properties, "poolMaxWaiters", Integer::parseInt));
 
-		config = config.poolValidationInterval(getProperty(prefix, properties, "poolValidationIntervalSeconds",
-				s -> Duration.ofSeconds(Long.parseLong(s))));
+    config = config.poolValidationInterval(getProperty(prefix, properties, "poolValidationIntervalSeconds",
+        s -> Duration.ofSeconds(Long.parseLong(s))));
 
-		config = config.encodingClasses(getProperty(prefix, properties, "encodingClasses")
-				.map(k -> Stream.of(k.split(",")).filter(s -> !s.isEmpty()).collect(Collectors.toSet())));
+    config = config.encodingClasses(getProperty(prefix, properties, "encodingClasses")
+        .map(k -> Stream.of(k.split(",")).filter(s -> !s.isEmpty()).collect(Collectors.toSet())));
 
-		config = config.ssl(getProperty(prefix, properties, "ssl.mode", SSL.Mode::valueOf).map(mode -> {
-			final SSL ssl = SSL.apply(mode);
-			return getProperty(prefix, properties, "ssl.rootCert").map(rootCert -> ssl.rootCert(new File(rootCert)))
-					.orElse(ssl);
-		}));
+    config = config.ssl(getProperty(prefix, properties, "ssl.mode", SSL.Mode::valueOf).map(mode -> {
+      final SSL ssl = SSL.apply(mode);
+      return getProperty(prefix, properties, "ssl.rootCert").map(rootCert -> ssl.rootCert(new File(rootCert)))
+          .orElse(ssl);
+    }));
 
-		return config;
-	}
+    return config;
+  }
 
-	public static final Config apply(final String dataSourceSupplierClass, final String host, final int port,
-			final String user) {
-		return new Config(dataSourceSupplierClass, host, port, user, Charset.defaultCharset(), Optional.empty(),
-				Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-				Optional.empty(), Optional.empty());
-	}
+  public static final Config apply(final String dataSourceSupplierClass, final String host, final int port,
+      final String user) {
 
-	private static final <T> T getRequiredProperty(final String prefix, final Properties properties, final String name,
-			final Function<String, T> parser) {
-		final String value = getRequiredProperty(prefix, properties, name);
-		try {
-			return parser.apply(value);
-		} catch (final Exception ex) {
-			throw new RuntimeException("Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.",
-					ex);
-		}
-	}
+    AtomicInteger threadNumber = new AtomicInteger(0);
+    ThreadFactory daemonFactory = new ThreadFactory() {
+      public Thread newThread(Runnable r) {
+        Thread t = Executors.defaultThreadFactory().newThread(r);
+        t.setName("ndbc-scheduler-" + threadNumber.incrementAndGet());
+        t.setDaemon(true);
+        return t;
+      }
+    };
 
-	private static final String getRequiredProperty(final String prefix, final Properties properties,
-			final String name) {
-		return getProperty(prefix, properties, name).orElseGet(() -> {
-			throw new RuntimeException("Missing config `" + prefix + "." + name + "`.");
-		});
-	}
+    ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1, daemonFactory);
 
-	private static final <T> Optional<T> getProperty(final String prefix, final Properties properties,
-			final String name, final Function<String, T> parser) {
-		return getProperty(prefix, properties, name).map(value -> {
-			try {
-				return parser.apply(value);
-			} catch (final Exception ex) {
-				throw new RuntimeException(
-						"Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.", ex);
-			}
-		});
-	}
+    return new Config(dataSourceSupplierClass, host, port, user, Charset.defaultCharset(),
+        scheduler, Optional.empty(),
+        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
+        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+  }
 
-	private static final Optional<String> getProperty(final String prefix, final Properties properties,
-			final String name) {
-		return Optional.ofNullable(properties.getProperty(prefix + "." + name));
-	}
+  private static final <T> T getRequiredProperty(final String prefix, final Properties properties, final String name,
+      final Function<String, T> parser) {
+    final String value = getRequiredProperty(prefix, properties, name);
+    try {
+      return parser.apply(value);
+    } catch (final Exception ex) {
+      throw new RuntimeException("Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.",
+          ex);
+    }
+  }
 
-	private final String dataSourceSupplierClass;
-	private final String host;
-	private final int port;
-	private final String user;
-	private final Charset charset;
-	private final Optional<String> password;
-	private final Optional<String> database;
-	private final Optional<Integer> poolMaxSize;
-	private final Optional<Integer> poolMaxWaiters;
-	private final Optional<Duration> poolValidationInterval;
-	private final Optional<Set<String>> encodingClasses;
-	private final Optional<Integer> nioThreads;
-	private final Optional<SSL> ssl;
+  private static final String getRequiredProperty(final String prefix, final Properties properties,
+      final String name) {
+    return getProperty(prefix, properties, name).orElseGet(() -> {
+      throw new RuntimeException("Missing config `" + prefix + "." + name + "`.");
+    });
+  }
 
-	private Config(final String dataSourceSupplierClass, final String host, final int port, final String user,
-			final Charset charset, final Optional<String> password, final Optional<String> database,
-			final Optional<Integer> poolMaxSize, final Optional<Integer> poolMaxWaiters,
-			final Optional<Duration> poolValidationInterval, final Optional<Set<String>> encodingClasses,
-			final Optional<Integer> nioThreads, final Optional<SSL> ssl) {
-		this.dataSourceSupplierClass = dataSourceSupplierClass;
-		this.charset = charset;
-		this.user = user;
-		this.password = password;
-		this.database = database;
-		this.host = host;
-		this.port = port;
-		this.poolMaxSize = poolMaxSize;
-		this.poolMaxWaiters = poolMaxWaiters;
-		this.poolValidationInterval = poolValidationInterval;
-		this.encodingClasses = encodingClasses.map(Collections::unmodifiableSet);
-		this.nioThreads = nioThreads;
-		this.ssl = ssl;
-	}
+  private static final <T> Optional<T> getProperty(final String prefix, final Properties properties,
+      final String name, final Function<String, T> parser) {
+    return getProperty(prefix, properties, name).map(value -> {
+      try {
+        return parser.apply(value);
+      } catch (final Exception ex) {
+        throw new RuntimeException(
+            "Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.", ex);
+      }
+    });
+  }
 
-	public final String dataSourceSupplierClass() {
-		return dataSourceSupplierClass;
-	}
+  private static final Optional<String> getProperty(final String prefix, final Properties properties,
+      final String name) {
+    return Optional.ofNullable(properties.getProperty(prefix + "." + name));
+  }
 
-	public final String host() {
-		return host;
-	}
+  private final String                   dataSourceSupplierClass;
+  private final String                   host;
+  private final int                      port;
+  private final String                   user;
+  private final Charset                  charset;
+  private final ScheduledExecutorService scheduler;
+  private final Optional<String>         password;
+  private final Optional<String>         database;
+  private final Optional<Integer>        poolMaxSize;
+  private final Optional<Integer>        poolMaxWaiters;
+  private final Optional<Duration>       connectionTimeout;
+  private final Optional<Duration>       queryTimeout;
+  private final Optional<Duration>       poolValidationInterval;
+  private final Optional<Set<String>>    encodingClasses;
+  private final Optional<Integer>        nioThreads;
+  private final Optional<SSL>            ssl;
 
-	public final int port() {
-		return port;
-	}
+  private Config(final String dataSourceSupplierClass, final String host, final int port, final String user,
+      final Charset charset, final ScheduledExecutorService scheduler, final Optional<String> password,
+      final Optional<String> database, final Optional<Integer> poolMaxSize, final Optional<Integer> poolMaxWaiters,
+      final Optional<Duration> connectionTimeout, final Optional<Duration> queryTimeout,
+      final Optional<Duration> poolValidationInterval, final Optional<Set<String>> encodingClasses,
+      final Optional<Integer> nioThreads, final Optional<SSL> ssl) {
+    this.dataSourceSupplierClass = dataSourceSupplierClass;
+    this.charset = charset;
+    this.scheduler = scheduler;
+    this.user = user;
+    this.password = password;
+    this.database = database;
+    this.host = host;
+    this.port = port;
+    this.poolMaxSize = poolMaxSize;
+    this.poolMaxWaiters = poolMaxWaiters;
+    this.connectionTimeout = connectionTimeout;
+    this.queryTimeout = queryTimeout;
+    this.poolValidationInterval = poolValidationInterval;
+    this.encodingClasses = encodingClasses.map(Collections::unmodifiableSet);
+    this.nioThreads = nioThreads;
+    this.ssl = ssl;
+  }
 
-	public final String user() {
-		return user;
-	}
+  public final String dataSourceSupplierClass() {
+    return dataSourceSupplierClass;
+  }
 
-	public final Charset charset() {
-		return charset;
-	}
+  public final String host() {
+    return host;
+  }
 
-	public final Config charset(final Charset charset) {
-		return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
-				poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
-	}
+  public final int port() {
+    return port;
+  }
 
-	public final Optional<String> password() {
-		return password;
-	}
+  public final String user() {
+    return user;
+  }
 
-	public final Config password(final String password) {
-		return password(Optional.of(password));
-	}
+  public final Charset charset() {
+    return charset;
+  }
 
-	public final Config password(final Optional<String> password) {
-		return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
-				poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
-	}
+  public final Config charset(final Charset charset) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+  }
 
-	public final Optional<String> database() {
-		return database;
-	}
+  public final ScheduledExecutorService scheduler() {
+    return scheduler;
+  }
 
-	public final Config database(final String database) {
-		return database(Optional.of(database));
-	}
+  public final Config scheduler(final ScheduledExecutorService scheduler) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+  }
 
-	public final Config database(final Optional<String> database) {
-		return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
-				poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
-	}
+  public final Optional<String> password() {
+    return password;
+  }
 
-	public final Optional<Integer> poolMaxSize() {
-		return poolMaxSize;
-	}
+  public final Config password(final String password) {
+    return password(Optional.of(password));
+  }
 
-	public final Config poolMaxSize(final int poolMaxSize) {
-		return poolMaxSize(Optional.of(poolMaxSize));
-	}
+  public final Config password(final Optional<String> password) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+  }
 
-	public final Config poolMaxSize(final Optional<Integer> poolMaxSize) {
-		return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
-				poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
-	}
+  public final Optional<String> database() {
+    return database;
+  }
 
-	public final Optional<Integer> poolMaxWaiters() {
-		return poolMaxWaiters;
-	}
+  public final Config database(final String database) {
+    return database(Optional.of(database));
+  }
 
-	public final Config poolMaxWaiters(final int poolMaxWaiters) {
-		return poolMaxWaiters(Optional.of(poolMaxWaiters));
-	}
+  public final Config database(final Optional<String> database) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+  }
 
-	public final Config poolMaxWaiters(final Optional<Integer> poolMaxWaiters) {
-		return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
-				poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
-	}
+  public final Optional<Integer> poolMaxSize() {
+    return poolMaxSize;
+  }
 
-	public final Optional<Duration> poolValidationInterval() {
-		return poolValidationInterval;
-	}
+  public final Config poolMaxSize(final int poolMaxSize) {
+    return poolMaxSize(Optional.of(poolMaxSize));
+  }
 
-	public final Config poolValidationInterval(final Duration poolValidationInterval) {
-		return poolValidationInterval(Optional.of(poolValidationInterval));
-	}
+  public final Config poolMaxSize(final Optional<Integer> poolMaxSize) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+  }
 
-	public final Config poolValidationInterval(final Optional<Duration> poolValidationInterval) {
-		return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
-				poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
-	}
+  public final Optional<Integer> poolMaxWaiters() {
+    return poolMaxWaiters;
+  }
 
-	public final Optional<Set<String>> encodingClasses() {
-		return encodingClasses;
-	}
+  public final Config poolMaxWaiters(final int poolMaxWaiters) {
+    return poolMaxWaiters(Optional.of(poolMaxWaiters));
+  }
 
-	public final Config encodingClasses(final Set<String> encodingClasses) {
-		return encodingClasses(Optional.of(encodingClasses));
-	}
+  public final Config poolMaxWaiters(final Optional<Integer> poolMaxWaiters) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+  }
 
-	public final Config encodingClasses(final Optional<Set<String>> encodingClasses) {
-		return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
-				poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
-	}
+  public final Optional<Duration> connectionTimeout() {
+    return connectionTimeout;
+  }
 
-	public final Config addEncodingClass(final String encodingClass) {
-		return encodingClasses(Optional.ofNullable(encodingClass).map(enc -> {
-			final Set<String> encodingClasses = new HashSet<>();
-			this.encodingClasses.ifPresent(encodingClasses::addAll);
-			encodingClasses.add(enc);
-			return encodingClasses;
-		}));
-	}
+  public final Config connectionTimeout(final Duration connectionTimeout) {
+    return connectionTimeout(Optional.of(connectionTimeout));
+  }
 
-	public final Optional<Integer> nioThreads() {
-		return nioThreads;
-	}
+  public final Config connectionTimeout(final Optional<Duration> connectionTimeout) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+  }
 
-	public final Config nioThreads(final int nioThreads) {
-		return nioThreads(Optional.of(nioThreads));
-	}
+  public final Optional<Duration> queryTimeout() {
+    return queryTimeout;
+  }
 
-	public final Config nioThreads(final Optional<Integer> nioThreads) {
-		return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
-				poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
-	}
+  public final Config queryTimeout(final Duration queryTimeout) {
+    return queryTimeout(Optional.of(queryTimeout));
+  }
 
-	public final Optional<SSL> ssl() {
-		return ssl;
-	}
+  public final Config queryTimeout(final Optional<Duration> queryTimeout) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+  }
 
-	public final Config ssl(final SSL ssl) {
-		return ssl(Optional.of(ssl));
-	}
+  public final Optional<Duration> poolValidationInterval() {
+    return connectionTimeout;
+  }
 
-	public final Config ssl(final Optional<SSL> ssl) {
-		return new Config(dataSourceSupplierClass, host, port, user, charset, password, database, poolMaxSize,
-				poolMaxWaiters, poolValidationInterval, encodingClasses, nioThreads, ssl);
-	}
+  public final Config poolValidationInterval(final Duration poolValidationInterval) {
+    return poolValidationInterval(Optional.of(poolValidationInterval));
+  }
 
-	public final <T> Optional<List<T>> loadCustomEncodings() {
-		return encodingClasses().map(l -> l.stream().map(n -> this.<T>loadEncoding(n)).collect(Collectors.toList()));
-	}
+  public final Config poolValidationInterval(final Optional<Duration> poolValidationInterval) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+  }
 
-	@SuppressWarnings("unchecked")
-	private final <T> T loadEncoding(final String cls) {
-		try {
-			return (T) Class.forName(cls).newInstance();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			throw new RuntimeException("Can't load encoding " + cls + ". Make sure to provide an empty constructor.",
-					e);
-		}
-	}
+  public final Optional<Set<String>> encodingClasses() {
+    return encodingClasses;
+  }
+
+  public final Config encodingClasses(final Set<String> encodingClasses) {
+    return encodingClasses(Optional.of(encodingClasses));
+  }
+
+  public final Config encodingClasses(final Optional<Set<String>> encodingClasses) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+  }
+
+  public final Config addEncodingClass(final String encodingClass) {
+    return encodingClasses(Optional.ofNullable(encodingClass).map(enc -> {
+      final Set<String> encodingClasses = new HashSet<>();
+      this.encodingClasses.ifPresent(encodingClasses::addAll);
+      encodingClasses.add(enc);
+      return encodingClasses;
+    }));
+  }
+
+  public final Optional<Integer> nioThreads() {
+    return nioThreads;
+  }
+
+  public final Config nioThreads(final int nioThreads) {
+    return nioThreads(Optional.of(nioThreads));
+  }
+
+  public final Config nioThreads(final Optional<Integer> nioThreads) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+  }
+
+  public final Optional<SSL> ssl() {
+    return ssl;
+  }
+
+  public final Config ssl(final SSL ssl) {
+    return ssl(Optional.of(ssl));
+  }
+
+  public final Config ssl(final Optional<SSL> ssl) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+  }
+
+  public final <T> Optional<List<T>> loadCustomEncodings() {
+    return encodingClasses().map(l -> l.stream().map(n -> this.<T>loadEncoding(n)).collect(Collectors.toList()));
+  }
+
+  @SuppressWarnings("unchecked")
+  private final <T> T loadEncoding(final String cls) {
+    try {
+      return (T) Class.forName(cls).newInstance();
+    } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+      throw new RuntimeException("Can't load encoding " + cls + ". Make sure to provide an empty constructor.",
+          e);
+    }
+  }
 }
