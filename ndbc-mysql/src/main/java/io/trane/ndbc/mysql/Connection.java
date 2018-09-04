@@ -22,6 +22,8 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   private static final Logger logger = Logger.getLogger(Connection.class.getName());
 
+  private static final PreparedStatement isValidQuery = PreparedStatement.apply("SELECT 1");
+
   private final Channel                                                 channel;
   private final Supplier<? extends Future<? extends Channel>>           channelSupplier;
   private final Function<String, Exchange<List<Row>>>                   simpleQueryExchange;
@@ -47,12 +49,12 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   @Override
   public Future<Boolean> isValid() {
-    return Future.value(true); // TODO
+    return query(isValidQuery).map(r -> true).rescue(e -> Future.FALSE);
   }
 
   @Override
   public Future<Void> close() {
-    return Future.VOID;
+    return Exchange.CLOSE.run(channel);
   }
 
   @Override

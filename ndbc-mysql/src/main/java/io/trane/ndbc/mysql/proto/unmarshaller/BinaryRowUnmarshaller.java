@@ -1,5 +1,6 @@
 package io.trane.ndbc.mysql.proto.unmarshaller;
 
+<<<<<<< HEAD
 import java.math.BigInteger;
 import java.util.List;
 

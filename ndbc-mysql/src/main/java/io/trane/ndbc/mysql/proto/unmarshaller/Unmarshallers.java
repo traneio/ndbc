@@ -32,4 +32,8 @@ public class Unmarshallers {
     else
       return new BinaryRowUnmarshaller(fields, encoding);
   }
+
+  public final BinaryRowUnmarshaller binaryRow(int columnCount) {
+    return new BinaryRowUnmarshaller(columnCount, charset);
+  }
 }
