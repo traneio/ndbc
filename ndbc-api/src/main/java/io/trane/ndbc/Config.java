@@ -359,7 +359,7 @@ public final class Config {
   }
 
   public final Optional<Duration> poolValidationInterval() {
-    return connectionTimeout;
+    return poolValidationInterval;
   }
 
   public final Config poolValidationInterval(final Duration poolValidationInterval) {
