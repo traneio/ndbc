@@ -5,6 +5,8 @@ jdk:
 - oraclejdk8
 script:
   - ./build/test.sh
+services:
+  - docker
 cache:
   directories:
   - $HOME/.m2/repository
@@ -20,10 +22,11 @@ jobs:
   include:
   - name: "pure"
     env: PROJECTS=ndbc-api,ndbc-core,ndbc-test,ndbc-postgres,ndbc-netty4,ndbc-mysql
-  - name: "mysql"
+  - name: "mysql 5.5"
     env: PROJECTS=ndbc-mysql-netty4
-    services:
-      - mysql
+    before_install:
+      - sudo service mysql stop
+      - sudo docker run -d -p 3306:3306 mysql:5.7
   - name: "postgres 9.2"
     env: PROJECTS=ndbc-postgres-netty4
     addons:
