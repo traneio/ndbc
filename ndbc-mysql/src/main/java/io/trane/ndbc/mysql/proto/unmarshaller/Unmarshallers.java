@@ -5,6 +5,7 @@ import java.util.List;
 
 import io.trane.ndbc.mysql.encoding.EncodingRegistry;
 import io.trane.ndbc.mysql.proto.Message.Field;
+import io.trane.ndbc.mysql.proto.Message.Row;
 
 public class Unmarshallers {
 
@@ -25,7 +26,10 @@ public class Unmarshallers {
     this.prepareOk = new PrepareOkUnmarshaller();
   }
 
-  public final TextRowUnmarshaller textRow(List<Field> fields) {
-    return new TextRowUnmarshaller(fields, encoding);
+  public final MysqlUnmarshaller<Row> row(List<Field> fields, boolean binary) {
+    if (!binary)
+      return new TextRowUnmarshaller(fields, encoding);
+    else
+      return new BinaryRowUnmarshaller(fields, encoding);
   }
 }

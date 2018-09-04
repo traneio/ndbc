@@ -1,6 +1,7 @@
 package io.trane.ndbc.mysql.proto;
 
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 import io.trane.ndbc.proto.BufferReader;
 
@@ -74,9 +75,8 @@ public class PacketBufferReader implements BufferReader {
   }
 
   public byte[] readLengthCodedBytes() {
-    final byte lengthByte = readByte();
-    final int length = lengthByte & 0xFF;
-    return readBytes(length);
+    final long length = readVariableLong();
+    return readBytes((int) length);
   }
 
   public String readLengthCodedString(Charset charset) {
@@ -187,5 +187,11 @@ public class PacketBufferReader implements BufferReader {
   @Override
   public Double readDouble() {
     return b.readDouble();
+  }
+
+  public void dump() {
+    b.markReaderIndex();
+    System.out.println(Arrays.toString(b.readBytes()));
+    b.resetReaderIndex();
   }
 }

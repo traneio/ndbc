@@ -16,7 +16,7 @@ final class StringEncoding extends Encoding<String, StringValue> {
 
   @Override
   public Integer fieldType() {
-    return FieldTypes.STRING;
+    return FieldTypes.VARCHAR;
   }
 
   @Override

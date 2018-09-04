@@ -45,17 +45,21 @@ public final class ExtendedExchange {
     else
       return Exchange.send(marshallers.textCommand, new PrepareStatementCommand(query))
           .then(readPrepareOk)
-          .flatMap(ok -> readFields(ok.numOfParameters).thenWaitFor(readOk).map(v -> ok.statementId))
+          .flatMap(ok -> readFields(ok.numOfParameters, ok.numOfParameters)
+              .flatMap(ig -> readFields(ok.numOfColumns, ok.numOfColumns)).map(v -> ok.statementId))
           .onSuccess(id -> Exchange.value(prepared.put(positionalQuery, statementId)))
           .flatMap(f::apply);
   }
 
-  private final Exchange<Void> readFields(int count) {
+  private final Exchange<Void> readFields(int count, int initialCount) {
     if (count == 0)
-      return Exchange.VOID;
+      if (initialCount == 0)
+        return Exchange.VOID;
+      else
+        return readOk;
     else
       return Exchange.receive(unmarshallers.field)
-          .flatMap(v -> readFields(count - 1));
+          .flatMap(v -> readFields(count - 1, initialCount));
   }
 
   // TODO handle quotes, comments, etc.

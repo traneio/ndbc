@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 import io.trane.ndbc.proto.BufferWriter;
 
@@ -87,25 +88,27 @@ public class PacketBufferWriter implements BufferWriter {
     }
   }
 
-  private final void writeLength(long length) {
+  private final void writeVariableLong(long length) {
     if (length < 251) {
       writeByte((byte) length);
-    } else if (length < 65536) {
+    } else if (length < 65536L) {
       writeByte((byte) 252);
-      writeUnsignedShort((int) length);
-    } else if (length < 16777216) {
+      writeShort((short) length);
+    } else if (length < 16777216L) {
       writeByte((byte) 253);
-      writeMediumLE(length);
+      writeByte((byte) (length & 0xff));
+      writeByte((byte) (length >>> 8));
+      writeByte((byte) (length >>> 16));
     } else {
       writeByte((byte) 254);
-      writeLongLE(length)
+      writeLong(length);
     }
   }
 
   public void writeLengthCodedString(Charset charset, String value) {
     byte[] bytes = value.getBytes(bw.getCharset());
-    bw.writeByte((byte) (bytes.length | 0xFF));
-    bw.writeBytes(bytes);
+    writeVariableLong(bytes.length);
+    writeBytes(bytes);
   }
 
   @Override
@@ -190,6 +193,7 @@ public class PacketBufferWriter implements BufferWriter {
 
     final byte[] header = { (byte) (packetLength & 0xff), (byte) ((packetLength >> 8) & 0xff),
         (byte) ((packetLength >> 16) & 0xff), (byte) (this.sequence) };
+
     bw.writeBytes(concat(header, baos.toByteArray()));
 
   }
@@ -204,5 +208,9 @@ public class PacketBufferWriter implements BufferWriter {
   @Override
   public Charset getCharset() {
     return bw.getCharset();
+  }
+
+  public void dump(String l) {
+    System.out.println(l + " " + Arrays.toString(baos.toByteArray()));
   }
 }

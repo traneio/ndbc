@@ -156,13 +156,13 @@ public interface Message {
   }
 
   public static class OkPacket implements Terminator {
-    public long   affectedRows;
-    public long   insertId;
-    public int    serverStatus;
-    public int    warningCount;
-    public String message;
+    public long         affectedRows;
+    public long         insertId;
+    public ServerStatus serverStatus;
+    public int          warningCount;
+    public String       message;
 
-    public OkPacket(final long affectedRows, final long insertId, final int serverStatus,
+    public OkPacket(final long affectedRows, final long insertId, final ServerStatus serverStatus,
         final int warningCount, final String message) {
       this.affectedRows = affectedRows;
       this.insertId = insertId;
@@ -195,7 +195,7 @@ public interface Message {
     public int hashCode() {
       int result = (int) (affectedRows ^ (affectedRows >>> 32));
       result = 31 * result + (int) (insertId ^ (insertId >>> 32));
-      result = 31 * result + serverStatus;
+      result = 31 * result + serverStatus.hashCode();
       result = 31 * result + warningCount;
       result = 31 * result + message.hashCode();
       return result;
@@ -239,10 +239,10 @@ public interface Message {
   }
 
   public static class EofPacket implements Terminator {
-    public int warnings;
-    public int serverStatus;
+    public int          warnings;
+    public ServerStatus serverStatus;
 
-    public EofPacket(final int warnings, final int serverStatus) {
+    public EofPacket(final int warnings, final ServerStatus serverStatus) {
       this.warnings = warnings;
       this.serverStatus = serverStatus;
     }
@@ -251,7 +251,7 @@ public interface Message {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + serverStatus;
+      result = prime * result + serverStatus.hashCode();
       result = prime * result + warnings;
       return result;
     }
@@ -641,10 +641,10 @@ public interface Message {
     }
   }
 
-  public static class TextRow implements ServerMessage {
+  public static class Row implements ServerMessage {
     public Value<?>[] values;
 
-    public TextRow(Value<?>[] values) {
+    public Row(Value<?>[] values) {
       this.values = values;
     }
 
@@ -664,7 +664,7 @@ public interface Message {
         return false;
       if (getClass() != obj.getClass())
         return false;
-      TextRow other = (TextRow) obj;
+      Row other = (Row) obj;
       if (!Arrays.equals(values, other.values))
         return false;
       return true;
@@ -673,108 +673,6 @@ public interface Message {
     @Override
     public String toString() {
       return "TextRow [values=" + Arrays.toString(values) + "]";
-    }
-  }
-
-  public static class TextResultSet implements ServerMessage {
-    public List<TextRow> textRows;
-    public List<Field>   fields;
-
-    public TextResultSet(final List<Field> fields, final List<TextRow> textRows) {
-      this.textRows = textRows;
-      this.fields = fields;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-      if (this == o)
-        return true;
-      if (o == null || getClass() != o.getClass())
-        return false;
-
-      final TextResultSet resultSet = (TextResultSet) o;
-
-      if (!textRows.equals(resultSet.textRows))
-        return false;
-      return fields.equals(resultSet.fields);
-    }
-
-    @Override
-    public int hashCode() {
-      int result = textRows.hashCode();
-      result = 31 * result + fields.hashCode();
-      return result;
-    }
-
-    @Override
-    public String toString() {
-      return "ResultSet{" + "textRows=" + textRows + ", fields=" + fields + '}';
-    }
-  }
-
-  public static class BinaryRow implements ServerMessage {
-    public List<String> values;
-
-    public BinaryRow(final List<String> values) {
-      this.values = values;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-      if (this == o)
-        return true;
-      if (o == null || getClass() != o.getClass())
-        return false;
-
-      final TextRow textRow = (TextRow) o;
-
-      return values.equals(textRow.values);
-    }
-
-    @Override
-    public int hashCode() {
-      return values.hashCode();
-    }
-
-    @Override
-    public String toString() {
-      return "TextRow{" + "values=" + values + '}';
-    }
-  }
-
-  public static class BinaryResultSet implements ServerMessage {
-    public List<BinaryRow> binaryRows;
-    public List<Field>     fields;
-
-    public BinaryResultSet(final List<Field> fields, final List<BinaryRow> binaryRows) {
-      this.binaryRows = binaryRows;
-      this.fields = fields;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-      if (this == o)
-        return true;
-      if (o == null || getClass() != o.getClass())
-        return false;
-
-      final BinaryResultSet resultSet = (BinaryResultSet) o;
-
-      if (!binaryRows.equals(resultSet.binaryRows))
-        return false;
-      return fields.equals(resultSet.fields);
-    }
-
-    @Override
-    public int hashCode() {
-      int result = binaryRows.hashCode();
-      result = 31 * result + fields.hashCode();
-      return result;
-    }
-
-    @Override
-    public String toString() {
-      return "ResultSet{" + "binaryRows=" + binaryRows + ", fields=" + fields + '}';
     }
   }
 
