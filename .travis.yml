@@ -24,6 +24,7 @@ jobs:
   include:
   - name: "pure"
     env: PROJECTS=ndbc-api,ndbc-core,ndbc-test,ndbc-postgres,ndbc-netty4,ndbc-mysql
+
   - name: "mysql 5.5"
     env: PROJECTS=ndbc-mysql-netty4
     before_install:
@@ -39,6 +40,28 @@ jobs:
     before_install:
       - sudo service mysql stop
       - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:5.7
+
+  - name: "mariadb 5.5.61"
+    env: PROJECTS=ndbc-mysql-netty4
+    before_install:
+      - sudo service mysql stop
+      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mariadb:5.5.61
+  - name: "mariadb 10.0.36"
+    env: PROJECTS=ndbc-mysql-netty4
+    before_install:
+      - sudo service mysql stop
+      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mariadb:10.0.36
+  - name: "mariadb 10.2.17"
+    env: PROJECTS=ndbc-mysql-netty4
+    before_install:
+      - sudo service mysql stop
+      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mariadb:10.2.17
+  - name: "mariadb 10.3.9"
+    env: PROJECTS=ndbc-mysql-netty4
+    before_install:
+      - sudo service mysql stop
+      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mariadb:10.3.9
+
   - name: "postgres 9.2"
     env: PROJECTS=ndbc-postgres-netty4
     addons:
@@ -59,5 +82,6 @@ jobs:
     env: PROJECTS=ndbc-postgres-netty4
     addons:
       postgresql: '9.6'
+
   - stage: "release"
     script: ./build/release.sh
