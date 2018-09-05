@@ -28,7 +28,7 @@ public class TextRowUnmarshaller extends MysqlUnmarshaller<Row> {
     final Value<?>[] values = new Value<?>[fields.size()];
     int i = 0;
     for (final Field field : fields) {
-      values[i] = encoding.decodeText(field.fieldType, p);
+      values[i] = encoding.decodeText(field, p);
       i++;
     }
     return new Row(values);

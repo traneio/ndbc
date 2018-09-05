@@ -1,9 +1,11 @@
 package io.trane.ndbc.mysql.encoding;
 
 import java.nio.charset.Charset;
+import java.util.Set;
 
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.mysql.proto.PacketBufferWriter;
+import io.trane.ndbc.util.Collections;
 import io.trane.ndbc.value.LongValue;
 
 final class LongEncoding extends Encoding<Long, LongValue> {
@@ -13,8 +15,13 @@ final class LongEncoding extends Encoding<Long, LongValue> {
   }
 
   @Override
-  public Integer fieldType() {
-    return FieldTypes.LONGLONG;
+  public Key key() {
+    return key(FieldTypes.LONGLONG);
+  }
+
+  @Override
+  public Set<Key> additionalKeys() {
+    return Collections.toImmutableSet(unsignedKey(FieldTypes.LONG), unsignedKey(FieldTypes.LONGLONG));
   }
 
   @Override
@@ -33,8 +40,11 @@ final class LongEncoding extends Encoding<Long, LongValue> {
   }
 
   @Override
-  public final Long decodeBinary(final PacketBufferReader b) {
-    return b.readLong();
+  public final Long decodeBinary(final PacketBufferReader b, boolean unsigned) {
+    if (unsigned)
+      return b.readUnsignedInt();
+    else
+      return b.readLong();
   }
 
   @Override

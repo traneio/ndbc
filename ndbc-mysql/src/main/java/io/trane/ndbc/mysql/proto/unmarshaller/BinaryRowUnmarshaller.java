@@ -34,7 +34,7 @@ public class BinaryRowUnmarshaller extends MysqlUnmarshaller<Row> {
       if (nullBitmap.testBit(i + 2))
         values[i] = Value.NULL;
       else
-        values[i] = encoding.decodeBinary(field.fieldType, p);
+        values[i] = encoding.decodeBinary(field, p);
       i++;
     }
     return new Row(values);

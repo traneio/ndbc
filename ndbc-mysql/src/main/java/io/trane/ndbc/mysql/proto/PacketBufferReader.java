@@ -98,6 +98,11 @@ public class PacketBufferReader implements BufferReader {
     return value;
   }
 
+  public short readUnsignedByte() {
+    final byte b = readByte();
+    return (short) ((b & 0xFF) << 0);
+  }
+
   @Override
   public String readCString(final Charset charset) {
     return b.readCString(charset);

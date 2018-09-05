@@ -15,13 +15,14 @@ final class StringEncoding extends Encoding<String, StringValue> {
   }
 
   @Override
-  public Integer fieldType() {
-    return FieldTypes.VARCHAR;
+  public Key key() {
+    return key(FieldTypes.VARCHAR);
   }
 
   @Override
-  public final Set<Integer> additionalOids() {
-    return Collections.toImmutableSet(FieldTypes.VAR_STRING, FieldTypes.VARCHAR);
+  public Set<Key> additionalKeys() {
+    return Collections.toImmutableSet(key(FieldTypes.STRING), key(FieldTypes.VAR_STRING), key(FieldTypes.TINY_BLOB),
+        key(FieldTypes.BLOB), key(FieldTypes.MEDIUM_BLOB));
   }
 
   @Override
@@ -40,7 +41,7 @@ final class StringEncoding extends Encoding<String, StringValue> {
   }
 
   @Override
-  public final String decodeBinary(final PacketBufferReader b) {
+  public final String decodeBinary(final PacketBufferReader b, boolean unsigned) {
     return b.readLengthCodedString(charset);
   }
 
