@@ -14,60 +14,60 @@ import io.trane.ndbc.Row;
 
 public class PoolEnv {
 
-	final int maxSize = 10;
-	final int maxWaiters = 10;
-	final Duration validationInterval = Duration.ofSeconds(1);
-	final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+  final int                      maxSize            = 10;
+  final int                      maxWaiters         = 10;
+  final Duration                 validationInterval = Duration.ofSeconds(1);
+  final ScheduledExecutorService scheduler          = Executors.newScheduledThreadPool(1);
 
-	@After
-	public void shutdown() {
-		scheduler.shutdown();
-	}
+  @After
+  public void shutdown() {
+    scheduler.shutdown();
+  }
 
-	protected Connection conn() {
-		return new TestConnection();
-	}
+  protected Connection conn() {
+    return new TestConnection();
+  }
 
-	class TestConnection implements Connection {
+  class TestConnection implements Connection {
 
-		private <T> T notExpected() {
-			throw new IllegalStateException("Unpexted call");
-		}
+    private <T> T notExpected() {
+      throw new IllegalStateException("Unpexted call");
+    }
 
-		@Override
-		public Future<Boolean> isValid() {
-			return notExpected();
-		}
+    @Override
+    public Future<Boolean> isValid() {
+      return notExpected();
+    }
 
-		@Override
-		public Future<Void> close() {
-			return notExpected();
-		}
+    @Override
+    public Future<Void> close() {
+      return notExpected();
+    }
 
-		@Override
-		public Future<List<Row>> query(final String query) {
-			return notExpected();
-		}
+    @Override
+    public Future<List<Row>> query(final String query) {
+      return notExpected();
+    }
 
-		@Override
-		public Future<Long> execute(final String query) {
-			return notExpected();
-		}
+    @Override
+    public Future<Long> execute(final String query) {
+      return notExpected();
+    }
 
-		@Override
-		public Future<List<Row>> query(final PreparedStatement query) {
-			return notExpected();
-		}
+    @Override
+    public Future<List<Row>> query(final PreparedStatement query) {
+      return notExpected();
+    }
 
-		@Override
-		public Future<Long> execute(final PreparedStatement query) {
-			return notExpected();
-		}
+    @Override
+    public Future<Long> execute(final PreparedStatement query) {
+      return notExpected();
+    }
 
-		@Override
-		public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
-			return notExpected();
-		}
-	};
+    @Override
+    public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
+      return notExpected();
+    }
+  };
 
 }

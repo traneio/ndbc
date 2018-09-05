@@ -18,19 +18,19 @@ public abstract class PostgresUnmarshaller<T extends ServerMessage> implements U
   protected final Charset                      charset;
   private final InfoResponseFieldsUnmarshaller infoResponseFieldsUnmarshaller;
 
-  public PostgresUnmarshaller(Charset charset) {
+  public PostgresUnmarshaller(final Charset charset) {
     this.charset = charset;
     this.infoResponseFieldsUnmarshaller = new InfoResponseFieldsUnmarshaller(charset);
   }
 
   @Override
-  public Optional<T> apply(BufferReader b) {
+  public Optional<T> apply(final BufferReader b) {
     final byte tpe = b.readByte();
     final int length = b.readInt() - 4;
     return read(tpe, b.readSlice(length));
   }
 
-  private Optional<T> read(byte tpe, BufferReader b) {
+  private Optional<T> read(final byte tpe, final BufferReader b) {
     switch (tpe) {
       case 'E':
         final InfoResponse.ErrorResponse error = new InfoResponse.ErrorResponse(
@@ -54,16 +54,16 @@ public abstract class PostgresUnmarshaller<T extends ServerMessage> implements U
     }
   }
 
-  public <U extends ServerMessage> PostgresUnmarshaller<ServerMessage> orElse(PostgresUnmarshaller<U> other) {
+  public <U extends ServerMessage> PostgresUnmarshaller<ServerMessage> orElse(final PostgresUnmarshaller<U> other) {
     return new PostgresUnmarshaller<ServerMessage>(null) {
 
       @Override
-      protected boolean acceptsType(byte tpe) {
+      protected boolean acceptsType(final byte tpe) {
         return PostgresUnmarshaller.this.acceptsType(tpe) || other.acceptsType(tpe);
       }
 
       @Override
-      protected ServerMessage decode(byte tpe, BufferReader readSlice) {
+      protected ServerMessage decode(final byte tpe, final BufferReader readSlice) {
         if (PostgresUnmarshaller.this.acceptsType(tpe))
           return PostgresUnmarshaller.this.decode(tpe, readSlice);
         else

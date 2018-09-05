@@ -11,39 +11,39 @@ import io.trane.ndbc.value.Value;
 
 public abstract class Encoding<T, V extends Value<T>> {
 
-	protected final Charset charset;
+  protected final Charset charset;
 
-	public Encoding(Charset charset) {
-		this.charset = charset;
-	}
+  public Encoding(final Charset charset) {
+    this.charset = charset;
+  }
 
-	public void writeBinary(final V value, final PacketBufferWriter writer) {
-		encodeBinary(value.get(), writer);
-	}
+  public void writeBinary(final V value, final PacketBufferWriter writer) {
+    encodeBinary(value.get(), writer);
+  }
 
-	public V readText(final PacketBufferReader reader) {
-		return box(decodeText(reader.readLengthCodedString(charset)));
-	}
+  public V readText(final PacketBufferReader reader) {
+    return box(decodeText(reader.readLengthCodedString(charset)));
+  }
 
-	public V readBinary(final PacketBufferReader reader) {
-		return box(decodeBinary(reader));
-	}
+  public V readBinary(final PacketBufferReader reader) {
+    return box(decodeBinary(reader));
+  }
 
-	public abstract Integer fieldType();
+  public abstract Integer fieldType();
 
-	private static Set<Integer> emptyOids = Collections.unmodifiableSet(new HashSet<>());
+  private static Set<Integer> emptyOids = Collections.unmodifiableSet(new HashSet<>());
 
-	public Set<Integer> additionalOids() {
-		return emptyOids;
-	}
+  public Set<Integer> additionalOids() {
+    return emptyOids;
+  }
 
-	public abstract Class<V> valueClass();
+  public abstract Class<V> valueClass();
 
-	protected abstract V box(T value);
+  protected abstract V box(T value);
 
-	protected abstract T decodeText(String value);
+  protected abstract T decodeText(String value);
 
-	protected abstract void encodeBinary(T value, PacketBufferWriter b);
+  protected abstract void encodeBinary(T value, PacketBufferWriter b);
 
-	protected abstract T decodeBinary(PacketBufferReader b);
+  protected abstract T decodeBinary(PacketBufferReader b);
 }

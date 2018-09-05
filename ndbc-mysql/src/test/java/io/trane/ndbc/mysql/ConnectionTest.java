@@ -162,13 +162,13 @@ public class ConnectionTest {
     }
 
     @Override
-    public <T extends ClientMessage> Future<Void> send(Marshaller<T> marshaller,
-        T msg) {
+    public <T extends ClientMessage> Future<Void> send(final Marshaller<T> marshaller,
+        final T msg) {
       return notExpected();
     }
 
     @Override
-    public <T extends ServerMessage> Future<T> receive(Unmarshaller<T> unmarshaller) {
+    public <T extends ServerMessage> Future<T> receive(final Unmarshaller<T> unmarshaller) {
       return notExpected();
     }
   };

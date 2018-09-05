@@ -52,7 +52,7 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
       if (item != null)
         return Future.flatApply(() -> f.apply(item)).ensure(() -> release(item));
       else if (sizeSemaphore.tryAcquire()) {
-        Future<T> conn = supplier.get();
+        final Future<T> conn = supplier.get();
         return connectionTimeout.map(t -> conn.within(t, scheduler)).orElse(conn)
             .flatMap(i -> f.apply(i).ensure(() -> release(i)));
       } else if (waitersSemaphore.tryAcquire()) {

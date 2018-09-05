@@ -81,8 +81,8 @@ public final class Config {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((mode == null) ? 0 : mode.hashCode());
-      result = prime * result + ((rootCert == null) ? 0 : rootCert.hashCode());
+      result = (prime * result) + ((mode == null) ? 0 : mode.hashCode());
+      result = (prime * result) + ((rootCert == null) ? 0 : rootCert.hashCode());
       return result;
     }
 
@@ -152,17 +152,15 @@ public final class Config {
   public static final Config apply(final String dataSourceSupplierClass, final String host, final int port,
       final String user) {
 
-    AtomicInteger threadNumber = new AtomicInteger(0);
-    ThreadFactory daemonFactory = new ThreadFactory() {
-      public Thread newThread(Runnable r) {
-        Thread t = Executors.defaultThreadFactory().newThread(r);
-        t.setName("ndbc-scheduler-" + threadNumber.incrementAndGet());
-        t.setDaemon(true);
-        return t;
-      }
+    final AtomicInteger threadNumber = new AtomicInteger(0);
+    final ThreadFactory daemonFactory = r -> {
+      final Thread t = Executors.defaultThreadFactory().newThread(r);
+      t.setName("ndbc-scheduler-" + threadNumber.incrementAndGet());
+      t.setDaemon(true);
+      return t;
     };
 
-    ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1, daemonFactory);
+    final ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1, daemonFactory);
 
     return new Config(dataSourceSupplierClass, host, port, user, Charset.defaultCharset(),
         scheduler, Optional.empty(),

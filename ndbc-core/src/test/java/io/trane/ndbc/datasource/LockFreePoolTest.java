@@ -25,7 +25,7 @@ public class LockFreePoolTest extends PoolEnv {
         Optional.empty(), Optional.empty(), Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
 
-    for (int i = 0; i < maxSize * 3; i++)
+    for (int i = 0; i < (maxSize * 3); i++)
       pool.apply(t -> {
         executing.incrementAndGet();
         return Promise.apply();

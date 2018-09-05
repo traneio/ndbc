@@ -23,12 +23,12 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
   private Promise<ChannelHandlerContext>                ctx                 = Promise.apply();
   private final AtomicReference<Consumer<BufferReader>> nextMessageConsumer = new AtomicReference<>(null);
 
-  public NettyChannel(Charset charset) {
+  public NettyChannel(final Charset charset) {
     this.charset = charset;
   }
 
   @Override
-  public <T extends ClientMessage> Future<Void> send(Marshaller<T> marshaller, T msg) {
+  public <T extends ClientMessage> Future<Void> send(final Marshaller<T> marshaller, final T msg) {
     System.out.println(hashCode() + " sent: " + msg);
     return ctx.flatMap(c -> {
       final ByteBuf ioBuffer = c.alloc().ioBuffer();
@@ -39,15 +39,15 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
   }
 
   @Override
-  public <T extends ServerMessage> Future<T> receive(Unmarshaller<T> unmarshaller) {
+  public <T extends ServerMessage> Future<T> receive(final Unmarshaller<T> unmarshaller) {
     return ctx.flatMap(c -> {
       System.out.println(hashCode() + " requested: " + unmarshaller);
       final Promise<T> p = Promise.apply();
-      Consumer<BufferReader> consumer = new Consumer<BufferReader>() {
+      final Consumer<BufferReader> consumer = new Consumer<BufferReader>() {
         @Override
-        public void accept(BufferReader b) {
+        public void accept(final BufferReader b) {
           try {
-            Optional<T> option = unmarshaller.apply(b);
+            final Optional<T> option = unmarshaller.apply(b);
             option.ifPresent(msg -> {
               System.out.println(hashCode() + " received: " + msg);
               b.release();
@@ -58,7 +58,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
                 throw new IllegalStateException("Previous `receive` still pending.");
               c.read();
             }
-          } catch (Throwable ex) {
+          } catch (final Throwable ex) {
             NonFatalException.verify(ex);
             p.setException(ex);
           }

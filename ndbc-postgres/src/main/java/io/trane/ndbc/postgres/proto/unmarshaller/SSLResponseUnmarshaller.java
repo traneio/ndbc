@@ -12,7 +12,7 @@ public final class SSLResponseUnmarshaller implements Unmarshaller<SSLResponse> 
   private static final Optional<SSLResponse> enabled  = Optional.of(new SSLResponse(true));
 
   @Override
-  public Optional<SSLResponse> apply(BufferReader b) {
+  public Optional<SSLResponse> apply(final BufferReader b) {
     switch (b.readByte()) {
       case 'N':
         return disabled;

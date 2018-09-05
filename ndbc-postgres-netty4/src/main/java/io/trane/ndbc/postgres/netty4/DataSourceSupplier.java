@@ -31,7 +31,7 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
   }
 
   private static Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnection(
-      Config config) {
+      final Config config) {
     final EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings(), config.charset());
     final Marshallers marshallers = new Marshallers(encoding);
     final Unmarshallers unmarshallers = new Unmarshallers(config.charset());

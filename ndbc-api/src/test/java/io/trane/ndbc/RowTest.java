@@ -16,40 +16,40 @@ import io.trane.ndbc.value.Value;
 
 public class RowTest {
 
-	Map<String, Integer> positions = new HashMap<>();
-	IntegerValue v1 = new IntegerValue(1);
-	LongValue v2 = new LongValue(2L);
-	Value<?>[] columns = {v1, v2};
+  Map<String, Integer> positions = new HashMap<>();
+  IntegerValue         v1        = new IntegerValue(1);
+  LongValue            v2        = new LongValue(2L);
+  Value<?>[]           columns   = { v1, v2 };
 
-	Row row = Row.apply(positions, columns);
+  Row row = Row.apply(positions, columns);
 
-	public RowTest() {
-		positions.put("a", 0);
-		positions.put("b", 1);
-	}
+  public RowTest() {
+    positions.put("a", 0);
+    positions.put("b", 1);
+  }
 
-	@Test
-	public void columnPos() {
-		assertEquals(v1, row.column(0));
-		assertEquals(v2, row.column(1));
-	}
+  @Test
+  public void columnPos() {
+    assertEquals(v1, row.column(0));
+    assertEquals(v2, row.column(1));
+  }
 
-	@Test
-	public void columnName() {
-		assertEquals(v1, row.column("a"));
-		assertEquals(v2, row.column("b"));
-	}
+  @Test
+  public void columnName() {
+    assertEquals(v1, row.column("a"));
+    assertEquals(v2, row.column("b"));
+  }
 
-	@Test
-	public void columnNames() {
-		final Iterator<String> it = row.columnNames().iterator();
-		assertEquals("a", it.next());
-		assertEquals("b", it.next());
-		assertFalse(it.hasNext());
-	}
+  @Test
+  public void columnNames() {
+    final Iterator<String> it = row.columnNames().iterator();
+    assertEquals("a", it.next());
+    assertEquals("b", it.next());
+    assertFalse(it.hasNext());
+  }
 
-	@Test
-	public void columns() {
-		assertArrayEquals(columns, row.columns().toArray());
-	}
+  @Test
+  public void columns() {
+    assertArrayEquals(columns, row.columns().toArray());
+  }
 }

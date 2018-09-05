@@ -10,27 +10,27 @@ import io.trane.ndbc.value.Value;
 
 public class TextRowUnmarshaller extends MysqlUnmarshaller<Row> {
 
-	private final List<Field> fields;
-	private final EncodingRegistry encoding;
+  private final List<Field>      fields;
+  private final EncodingRegistry encoding;
 
-	public TextRowUnmarshaller(List<Field> fields, EncodingRegistry encoding) {
-		this.fields = fields;
-		this.encoding = encoding;
-	}
+  public TextRowUnmarshaller(final List<Field> fields, final EncodingRegistry encoding) {
+    this.fields = fields;
+    this.encoding = encoding;
+  }
 
-	@Override
-	protected boolean acceptsHeader(int header) {
-		return !TerminatorUnmarshaller.isTerminator(header);
-	}
+  @Override
+  protected boolean acceptsHeader(final int header) {
+    return !TerminatorUnmarshaller.isTerminator(header);
+  }
 
-	@Override
-	public Row decode(int header, PacketBufferReader p) {
-		final Value<?>[] values = new Value<?>[fields.size()];
-		int i = 0;
-		for (Field field : fields) {
-			values[i] = encoding.decodeText(field.fieldType, p);
-			i++;
-		}
-		return new Row(values);
-	}
+  @Override
+  public Row decode(final int header, final PacketBufferReader p) {
+    final Value<?>[] values = new Value<?>[fields.size()];
+    int i = 0;
+    for (final Field field : fields) {
+      values[i] = encoding.decodeText(field.fieldType, p);
+      i++;
+    }
+    return new Row(values);
+  }
 }

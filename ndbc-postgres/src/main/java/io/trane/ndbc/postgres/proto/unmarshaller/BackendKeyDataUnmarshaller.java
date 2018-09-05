@@ -7,17 +7,17 @@ import io.trane.ndbc.proto.BufferReader;;
 
 public final class BackendKeyDataUnmarshaller extends PostgresUnmarshaller<BackendKeyData> {
 
-	public BackendKeyDataUnmarshaller(Charset charset) {
-		super(charset);
-	}
+  public BackendKeyDataUnmarshaller(final Charset charset) {
+    super(charset);
+  }
 
-	@Override
-	protected boolean acceptsType(byte tpe) {
-		return tpe == 'K';
-	}
+  @Override
+  protected boolean acceptsType(final byte tpe) {
+    return tpe == 'K';
+  }
 
-	@Override
-	public final BackendKeyData decode(final byte tpe, final BufferReader b) {
-		return new BackendKeyData(b.readInt(), b.readInt());
-	}
+  @Override
+  public final BackendKeyData decode(final byte tpe, final BufferReader b) {
+    return new BackendKeyData(b.readInt(), b.readInt());
+  }
 }

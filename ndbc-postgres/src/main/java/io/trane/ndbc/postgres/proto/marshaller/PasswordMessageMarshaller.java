@@ -6,10 +6,11 @@ import io.trane.ndbc.proto.Marshaller;
 
 public final class PasswordMessageMarshaller implements Marshaller<PasswordMessage> {
 
-	public final void apply(final PasswordMessage msg, final BufferWriter b) {
-		b.writeChar('p');
-		b.writeInt(0);
-		b.writeCString(msg.password);
-		b.writeLength(1);
-	}
+  @Override
+  public final void apply(final PasswordMessage msg, final BufferWriter b) {
+    b.writeChar('p');
+    b.writeInt(0);
+    b.writeCString(msg.password);
+    b.writeLength(1);
+  }
 }

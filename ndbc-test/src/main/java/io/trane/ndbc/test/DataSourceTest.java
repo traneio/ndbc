@@ -75,7 +75,7 @@ public class DataSourceTest {
     try {
       ds.query("SELECT * FROM invalid_table").get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
       assertTrue(ex.getMessage().contains("invalid_table"));
     }
   }
@@ -85,7 +85,7 @@ public class DataSourceTest {
     try {
       ds.query("SLCT * FROM " + table).get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
     }
   }
 
@@ -104,7 +104,7 @@ public class DataSourceTest {
     try {
       ds.query(ps).get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
     }
   }
 
@@ -115,7 +115,7 @@ public class DataSourceTest {
     try {
       ds.query(ps).get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
       assertTrue(ex.getMessage().contains("invalid_table"));
     }
   }
@@ -136,7 +136,7 @@ public class DataSourceTest {
     try {
       ds.query(ps).get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
       assertTrue(ex.getMessage().contains("invalid_table"));
     }
   }
@@ -156,7 +156,7 @@ public class DataSourceTest {
     try {
       ds.execute("INSERT INTO invalid_table VALUES ('u')").get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
       assertTrue(ex.getMessage().contains("invalid_table"));
     }
   }
@@ -175,7 +175,7 @@ public class DataSourceTest {
     try {
       ds.execute("UPDATE invalid_table SET s = 'u'").get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
       assertTrue(ex.getMessage().contains("invalid_table"));
     }
   }
@@ -193,7 +193,7 @@ public class DataSourceTest {
     try {
       ds.execute("DELETE FROM invalid_table").get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
       assertTrue(ex.getMessage().contains("invalid_table"));
     }
   }
@@ -217,7 +217,7 @@ public class DataSourceTest {
     try {
       ds.execute(ps).get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
       assertTrue(ex.getMessage().contains("invalid_table"));
     }
   }
@@ -240,7 +240,7 @@ public class DataSourceTest {
     try {
       ds.execute(ps).get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
       assertTrue(ex.getMessage().contains("invalid_table"));
     }
   }
@@ -262,7 +262,7 @@ public class DataSourceTest {
     try {
       ds.execute(ps).get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
       assertTrue(ex.getMessage().contains("invalid_table"));
     }
   }
@@ -286,7 +286,7 @@ public class DataSourceTest {
     try {
       ds.execute(ps).get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
       assertTrue(ex.getMessage().contains("invalid_table"));
     }
   }
@@ -309,7 +309,7 @@ public class DataSourceTest {
     try {
       ds.execute(ps).get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
       assertTrue(ex.getMessage().contains("invalid_table"));
     }
   }
@@ -331,7 +331,7 @@ public class DataSourceTest {
     try {
       ds.execute(ps).get(timeout);
       assertTrue(false);
-    } catch (NdbcException ex) {
+    } catch (final NdbcException ex) {
       assertTrue(ex.getMessage().contains("invalid_table"));
     }
   }
@@ -357,7 +357,7 @@ public class DataSourceTest {
         throw new IllegalStateException();
       })).get(timeout);
       assertTrue(false);
-    } catch (IllegalStateException ex) {
+    } catch (final IllegalStateException ex) {
     }
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
@@ -386,7 +386,7 @@ public class DataSourceTest {
       f.raise(new CancellationException());
       try {
         f.get(timeout);
-      } catch (CheckedFutureException e) {
+      } catch (final CheckedFutureException e) {
         throw e.getCause();
       }
     } finally {

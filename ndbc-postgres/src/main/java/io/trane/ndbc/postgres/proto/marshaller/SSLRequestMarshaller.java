@@ -6,8 +6,9 @@ import io.trane.ndbc.proto.Marshaller;
 
 public final class SSLRequestMarshaller implements Marshaller<SSLRequest> {
 
-	public final void apply(final SSLRequest msg, final BufferWriter b) {
-		b.writeInt(8);
-		b.writeInt(80877103);
-	}
+  @Override
+  public final void apply(final SSLRequest msg, final BufferWriter b) {
+    b.writeInt(8);
+    b.writeInt(80877103);
+  }
 }

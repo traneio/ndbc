@@ -11,47 +11,47 @@ import io.trane.ndbc.value.Value;
 
 public final class Row {
 
-	private final Map<String, Integer> positions;
-	private final Value<?>[] columns;
+  private final Map<String, Integer> positions;
+  private final Value<?>[]           columns;
 
-	public static final Row apply(final Map<String, Integer> positions, final Value<?>[] columns) {
-		return new Row(positions, columns);
-	}
+  public static final Row apply(final Map<String, Integer> positions, final Value<?>[] columns) {
+    return new Row(positions, columns);
+  }
 
-	private Row(final Map<String, Integer> positions, final Value<?>[] columns) {
-		this.positions = positions;
-		this.columns = columns;
-	}
+  private Row(final Map<String, Integer> positions, final Value<?>[] columns) {
+    this.positions = positions;
+    this.columns = columns;
+  }
 
-	public final Value<?> column(final int columnPosition) {
-		return columns[columnPosition];
-	}
+  public final Value<?> column(final int columnPosition) {
+    return columns[columnPosition];
+  }
 
-	public final Value<?> column(final String columnName) {
-		return columns[positions.get(columnName)];
-	}
+  public final Value<?> column(final String columnName) {
+    return columns[positions.get(columnName)];
+  }
 
-	public final List<String> columnNames() {
-		return Collections.unmodifiableList(positions.entrySet().stream().sorted(Map.Entry.comparingByValue())
-				.map(Map.Entry::getKey).collect(Collectors.toList()));
-	}
+  public final List<String> columnNames() {
+    return Collections.unmodifiableList(positions.entrySet().stream().sorted(Map.Entry.comparingByValue())
+        .map(Map.Entry::getKey).collect(Collectors.toList()));
+  }
 
-	public final List<Value<?>> columns() {
-		return Collections.unmodifiableList(Arrays.asList(columns));
-	}
+  public final List<Value<?>> columns() {
+    return Collections.unmodifiableList(Arrays.asList(columns));
+  }
 
-	@Override
-	public String toString() {
-		Iterator<String> names = columnNames().iterator();
-		Iterator<Value<?>> values = Arrays.asList(columns).iterator();
-		String result = "Row [";
-		while (names.hasNext()) {
-			String name = names.next();
-			Value<?> value = values.next();
-			result += name + "= " + value.get();
-			if (names.hasNext())
-				result += ", ";
-		}
-		return result + "]";
-	}
+  @Override
+  public String toString() {
+    final Iterator<String> names = columnNames().iterator();
+    final Iterator<Value<?>> values = Arrays.asList(columns).iterator();
+    String result = "Row [";
+    while (names.hasNext()) {
+      final String name = names.next();
+      final Value<?> value = values.next();
+      result += name + "= " + value.get();
+      if (names.hasNext())
+        result += ", ";
+    }
+    return result + "]";
+  }
 }

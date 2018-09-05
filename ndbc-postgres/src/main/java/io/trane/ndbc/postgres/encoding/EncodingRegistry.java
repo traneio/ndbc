@@ -17,11 +17,11 @@ public final class EncodingRegistry {
   private final Map<Class<?>, Encoding<?, ?>> byValueClass;
   private final Map<Integer, Encoding<?, ?>>  byOid;
 
-  public EncodingRegistry(final Optional<List<Encoding<?, ?>>> customEncodings, Charset charset) {
+  public EncodingRegistry(final Optional<List<Encoding<?, ?>>> customEncodings, final Charset charset) {
     byValueClass = new HashMap<>();
     byOid = new HashMap<>();
 
-    List<Encoding<?, ?>> defaultEncodings = Arrays.asList(new BigDecimalEncoding(charset),
+    final List<Encoding<?, ?>> defaultEncodings = Arrays.asList(new BigDecimalEncoding(charset),
         new BooleanEncoding(charset), new ByteArrayEncoding(charset), new DoubleEncoding(charset),
         new FloatEncoding(charset), new IntegerEncoding(charset), new LocalDateEncoding(charset),
         new LocalDateTimeEncoding(charset), new LocalTimeEncoding(charset), new LongEncoding(charset),

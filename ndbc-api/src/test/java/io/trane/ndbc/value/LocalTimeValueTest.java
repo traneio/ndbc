@@ -8,10 +8,10 @@ import org.junit.Test;
 
 public class LocalTimeValueTest {
 
-	@Test
-	public void getLocalTime() {
-		final LocalTime value = LocalTime.now();
-		final LocalTimeValue wrapper = new LocalTimeValue(value);
-		assertEquals(value, wrapper.getLocalTime());
-	}
+  @Test
+  public void getLocalTime() {
+    final LocalTime value = LocalTime.now();
+    final LocalTimeValue wrapper = new LocalTimeValue(value);
+    assertEquals(value, wrapper.getLocalTime());
+  }
 }

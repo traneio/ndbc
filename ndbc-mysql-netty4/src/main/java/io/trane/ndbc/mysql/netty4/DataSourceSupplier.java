@@ -23,12 +23,12 @@ import io.trane.ndbc.netty4.NettyChannel;
 
 public final class DataSourceSupplier extends Netty4DataSourceSupplier {
 
-  public DataSourceSupplier(Config config) {
+  public DataSourceSupplier(final Config config) {
     super(config, createConnection(config), new TransformBufferReader()); // TODO
   }
 
   private static Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnection(
-      Config config) {
+      final Config config) {
 
     final EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings(), config.charset());
     final Unmarshallers unmarshallers = new Unmarshallers(config.charset(), encoding);

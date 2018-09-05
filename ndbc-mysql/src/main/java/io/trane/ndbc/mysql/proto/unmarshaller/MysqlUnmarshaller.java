@@ -10,8 +10,8 @@ import io.trane.ndbc.proto.Unmarshaller;
 public abstract class MysqlUnmarshaller<T extends ServerMessage> implements Unmarshaller<T> {
 
   @Override
-  public Optional<T> apply(BufferReader bufferReader) {
-    PacketBufferReader p = new PacketBufferReader(bufferReader);
+  public Optional<T> apply(final BufferReader bufferReader) {
+    final PacketBufferReader p = new PacketBufferReader(bufferReader);
     p.markReaderIndex();
     final int header = p.readByte() & 0xFF;
     if (!acceptsHeader(header))
@@ -21,17 +21,17 @@ public abstract class MysqlUnmarshaller<T extends ServerMessage> implements Unma
     return Optional.of(decode(header, p));
   }
 
-  public <U extends ServerMessage> MysqlUnmarshaller<ServerMessage> orElse(MysqlUnmarshaller<U> other) {
+  public <U extends ServerMessage> MysqlUnmarshaller<ServerMessage> orElse(final MysqlUnmarshaller<U> other) {
 
     return new MysqlUnmarshaller<ServerMessage>() {
 
       @Override
-      protected boolean acceptsHeader(int header) {
+      protected boolean acceptsHeader(final int header) {
         return MysqlUnmarshaller.this.acceptsHeader(header) || other.acceptsHeader(header);
       }
 
       @Override
-      protected ServerMessage decode(int header, PacketBufferReader packet) {
+      protected ServerMessage decode(final int header, final PacketBufferReader packet) {
         if (MysqlUnmarshaller.this.acceptsHeader(header))
           return MysqlUnmarshaller.this.decode(header, packet);
         else
@@ -45,7 +45,7 @@ public abstract class MysqlUnmarshaller<T extends ServerMessage> implements Unma
     };
   }
 
-  protected boolean acceptsHeader(int header) {
+  protected boolean acceptsHeader(final int header) {
     return true;
   }
 

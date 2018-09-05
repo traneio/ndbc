@@ -82,7 +82,7 @@ public class EncodingRegistryTest {
 
   class TestValueEncoding extends Encoding<String, TestValue> {
 
-    public TestValueEncoding(Charset charset) {
+    public TestValueEncoding(final Charset charset) {
       super(charset);
     }
 

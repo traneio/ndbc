@@ -7,11 +7,11 @@ import io.trane.ndbc.proto.Marshaller;
 
 public class CloseStatementCommandMarshaller implements Marshaller<CloseStatementCommand> {
 
-	@Override
-	public void apply(final CloseStatementCommand command, final BufferWriter bw) {
-		final PacketBufferWriter packet = new PacketBufferWriter(bw, 0);
-		packet.writeByte(command.command);
-		packet.writeUnsignedInt(command.statementId);
-		packet.flush();
-	}
+  @Override
+  public void apply(final CloseStatementCommand command, final BufferWriter bw) {
+    final PacketBufferWriter packet = new PacketBufferWriter(bw, 0);
+    packet.writeByte(command.command);
+    packet.writeUnsignedInt(command.statementId);
+    packet.flush();
+  }
 }

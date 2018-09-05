@@ -19,59 +19,59 @@ import io.trane.ndbc.value.Value;
 
 public final class ExtendedExchange {
 
-	private final short[] binary = {Format.BINARY.getCode()};
-	private final Sync sync = new Sync();
-	private final Set<Integer> prepared = new HashSet<>();
-	private final Marshallers marshallers;
-	private final Unmarshallers unmarshallers;
+  private final short[]       binary   = { Format.BINARY.getCode() };
+  private final Sync          sync     = new Sync();
+  private final Set<Integer>  prepared = new HashSet<>();
+  private final Marshallers   marshallers;
+  private final Unmarshallers unmarshallers;
 
-	public ExtendedExchange(Marshallers marshallers, Unmarshallers unmarshallers) {
-		this.marshallers = marshallers;
-		this.unmarshallers = unmarshallers;
-	}
+  public ExtendedExchange(final Marshallers marshallers, final Unmarshallers unmarshallers) {
+    this.marshallers = marshallers;
+    this.unmarshallers = unmarshallers;
+  }
 
-	public final <T> Exchange<T> apply(final String query, final List<Value<?>> params, final Exchange<T> readResult) {
-		return withParsing(query, params,
-				id -> Exchange.send(marshallers.bind, new Bind(id, id, binary, params, binary))
-						.thenSend(marshallers.describe, new Describe.DescribePortal(id))
-						.thenSend(marshallers.execute, new Execute(id, 0))
-						.thenSend(marshallers.close, new Close.ClosePortal(id)).thenSend(marshallers.sync, sync))
-								.thenReceive(unmarshallers.bindComplete).then(readResult)
-								.thenReceive(unmarshallers.closeComplete).thenWaitFor(unmarshallers.readyForQuery);
-	}
+  public final <T> Exchange<T> apply(final String query, final List<Value<?>> params, final Exchange<T> readResult) {
+    return withParsing(query, params,
+        id -> Exchange.send(marshallers.bind, new Bind(id, id, binary, params, binary))
+            .thenSend(marshallers.describe, new Describe.DescribePortal(id))
+            .thenSend(marshallers.execute, new Execute(id, 0))
+            .thenSend(marshallers.close, new Close.ClosePortal(id)).thenSend(marshallers.sync, sync))
+                .thenReceive(unmarshallers.bindComplete).then(readResult)
+                .thenReceive(unmarshallers.closeComplete).thenWaitFor(unmarshallers.readyForQuery);
+  }
 
-	private final <T> Exchange<T> withParsing(final String query, final List<Value<?>> params,
-			final Function<String, Exchange<T>> f) {
-		final int id = id(query, params);
-		final String idString = Integer.toString(id);
-		if (prepared.contains(id))
-			return f.apply(idString);
-		else
-			return Exchange.send(marshallers.parse, new Parse(Integer.toString(id), positional(query), params))
-					.then(f.apply(idString)).thenReceive(unmarshallers.parseComplete)
-					.onSuccess(ign -> Exchange.value(prepared.add(id)));
-	}
+  private final <T> Exchange<T> withParsing(final String query, final List<Value<?>> params,
+      final Function<String, Exchange<T>> f) {
+    final int id = id(query, params);
+    final String idString = Integer.toString(id);
+    if (prepared.contains(id))
+      return f.apply(idString);
+    else
+      return Exchange.send(marshallers.parse, new Parse(Integer.toString(id), positional(query), params))
+          .then(f.apply(idString)).thenReceive(unmarshallers.parseComplete)
+          .onSuccess(ign -> Exchange.value(prepared.add(id)));
+  }
 
-	private final int id(final String query, final List<Value<?>> params) {
-		int id = query.hashCode();
-		for (final Value<?> v : params)
-			id = 31 * id + v.getClass().hashCode();
-		return id;
-	}
+  private final int id(final String query, final List<Value<?>> params) {
+    int id = query.hashCode();
+    for (final Value<?> v : params)
+      id = (31 * id) + v.getClass().hashCode();
+    return id;
+  }
 
-	// TODO handle quotes, comments, etc.
-	private final String positional(final String query) {
-		int idx = 0;
-		final StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < query.length(); i++) {
-			final char c = query.charAt(i);
-			if (c == '?') {
-				idx += 1;
-				sb.append("$");
-				sb.append(idx);
-			} else
-				sb.append(c);
-		}
-		return sb.toString();
-	}
+  // TODO handle quotes, comments, etc.
+  private final String positional(final String query) {
+    int idx = 0;
+    final StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < query.length(); i++) {
+      final char c = query.charAt(i);
+      if (c == '?') {
+        idx += 1;
+        sb.append("$");
+        sb.append(idx);
+      } else
+        sb.append(c);
+    }
+    return sb.toString();
+  }
 }

@@ -6,17 +6,17 @@ import java.time.LocalTime;
 
 public final class LocalDateValue extends Value<LocalDate> {
 
-	public LocalDateValue(final LocalDate value) {
-		super(value);
-	}
+  public LocalDateValue(final LocalDate value) {
+    super(value);
+  }
 
-	@Override
-	public final LocalDate getLocalDate() {
-		return get();
-	}
+  @Override
+  public final LocalDate getLocalDate() {
+    return get();
+  }
 
-	@Override
-	public LocalDateTime getLocalDateTime() {
-		return LocalDateTime.of(get(), LocalTime.MIDNIGHT);
-	}
+  @Override
+  public LocalDateTime getLocalDateTime() {
+    return LocalDateTime.of(get(), LocalTime.MIDNIGHT);
+  }
 }

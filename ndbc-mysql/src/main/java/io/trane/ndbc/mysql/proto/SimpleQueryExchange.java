@@ -10,16 +10,16 @@ import io.trane.ndbc.proto.Exchange;
 
 public class SimpleQueryExchange implements Function<String, Exchange<List<Row>>> {
 
-	private final Marshallers marshallers;
-	private final Exchange<List<Row>> resultSet;
+  private final Marshallers         marshallers;
+  private final Exchange<List<Row>> resultSet;
 
-	public SimpleQueryExchange(Marshallers marshallers, Exchange<List<Row>> resultSet) {
-		this.marshallers = marshallers;
-		this.resultSet = resultSet;
-	}
+  public SimpleQueryExchange(final Marshallers marshallers, final Exchange<List<Row>> resultSet) {
+    this.marshallers = marshallers;
+    this.resultSet = resultSet;
+  }
 
-	@Override
-	public Exchange<List<Row>> apply(final String sql) {
-		return Exchange.send(marshallers.textCommand, new QueryCommand(sql)).then(resultSet);
-	}
+  @Override
+  public Exchange<List<Row>> apply(final String sql) {
+    return Exchange.send(marshallers.textCommand, new QueryCommand(sql)).then(resultSet);
+  }
 }

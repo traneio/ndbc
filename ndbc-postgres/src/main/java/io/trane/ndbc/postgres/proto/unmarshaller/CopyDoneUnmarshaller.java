@@ -7,19 +7,19 @@ import io.trane.ndbc.proto.BufferReader;;
 
 public final class CopyDoneUnmarshaller extends PostgresUnmarshaller<CopyDone> {
 
-	private static final CopyDone copyDone = new CopyDone();
+  private static final CopyDone copyDone = new CopyDone();
 
-	public CopyDoneUnmarshaller(Charset charset) {
-		super(charset);
-	}
+  public CopyDoneUnmarshaller(final Charset charset) {
+    super(charset);
+  }
 
-	@Override
-	protected boolean acceptsType(byte tpe) {
-		return tpe == 'c';
-	}
+  @Override
+  protected boolean acceptsType(final byte tpe) {
+    return tpe == 'c';
+  }
 
-	@Override
-	public final CopyDone decode(final byte tpe, final BufferReader b) {
-		return copyDone;
-	}
+  @Override
+  public final CopyDone decode(final byte tpe, final BufferReader b) {
+    return copyDone;
+  }
 }

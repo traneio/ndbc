@@ -116,9 +116,9 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   private final <T> Future<T> execute(final Exchange<T> exchange) {
     try {
-      Future<T> run = exchange.run(channel);
+      final Future<T> run = exchange.run(channel);
       return queryTimeout.map(t -> run.within(t, scheduler)).orElse(run);
-    } catch (Throwable t) {
+    } catch (final Throwable t) {
       NonFatalException.verify(t);
       return Future.exception(t);
     }
