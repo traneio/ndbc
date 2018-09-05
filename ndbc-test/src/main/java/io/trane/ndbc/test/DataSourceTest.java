@@ -17,224 +17,380 @@ import io.trane.future.CheckedFutureException;
 import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
+import io.trane.ndbc.NdbcException;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 
 public class DataSourceTest {
 
-	protected DataSource ds;
+  protected DataSource ds;
 
-	protected Duration timeout = Duration.ofSeconds(999);
+  protected Duration timeout = Duration.ofSeconds(999);
 
-	private static int tableSuffix = 1;
+  private static int tableSuffix = 1;
 
-	protected final String table = "table_" + tableSuffix++;
+  protected final String table = "table_" + tableSuffix++;
 
-	private final String stringColumnType;
+  private final String stringColumnType;
 
-	private final String sleepQuery;
+  private final String sleepQuery;
 
-	public DataSourceTest(final Config config, final String stringColumnType, final String sleepQuery) {
-		this.ds = DataSource.fromConfig(config);
-		this.stringColumnType = stringColumnType;
-		this.sleepQuery = sleepQuery;
-	}
+  public DataSourceTest(final Config config, final String stringColumnType, final String sleepQuery) {
+    this.ds = DataSource.fromConfig(config);
+    this.stringColumnType = stringColumnType;
+    this.sleepQuery = sleepQuery;
+  }
 
-	@Before
-	public void recreateSchema() throws CheckedFutureException {
-		ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
-		ds.execute("CREATE TABLE " + table + " (s " + stringColumnType + ")").get(timeout);
-		ds.execute("INSERT INTO " + table + " VALUES ('s')").get(timeout);
-	}
+  @Before
+  public void recreateSchema() throws CheckedFutureException {
+    ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
+    ds.execute("CREATE TABLE " + table + " (s " + stringColumnType + ")").get(timeout);
+    ds.execute("INSERT INTO " + table + " VALUES ('s')").get(timeout);
+  }
 
-	@After
-	public void close() throws CheckedFutureException {
-		ds.close().get(timeout);
-	}
+  @After
+  public void close() throws CheckedFutureException {
+    ds.close().get(timeout);
+  }
 
-	// @Test
-	// public void array() throws CheckedFutureException {
-	// final Iterator<Row> rows = ds.query(PreparedStatement.apply("SELECT
-	// ARRAY[1,2, 3]")).get(timeout).iterator();
-	//
-	// assertEquals(rows.next().column(0).getString(), "s");
-	// assertFalse(rows.hasNext());
-	// }
+  // @Test
+  // public void array() throws CheckedFutureException {
+  // final Iterator<Row> rows = ds.query(PreparedStatement.apply("SELECT
+  // ARRAY[1,2, 3]")).get(timeout).iterator();
+  //
+  // assertEquals(rows.next().column(0).getString(), "s");
+  // assertFalse(rows.hasNext());
+  // }
 
-	@Test
-	public void simpleQuery() throws CheckedFutureException {
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+  @Test
+  public void simpleQuery() throws CheckedFutureException {
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
 
-		assertEquals(rows.next().column(0).getString(), "s");
-		assertFalse(rows.hasNext());
-	}
+    assertEquals(rows.next().column(0).getString(), "s");
+    assertFalse(rows.hasNext());
+  }
 
-	@Test
-	public void extendedQueryNoParams() throws CheckedFutureException {
-		final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM " + table);
+  @Test
+  public void simpleQueryFailure() throws CheckedFutureException {
+    try {
+      ds.query("SELECT * FROM invalid_table").get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+      assertTrue(ex.getMessage().contains("invalid_table"));
+    }
+  }
 
-		final Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
-		assertEquals(rows.next().column(0).getString(), "s");
-		assertFalse(rows.hasNext());
-	}
+  @Test
+  public void simpleQueryInvalid() throws CheckedFutureException {
+    try {
+      ds.query("SLCT * FROM " + table).get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+    }
+  }
 
-	@Test
-	public void extendedQueryWithParams() throws CheckedFutureException {
-		final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM " + table + " WHERE s = ?").setString("s");
+  @Test
+  public void extendedQueryNoParams() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM " + table);
 
-		final Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
-		assertEquals(rows.next().column(0).getString(), "s");
-		assertFalse(rows.hasNext());
-	}
+    final Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
+    assertEquals(rows.next().column(0).getString(), "s");
+    assertFalse(rows.hasNext());
+  }
 
-	@Test
-	public void simpleExecuteInsert() throws CheckedFutureException {
-		ds.execute("INSERT INTO " + table + " VALUES ('u')").get(timeout);
+  @Test
+  public void extendedQueryInvalid() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("SLCT * FROM " + table);
+    try {
+      ds.query(ps).get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+    }
+  }
 
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
-		assertEquals(rows.next().column(0).getString(), "s");
-		assertEquals(rows.next().column(0).getString(), "u");
-		assertFalse(rows.hasNext());
-	}
+  @Test
+  public void extendedQueryNoParamsFailure() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM invalid_table");
 
-	@Test
-	public void simpleExecuteUpdate() throws CheckedFutureException {
-		ds.execute("UPDATE " + table + " SET s = 'u'").get(timeout);
+    try {
+      ds.query(ps).get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+      assertTrue(ex.getMessage().contains("invalid_table"));
+    }
+  }
 
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
-		assertEquals(rows.next().column(0).getString(), "u");
-		assertFalse(rows.hasNext());
-	}
+  @Test
+  public void extendedQueryWithParams() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM " + table + " WHERE s = ?").setString("s");
 
-	@Test
-	public void simpleExecuteDelete() throws CheckedFutureException {
-		ds.execute("DELETE FROM " + table).get(timeout);
+    final Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
+    assertEquals(rows.next().column(0).getString(), "s");
+    assertFalse(rows.hasNext());
+  }
 
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
-		assertFalse(rows.hasNext());
-	}
+  @Test
+  public void extendedQueryWithParamsFailure() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM invalid_table WHERE s = ?").setString("s");
 
-	@Test
-	public void extendedExecuteInsertNoParam() throws CheckedFutureException {
-		final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES ('u')");
+    try {
+      ds.query(ps).get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+      assertTrue(ex.getMessage().contains("invalid_table"));
+    }
+  }
 
-		assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
+  @Test
+  public void simpleExecuteInsert() throws CheckedFutureException {
+    ds.execute("INSERT INTO " + table + " VALUES ('u')").get(timeout);
 
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
-		assertEquals(rows.next().column(0).getString(), "s");
-		assertEquals(rows.next().column(0).getString(), "u");
-		assertFalse(rows.hasNext());
-	}
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertEquals(rows.next().column(0).getString(), "s");
+    assertEquals(rows.next().column(0).getString(), "u");
+    assertFalse(rows.hasNext());
+  }
 
-	@Test
-	public void extendedExecuteUpdateNoParam() throws CheckedFutureException {
-		final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = 'u'");
+  @Test
+  public void simpleExecuteInsertFailure() throws CheckedFutureException {
+    try {
+      ds.execute("INSERT INTO invalid_table VALUES ('u')").get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+      assertTrue(ex.getMessage().contains("invalid_table"));
+    }
+  }
 
-		assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
+  @Test
+  public void simpleExecuteUpdate() throws CheckedFutureException {
+    ds.execute("UPDATE " + table + " SET s = 'u'").get(timeout);
 
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
-		assertEquals(rows.next().column(0).getString(), "u");
-		assertFalse(rows.hasNext());
-	}
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertEquals(rows.next().column(0).getString(), "u");
+    assertFalse(rows.hasNext());
+  }
 
-	@Test
-	public void extendedExecuteDeleteNoParam() throws CheckedFutureException {
-		final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = 's'");
+  @Test
+  public void simpleExecuteUpdateFailure() throws CheckedFutureException {
+    try {
+      ds.execute("UPDATE invalid_table SET s = 'u'").get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+      assertTrue(ex.getMessage().contains("invalid_table"));
+    }
+  }
 
-		assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
+  @Test
+  public void simpleExecuteDelete() throws CheckedFutureException {
+    ds.execute("DELETE FROM " + table).get(timeout);
 
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
-		assertFalse(rows.hasNext());
-	}
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertFalse(rows.hasNext());
+  }
 
-	@Test
-	public void extendedExecuteInsertWithParam() throws CheckedFutureException {
-		final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)").setString("u");
+  @Test
+  public void simpleExecuteDeleteFailure() throws CheckedFutureException {
+    try {
+      ds.execute("DELETE FROM invalid_table").get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+      assertTrue(ex.getMessage().contains("invalid_table"));
+    }
+  }
 
-		assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
+  @Test
+  public void extendedExecuteInsertNoParam() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES ('u')");
 
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
-		assertEquals(rows.next().column(0).getString(), "s");
-		assertEquals(rows.next().column(0).getString(), "u");
-		assertFalse(rows.hasNext());
-	}
+    assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
-	@Test
-	public void extendedExecuteUpdateWithParam() throws CheckedFutureException {
-		final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = ?").setString("u");
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertEquals(rows.next().column(0).getString(), "s");
+    assertEquals(rows.next().column(0).getString(), "u");
+    assertFalse(rows.hasNext());
+  }
 
-		assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
+  @Test
+  public void extendedExecuteInsertNoParamFailure() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO invalid_table VALUES ('u')");
 
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
-		assertEquals(rows.next().column(0).getString(), "u");
-		assertFalse(rows.hasNext());
-	}
+    try {
+      ds.execute(ps).get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+      assertTrue(ex.getMessage().contains("invalid_table"));
+    }
+  }
 
-	@Test
-	public void extendedExecuteDeleteWithParam() throws CheckedFutureException {
-		final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
+  @Test
+  public void extendedExecuteUpdateNoParam() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = 'u'");
 
-		assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
+    assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
-		assertFalse(rows.hasNext());
-	}
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertEquals(rows.next().column(0).getString(), "u");
+    assertFalse(rows.hasNext());
+  }
 
-	@Test
-	public void transactionSuccess() throws CheckedFutureException {
-		final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
+  @Test
+  public void extendedExecuteUpdateNoParamFailure() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("UPDATE invalid_table SET s = 'u'");
 
-		final long affectedRows = ds.transactional(() -> ds.execute(ps)).get(timeout);
+    try {
+      ds.execute(ps).get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+      assertTrue(ex.getMessage().contains("invalid_table"));
+    }
+  }
 
-		assertEquals(affectedRows, 1L);
+  @Test
+  public void extendedExecuteDeleteNoParam() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = 's'");
 
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
-		assertFalse(rows.hasNext());
-	}
+    assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
-	@Test
-	public void transactionLocalFailure() throws CheckedFutureException {
-		final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertFalse(rows.hasNext());
+  }
 
-		try {
-			ds.transactional(() -> ds.execute(ps).map(v -> {
-				throw new IllegalStateException();
-			})).get(timeout);
-			assertTrue(false);
-		} catch (IllegalStateException ex) {
-		}
+  @Test
+  public void extendedExecuteDeleteNoParamFailure() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM invalid_table WHERE s = 's'");
 
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
-		assertTrue(rows.hasNext());
-	}
+    try {
+      ds.execute(ps).get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+      assertTrue(ex.getMessage().contains("invalid_table"));
+    }
+  }
 
-	@Test
-	public void transactionDBFailure() throws CheckedFutureException {
-		final PreparedStatement ps = PreparedStatement.apply("DELETE FROM INVALID_TABLE WHERE s = ?").setString("s");
+  @Test
+  public void extendedExecuteInsertWithParam() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)").setString("u");
 
-		ds.transactional(() -> ds.execute(ps)).join(timeout);
+    assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
-		final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
-		assertTrue(rows.hasNext());
-	}
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertEquals(rows.next().column(0).getString(), "s");
+    assertEquals(rows.next().column(0).getString(), "u");
+    assertFalse(rows.hasNext());
+  }
 
-	class CancellationException extends Exception {
-		private static final long serialVersionUID = 1L;
-	}
+  @Test
+  public void extendedExecuteInsertWithParamFailure() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO invalid_table VALUES (?)").setString("u");
 
-	@Test(expected = CancellationException.class)
-	public void cancellation() throws Throwable {
-		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-		try {
-			final Future<Long> f = ds.execute(sleepQuery);
-			f.raise(new CancellationException());
-			try {
-				f.get(timeout);
-			} catch (CheckedFutureException e) {
-				throw e.getCause();
-			}
-		} finally {
-			scheduler.shutdown();
-		}
-	}
+    try {
+      ds.execute(ps).get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+      assertTrue(ex.getMessage().contains("invalid_table"));
+    }
+  }
+
+  @Test
+  public void extendedExecuteUpdateWithParam() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = ?").setString("u");
+
+    assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
+
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertEquals(rows.next().column(0).getString(), "u");
+    assertFalse(rows.hasNext());
+  }
+
+  @Test
+  public void extendedExecuteUpdteWithParamFailure() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("UPDATE invalid_table SET s = ?").setString("u");
+
+    try {
+      ds.execute(ps).get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+      assertTrue(ex.getMessage().contains("invalid_table"));
+    }
+  }
+
+  @Test
+  public void extendedExecuteDeleteWithParam() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
+
+    assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
+
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertFalse(rows.hasNext());
+  }
+
+  @Test
+  public void extendedExecuteDeleteWithParamFailure() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM invalid_table WHERE s = ?").setString("s");
+
+    try {
+      ds.execute(ps).get(timeout);
+      assertTrue(false);
+    } catch (NdbcException ex) {
+      assertTrue(ex.getMessage().contains("invalid_table"));
+    }
+  }
+
+  @Test
+  public void transactionSuccess() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
+
+    final long affectedRows = ds.transactional(() -> ds.execute(ps)).get(timeout);
+
+    assertEquals(affectedRows, 1L);
+
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertFalse(rows.hasNext());
+  }
+
+  @Test
+  public void transactionLocalFailure() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
+
+    try {
+      ds.transactional(() -> ds.execute(ps).map(v -> {
+        throw new IllegalStateException();
+      })).get(timeout);
+      assertTrue(false);
+    } catch (IllegalStateException ex) {
+    }
+
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertTrue(rows.hasNext());
+  }
+
+  @Test
+  public void transactionDBFailure() throws CheckedFutureException {
+    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM INVALID_TABLE WHERE s = ?").setString("s");
+
+    ds.transactional(() -> ds.execute(ps)).join(timeout);
+
+    final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
+    assertTrue(rows.hasNext());
+  }
+
+  class CancellationException extends Exception {
+    private static final long serialVersionUID = 1L;
+  }
+
+  @Test(expected = CancellationException.class)
+  public void cancellation() throws Throwable {
+    final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    try {
+      final Future<Long> f = ds.execute(sleepQuery);
+      f.raise(new CancellationException());
+      try {
+        f.get(timeout);
+      } catch (CheckedFutureException e) {
+        throw e.getCause();
+      }
+    } finally {
+      scheduler.shutdown();
+    }
+  }
 }

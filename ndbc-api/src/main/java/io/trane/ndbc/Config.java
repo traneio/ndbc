@@ -176,7 +176,7 @@ public final class Config {
     try {
       return parser.apply(value);
     } catch (final Exception ex) {
-      throw new RuntimeException("Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.",
+      throw new NdbcException("Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.",
           ex);
     }
   }
@@ -184,7 +184,7 @@ public final class Config {
   private static final String getRequiredProperty(final String prefix, final Properties properties,
       final String name) {
     return getProperty(prefix, properties, name).orElseGet(() -> {
-      throw new RuntimeException("Missing config `" + prefix + "." + name + "`.");
+      throw new NdbcException("Missing config `" + prefix + "." + name + "`.");
     });
   }
 
@@ -194,7 +194,7 @@ public final class Config {
       try {
         return parser.apply(value);
       } catch (final Exception ex) {
-        throw new RuntimeException(
+        throw new NdbcException(
             "Can't parse value `" + value + "` for config `" + prefix + "." + name + "`.", ex);
       }
     });
@@ -428,7 +428,7 @@ public final class Config {
     try {
       return (T) Class.forName(cls).newInstance();
     } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-      throw new RuntimeException("Can't load encoding " + cls + ". Make sure to provide an empty constructor.",
+      throw new NdbcException("Can't load encoding " + cls + ". Make sure to provide an empty constructor.",
           e);
     }
   }
