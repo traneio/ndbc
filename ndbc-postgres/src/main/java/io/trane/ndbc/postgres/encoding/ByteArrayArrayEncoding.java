@@ -7,7 +7,7 @@ import io.trane.ndbc.value.ByteArrayArrayValue;
 final class ByteArrayArrayEncoding extends ArrayEncoding<byte[], ByteArrayArrayValue> {
 
   private final ByteArrayEncoding byteArrayEncoding;
-  private final byte[][]          emptyArray = new byte[0][0];
+  private final byte[][] emptyArray = new byte[0][0];
 
   public ByteArrayArrayEncoding(final ByteArrayEncoding byteArrayEncoding, final Charset charset) {
     super(charset);

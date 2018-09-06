@@ -15,7 +15,7 @@ import io.trane.ndbc.value.Value;
 public final class EncodingRegistry {
 
   private final Map<Class<?>, Encoding<?, ?>> byValueClass;
-  private final Map<Integer, Encoding<?, ?>>  byOid;
+  private final Map<Integer, Encoding<?, ?>> byOid;
 
   public EncodingRegistry(final Optional<List<Encoding<?, ?>>> customEncodings, final Charset charset) {
     byValueClass = new HashMap<>();
@@ -29,7 +29,7 @@ public final class EncodingRegistry {
         new ShortEncoding(charset), new StringEncoding(charset),
         new BigDecimalArrayEncoding(new BigDecimalEncoding(charset), charset),
         new BooleanArrayEncoding(new BooleanEncoding(charset), charset),
-        new ByteArrayArrayEncoding(new ByteArrayEncoding(charset), charset),
+        new ByteArrayArrayEncoding(new ByteArrayEncoding(charset, ByteArrayEncoding.ARRAY_PREFIX), charset),
         new DoubleArrayEncoding(new DoubleEncoding(charset), charset),
         new FloatArrayEncoding(new FloatEncoding(charset), charset),
         new IntegerArrayEncoding(new IntegerEncoding(charset), charset),
