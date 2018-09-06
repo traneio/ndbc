@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetTime;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
@@ -14,7 +15,7 @@ import io.trane.ndbc.value.Value;
 
 public abstract class ArrayEncodingTest extends EncodingTest {
 
-  public ArrayEncodingTest(Config config) {
+  public ArrayEncodingTest(final Config config) {
     super(config);
   }
 
@@ -61,6 +62,7 @@ public abstract class ArrayEncodingTest extends EncodingTest {
     });
   }
 
+  @Ignore
   @Test
   public void floatArray() throws CheckedFutureException {
     testArray(floatColumnTypes(), (ps, v) -> ps.setFloatArray(v), Value::getFloatArray, r -> {
