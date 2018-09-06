@@ -1,12 +1,17 @@
 package io.trane.ndbc.postgres.encoding;
 
 import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
 import io.trane.ndbc.value.Value;
 
 abstract class ArrayEncoding<I, V extends Value<I[]>> extends Encoding<I[], V> {
+
+  private static final Pattern BRACES = Pattern.compile("\\{(.+?)\\}");
+  private static final Pattern QUOTES = Pattern.compile("\"(.+?)\"");
 
   public ArrayEncoding(final Charset charset) {
     super(charset);
@@ -26,8 +31,26 @@ abstract class ArrayEncoding<I, V extends Value<I[]>> extends Encoding<I[], V> {
 
   @Override
   public final I[] decodeText(final String value) {
-    throw new UnsupportedOperationException(); // TODO see buildArrayList in
-    // PgArray.java
+    final Matcher matcher = BRACES.matcher(value);
+
+    if (matcher.find()) {
+      final String[] pieces = matcher.group(1).split(",");
+      final I[] result = newArray(pieces.length);
+
+      for (int i = 0; i < result.length; i++)
+        result[i] = decode(pieces[i]);
+
+      return result;
+    } else
+      return emptyArray();
+  }
+
+  private final I decode(final String value) {
+    final Matcher matcher = QUOTES.matcher(value);
+    if (matcher.find())
+      return itemEncoding().decodeText(matcher.group(1));
+    else
+      return itemEncoding().decodeText(value);
   }
 
   @Override
@@ -51,7 +74,7 @@ abstract class ArrayEncoding<I, V extends Value<I[]>> extends Encoding<I[], V> {
   @Override
   public final I[] decodeBinary(final BufferReader b) {
     final int dimensions = b.readInt();
-    assert (dimensions <= 1);
+    assert dimensions <= 1;
     b.readInt(); // flags bit 0: 0=no-nulls, 1=has-nulls
     b.readInt(); // elementOid
     if (dimensions == 0)
@@ -59,7 +82,7 @@ abstract class ArrayEncoding<I, V extends Value<I[]>> extends Encoding<I[], V> {
     else {
       final int length = b.readInt();
       final int lbound = b.readInt();
-      assert (lbound == 1);
+      assert lbound == 1;
 
       final I[] result = newArray(length);
 

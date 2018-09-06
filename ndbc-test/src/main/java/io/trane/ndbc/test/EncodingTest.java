@@ -86,8 +86,8 @@ public abstract class EncodingTest {
   }
 
   protected <T> void testArray(final List<String> columnTypes,
-      final BiFunction<PreparedStatement, T[], PreparedStatement> set,
-      final Function<Value<?>, T[]> get, final Function<Random, T[]> gen) throws CheckedFutureException {
+      final BiFunction<PreparedStatement, T[], PreparedStatement> set, final Function<Value<?>, T[]> get,
+      final Function<Random, T[]> gen) throws CheckedFutureException {
     test(columnTypes, set, get, gen, (a, b) -> assertArrayEquals(a, b));
   }
 
@@ -103,7 +103,7 @@ public abstract class EncodingTest {
       final Function<Value<?>, T> get, final Function<Random, T> gen, final BiConsumer<T, T> verify,
       final int iterations) throws CheckedFutureException {
 
-    for (String columnType : columnTypes) {
+    for (final String columnType : columnTypes) {
       final String table = "test_encoding_" + tableSuffix.incrementAndGet();
       ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
       ds.execute("CREATE TABLE " + table + " (c " + columnType + ")").get(timeout);
@@ -113,12 +113,10 @@ public abstract class EncodingTest {
         final T expected = gen.apply(r);
         try {
           ds.execute("DELETE FROM " + table).get(timeout);
-          ds.execute(set.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected))
-              .get(timeout);
+          ds.execute(set.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected)).get(timeout);
 
-          // final T simpleQueryActual = get.apply(query("SELECT c FROM " +
-          // table));
-          // verify.accept(expected, simpleQueryActual);
+          final T simpleQueryActual = get.apply(query("SELECT c FROM " + table));
+          verify.accept(expected, simpleQueryActual);
 
           final T extendedQueryactual = get.apply(query(PreparedStatement.apply("SELECT c FROM " + table)));
           verify.accept(expected, extendedQueryactual);

@@ -8,7 +8,7 @@ import io.trane.ndbc.value.LocalTimeArrayValue;
 final class LocalTimeArrayEncoding extends ArrayEncoding<LocalTime, LocalTimeArrayValue> {
 
   private final LocalTimeEncoding localTimeEncoding;
-  private final LocalTime[]       emptyArray = new LocalTime[0];
+  private final LocalTime[] emptyArray = new LocalTime[0];
 
   public LocalTimeArrayEncoding(final LocalTimeEncoding localTimeEncoding, final Charset charset) {
     super(charset);
