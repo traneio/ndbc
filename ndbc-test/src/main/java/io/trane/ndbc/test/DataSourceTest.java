@@ -374,16 +374,12 @@ public class DataSourceTest {
     assertTrue(rows.hasNext());
   }
 
-  class CancellationException extends Exception {
-    private static final long serialVersionUID = 1L;
-  }
-
-  @Test(expected = CancellationException.class)
+  @Test(expected = NdbcException.class)
   public void cancellation() throws Throwable {
     final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     try {
       final Future<Long> f = ds.execute(sleepQuery);
-      f.raise(new CancellationException());
+      f.raise(new NdbcException(""));
       try {
         f.get(timeout);
       } catch (final CheckedFutureException e) {

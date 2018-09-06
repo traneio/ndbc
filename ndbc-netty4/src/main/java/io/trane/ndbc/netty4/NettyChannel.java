@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.trane.future.Future;
@@ -33,8 +34,9 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
     return ctx.flatMap(c -> {
       final ByteBuf ioBuffer = c.alloc().ioBuffer();
       marshaller.apply(msg, new BufferWriter(charset, ioBuffer));
-      c.write(ioBuffer);
-      return Future.VOID;
+      ChannelFuture write = c.write(ioBuffer);
+      c.flush();
+      return ChannelFutureHandler.toFuture(write);
     });
   }
 
@@ -65,7 +67,6 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
         }
       };
       if (nextMessageConsumer.compareAndSet(null, consumer)) {
-        c.flush();
         c.read();
         return p;
       } else

@@ -133,6 +133,6 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
         .flatMap(channel -> Exchange
             .send(marshallers.cancelRequest, new CancelRequest(data.processId, data.secretKey))
             .then(Exchange.CLOSE).run(channel))
-        .onFailure(e -> logger.warning("Can't cancel request. Reason: " + e)).ensure(() -> p.setException(ex)));
+        .onFailure(e -> logger.warning("Can't cancel request. Reason: " + e)));
   }
 }

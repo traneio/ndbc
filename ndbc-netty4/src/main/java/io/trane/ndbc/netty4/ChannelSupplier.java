@@ -17,7 +17,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.flow.FlowControlHandler;
 import io.trane.future.Future;
-import io.trane.future.Promise;
 
 public final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
 
@@ -55,14 +54,13 @@ public final class ChannelSupplier implements Supplier<Future<NettyChannel>> {
   }
 
   private final Future<Void> bootstrap(final NettyChannel channel) {
-    final Promise<Void> p = Promise.apply();
-    new Bootstrap().group(eventLoopGroup).channel(NioSocketChannel.class).option(ChannelOption.SO_KEEPALIVE, true)
-        .option(ChannelOption.AUTO_READ, false).handler(new ChannelInitializer<io.netty.channel.Channel>() {
-          @Override
-          protected void initChannel(final io.netty.channel.Channel ch) throws Exception {
-            ch.pipeline().addLast(toBufferReaderDecoder(), new FlowControlHandler(), channel);
-          }
-        }).connect(new InetSocketAddress(host, port)).addListener(future -> p.become(Future.VOID));
-    return p;
+    return ChannelFutureHandler.toFuture(
+        new Bootstrap().group(eventLoopGroup).channel(NioSocketChannel.class).option(ChannelOption.SO_KEEPALIVE, true)
+            .option(ChannelOption.AUTO_READ, false).handler(new ChannelInitializer<io.netty.channel.Channel>() {
+              @Override
+              protected void initChannel(final io.netty.channel.Channel ch) throws Exception {
+                ch.pipeline().addLast(toBufferReaderDecoder(), new FlowControlHandler(), channel);
+              }
+            }).connect(new InetSocketAddress(host, port)));
   }
 }
