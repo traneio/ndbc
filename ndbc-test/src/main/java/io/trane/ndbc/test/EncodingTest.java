@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -125,12 +124,7 @@ public abstract class EncodingTest {
           verify.accept(expected, extendedQueryactual);
 
         } catch (final Exception e) {
-          String s;
-          if (expected.getClass().isArray())
-            s = Arrays.toString((Object[]) expected);
-          else
-            s = expected.toString();
-          throw new RuntimeException("Failure. columnType '" + columnType + "', value '" + s + "'", e);
+          throw new RuntimeException("Failure. columnType '" + columnType + "', value '" + expected + "'", e);
         }
       }
     }

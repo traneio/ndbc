@@ -34,7 +34,7 @@ public final class ExtendedExchange {
   public final <T> Exchange<T> apply(final String query, final List<Value<?>> params, final Exchange<T> readResult) {
     return withParsing(query, params,
         id -> Exchange.send(marshallers.executeStatementCommand, new ExecuteStatementCommand(id, params))
-            .thenWaitFor(readResult));
+            .then(readResult));
   }
 
   private final <T> Exchange<T> withParsing(final String query, final List<Value<?>> params,
