@@ -3,6 +3,7 @@ package io.trane.ndbc.postgres.encoding;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.function.BiConsumer;
@@ -16,12 +17,13 @@ import io.trane.ndbc.value.Value;
 public abstract class EncodingTest<V extends Value<?>, E extends Encoding<?, V>> {
 
   private static final int SAMPLES = 1000;
+  protected static final Charset UTF8 = Charset.forName("UTF-8");
 
-  private final E                   enc;
-  private final Integer             expectedOid;
-  private final Class<V>            expectedValueClass;
+  private final E enc;
+  private final Integer expectedOid;
+  private final Class<V> expectedValueClass;
   private final Function<Random, V> generator;
-  private final BiConsumer<V, V>    verify;
+  private final BiConsumer<V, V> verify;
 
   public EncodingTest(final E enc, final Integer expectedOid, final Class<V> expectedValueClass,
       final Function<Random, V> generator) {
@@ -75,5 +77,16 @@ public abstract class EncodingTest<V extends Value<?>, E extends Encoding<?, V>>
   protected static LocalDateTime randomLocalDateTime(final Random r) {
     return LocalDateTime.of(r.nextInt(5000 - 1971) + 1971, r.nextInt(12) + 1, r.nextInt(28) + 1, r.nextInt(24),
         r.nextInt(60), r.nextInt(60), r.nextInt(99999) * 1000);
+  }
+
+  protected static String randomString(final Random r) {
+    final int length = r.nextInt(1000) + 1;
+    final StringBuilder sb = new StringBuilder();
+    while (sb.length() < r.nextInt(length)) {
+      final char c = (char) (r.nextInt() & Character.MAX_VALUE);
+      if (Character.isAlphabetic(c) || Character.isDigit(c))
+        sb.append(c);
+    }
+    return sb.toString();
   }
 }
