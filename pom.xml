@@ -64,6 +64,7 @@
 		<module>ndbc-mysql</module>
 		<module>ndbc-mysql-embedded</module>
 		<module>ndbc-mysql-netty4</module>
+		<module>ndbc-sqlserver</module>
 		<module>ndbc-readme-validation</module>
 	</modules>
 
