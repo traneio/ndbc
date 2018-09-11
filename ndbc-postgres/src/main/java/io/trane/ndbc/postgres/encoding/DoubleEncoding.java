@@ -23,11 +23,6 @@ final class DoubleEncoding extends Encoding<Double, DoubleValue> {
   }
 
   @Override
-  public final String encodeText(final Double value) {
-    return Double.toString(value);
-  }
-
-  @Override
   public final Double decodeText(final String value) {
     return Double.valueOf(value);
   }

@@ -16,14 +16,14 @@ import io.trane.ndbc.value.Value;
 
 public abstract class EncodingTest<V extends Value<?>, E extends Encoding<?, V>> {
 
-  private static final int SAMPLES = 1000;
-  protected static final Charset UTF8 = Charset.forName("UTF-8");
+  private static final int       SAMPLES = 1000;
+  protected static final Charset UTF8    = Charset.forName("UTF-8");
 
-  private final E enc;
-  private final Integer expectedOid;
-  private final Class<V> expectedValueClass;
+  private final E                   enc;
+  private final Integer             expectedOid;
+  private final Class<V>            expectedValueClass;
   private final Function<Random, V> generator;
-  private final BiConsumer<V, V> verify;
+  private final BiConsumer<V, V>    verify;
 
   public EncodingTest(final E enc, final Integer expectedOid, final Class<V> expectedValueClass,
       final Function<Random, V> generator) {
@@ -49,29 +49,20 @@ public abstract class EncodingTest<V extends Value<?>, E extends Encoding<?, V>>
     assertEquals(expectedValueClass, enc.valueClass());
   }
 
-  private void testValue(final V value, final Format format) {
+  private void testValue(final V value) {
     final ByteBuffer buf = ByteBuffer.allocate(1000);
-    enc.encode(format, value, new TestBufferWriter(buf));
+    enc.encodeBinary(value, new TestBufferWriter(buf));
     buf.limit(buf.position());
     buf.rewind();
-    final V decoded = enc.decode(format, new TestBufferReader(buf));
+    final V decoded = enc.decode(Format.BINARY, new TestBufferReader(buf));
     verify.accept(value, decoded);
-  }
-
-  private void testFormat(final Format format) {
-    final Random r = new Random(1);
-    for (int i = 0; i < SAMPLES; i++)
-      testValue(generator.apply(r), format);
-  }
-
-  @Test
-  public void textEncoding() {
-    testFormat(Format.TEXT);
   }
 
   @Test
   public void binaryEncoding() {
-    testFormat(Format.BINARY);
+    final Random r = new Random(1);
+    for (int i = 0; i < SAMPLES; i++)
+      testValue(generator.apply(r));
   }
 
   protected static LocalDateTime randomLocalDateTime(final Random r) {

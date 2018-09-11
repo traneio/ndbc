@@ -24,11 +24,6 @@ final class UUIDEncoding extends Encoding<UUID, UUIDValue> {
   }
 
   @Override
-  public final String encodeText(final UUID value) {
-    return value.toString();
-  }
-
-  @Override
   public final UUID decodeText(final String value) {
     return UUID.fromString(value);
   }

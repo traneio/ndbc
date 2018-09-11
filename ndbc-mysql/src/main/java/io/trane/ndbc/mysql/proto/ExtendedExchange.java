@@ -47,7 +47,8 @@ public final class ExtendedExchange {
       return Exchange.send(marshallers.textCommand, new PrepareStatementCommand(query)).then(readPrepareOk)
           .flatMap(ok -> readFields(ok.numOfParameters, ok.numOfParameters)
               .flatMap(ig -> readFields(ok.numOfColumns, ok.numOfColumns)).map(v -> ok.statementId))
-          .onSuccess(id -> Exchange.value(prepared.put(positionalQuery, statementId))).flatMap(f::apply);
+          .onSuccess(id -> Exchange.value(prepared.put(positionalQuery, statementId)))
+          .flatMap(f::apply);
   }
 
   private final Exchange<Void> readFields(final int count, final int initialCount) {

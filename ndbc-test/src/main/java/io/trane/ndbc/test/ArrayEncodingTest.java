@@ -144,6 +144,7 @@ public abstract class ArrayEncodingTest extends EncodingTest {
   }
 
   @Test
+  @Ignore
   public void stringArray() throws CheckedFutureException {
     testArray(stringColumnTypes(), (ps, v) -> ps.setStringArray(v), Value::getStringArray, r -> {
       final String[] array = new String[r.nextInt(10)];

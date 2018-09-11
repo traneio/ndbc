@@ -24,6 +24,8 @@ public final class EncodingRegistry {
     byKey = new HashMap<>();
 
     final List<Encoding<?, ?>> defaultEncodings = Arrays.asList(
+        new BooleanEncoding(charset),
+
         new DoubleEncoding(charset),
         new FloatEncoding(charset),
         new ShortEncoding(charset),
@@ -71,7 +73,10 @@ public final class EncodingRegistry {
   }
 
   public final Integer fieldType(final Value<?> value) {
-    return byValueClass.get(value.getClass()).key().fieldType;
+    Encoding<?, ?> encoding = byValueClass.get(value.getClass());
+    if (encoding == null)
+      throw new NdbcException("Can't encode " + value);
+    return encoding.key().fieldType;
   }
 
   private void registerEncodings(final List<Encoding<?, ?>> encodings) {

@@ -36,7 +36,9 @@ public final class BindMarshaller implements Marshaller<Bind> {
       else {
         final int lengthPosition = b.writerIndex();
         b.writeInt(0);
-        encoding.encode(format(msg, i), field, b);
+        if (format(msg, i) != Format.BINARY)
+          throw new IllegalStateException("Bug - Expected binary encoding");
+        encoding.encodeBinary(field, b);
         b.writeLengthNoSelf(lengthPosition);
       }
       i++;

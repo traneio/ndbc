@@ -23,11 +23,6 @@ final class IntegerEncoding extends Encoding<Integer, IntegerValue> {
   }
 
   @Override
-  public final String encodeText(final Integer value) {
-    return Integer.toString(value);
-  }
-
-  @Override
   public final Integer decodeText(final String value) {
     return Integer.valueOf(value);
   }

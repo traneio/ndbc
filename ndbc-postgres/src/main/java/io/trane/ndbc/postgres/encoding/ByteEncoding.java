@@ -23,11 +23,6 @@ final class ByteEncoding extends Encoding<Byte, ByteValue> {
   }
 
   @Override
-  public final String encodeText(final Byte value) {
-    return Byte.toString(value);
-  }
-
-  @Override
   public final Byte decodeText(final String value) {
     return Byte.valueOf(value);
   }

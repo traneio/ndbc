@@ -111,18 +111,31 @@ public abstract class EncodingTest {
       final Random r = new Random(1);
       for (int i = 0; i < iterations; i++) {
         final T expected = gen.apply(r);
-        try {
-          ds.execute("DELETE FROM " + table).get(timeout);
-          ds.execute(set.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected)).get(timeout);
+        ds.execute("DELETE FROM " + table).get(timeout);
 
+        try {
+          ds.execute(set.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected)).get(timeout);
+        } catch (final Exception e) {
+          throw new RuntimeException(
+              "Failure (extended insert). columnType '" + columnType + "', value '" + expected + "'", e);
+        }
+
+        try {
           final T simpleQueryActual = get.apply(query("SELECT c FROM " + table));
           verify.accept(expected, simpleQueryActual);
 
+        } catch (final Exception e) {
+          throw new RuntimeException(
+              "Failure (simple query). columnType '" + columnType + "', value '" + expected + "'", e);
+        }
+
+        try {
           final T extendedQueryactual = get.apply(query(PreparedStatement.apply("SELECT c FROM " + table)));
           verify.accept(expected, extendedQueryactual);
 
         } catch (final Exception e) {
-          throw new RuntimeException("Failure. columnType '" + columnType + "', value '" + expected + "'", e);
+          throw new RuntimeException(
+              "Failure (extended query). columnType '" + columnType + "', value '" + expected + "'", e);
         }
       }
     }

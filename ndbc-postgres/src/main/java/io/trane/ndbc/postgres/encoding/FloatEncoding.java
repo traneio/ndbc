@@ -23,11 +23,6 @@ final class FloatEncoding extends Encoding<Float, FloatValue> {
   }
 
   @Override
-  public final String encodeText(final Float value) {
-    return Float.toString(value);
-  }
-
-  @Override
   public final Float decodeText(final String value) {
     return Float.valueOf(value);
   }

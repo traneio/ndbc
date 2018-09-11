@@ -25,11 +25,6 @@ final class LocalDateEncoding extends Encoding<LocalDate, LocalDateValue> {
   }
 
   @Override
-  public final String encodeText(final LocalDate value) {
-    return value.toString();
-  }
-
-  @Override
   public final LocalDate decodeText(final String value) {
     return LocalDate.parse(value);
   }

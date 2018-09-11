@@ -1,10 +1,8 @@
 package io.trane.ndbc.postgres.encoding;
 
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
@@ -24,11 +22,6 @@ abstract class ArrayEncoding<I, V extends Value<I[]>> extends Encoding<I[], V> {
   protected abstract I[] emptyArray();
 
   protected abstract Encoding<I, ?> itemEncoding();
-
-  @Override
-  public final String encodeText(final I[] value) {
-    return "{" + Arrays.stream(value).map(v -> itemEncoding().encodeText(v)).collect(Collectors.joining(",")) + "}";
-  }
 
   @Override
   public final I[] decodeText(final String value) {

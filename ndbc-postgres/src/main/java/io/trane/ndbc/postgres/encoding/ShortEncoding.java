@@ -23,11 +23,6 @@ final class ShortEncoding extends Encoding<Short, ShortValue> {
   }
 
   @Override
-  public final String encodeText(final Short value) {
-    return Short.toString(value);
-  }
-
-  @Override
   public final Short decodeText(final String value) {
     return Short.valueOf(value);
   }

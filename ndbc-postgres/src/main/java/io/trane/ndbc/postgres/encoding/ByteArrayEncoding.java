@@ -9,7 +9,7 @@ import io.trane.ndbc.value.ByteArrayValue;
 final class ByteArrayEncoding extends Encoding<byte[], ByteArrayValue> {
 
   private static final String DEFAULT_PREFIX = "\\x";
-  static final String ARRAY_PREFIX = "\\\\x";
+  static final String         ARRAY_PREFIX   = "\\\\x";
 
   private final String prefix;
 
@@ -31,15 +31,6 @@ final class ByteArrayEncoding extends Encoding<byte[], ByteArrayValue> {
   @Override
   public final Class<ByteArrayValue> valueClass() {
     return ByteArrayValue.class;
-  }
-
-  @Override
-  public final String encodeText(final byte[] value) {
-    final StringBuilder sb = new StringBuilder();
-    sb.append(prefix);
-    for (final byte b : value)
-      sb.append(String.format("%02x", b));
-    return sb.toString();
   }
 
   @Override

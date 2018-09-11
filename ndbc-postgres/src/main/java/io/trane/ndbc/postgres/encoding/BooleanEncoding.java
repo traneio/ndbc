@@ -23,11 +23,6 @@ final class BooleanEncoding extends Encoding<Boolean, BooleanValue> {
   }
 
   @Override
-  public final String encodeText(final Boolean value) {
-    return value ? "T" : "F";
-  }
-
-  @Override
   public final Boolean decodeText(final String value) {
     final String upperCase = value.toUpperCase();
     return "T".equals(upperCase) || "TRUE".equals(upperCase);

@@ -33,11 +33,6 @@ final class OffsetTimeEncoding extends Encoding<OffsetTime, OffsetTimeValue> {
   }
 
   @Override
-  public final String encodeText(final OffsetTime value) {
-    return value.toString();
-  }
-
-  @Override
   public final OffsetTime decodeText(final String value) {
     return OffsetTime.parse(value, formatter);
   }

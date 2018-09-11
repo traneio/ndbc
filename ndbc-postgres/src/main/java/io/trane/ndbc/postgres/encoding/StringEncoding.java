@@ -30,11 +30,6 @@ final class StringEncoding extends Encoding<String, StringValue> {
   }
 
   @Override
-  public final String encodeText(final String value) {
-    return value;
-  }
-
-  @Override
   public final String decodeText(final String value) {
     if (value.equals("\"\"")) {
       return "";

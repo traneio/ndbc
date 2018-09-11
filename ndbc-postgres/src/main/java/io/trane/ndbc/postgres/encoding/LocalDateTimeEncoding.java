@@ -30,11 +30,6 @@ final class LocalDateTimeEncoding extends Encoding<LocalDateTime, LocalDateTimeV
   }
 
   @Override
-  public final String encodeText(final LocalDateTime value) {
-    return java.sql.Timestamp.valueOf(value).toString();
-  }
-
-  @Override
   public final LocalDateTime decodeText(final String value) {
     return LocalDateTime.ofInstant(java.sql.Timestamp.valueOf(value).toInstant(), ZoneId.systemDefault());
   }

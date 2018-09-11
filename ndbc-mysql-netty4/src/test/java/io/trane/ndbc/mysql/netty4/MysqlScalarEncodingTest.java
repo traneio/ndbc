@@ -29,7 +29,7 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
   }
 
   protected List<String> booleanColumnTypes() {
-    return Arrays.asList("BIT");
+    return Arrays.asList("TINYINT");
   }
 
   protected List<String> byteArrayColumnTypes() {
@@ -45,7 +45,7 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
   }
 
   protected List<String> integerColumnTypes() {
-    return Arrays.asList("INTEGER");
+    return Arrays.asList("INT");
   }
 
   protected List<String> localDateColumnTypes() {
@@ -77,6 +77,6 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
   }
 
   protected List<String> stringColumnTypes() {
-    return Arrays.asList("CHAR", "VARCHAR", "LONGVARCHAR");
+    return Arrays.asList("VARCHAR(9999)", "TEXT");
   }
 }

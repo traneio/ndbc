@@ -23,11 +23,6 @@ final class LongEncoding extends Encoding<Long, LongValue> {
   }
 
   @Override
-  public final String encodeText(final Long value) {
-    return Long.toString(value);
-  }
-
-  @Override
   public final Long decodeText(final String value) {
     return Long.valueOf(value);
   }

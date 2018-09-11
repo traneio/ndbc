@@ -15,7 +15,7 @@ import io.trane.ndbc.value.Value;
 public final class EncodingRegistry {
 
   private final Map<Class<?>, Encoding<?, ?>> byValueClass;
-  private final Map<Integer, Encoding<?, ?>> byOid;
+  private final Map<Integer, Encoding<?, ?>>  byOid;
 
   public EncodingRegistry(final Optional<List<Encoding<?, ?>>> customEncodings, final Charset charset) {
     byValueClass = new HashMap<>();
@@ -47,10 +47,10 @@ public final class EncodingRegistry {
   }
 
   @SuppressWarnings("unchecked")
-  public final <T> void encode(final Format format, final Value<T> value, final BufferWriter writer) {
+  public final <T> void encodeBinary(final Value<T> value, final BufferWriter writer) {
     Encoding<T, Value<T>> enc;
     if ((enc = (Encoding<T, Value<T>>) byValueClass.get(value.getClass())) != null)
-      enc.encode(format, value, writer);
+      enc.encodeBinary(value, writer);
     else
       throw new NdbcException("Can't encode value: " + value);
   }

@@ -24,11 +24,6 @@ final class LocalTimeEncoding extends Encoding<LocalTime, LocalTimeValue> {
   }
 
   @Override
-  public final String encodeText(final LocalTime value) {
-    return value.toString();
-  }
-
-  @Override
   public final LocalTime decodeText(final String value) {
     return LocalTime.parse(value);
   }
