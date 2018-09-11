@@ -13,7 +13,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
@@ -69,7 +68,6 @@ public class ConnectionTest {
   }
 
   @Test
-  @Ignore
   public void execute() throws CheckedFutureException {
     final Long result = 33L;
     final String command = "command";
@@ -77,7 +75,7 @@ public class ConnectionTest {
       @Override
       Function<String, Exchange<Long>> simpleExecuteExchange() {
         return q -> {
-          assertEquals(command, q);
+          assertTrue(q.startsWith("KILL ") || command == q);
           return Exchange.value(result);
         };
       }
