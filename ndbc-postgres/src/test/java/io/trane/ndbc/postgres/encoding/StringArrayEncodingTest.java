@@ -2,6 +2,8 @@ package io.trane.ndbc.postgres.encoding;
 
 import java.util.Arrays;
 
+import org.junit.Assert;
+
 import io.trane.ndbc.value.StringArrayValue;
 
 public class StringArrayEncodingTest extends EncodingTest<StringArrayValue, StringArrayEncoding> {
@@ -12,7 +14,7 @@ public class StringArrayEncodingTest extends EncodingTest<StringArrayValue, Stri
       Arrays.setAll(strings, p -> randomString(r));
       return new StringArrayValue(strings);
     }, (a, b) -> {
-      // Assert.assertArrayEquals(a.getStringArray(), b.getStringArray()); failing :(
+      Assert.assertArrayEquals(a.getStringArray(), b.getStringArray());
     });
   }
 }
