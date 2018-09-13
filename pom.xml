@@ -30,6 +30,12 @@
 			<url>https://github.com/fwbrasil</url>
 			<id>fwbrasil</id>
 		</developer>
+		<developer>
+			<email>von.juliano@gmail.com</email>
+			<name>Juliano Alves</name>
+			<url>https://github.com/juliano</url>
+			<id>juliano</id>
+		</developer>
 	</developers>
 
 	<properties>
