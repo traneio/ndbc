@@ -24,7 +24,7 @@ final class BooleanEncoding extends Encoding<Boolean, BooleanValue> {
 
   @Override
   public final Boolean decodeText(final String value) {
-    return Boolean.valueOf(value);
+    return value.equals("1") || Boolean.valueOf(value);
   }
 
   @Override

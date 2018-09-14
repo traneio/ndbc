@@ -115,7 +115,7 @@ public abstract class EncodingTest {
 
         try {
           ds.execute(set.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected)).get(timeout);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
           throw new RuntimeException(
               "Failure (extended insert). columnType '" + columnType + "', value '" + expected + "'", e);
         }
@@ -124,7 +124,7 @@ public abstract class EncodingTest {
           final T simpleQueryActual = get.apply(query("SELECT c FROM " + table));
           verify.accept(expected, simpleQueryActual);
 
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
           throw new RuntimeException(
               "Failure (simple query). columnType '" + columnType + "', value '" + expected + "'", e);
         }
@@ -133,7 +133,7 @@ public abstract class EncodingTest {
           final T extendedQueryactual = get.apply(query(PreparedStatement.apply("SELECT c FROM " + table)));
           verify.accept(expected, extendedQueryactual);
 
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
           throw new RuntimeException(
               "Failure (extended query). columnType '" + columnType + "', value '" + expected + "'", e);
         }

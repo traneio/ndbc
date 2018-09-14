@@ -36,7 +36,7 @@ final class ShortEncoding extends Encoding<Short, ShortValue> {
 
   @Override
   public final void encodeBinary(final Short value, final PacketBufferWriter b) {
-    b.writeShort(value);
+    b.writeUnsignedShort(value);
   }
 
   @Override

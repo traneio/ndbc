@@ -4,12 +4,9 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
-
 import io.trane.ndbc.Config;
 import io.trane.ndbc.test.ScalarEncodingTest;
 
-@Ignore
 public class MysqlScalarEncodingTest extends ScalarEncodingTest {
 
   private static final Config config = Config
