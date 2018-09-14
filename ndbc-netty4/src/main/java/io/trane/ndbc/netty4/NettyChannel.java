@@ -51,7 +51,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
           try {
             final Optional<T> option = unmarshaller.apply(b);
             option.ifPresent(msg -> {
-              System.out.println(hashCode() + " received: " + msg);
+              System.out.println(NettyChannel.this.hashCode() + " received: " + msg);
               b.release();
               p.setValue(msg);
             });
