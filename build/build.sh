@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e # Any subsequent(*) commands which fail will cause the shell script to exit immediately
 
-MVN="mvn -Dmaven.test.skip=true --settings build/settings.xml "
+MVN="mvn --settings build/settings.xml org.jacoco:jacoco-maven-plugin:prepare-agent "
 
 if [[ $TRAVIS_PULL_REQUEST == "false" ]]
 then
