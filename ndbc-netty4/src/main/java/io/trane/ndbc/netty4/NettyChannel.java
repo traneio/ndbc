@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
@@ -20,6 +21,8 @@ import io.trane.ndbc.util.NonFatalException;
 
 final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader> implements Channel {
 
+  private static final Logger log = Logger.getLogger(NettyChannel.class.getName());
+
   private final Charset                                 charset;
   private Promise<ChannelHandlerContext>                ctx                 = Promise.apply();
   private final AtomicReference<Consumer<BufferReader>> nextMessageConsumer = new AtomicReference<>(null);
@@ -30,7 +33,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
 
   @Override
   public <T extends ClientMessage> Future<Void> send(final Marshaller<T> marshaller, final T msg) {
-    System.out.println(hashCode() + " sent: " + msg);
+    log.fine(hashCode() + " sent: " + msg);
     return ctx.flatMap(c -> {
       final ByteBuf ioBuffer = c.alloc().ioBuffer();
       marshaller.apply(msg, new BufferWriter(charset, ioBuffer));
@@ -43,7 +46,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
   @Override
   public <T extends ServerMessage> Future<T> receive(final Unmarshaller<T> unmarshaller) {
     return ctx.flatMap(c -> {
-      System.out.println(hashCode() + " requested: " + unmarshaller);
+      log.fine(hashCode() + " requested: " + unmarshaller);
       final Promise<T> p = Promise.apply();
       final Consumer<BufferReader> consumer = new Consumer<BufferReader>() {
         @Override
@@ -51,7 +54,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
           try {
             final Optional<T> option = unmarshaller.apply(b);
             option.ifPresent(msg -> {
-              System.out.println(NettyChannel.this.hashCode() + " received: " + msg);
+              log.fine(NettyChannel.this.hashCode() + " received: " + msg);
               b.release();
               p.setValue(msg);
             });
