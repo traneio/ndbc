@@ -10,7 +10,7 @@ cache:
   - $HOME/.ndbc
   - $HOME/.embedpostgresql
 before_cache:
-  - rm -f $HOME/.m2/repository/io/trane/ndbc
+  - rm -rf $HOME/.m2/repository/io/trane/ndbc
 env:
   global:
   - BUILD_DIR="`pwd`/build"
