@@ -16,21 +16,13 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import io.trane.future.CheckedFutureException;
-import io.trane.ndbc.Config;
-import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 import io.trane.ndbc.value.Value;
 
-public abstract class EncodingTest {
-
-  protected DataSource ds;
+public abstract class EncodingTest extends NdbcTest {
 
   protected Duration timeout = Duration.ofSeconds(999);
-
-  public EncodingTest(final Config config) {
-    this.ds = DataSource.fromConfig(config);
-  }
 
   protected abstract List<String> bigDecimalColumnTypes();
 

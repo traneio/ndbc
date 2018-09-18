@@ -11,6 +11,7 @@ cache:
   directories:
   - $HOME/.m2/repository
   - $HOME/.sonar/cache
+  - $HOME/.ndbc
 env:
   global:
   - BUILD_DIR="`pwd`/build"
@@ -21,7 +22,7 @@ env:
 jobs:
   include:
   - name: "pure"
-    env: PROJECTS=ndbc-api,ndbc-core,ndbc-test,ndbc-postgres,ndbc-netty4,ndbc-mysql
+    env: PROJECTS=ndbc-api,ndbc-core,ndbc-test,ndbc-postgres,ndbc-postgres-netty4,ndbc-netty4,ndbc-mysql
 
   - name: "mysql 5.5"
     env: PROJECTS=ndbc-mysql-netty4
@@ -54,27 +55,5 @@ jobs:
     before_install:
       - sudo service mysql stop
       - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mariadb:10.2.17
-
-  - name: "postgres 9.2"
-    env: PROJECTS=ndbc-postgres-netty4
-    addons:
-      postgresql: '9.2'
-  - name: "postgres 9.3"
-    env: PROJECTS=ndbc-postgres-netty4
-    addons:
-      postgresql: '9.3'
-  - name: "postgres 9.4"
-    env: PROJECTS=ndbc-postgres-netty4
-    addons:
-      postgresql: '9.4'
-  - name: "postgres 9.5"
-    env: PROJECTS=ndbc-postgres-netty4
-    addons:
-      postgresql: '9.5'
-  - name: "postgres 9.6"
-    env: PROJECTS=ndbc-postgres-netty4
-    addons:
-      postgresql: '9.6'
-
   - stage: "release"
     script: ./build/release.sh

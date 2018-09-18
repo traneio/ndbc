@@ -10,7 +10,7 @@ public class PostgresDataSourceTest extends DataSourceTest {
 
   @Parameters(name = "{1}")
   public static Collection<Object[]> data() {
-    return PostgresEnv.dataSources();
+    return PostgresEnv.dataSources;
   }
 
   public PostgresDataSourceTest() {

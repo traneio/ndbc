@@ -1,17 +1,18 @@
 package io.trane.ndbc.postgres.netty4;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized.Parameters;
 
 import io.trane.ndbc.test.ScalarEncodingTest;
 
-@RunWith(PostgresTestRunner.class)
 public class PostgresScalarEncodingTest extends ScalarEncodingTest {
 
-  public PostgresScalarEncodingTest() {
-    super(PostgresEnv.instance);
+  @Parameters(name = "{1}")
+  public static Collection<Object[]> data() {
+    return PostgresEnv.dataSources;
   }
 
   protected List<String> bigDecimalColumnTypes() {

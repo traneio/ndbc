@@ -10,14 +10,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
-import io.trane.ndbc.Config;
 import io.trane.ndbc.value.Value;
 
 public abstract class ArrayEncodingTest extends EncodingTest {
-
-  public ArrayEncodingTest(final Config config) {
-    super(config);
-  }
 
   @Test
   public void bigDecimalArray() throws CheckedFutureException {

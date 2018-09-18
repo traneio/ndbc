@@ -1,14 +1,18 @@
 package io.trane.ndbc.postgres.netty4;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+
+import org.junit.runners.Parameterized.Parameters;
 
 import io.trane.ndbc.test.ArrayEncodingTest;
 
 public class PostgresArrayEncodingTest extends ArrayEncodingTest {
 
-  public PostgresArrayEncodingTest() {
-    super(PostgresEnv.instance);
+  @Parameters(name = "{1}")
+  public static Collection<Object[]> data() {
+    return PostgresEnv.dataSources;
   }
 
   protected List<String> bigDecimalColumnTypes() {
