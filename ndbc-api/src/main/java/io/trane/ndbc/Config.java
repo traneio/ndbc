@@ -127,14 +127,21 @@ public final class Config {
 
     Config config = Config.apply(dataSourceSupplierClass, host, port, user);
 
-    config = config
-        .charset(getProperty(prefix, properties, "charset", Charset::forName).orElse(Charset.defaultCharset()));
+    config = config.charset(getProperty(prefix, properties, "charset", Charset::forName)
+        .orElse(Charset.defaultCharset()));
+
     config = config.password(getProperty(prefix, properties, "password"));
     config = config.database(getProperty(prefix, properties, "database"));
     config = config.poolMaxSize(getProperty(prefix, properties, "poolMaxSize", Integer::parseInt));
     config = config.poolMaxWaiters(getProperty(prefix, properties, "poolMaxWaiters", Integer::parseInt));
 
     config = config.poolValidationInterval(getProperty(prefix, properties, "poolValidationIntervalSeconds",
+        s -> Duration.ofSeconds(Long.parseLong(s))));
+
+    config = config.connectionTimeout(getProperty(prefix, properties, "connectionTimeoutSeconds",
+        s -> Duration.ofSeconds(Long.parseLong(s))));
+
+    config = config.queryTimeout(getProperty(prefix, properties, "queryTimeoutSeconds",
         s -> Duration.ofSeconds(Long.parseLong(s))));
 
     config = config.encodingClasses(getProperty(prefix, properties, "encodingClasses")
@@ -266,7 +273,8 @@ public final class Config {
 
   public final Config charset(final Charset charset) {
     return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
-        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
+        nioThreads, ssl);
   }
 
   public final ScheduledExecutorService scheduler() {
@@ -275,7 +283,8 @@ public final class Config {
 
   public final Config scheduler(final ScheduledExecutorService scheduler) {
     return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
-        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
+        nioThreads, ssl);
   }
 
   public final Optional<String> password() {
@@ -288,7 +297,8 @@ public final class Config {
 
   public final Config password(final Optional<String> password) {
     return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
-        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
+        nioThreads, ssl);
   }
 
   public final Optional<String> database() {
@@ -301,7 +311,8 @@ public final class Config {
 
   public final Config database(final Optional<String> database) {
     return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
-        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
+        nioThreads, ssl);
   }
 
   public final Optional<Integer> poolMaxSize() {
@@ -314,7 +325,8 @@ public final class Config {
 
   public final Config poolMaxSize(final Optional<Integer> poolMaxSize) {
     return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
-        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
+        nioThreads, ssl);
   }
 
   public final Optional<Integer> poolMaxWaiters() {
@@ -327,7 +339,8 @@ public final class Config {
 
   public final Config poolMaxWaiters(final Optional<Integer> poolMaxWaiters) {
     return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
-        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
+        nioThreads, ssl);
   }
 
   public final Optional<Duration> connectionTimeout() {
@@ -340,7 +353,8 @@ public final class Config {
 
   public final Config connectionTimeout(final Optional<Duration> connectionTimeout) {
     return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
-        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads,
+        ssl);
   }
 
   public final Optional<Duration> queryTimeout() {
@@ -353,7 +367,8 @@ public final class Config {
 
   public final Config queryTimeout(final Optional<Duration> queryTimeout) {
     return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
-        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads,
+        ssl);
   }
 
   public final Optional<Duration> poolValidationInterval() {
@@ -366,7 +381,8 @@ public final class Config {
 
   public final Config poolValidationInterval(final Optional<Duration> poolValidationInterval) {
     return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
-        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
+        nioThreads, ssl);
   }
 
   public final Optional<Set<String>> encodingClasses() {
@@ -379,7 +395,8 @@ public final class Config {
 
   public final Config encodingClasses(final Optional<Set<String>> encodingClasses) {
     return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
-        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
+        nioThreads, ssl);
   }
 
   public final Config addEncodingClass(final String encodingClass) {
@@ -401,7 +418,8 @@ public final class Config {
 
   public final Config nioThreads(final Optional<Integer> nioThreads) {
     return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
-        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
+        nioThreads, ssl);
   }
 
   public final Optional<SSL> ssl() {
@@ -414,7 +432,8 @@ public final class Config {
 
   public final Config ssl(final Optional<SSL> ssl) {
     return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database, poolMaxSize,
-        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses, nioThreads, ssl);
+        poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
+        nioThreads, ssl);
   }
 
   public final <T> Optional<List<T>> loadCustomEncodings() {

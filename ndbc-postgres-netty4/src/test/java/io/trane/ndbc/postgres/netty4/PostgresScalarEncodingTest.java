@@ -1,21 +1,14 @@
 package io.trane.ndbc.postgres.netty4;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
-import io.trane.ndbc.Config;
 import io.trane.ndbc.test.ScalarEncodingTest;
 
 public class PostgresScalarEncodingTest extends ScalarEncodingTest {
 
-  private static final Config config = Config
-      .apply("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 5432, "postgres")
-      .password("postgres").poolValidationInterval(Duration.ofSeconds(1)).poolMaxSize(1).poolMaxWaiters(0);
-  // TODO .ssl(SSL.apply(SSL.Mode.REQUIRE));
-
   public PostgresScalarEncodingTest() {
-    super(config);
+    super(PostgresConfig.instance);
   }
 
   protected List<String> bigDecimalColumnTypes() {
