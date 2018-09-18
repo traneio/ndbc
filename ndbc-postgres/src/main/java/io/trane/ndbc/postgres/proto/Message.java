@@ -1284,11 +1284,6 @@ public interface Message {
       }
 
       @Override
-      public boolean isError() {
-        return true;
-      }
-
-      @Override
       public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -1327,11 +1322,6 @@ public interface Message {
 
       public NoticeResponse(final Field[] fields) {
         super(fields);
-      }
-
-      @Override
-      public boolean isNotice() {
-        return true;
       }
 
       @Override
@@ -1596,11 +1586,6 @@ public interface Message {
       this.processID = processID;
       this.channelName = channelName;
       this.payload = payload;
-    }
-
-    @Override
-    public boolean isNotice() {
-      return true;
     }
 
     @Override
