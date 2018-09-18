@@ -5,42 +5,27 @@
     <artifactId>ndbc</artifactId>
     <version>0.0.2-SNAPSHOT</version>
   </parent>
-  <artifactId>ndbc-mysql-netty4</artifactId>
+  <artifactId>ndbc-mysql-embedded</artifactId>
   <packaging>jar</packaging>
 
-  <name>ndbc-mysql-netty4</name>
+  <name>ndbc-mysql-embedded</name>
 
   <dependencies>
     <dependency>
       <groupId>io.trane</groupId>
-      <artifactId>ndbc-mysql</artifactId>
+      <artifactId>ndbc-api</artifactId>
       <version>0.0.2-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>io.trane</groupId>
-      <artifactId>ndbc-mysql-embedded</artifactId>
-      <version>0.0.2-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>io.trane</groupId>
-      <artifactId>ndbc-test</artifactId>
-      <version>0.0.2-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>io.trane</groupId>
-      <artifactId>ndbc-netty4</artifactId>
-      <version>0.0.2-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-all</artifactId>
-      <version>4.1.11.Final</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.12</version>
       <scope>test</scope>
+    </dependency>
+      <dependency>
+      <groupId>com.wix</groupId>
+      <artifactId>wix-embedded-mysql</artifactId>
+      <version>4.1.2</version>
     </dependency>
   </dependencies>
 

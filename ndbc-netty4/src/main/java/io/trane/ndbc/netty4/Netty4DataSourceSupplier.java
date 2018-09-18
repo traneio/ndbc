@@ -33,6 +33,6 @@ public abstract class Netty4DataSourceSupplier implements Supplier<DataSource> {
   public final DataSource get() {
     final Pool<Connection> pool = LockFreePool.apply(createConnection, config.poolMaxSize(), config.poolMaxWaiters(),
         config.connectionTimeout(), config.poolValidationInterval(), config.scheduler());
-    return new PooledDataSource(pool);
+    return new PooledDataSource(pool, config);
   }
 }

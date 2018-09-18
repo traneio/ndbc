@@ -21,39 +21,6 @@ env:
   - secure: TaSahaPnzbf7UfDvtO9qSxLzv5dLERrnkIYKmuVpcQ1LIe8K83JcqDF/FLnTQPNC/PEWmkMcXgJs6YVAtcTaoKCaLciU/ashnngAqqgjTi42Fi043pveSiyuJ9h9AHIwi6/75dC6Ks2e6MLgc8sYsJDC656FYCKK09TKf9P0STNNomllCE8+2WAySMPwWGBs/CHUoY0McolvnY+opLUV0WlyEcEBvbB1G3SLqBJ48+C8K0t719zIGN0HozhKLysroJ27aU4xoeA77BQyXQihrkooifPXbmg16PExaK5PixNe1XVNd7b96qWG/8goJX3TK4BR40FWlFHa1TRORfE9a69NdNPPH1vTK+pQ59OUPI6y9t7WFw/ZQK567okSzMHmNM4vqUcR4DTJQNZU1Bb2+LkA1JBteqG8kV9kBdtT/cF8QzxCqRZtEaJYUrZ3baELwNt+jMGEEbhP5fAVm/+trx4g00nzO/RgbT/90YGMtUvyUuSPsGSa/47Axn0O76IcfJtDJX92op35NIa+gJWNo3HulsdN93cgtHh1sM0k2Ypxxk12egln5kjjpbwf5tVhrS/HaCaY+eOAU3U+9Zt1sqqLTGubceFw89CsTru+OtIsEYE5XHgDSZN4GY6NS8ElmRK3TQzzE3K6Zgfq3ZA1jprNx+JBYvS6KtHHdRJ6GzU=
 jobs:
   include:
-  - name: "pure"
-    env: PROJECTS=ndbc-api,ndbc-core,ndbc-test,ndbc-postgres,ndbc-postgres-netty4,ndbc-netty4,ndbc-mysql
-
-  - name: "mysql 5.5"
-    env: PROJECTS=ndbc-mysql-netty4
-    before_install:
-      - sudo service mysql stop
-      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:5.7
-  - name: "mysql 5.6"
-    env: PROJECTS=ndbc-mysql-netty4
-    before_install:
-      - sudo service mysql stop
-      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:5.6
-  - name: "mysql 5.7"
-    env: PROJECTS=ndbc-mysql-netty4
-    before_install:
-      - sudo service mysql stop
-      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:5.7
-
-  - name: "mariadb 5.5.61"
-    env: PROJECTS=ndbc-mysql-netty4
-    before_install:
-      - sudo service mysql stop
-      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mariadb:5.5.61
-  - name: "mariadb 10.0.36"
-    env: PROJECTS=ndbc-mysql-netty4
-    before_install:
-      - sudo service mysql stop
-      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mariadb:10.0.36
-  - name: "mariadb 10.2.17"
-    env: PROJECTS=ndbc-mysql-netty4
-    before_install:
-      - sudo service mysql stop
-      - sudo docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mariadb:10.2.17
+  - name: "test"
   - stage: "release"
     script: ./build/release.sh

@@ -53,10 +53,12 @@
 		<module>ndbc-api</module>
 		<module>ndbc-core</module>
 		<module>ndbc-test</module>
-		<module>ndbc-postgres</module>
-		<module>ndbc-postgres-netty4</module>
 		<module>ndbc-netty4</module>
+		<module>ndbc-postgres</module>
+		<module>ndbc-postgres-embedded</module>
+		<module>ndbc-postgres-netty4</module>
 		<module>ndbc-mysql</module>
+		<module>ndbc-mysql-embedded</module>
 		<module>ndbc-mysql-netty4</module>
 	</modules>
 

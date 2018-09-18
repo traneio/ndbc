@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import io.trane.future.Future;
 import io.trane.future.Local;
+import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
@@ -15,9 +16,11 @@ public final class PooledDataSource implements DataSource {
 
   private final Pool<Connection>  pool;
   private final Local<Connection> currentTransation;
+  private final Config            config;
 
-  public PooledDataSource(final Pool<Connection> pool) {
+  public PooledDataSource(final Pool<Connection> pool, Config config) {
     this.pool = pool;
+    this.config = config;
     currentTransation = Local.apply();
   }
 
@@ -63,5 +66,10 @@ public final class PooledDataSource implements DataSource {
       return f.apply(transaction.get());
     else
       return pool.apply(f);
+  }
+
+  @Override
+  public Config config() {
+    return this.config;
   }
 }

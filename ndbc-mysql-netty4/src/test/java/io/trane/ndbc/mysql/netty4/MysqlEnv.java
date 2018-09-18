@@ -1,4 +1,4 @@
-package io.trane.ndbc.postgres.netty4;
+package io.trane.ndbc.mysql.netty4;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -10,16 +10,17 @@ import io.trane.future.CheckedFutureException;
 import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
-import io.trane.ndbc.postgres.embedded.Embedded;
-import io.trane.ndbc.postgres.embedded.Embedded.Version;
+import io.trane.ndbc.mysql.embedded.Embedded;
+import io.trane.ndbc.mysql.embedded.Embedded.Version;
 
-public class PostgresEnv {
+public class MysqlEnv {
 
   private static final Config config() {
     return Config
-        .apply("io.trane.ndbc.postgres.netty4.DataSourceSupplier",
-            "localhost", Embedded.findFreePort(), "postgres")
-        .password("postgres")
+        .apply("io.trane.ndbc.mysql.netty4.DataSourceSupplier",
+            "localhost", Embedded.findFreePort(), "test")
+        .database("test_schema")
+        .password("test")
         .poolValidationInterval(Duration.ofSeconds(1))
         .connectionTimeout(Duration.ofSeconds(1))
         .queryTimeout(Duration.ofSeconds(1));

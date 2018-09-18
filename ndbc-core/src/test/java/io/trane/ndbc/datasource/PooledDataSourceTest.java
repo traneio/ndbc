@@ -158,6 +158,6 @@ public class PooledDataSourceTest extends PoolEnv {
   private DataSource ds(final Connection c) {
     final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(c), Optional.empty(), Optional.empty(),
         Optional.empty(), Optional.empty(), scheduler);
-    return new PooledDataSource(pool);
+    return new PooledDataSource(pool, null);
   }
 }

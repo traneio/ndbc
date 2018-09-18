@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import io.trane.ndbc.Config.SSL;
-import io.trane.ndbc.Config.SSL.Mode;
+import io.trane.ndbc.Config.SSL.SSLMode;
 
 public class ConfigTest {
 
@@ -256,7 +256,7 @@ public class ConfigTest {
   @Test
   public void ssl() {
     final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    final SSL ssl = Config.SSL.apply(Mode.REQUIRE);
+    final SSL ssl = Config.SSL.apply(SSLMode.REQUIRE);
     assertEquals(Optional.of(ssl), c.ssl(ssl).ssl());
   }
 
@@ -269,7 +269,7 @@ public class ConfigTest {
   @Test
   public void sslOptionalPresent() {
     final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    final SSL ssl = Config.SSL.apply(Mode.VERIFY_CA);
+    final SSL ssl = Config.SSL.apply(SSLMode.VERIFY_CA);
     assertEquals(Optional.of(ssl), c.ssl(Optional.of(ssl)).ssl());
   }
 
@@ -445,7 +445,7 @@ public class ConfigTest {
 
   @Test
   public void fromPropertiesSSLMode() {
-    final Mode mode = Mode.PREFER;
+    final SSLMode mode = SSLMode.PREFER;
     final Properties p = new Properties();
     p.setProperty("db.dataSourceSupplierClass", dataSourceSupplierClass);
     p.setProperty("db.host", host);
@@ -458,7 +458,7 @@ public class ConfigTest {
 
   @Test
   public void fromPropertiesSSLRootCert() {
-    final Mode mode = Mode.PREFER;
+    final SSLMode mode = SSLMode.PREFER;
     final String rootCert = "rootCert";
     final Properties p = new Properties();
     p.setProperty("db.dataSourceSupplierClass", dataSourceSupplierClass);

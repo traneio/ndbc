@@ -102,5 +102,10 @@ public class DataSourceTest {
     public Future<Void> close() {
       return null;
     }
+
+    @Override
+    public Config config() {
+      return null;
+    }
   };
 }
