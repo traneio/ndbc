@@ -8,7 +8,7 @@ import io.trane.ndbc.test.ArrayEncodingTest;
 public class PostgresArrayEncodingTest extends ArrayEncodingTest {
 
   public PostgresArrayEncodingTest() {
-    super(PostgresConfig.instance);
+    super(PostgresEnv.instance);
   }
 
   protected List<String> bigDecimalColumnTypes() {

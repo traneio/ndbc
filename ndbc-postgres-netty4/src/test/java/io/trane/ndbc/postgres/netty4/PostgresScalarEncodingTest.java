@@ -3,12 +3,15 @@ package io.trane.ndbc.postgres.netty4;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.runner.RunWith;
+
 import io.trane.ndbc.test.ScalarEncodingTest;
 
+@RunWith(PostgresTestRunner.class)
 public class PostgresScalarEncodingTest extends ScalarEncodingTest {
 
   public PostgresScalarEncodingTest() {
-    super(PostgresConfig.instance);
+    super(PostgresEnv.instance);
   }
 
   protected List<String> bigDecimalColumnTypes() {
