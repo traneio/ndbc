@@ -2,6 +2,7 @@ package io.trane.ndbc;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
 
@@ -23,13 +24,23 @@ public interface DataSource {
 
   @SuppressWarnings("unchecked")
   public static DataSource fromConfig(final Config config) {
-    try {
-      final Supplier<DataSource> supplier = (Supplier<DataSource>) Class.forName(config.dataSourceSupplierClass())
-          .getConstructor(Config.class).newInstance(config);
-      return supplier.get();
-    } catch (final Exception e) {
-      throw new NdbcException("Can't load DataSource supplier: " + config.dataSourceSupplierClass(), e);
-    }
+    return config.embedded().map(embedded -> {
+      try {
+        final Supplier<DataSource> supplier = (Supplier<DataSource>) Class.forName(embedded.supplierClass)
+            .getConstructor(Config.class, Optional.class).newInstance(config, embedded.version);
+        return supplier.get();
+      } catch (final Exception e) {
+        throw new NdbcException("Can't load DataSource supplier for: " + embedded, e);
+      }
+    }).orElseGet(() -> {
+      try {
+        final Supplier<DataSource> supplier = (Supplier<DataSource>) Class.forName(config.dataSourceSupplierClass())
+            .getConstructor(Config.class).newInstance(config);
+        return supplier.get();
+      } catch (final Exception e) {
+        throw new NdbcException("Can't load DataSource supplier: " + config.dataSourceSupplierClass(), e);
+      }
+    });
   }
 
   Future<List<Row>> query(String query);

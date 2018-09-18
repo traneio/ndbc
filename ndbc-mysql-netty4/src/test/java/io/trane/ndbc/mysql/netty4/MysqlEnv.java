@@ -1,24 +1,20 @@
 package io.trane.ndbc.mysql.netty4;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import io.trane.future.CheckedFutureException;
-import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
-import io.trane.ndbc.mysql.embedded.Embedded;
-import io.trane.ndbc.mysql.embedded.Embedded.Version;
 
 public class MysqlEnv {
 
-  private static final Config config() {
+  private static final Config config(String version) {
     return Config
-        .apply("io.trane.ndbc.mysql.netty4.DataSourceSupplier",
-            "localhost", Embedded.findFreePort(), "test")
+        .apply("io.trane.ndbc.mysql.netty4.DataSourceSupplier", "localhost", 0, "test")
+        .embedded(Config.Embedded.apply("io.trane.ndbc.mysql.embedded.EmbeddedSupplier", Optional.of(version)))
         .database("test_schema")
         .password("test")
         .poolValidationInterval(Duration.ofSeconds(1))
@@ -26,21 +22,9 @@ public class MysqlEnv {
         .queryTimeout(Duration.ofSeconds(1));
   }
 
-  public static final List<Object[]> dataSources;
+  private static final List<String> versions = Arrays.asList("v5_5_latest", "v5_6_latest", "v5_7_latest");
 
-  static {
-    List<Version> versions = Arrays.asList(Embedded.Version.values());
-    List<Future<DataSource>> list = versions.stream()
-        .map(v -> Embedded.dataSource(v, config()))
-        .collect(Collectors.toList());
-    try {
-      dataSources = new ArrayList<>();
-      List<DataSource> values = Future.collect(list).get(Duration.ofHours(1));
-      for (int i = 0; i < values.size(); i++) {
-        dataSources.add(new Object[] { values.get(i), "PG " + versions.get(i) });
-      }
-    } catch (CheckedFutureException e) {
-      throw new RuntimeException(e);
-    }
-  }
+  public static final List<Object[]> dataSources = versions.stream()
+      .map(v -> new Object[] { DataSource.fromConfig(config(v)), "PG " + v })
+      .collect(Collectors.toList());
 }

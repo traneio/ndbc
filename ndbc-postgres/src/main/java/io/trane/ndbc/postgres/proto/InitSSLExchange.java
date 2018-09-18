@@ -3,7 +3,7 @@ package io.trane.ndbc.postgres.proto;
 import java.util.Optional;
 
 import io.trane.ndbc.Config;
-import io.trane.ndbc.Config.SSL.SSLMode;
+import io.trane.ndbc.Config.SSL.Mode;
 import io.trane.ndbc.postgres.proto.Message.SSLRequest;
 import io.trane.ndbc.postgres.proto.marshaller.Marshallers;
 import io.trane.ndbc.postgres.proto.unmarshaller.Unmarshallers;
@@ -25,14 +25,14 @@ public class InitSSLExchange {
 
   public final Exchange<Optional<Config.SSL>> apply(final Optional<Config.SSL> optCfg) {
     return optCfg.map(cfg -> {
-      if (cfg.mode() == Config.SSL.SSLMode.DISABLE)
+      if (cfg.mode() == Config.SSL.Mode.DISABLE)
         return disabled;
       else
         return Exchange.send(marshallers.sslRequest, sslRequest)
             .then(Exchange.receive(unmarshallers.sslResponse).flatMap(r -> {
               if (r.enabled)
                 return Exchange.value(Optional.of(cfg));
-              else if (cfg.mode() != SSLMode.PREFER)
+              else if (cfg.mode() != Mode.PREFER)
                 return Exchange.fail("Database doesn't accept SSL connections.");
               else
                 return disabled;

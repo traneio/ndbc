@@ -15,7 +15,7 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.trane.future.Future;
 import io.trane.ndbc.Config;
-import io.trane.ndbc.Config.SSL.SSLMode;
+import io.trane.ndbc.Config.SSL.Mode;
 
 public class InitSSLHandler {
 
@@ -23,7 +23,7 @@ public class InitSSLHandler {
       final NettyChannel channel) {
     return optCfg.map(cfg -> {
       final SslContextBuilder ctxBuilder = SslContextBuilder.forClient();
-      if ((cfg.mode() == SSLMode.VERIFY_CA) || (cfg.mode() == SSLMode.VERIFY_FULL))
+      if ((cfg.mode() == Mode.VERIFY_CA) || (cfg.mode() == Mode.VERIFY_FULL))
         cfg.rootCert().map(ctxBuilder::trustManager).orElseGet(() -> {
           try {
             final TrustManagerFactory tmf = TrustManagerFactory
@@ -54,7 +54,7 @@ public class InitSSLHandler {
 
       return channel.ctx().onSuccess(ctx -> {
         final SSLEngine sslEngine = sslContext.newEngine(ctx.alloc(), host, port);
-        if (cfg.mode() == SSLMode.VERIFY_FULL) {
+        if (cfg.mode() == Mode.VERIFY_FULL) {
           final SSLParameters sslParams = sslEngine.getSSLParameters();
           sslParams.setEndpointIdentificationAlgorithm("HTTPS");
           sslEngine.setSSLParameters(sslParams);

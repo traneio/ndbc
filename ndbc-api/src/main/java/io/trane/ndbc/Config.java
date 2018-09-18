@@ -22,12 +22,8 @@ import java.util.stream.Stream;
 
 public final class Config {
 
-  public static enum Mode {
-    Embedded, Remote
-  }
-
   public static class SSL {
-    public static enum SSLMode {
+    public static enum Mode {
       /**
        * only try a non-SSL connection
        */
@@ -53,23 +49,23 @@ public final class Config {
       VERIFY_FULL
     }
 
-    public static final SSL apply(final SSLMode mode) {
+    public static final SSL apply(final Mode mode) {
       return new SSL(mode, Optional.empty());
     }
 
-    public static final SSL apply(final SSLMode mode, final File rootCert) {
+    public static final SSL apply(final Mode mode, final File rootCert) {
       return new SSL(mode, Optional.of(rootCert));
     }
 
-    private final SSLMode        mode;
+    private final Mode           mode;
     private final Optional<File> rootCert;
 
-    private SSL(final SSLMode mode, final Optional<File> rootCert) {
+    private SSL(final Mode mode, final Optional<File> rootCert) {
       this.mode = mode;
       this.rootCert = rootCert;
     }
 
-    public final SSLMode mode() {
+    public final Mode mode() {
       return mode;
     }
 
@@ -110,6 +106,56 @@ public final class Config {
     }
   }
 
+  public static class Embedded {
+    public final String           supplierClass;
+    public final Optional<String> version;
+
+    public static Embedded apply(String supplierClass, Optional<String> version) {
+      return new Embedded(supplierClass, version);
+    }
+
+    private Embedded(String supplierClass, Optional<String> version) {
+      this.supplierClass = supplierClass;
+      this.version = version;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((supplierClass == null) ? 0 : supplierClass.hashCode());
+      result = prime * result + ((version == null) ? 0 : version.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      Embedded other = (Embedded) obj;
+      if (supplierClass == null) {
+        if (other.supplierClass != null)
+          return false;
+      } else if (!supplierClass.equals(other.supplierClass))
+        return false;
+      if (version == null) {
+        if (other.version != null)
+          return false;
+      } else if (!version.equals(other.version))
+        return false;
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "Embedded [supplierClass=" + supplierClass + ", version=" + version + "]";
+    }
+  }
+
   public static final Config fromSystemProperties(final String prefix) {
     return fromProperties(prefix, System.getProperties());
   }
@@ -134,7 +180,6 @@ public final class Config {
     config = config.charset(getProperty(prefix, properties, "charset", Charset::forName)
         .orElse(Charset.defaultCharset()));
 
-    config = config.mode(getProperty(prefix, properties, "mode", Mode::valueOf).orElse(Mode.Remote));
     config = config.password(getProperty(prefix, properties, "password"));
     config = config.database(getProperty(prefix, properties, "database"));
     config = config.poolMaxSize(getProperty(prefix, properties, "poolMaxSize", Integer::parseInt));
@@ -152,11 +197,14 @@ public final class Config {
     config = config.encodingClasses(getProperty(prefix, properties, "encodingClasses")
         .map(k -> Stream.of(k.split(",")).filter(s -> !s.isEmpty()).collect(Collectors.toSet())));
 
-    config = config.ssl(getProperty(prefix, properties, "ssl.mode", SSL.SSLMode::valueOf).map(sslMode -> {
+    config = config.ssl(getProperty(prefix, properties, "ssl.mode", SSL.Mode::valueOf).map(sslMode -> {
       final SSL ssl = SSL.apply(sslMode);
       return getProperty(prefix, properties, "ssl.rootCert").map(rootCert -> ssl.rootCert(new File(rootCert)))
           .orElse(ssl);
     }));
+
+    config = config.embedded(getProperty(prefix, properties, "embedded.supplierClass")
+        .map(cls -> Embedded.apply(cls, getProperty(prefix, properties, "embedded.version"))));
 
     return config;
   }
@@ -174,10 +222,10 @@ public final class Config {
 
     final ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1, daemonFactory);
 
-    return new Config(Mode.Remote, dataSourceSupplierClass, host, port, user, Charset.defaultCharset(),
+    return new Config(dataSourceSupplierClass, host, port, user, Charset.defaultCharset(),
         scheduler, Optional.empty(),
         Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
   }
 
   private static final <T> T getRequiredProperty(final String prefix, final Properties properties, final String name,
@@ -215,7 +263,6 @@ public final class Config {
     return Optional.ofNullable(properties.getProperty(prefix + "." + name));
   }
 
-  private final Mode                     mode;
   private final String                   dataSourceSupplierClass;
   private final String                   host;
   private final int                      port;
@@ -232,15 +279,14 @@ public final class Config {
   private final Optional<Set<String>>    encodingClasses;
   private final Optional<Integer>        nioThreads;
   private final Optional<SSL>            ssl;
+  private final Optional<Embedded>       embedded;
 
-  private Config(final Mode mode, final String dataSourceSupplierClass, final String host, final int port,
-      final String user,
+  private Config(final String dataSourceSupplierClass, final String host, final int port, final String user,
       final Charset charset, final ScheduledExecutorService scheduler, final Optional<String> password,
       final Optional<String> database, final Optional<Integer> poolMaxSize, final Optional<Integer> poolMaxWaiters,
       final Optional<Duration> connectionTimeout, final Optional<Duration> queryTimeout,
       final Optional<Duration> poolValidationInterval, final Optional<Set<String>> encodingClasses,
-      final Optional<Integer> nioThreads, final Optional<SSL> ssl) {
-    this.mode = mode;
+      final Optional<Integer> nioThreads, final Optional<SSL> ssl, Optional<Embedded> embeddedDatabase) {
     this.dataSourceSupplierClass = dataSourceSupplierClass;
     this.charset = charset;
     this.scheduler = scheduler;
@@ -257,6 +303,7 @@ public final class Config {
     this.encodingClasses = encodingClasses.map(Collections::unmodifiableSet);
     this.nioThreads = nioThreads;
     this.ssl = ssl;
+    this.embedded = embeddedDatabase;
   }
 
   public final String dataSourceSupplierClass() {
@@ -271,18 +318,14 @@ public final class Config {
     return port;
   }
 
+  public final Config port(final int port) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+        poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
+        nioThreads, ssl, embedded);
+  }
+
   public final String user() {
     return user;
-  }
-
-  public final Mode mode() {
-    return mode;
-  }
-
-  public final Config mode(final Mode mode) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
-        poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads, ssl);
   }
 
   public final Charset charset() {
@@ -290,9 +333,9 @@ public final class Config {
   }
 
   public final Config charset(final Charset charset) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
         poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads, ssl);
+        nioThreads, ssl, embedded);
   }
 
   public final ScheduledExecutorService scheduler() {
@@ -300,9 +343,9 @@ public final class Config {
   }
 
   public final Config scheduler(final ScheduledExecutorService scheduler) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
         poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads, ssl);
+        nioThreads, ssl, embedded);
   }
 
   public final Optional<String> password() {
@@ -314,9 +357,9 @@ public final class Config {
   }
 
   public final Config password(final Optional<String> password) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
         poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads, ssl);
+        nioThreads, ssl, embedded);
   }
 
   public final Optional<String> database() {
@@ -328,9 +371,9 @@ public final class Config {
   }
 
   public final Config database(final Optional<String> database) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
         poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads, ssl);
+        nioThreads, ssl, embedded);
   }
 
   public final Optional<Integer> poolMaxSize() {
@@ -342,9 +385,9 @@ public final class Config {
   }
 
   public final Config poolMaxSize(final Optional<Integer> poolMaxSize) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
         poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads, ssl);
+        nioThreads, ssl, embedded);
   }
 
   public final Optional<Integer> poolMaxWaiters() {
@@ -356,9 +399,9 @@ public final class Config {
   }
 
   public final Config poolMaxWaiters(final Optional<Integer> poolMaxWaiters) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
         poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads, ssl);
+        nioThreads, ssl, embedded);
   }
 
   public final Optional<Duration> connectionTimeout() {
@@ -370,10 +413,9 @@ public final class Config {
   }
 
   public final Config connectionTimeout(final Optional<Duration> connectionTimeout) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
         poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads,
-        ssl);
+        nioThreads, ssl, embedded);
   }
 
   public final Optional<Duration> queryTimeout() {
@@ -385,10 +427,9 @@ public final class Config {
   }
 
   public final Config queryTimeout(final Optional<Duration> queryTimeout) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
         poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads,
-        ssl);
+        nioThreads, ssl, embedded);
   }
 
   public final Optional<Duration> poolValidationInterval() {
@@ -400,9 +441,9 @@ public final class Config {
   }
 
   public final Config poolValidationInterval(final Optional<Duration> poolValidationInterval) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
         poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads, ssl);
+        nioThreads, ssl, embedded);
   }
 
   public final Optional<Set<String>> encodingClasses() {
@@ -414,9 +455,9 @@ public final class Config {
   }
 
   public final Config encodingClasses(final Optional<Set<String>> encodingClasses) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
         poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads, ssl);
+        nioThreads, ssl, embedded);
   }
 
   public final Config addEncodingClass(final String encodingClass) {
@@ -437,9 +478,9 @@ public final class Config {
   }
 
   public final Config nioThreads(final Optional<Integer> nioThreads) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
         poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads, ssl);
+        nioThreads, ssl, embedded);
   }
 
   public final Optional<SSL> ssl() {
@@ -451,9 +492,23 @@ public final class Config {
   }
 
   public final Config ssl(final Optional<SSL> ssl) {
-    return new Config(mode, dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
         poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
-        nioThreads, ssl);
+        nioThreads, ssl, embedded);
+  }
+
+  public final Optional<Embedded> embedded() {
+    return embedded;
+  }
+
+  public final Config embedded(final Embedded embedded) {
+    return embedded(Optional.of(embedded));
+  }
+
+  public final Config embedded(final Optional<Embedded> embedded) {
+    return new Config(dataSourceSupplierClass, host, port, user, charset, scheduler, password, database,
+        poolMaxSize, poolMaxWaiters, connectionTimeout, queryTimeout, poolValidationInterval, encodingClasses,
+        nioThreads, ssl, embedded);
   }
 
   public final <T> Optional<List<T>> loadCustomEncodings() {
