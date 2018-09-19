@@ -3,6 +3,7 @@ package io.trane.ndbc.mysql.proto;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
@@ -39,6 +40,22 @@ public class PacketBufferWriter implements BufferWriter {
   public void writeUnsignedShort(final int s) {
     final byte[] bytes = { (byte) (s & 0xff), (byte) ((s >> 8) & 0xff) };
     writeBytes(bytes);
+  }
+
+  public void writeUnsignedLong(final BigInteger s) {
+    byte[] byteArray = s.toByteArray();
+    int lengthOfByteArray = byteArray.length;
+
+    if (lengthOfByteArray > 8) {
+      throw new UnsupportedOperationException("Big integer is too logn: " + lengthOfByteArray);
+    }
+
+    for (int i = lengthOfByteArray - 1; i >= 0; i--)
+      writeByte(byteArray[i]);
+
+    for (int i = lengthOfByteArray; i < 8; i++) {
+      writeByte((byte) 0x0);
+    }
   }
 
   @Override

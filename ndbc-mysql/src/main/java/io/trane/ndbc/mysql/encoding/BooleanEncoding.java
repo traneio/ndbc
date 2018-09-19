@@ -33,7 +33,7 @@ final class BooleanEncoding extends Encoding<Boolean, BooleanValue> {
   }
 
   @Override
-  public final Boolean decodeBinary(final PacketBufferReader b, boolean unsigned) {
+  public final Boolean decodeBinary(final PacketBufferReader b, Key key) {
     return b.readByte() == 1;
   }
 

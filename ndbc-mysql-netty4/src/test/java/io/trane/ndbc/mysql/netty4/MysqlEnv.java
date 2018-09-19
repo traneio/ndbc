@@ -18,13 +18,15 @@ public class MysqlEnv {
         .database("test_schema")
         .password("test")
         .poolValidationInterval(Duration.ofSeconds(1))
-        .connectionTimeout(Duration.ofSeconds(1))
-        .queryTimeout(Duration.ofSeconds(1));
+        .connectionTimeout(Duration.ofSeconds(1));
   }
 
-  private static final List<String> versions = Arrays.asList("v5_5_latest", "v5_6_latest", "v5_7_latest");
+  private static final List<String> versions = Arrays.asList(
+      "v5_5_latest",
+      "v5_6_latest",
+      "v5_7_latest");
 
   public static final List<Object[]> dataSources = versions.stream()
-      .map(v -> new Object[] { DataSource.fromConfig(config(v)), "PG " + v })
+      .map(v -> new Object[] { DataSource.fromConfig(config(v)), "Mysql " + v })
       .collect(Collectors.toList());
 }

@@ -25,7 +25,8 @@ public class StartupExchange {
         .map(rows -> rows.get(0).column(0).getLong());
   }
 
-  public Exchange<Long> apply(final String username, final Optional<String> password, final Optional<String> database,
+  public Exchange<Long> apply(final String username, final Optional<String> password,
+      final Optional<String> database,
       final String encoding) {
     return Exchange.receive(unmarshallers.handshake)
         .flatMap(msg -> doHandshake(username, password, database, encoding).apply(msg))

@@ -33,8 +33,7 @@ final class ByteEncoding extends Encoding<Byte, ByteValue> {
   }
 
   @Override
-  public final Byte decodeBinary(final PacketBufferReader b, boolean unsigned) {
-    assert (unsigned);
+  public final Byte decodeBinary(final PacketBufferReader b, Key key) {
     return b.readByte();
   }
 

@@ -10,18 +10,21 @@ import io.trane.ndbc.value.ShortValue;
 
 final class ShortEncoding extends Encoding<Short, ShortValue> {
 
+  private static final Key signedShort  = key(FieldTypes.SHORT);
+  private static final Key unsignedTiny = unsignedKey(FieldTypes.TINY);
+
   public ShortEncoding(final Charset charset) {
     super(charset);
   }
 
   @Override
   public Key key() {
-    return key(FieldTypes.SHORT);
+    return signedShort;
   }
 
   @Override
   public Set<Key> additionalKeys() {
-    return Collections.toImmutableSet(unsignedKey(FieldTypes.TINY));
+    return Collections.toImmutableSet(unsignedTiny);
   }
 
   @Override
@@ -36,15 +39,17 @@ final class ShortEncoding extends Encoding<Short, ShortValue> {
 
   @Override
   public final void encodeBinary(final Short value, final PacketBufferWriter b) {
-    b.writeUnsignedShort(value);
+    b.writeShort(Short.reverseBytes(value));
   }
 
   @Override
-  public final Short decodeBinary(final PacketBufferReader b, boolean unsigned) {
-    if (unsigned)
-      return b.readUnsignedByte();
+  public final Short decodeBinary(final PacketBufferReader b, Key key) {
+    if (key.equals(signedShort))
+      return Short.reverseBytes(b.readShort());
+    else if (key.equals(unsignedTiny))
+      return Short.reverseBytes(b.readUnsignedByte());
     else
-      return b.readShort();
+      throw new IllegalStateException("Invalid key " + key);
   }
 
   @Override

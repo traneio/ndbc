@@ -19,6 +19,10 @@ public class PostgresArrayEncodingTest extends ArrayEncodingTest {
     return Arrays.asList("numeric[]");
   }
 
+  protected List<String> bigIntegerColumnTypes() {
+    return Arrays.asList("bigint[]");
+  }
+
   protected List<String> booleanColumnTypes() {
     return Arrays.asList("bool[]");
   }

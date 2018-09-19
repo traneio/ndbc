@@ -33,7 +33,7 @@ final class DoubleEncoding extends Encoding<Double, DoubleValue> {
   }
 
   @Override
-  public final Double decodeBinary(final PacketBufferReader b, boolean unsigned) {
+  public final Double decodeBinary(final PacketBufferReader b, Key key) {
     return b.readDouble();
   }
 

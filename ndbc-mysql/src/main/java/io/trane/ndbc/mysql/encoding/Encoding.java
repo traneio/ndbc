@@ -68,8 +68,8 @@ public abstract class Encoding<T, V extends Value<T>> {
     return box(decodeText(reader.readLengthCodedString(charset)));
   }
 
-  public V readBinary(final PacketBufferReader reader, boolean unsigned) {
-    return box(decodeBinary(reader, unsigned));
+  public V readBinary(final PacketBufferReader reader, Key key) {
+    return box(decodeBinary(reader, key));
   }
 
   public abstract Key key();
@@ -80,11 +80,11 @@ public abstract class Encoding<T, V extends Value<T>> {
     return emptyKeys;
   }
 
-  protected Key unsignedKey(Integer fieldType) {
+  protected static Key unsignedKey(Integer fieldType) {
     return new Key(fieldType, true);
   }
 
-  protected Key key(Integer fieldType) {
+  protected static Key key(Integer fieldType) {
     return new Key(fieldType, false);
   }
 
@@ -96,5 +96,5 @@ public abstract class Encoding<T, V extends Value<T>> {
 
   protected abstract void encodeBinary(T value, PacketBufferWriter b);
 
-  protected abstract T decodeBinary(PacketBufferReader b, boolean unsigned);
+  protected abstract T decodeBinary(PacketBufferReader b, Key key);
 }

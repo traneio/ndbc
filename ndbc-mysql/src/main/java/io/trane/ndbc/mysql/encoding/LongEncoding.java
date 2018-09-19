@@ -10,18 +10,22 @@ import io.trane.ndbc.value.LongValue;
 
 final class LongEncoding extends Encoding<Long, LongValue> {
 
+  private static final Key signedLongLong   = key(FieldTypes.LONGLONG);
+  private static final Key unsignedLong     = unsignedKey(FieldTypes.LONG);
+  private static final Key unsignedLongLong = unsignedKey(FieldTypes.LONGLONG);
+
   public LongEncoding(final Charset charset) {
     super(charset);
   }
 
   @Override
   public Key key() {
-    return key(FieldTypes.LONGLONG);
+    return signedLongLong;
   }
 
   @Override
   public Set<Key> additionalKeys() {
-    return Collections.toImmutableSet(unsignedKey(FieldTypes.LONG), unsignedKey(FieldTypes.LONGLONG));
+    return Collections.toImmutableSet(unsignedLong, unsignedLongLong);
   }
 
   @Override
@@ -36,15 +40,19 @@ final class LongEncoding extends Encoding<Long, LongValue> {
 
   @Override
   public final void encodeBinary(final Long value, final PacketBufferWriter b) {
-    b.writeLong(value);
+    b.writeLong(Long.reverseBytes(value));
   }
 
   @Override
-  public final Long decodeBinary(final PacketBufferReader b, boolean unsigned) {
-    if (unsigned)
-      return b.readUnsignedInt();
+  public final Long decodeBinary(final PacketBufferReader b, Key key) {
+    if (key.equals(signedLongLong))
+      return Long.reverseBytes(b.readLong());
+    else if (key.equals(unsignedLong))
+      return Long.reverseBytes(b.readUnsignedInt());
+    else if (key.equals(unsignedLongLong))
+      return b.readUnsignedLongLE().longValue();
     else
-      return b.readLong();
+      throw new IllegalStateException("Invalid key " + key);
   }
 
   @Override

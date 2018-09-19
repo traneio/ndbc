@@ -33,7 +33,7 @@ final class FloatEncoding extends Encoding<Float, FloatValue> {
   }
 
   @Override
-  public final Float decodeBinary(final PacketBufferReader b, boolean unsigned) {
+  public final Float decodeBinary(final PacketBufferReader b, Key key) {
     return b.readFloat();
   }
 

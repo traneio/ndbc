@@ -25,7 +25,6 @@ public final class EncodingRegistry {
 
     final List<Encoding<?, ?>> defaultEncodings = Arrays.asList(
         new BooleanEncoding(charset),
-
         new DoubleEncoding(charset),
         new FloatEncoding(charset),
         new ShortEncoding(charset),
@@ -51,21 +50,25 @@ public final class EncodingRegistry {
   }
 
   public final <T> Value<T> decodeText(final Field field, final PacketBufferReader reader) {
-    return this.<T>resolve(field).readText(reader);
+    return this.<T>resolve(keyFor(field)).readText(reader);
   }
 
   public final <T> Value<T> decodeBinary(final Field field, final PacketBufferReader reader) {
-    return this.<T>resolve(field).readBinary(reader, isUnsigned(field));
+    Key key = keyFor(field);
+    return this.<T>resolve(key).readBinary(reader, key);
+  }
+
+  private final Key keyFor(final Field field) {
+    return new Key(field.fieldType, isUnsigned(field));
   }
 
   @SuppressWarnings("unchecked")
-  private final <T> Encoding<T, Value<T>> resolve(final Field field) {
-    Key key = new Key(field.fieldType, isUnsigned(field));
+  private final <T> Encoding<T, Value<T>> resolve(final Key key) {
     Encoding<T, Value<T>> enc;
     if ((enc = (Encoding<T, Value<T>>) byKey.get(key)) != null)
       return enc;
     else
-      throw new NdbcException("Can't decode value of type " + field);
+      throw new NdbcException("Can't decode value " + key);
   }
 
   private boolean isUnsigned(final Field field) {

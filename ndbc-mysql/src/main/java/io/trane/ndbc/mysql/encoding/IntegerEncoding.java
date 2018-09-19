@@ -36,12 +36,12 @@ final class IntegerEncoding extends Encoding<Integer, IntegerValue> {
 
   @Override
   public final void encodeBinary(final Integer value, final PacketBufferWriter b) {
-    b.writeInt(value);
+    b.writeInt(Integer.reverseBytes(value));
   }
 
   @Override
-  public final Integer decodeBinary(final PacketBufferReader b, boolean unsigned) {
-    return b.readInt();
+  public final Integer decodeBinary(final PacketBufferReader b, Key key) {
+    return Integer.reverseBytes(b.readInt());
   }
 
   @Override

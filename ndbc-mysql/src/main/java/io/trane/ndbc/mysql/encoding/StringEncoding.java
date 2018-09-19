@@ -41,7 +41,7 @@ final class StringEncoding extends Encoding<String, StringValue> {
   }
 
   @Override
-  public final String decodeBinary(final PacketBufferReader b, boolean unsigned) {
+  public final String decodeBinary(final PacketBufferReader b, Key key) {
     return b.readLengthCodedString(charset);
   }
 

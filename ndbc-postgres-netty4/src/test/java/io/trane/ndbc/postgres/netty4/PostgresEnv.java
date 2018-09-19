@@ -18,8 +18,7 @@ public class PostgresEnv {
         .database("test_schema")
         .password("test")
         .poolValidationInterval(Duration.ofSeconds(1))
-        .connectionTimeout(Duration.ofSeconds(1))
-        .queryTimeout(Duration.ofSeconds(1));
+        .connectionTimeout(Duration.ofSeconds(1));
   }
 
   private static final List<String> versions = Arrays.asList("V9_5", "V9_6");
