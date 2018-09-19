@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk8
 script:
-  - ./build/build.sh
+  - travis_retry ./build/build.sh
 cache:
   directories:
   - $HOME/.m2/repository
