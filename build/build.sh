@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e # Any subsequent(*) commands which fail will cause the shell script to exit immediately
+set -x
 
 MVN="mvn --settings build/settings.xml -Dlogback.configurationFile=build/logback-ci.xml org.jacoco:jacoco-maven-plugin:prepare-agent "
 
@@ -43,3 +44,5 @@ then
 else
 	echo "Nothing to publish"
 fi
+
+set +x
