@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e # Any subsequent(*) commands which fail will cause the shell script to exit immediately
 
-MVN="mvn --settings build/settings.xml -Dlogback.configurationFile=build/logback-ci.xml org.jacoco:jacoco-maven-plugin:prepare-agent "
+MVN="mvn --settings build/settings.xml -Dlogback.configurationFile=file://$BUILD_DIR/logback-ci.xml org.jacoco:jacoco-maven-plugin:prepare-agent "
 
 if [[ $TRAVIS_PULL_REQUEST == "false" ]]
 then
