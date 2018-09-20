@@ -41,7 +41,7 @@ public abstract class PostgresUnmarshaller<T extends ServerMessage> implements U
       case 'N':
         final InfoResponse.NoticeResponse notice = new InfoResponse.NoticeResponse(
             infoResponseFieldsUnmarshaller.apply(b));
-        log.info(notice.toString());
+        log.debug(notice.toString());
         return Optional.empty();
       case 'A':
         final NotificationResponse notification = new NotificationResponse(b.readInt(), b.readCString(charset),
