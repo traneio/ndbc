@@ -21,7 +21,16 @@ public class PostgresEnv {
         .connectionTimeout(Duration.ofSeconds(1));
   }
 
-  private static final List<String> versions = Arrays.asList("V9_5", "V9_6");
+  private static final List<String> versions;
+
+  static {
+    if (System.getenv("TRAVIS_BRANCH") != null)
+      versions = Arrays.asList(
+          "V9_5",
+          "V9_6");
+    else
+      versions = Arrays.asList("V9_6");
+  }
 
   public static final List<Object[]> dataSources = versions.stream()
       .map(v -> new Object[] { DataSource.fromConfig(config(v)), "PG " + v })

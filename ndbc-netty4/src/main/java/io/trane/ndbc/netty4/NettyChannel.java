@@ -53,6 +53,8 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
         public void accept(final BufferReader b) {
           try {
             final Optional<T> option = unmarshaller.apply(b);
+            if (b.readableBytes() > 0)
+              throw new IllegalStateException("Bug - Unmarshaller " + unmarshaller + " didn't consume all bytes.");
             option.ifPresent(msg -> {
               log.fine(NettyChannel.this.hashCode() + " received: " + msg);
               b.release();

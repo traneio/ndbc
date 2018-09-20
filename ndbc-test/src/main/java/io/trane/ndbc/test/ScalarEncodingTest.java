@@ -90,6 +90,6 @@ public abstract class ScalarEncodingTest extends EncodingTest {
 
   @Test
   public void string() throws CheckedFutureException {
-    test(stringColumnTypes(), (ps, v) -> ps.setString(v), Value::getString, r -> radomString(r, 100));
+    test(stringColumnTypes(), (ps, v) -> ps.setString(v), Value::getString, r -> "");
   }
 }
