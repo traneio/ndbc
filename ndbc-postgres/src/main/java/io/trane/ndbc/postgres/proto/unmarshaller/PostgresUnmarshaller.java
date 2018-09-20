@@ -2,7 +2,9 @@ package io.trane.ndbc.postgres.proto.unmarshaller;
 
 import java.nio.charset.Charset;
 import java.util.Optional;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.trane.ndbc.NdbcException;
 import io.trane.ndbc.postgres.proto.Message.InfoResponse;
@@ -13,7 +15,7 @@ import io.trane.ndbc.proto.Unmarshaller;
 
 public abstract class PostgresUnmarshaller<T extends ServerMessage> implements Unmarshaller<T> {
 
-  private static final Logger log = Logger.getLogger(PostgresUnmarshaller.class.getName());
+  private static final Logger log = LoggerFactory.getLogger(PostgresUnmarshaller.class);
 
   protected final Charset                      charset;
   private final InfoResponseFieldsUnmarshaller infoResponseFieldsUnmarshaller;
@@ -39,12 +41,12 @@ public abstract class PostgresUnmarshaller<T extends ServerMessage> implements U
       case 'N':
         final InfoResponse.NoticeResponse notice = new InfoResponse.NoticeResponse(
             infoResponseFieldsUnmarshaller.apply(b));
-        log.fine(notice.toString());
+        log.info(notice.toString());
         return Optional.empty();
       case 'A':
         final NotificationResponse notification = new NotificationResponse(b.readInt(), b.readCString(charset),
             b.readCString(charset));
-        log.fine(notification.toString());
+        log.info(notification.toString());
         return Optional.empty();
       default:
         if (!acceptsType(tpe))

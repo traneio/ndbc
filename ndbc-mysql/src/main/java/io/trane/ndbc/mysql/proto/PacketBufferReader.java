@@ -2,7 +2,6 @@ package io.trane.ndbc.mysql.proto;
 
 import java.math.BigInteger;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 
 import io.trane.ndbc.proto.BufferReader;
 
@@ -207,11 +206,5 @@ public class PacketBufferReader implements BufferReader {
   @Override
   public Double readDouble() {
     return b.readDouble();
-  }
-
-  public void dump() {
-    b.markReaderIndex();
-    System.out.println(Arrays.toString(b.readBytes()));
-    b.resetReaderIndex();
   }
 }

@@ -4,7 +4,9 @@ import java.nio.charset.Charset;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
@@ -21,7 +23,7 @@ import io.trane.ndbc.util.NonFatalException;
 
 final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader> implements Channel {
 
-  private static final Logger log = Logger.getLogger(NettyChannel.class.getName());
+  private static final Logger log = LoggerFactory.getLogger(NettyChannel.class);
 
   private final Charset                                 charset;
   private Promise<ChannelHandlerContext>                ctx                 = Promise.apply();
@@ -33,7 +35,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
 
   @Override
   public <T extends ClientMessage> Future<Void> send(final Marshaller<T> marshaller, final T msg) {
-    log.fine(hashCode() + " sent: " + msg);
+    log.debug(hashCode() + " sent: " + msg);
     return ctx.flatMap(c -> {
       final ByteBuf ioBuffer = c.alloc().ioBuffer();
       marshaller.apply(msg, new BufferWriter(charset, ioBuffer));
@@ -46,7 +48,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
   @Override
   public <T extends ServerMessage> Future<T> receive(final Unmarshaller<T> unmarshaller) {
     return ctx.flatMap(c -> {
-      log.fine(hashCode() + " requested: " + unmarshaller);
+      log.debug(hashCode() + " requested: " + unmarshaller);
       final Promise<T> p = Promise.apply();
       final Consumer<BufferReader> consumer = new Consumer<BufferReader>() {
         @Override
@@ -56,7 +58,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
             if (b.readableBytes() > 0)
               throw new IllegalStateException("Bug - Unmarshaller " + unmarshaller + " didn't consume all bytes.");
             option.ifPresent(msg -> {
-              log.fine(NettyChannel.this.hashCode() + " received: " + msg);
+              log.debug(NettyChannel.this.hashCode() + " received: " + msg);
               b.release();
               p.setValue(msg);
             });

@@ -8,7 +8,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.trane.future.Future;
 import io.trane.future.InterruptHandler;
@@ -23,7 +25,7 @@ import io.trane.ndbc.value.Value;
 
 public final class Connection implements io.trane.ndbc.datasource.Connection {
 
-  private static final Logger logger = Logger.getLogger(Connection.class.getName());
+  private static final Logger log = LoggerFactory.getLogger(Connection.class);
 
   private static final PreparedStatement isValidQuery = PreparedStatement.apply("SELECT 1");
 
@@ -127,7 +129,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private final <T> InterruptHandler handler(final Promise<T> p) {
     return ex -> {
       channelSupplier.get().flatMap(channel -> cancelQueryExchange.run(channel))
-          .onFailure(e -> logger.warning("Can't cancel request. Reason: " + e))
+          .onFailure(e -> log.warn("Can't cancel request. Reason: " + e))
           .ensure(() -> p.setException(ex));
     };
   }

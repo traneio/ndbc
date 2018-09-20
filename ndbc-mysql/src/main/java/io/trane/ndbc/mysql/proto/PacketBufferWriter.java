@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 
 import io.trane.ndbc.proto.BufferWriter;
 
@@ -223,9 +222,5 @@ public class PacketBufferWriter implements BufferWriter {
   @Override
   public Charset getCharset() {
     return bw.getCharset();
-  }
-
-  public void dump(final String l) {
-    System.out.println(l + " " + Arrays.toString(baos.toByteArray()));
   }
 }

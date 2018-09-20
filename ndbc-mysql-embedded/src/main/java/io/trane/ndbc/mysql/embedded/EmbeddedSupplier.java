@@ -6,7 +6,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.wix.mysql.EmbeddedMysql;
 import com.wix.mysql.EmbeddedMysql.Builder;
@@ -23,6 +25,8 @@ import io.trane.ndbc.Row;
 
 public class EmbeddedSupplier implements Supplier<DataSource> {
 
+  private static final Logger log = LoggerFactory.getLogger(EmbeddedSupplier.class);
+
   private final Config  config;
   private final Version version;
 
@@ -33,8 +37,6 @@ public class EmbeddedSupplier implements Supplier<DataSource> {
       this.config = config;
     this.version = version.map(Version::valueOf).orElse(Version.v5_7_latest);
   }
-
-  private static final Logger log = Logger.getLogger(EmbeddedMysql.class.getName());
 
   @Override
   public DataSource get() {

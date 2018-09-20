@@ -8,7 +8,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.flapdoodle.embed.process.config.IRuntimeConfig;
 import io.trane.future.Future;
@@ -22,7 +24,7 @@ import ru.yandex.qatools.embed.postgresql.util.SocketUtil;
 
 public class EmbeddedSupplier implements Supplier<DataSource> {
 
-  private static final Logger log = Logger.getLogger(EmbeddedSupplier.class.getName());
+  private static final Logger log = LoggerFactory.getLogger(EmbeddedSupplier.class);
 
   private static final List<String> DEFAULT_ADD_PARAMS = asList(
       "-E", "SQL_ASCII",
