@@ -4,10 +4,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.runners.Parameterized.Parameters;
 
 import io.trane.ndbc.test.ScalarEncodingTest;
 
+@Ignore
 public class MysqlScalarEncodingTest extends ScalarEncodingTest {
 
   @Parameters(name = "{1}")
