@@ -10,12 +10,13 @@ import io.trane.ndbc.netty4.Netty4DataSourceSupplier;
 import io.trane.ndbc.netty4.NettyChannel;
 import io.trane.ndbc.sqlserver.proto.StartupExchange;
 import io.trane.ndbc.sqlserver.proto.marshaller.Marshallers;
+import io.trane.ndbc.sqlserver.proto.unmarshaller.TransformBufferReader;
 import io.trane.ndbc.sqlserver.proto.unmarshaller.Unmarshallers;
 
 public class DataSourceSupplier extends Netty4DataSourceSupplier {
 
   public DataSourceSupplier(final Config config) {
-    super(config, createConnection(config), null);
+    super(config, createConnection(config), new TransformBufferReader());
   }
 
   private static Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnection(
