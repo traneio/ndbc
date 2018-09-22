@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
@@ -19,10 +20,13 @@ import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.sqlserver.proto.Message.Attention;
 import io.trane.ndbc.sqlserver.proto.marshaller.Marshallers;
 import io.trane.ndbc.util.NonFatalException;
+import io.trane.ndbc.value.Value;
 
 public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   private static final Logger logger = Logger.getLogger(Connection.class.getName());
+
+  private static final PreparedStatement isValidQuery = PreparedStatement.apply("SELECT 1");
 
   private final Channel channel;
   private final Marshallers marshallers;
@@ -30,26 +34,35 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private final ScheduledExecutorService scheduler;
   private final Supplier<? extends Future<? extends Channel>> channelSupplier;
   private final Function<String, Exchange<List<Row>>> simpleQueryExchange;
+  private final Function<String, Exchange<Long>> simpleExecuteExchange;
+  private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
+  private final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange;
 
   public Connection(final Channel channel, final Marshallers marshallers, final Optional<Duration> queryTimeout,
       final ScheduledExecutorService scheduler, final Supplier<? extends Future<? extends Channel>> channelSupplier,
-      final Function<String, Exchange<List<Row>>> simpleQueryExchange) {
+      final Function<String, Exchange<List<Row>>> simpleQueryExchange,
+      final Function<String, Exchange<Long>> simpleExecuteExchange,
+      final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange,
+      final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange) {
     this.channel = channel;
     this.marshallers = marshallers;
     this.queryTimeout = queryTimeout;
     this.scheduler = scheduler;
     this.channelSupplier = channelSupplier;
     this.simpleQueryExchange = simpleQueryExchange;
+    this.simpleExecuteExchange = simpleExecuteExchange;
+    this.extendedQueryExchange = extendedQueryExchange;
+    this.extendedExecuteExchange = extendedExecuteExchange;
   }
 
   @Override
   public Future<Boolean> isValid() {
-    return null;
+    return query(isValidQuery).map(r -> true).rescue(e -> Future.FALSE);
   }
 
   @Override
   public Future<Void> close() {
-    return null;
+    return Exchange.CLOSE.run(channel);
   }
 
   @Override
@@ -58,18 +71,18 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   }
 
   @Override
-  public Future<Long> execute(final String query) {
-    return null;
+  public Future<Long> execute(final String command) {
+    return run(simpleExecuteExchange.apply(command));
   }
 
   @Override
-  public Future<List<Row>> query(final PreparedStatement query) {
-    return null;
+  public final Future<List<Row>> query(final PreparedStatement query) {
+    return run(extendedQueryExchange.apply(query.query(), query.params()));
   }
 
   @Override
-  public Future<Long> execute(final PreparedStatement query) {
-    return null;
+  public Future<Long> execute(final PreparedStatement command) {
+    return run(extendedExecuteExchange.apply(command.query(), command.params()));
   }
 
   @Override
