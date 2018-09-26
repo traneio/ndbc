@@ -8,6 +8,7 @@ import io.trane.ndbc.Config;
 import io.trane.ndbc.datasource.Connection;
 import io.trane.ndbc.netty4.Netty4DataSourceSupplier;
 import io.trane.ndbc.netty4.NettyChannel;
+import io.trane.ndbc.sqlserver.proto.SimpleQueryExchange;
 import io.trane.ndbc.sqlserver.proto.StartupExchange;
 import io.trane.ndbc.sqlserver.proto.marshaller.Marshallers;
 import io.trane.ndbc.sqlserver.proto.unmarshaller.TransformBufferReader;
@@ -24,11 +25,13 @@ public class DataSourceSupplier extends Netty4DataSourceSupplier {
     final Marshallers marshallers = new Marshallers();
     final Unmarshallers unmarshallers = new Unmarshallers();
     final StartupExchange startup = new StartupExchange(marshallers, unmarshallers);
+    final SimpleQueryExchange simpleQueryExchange = new SimpleQueryExchange();
 
     return (channelSupplier) -> () -> {
       return channelSupplier.get().flatMap(channel -> startup
           .apply(config.user(), config.password(), config.database(), "utf8").run(channel).map(connectionId -> {
-            return new io.trane.ndbc.sqlserver.Connection();
+            return new io.trane.ndbc.sqlserver.Connection(channel, marshallers, config.queryTimeout(),
+                config.scheduler(), channelSupplier, simpleQueryExchange, null, null, null);
           }));
     };
   }

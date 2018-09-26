@@ -35,7 +35,7 @@ public interface Message {
 
     @Override
     public String toString() {
-      return "PreLogin{header=" + header + "}";
+      return "PreLogin[header=" + header + "]";
     }
   }
 
@@ -58,6 +58,34 @@ public interface Message {
   }
 
   public static final class PreLoginResponse implements ServerMessage {
+    public Long id = 1234567890L;
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = (int) (prime * result + (id ^ id >>> 32));
+      return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      final PreLoginResponse other = (PreLoginResponse) obj;
+      if (id != other.id)
+        return false;
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "PreLoginResponse[id=" + id + "]";
+    }
   }
 
   public static final class LoginResponse implements ServerMessage {
