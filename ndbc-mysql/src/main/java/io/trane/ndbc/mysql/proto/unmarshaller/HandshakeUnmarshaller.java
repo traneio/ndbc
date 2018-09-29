@@ -19,7 +19,7 @@ public class HandshakeUnmarshaller extends MysqlUnmarshaller<Handshake> {
   }
 
   @Override
-  public final Handshake decode(final int header, final PacketBufferReader packet) {
+  public final Handshake decode(final PacketBufferReader packet) {
 
     final int protocolVersion = packet.readByte() & 0xff;
     final String serverVersion = packet.readCString(charset);

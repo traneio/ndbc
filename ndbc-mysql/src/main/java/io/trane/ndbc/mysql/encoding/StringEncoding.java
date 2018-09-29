@@ -10,10 +10,6 @@ import io.trane.ndbc.value.StringValue;
 
 final class StringEncoding extends Encoding<String, StringValue> {
 
-  public StringEncoding(final Charset charset) {
-    super(charset);
-  }
-
   @Override
   public Key key() {
     return key(FieldTypes.VARCHAR);
@@ -21,8 +17,7 @@ final class StringEncoding extends Encoding<String, StringValue> {
 
   @Override
   public Set<Key> additionalKeys() {
-    return Collections.toImmutableSet(key(FieldTypes.STRING), key(FieldTypes.VAR_STRING), key(FieldTypes.TINY_BLOB),
-        key(FieldTypes.BLOB), key(FieldTypes.MEDIUM_BLOB));
+    return Collections.toImmutableSet(key(FieldTypes.STRING), key(FieldTypes.VAR_STRING));
   }
 
   @Override
@@ -31,17 +26,17 @@ final class StringEncoding extends Encoding<String, StringValue> {
   }
 
   @Override
-  public final String decodeText(final String value) {
+  public final String decodeText(final String value, Charset charset) {
     return value;
   }
 
   @Override
-  public final void encodeBinary(final String value, final PacketBufferWriter b) {
+  public final void encodeBinary(final String value, final PacketBufferWriter b, Charset charset) {
     b.writeLengthCodedString(charset, value);
   }
 
   @Override
-  public final String decodeBinary(final PacketBufferReader b, Key key) {
+  public final String decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
     return b.readLengthCodedString(charset);
   }
 

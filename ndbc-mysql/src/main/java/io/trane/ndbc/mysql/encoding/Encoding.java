@@ -54,22 +54,16 @@ public abstract class Encoding<T, V extends Value<T>> {
     }
   }
 
-  protected final Charset charset;
-
-  public Encoding(final Charset charset) {
-    this.charset = charset;
+  public void writeBinary(final V value, final PacketBufferWriter writer, Charset charset) {
+    encodeBinary(value.get(), writer, charset);
   }
 
-  public void writeBinary(final V value, final PacketBufferWriter writer) {
-    encodeBinary(value.get(), writer);
+  public V readText(final PacketBufferReader reader, Key key, Charset charset) {
+    return box(decodeText(reader.readLengthCodedString(charset), charset));
   }
 
-  public V readText(final PacketBufferReader reader) {
-    return box(decodeText(reader.readLengthCodedString(charset)));
-  }
-
-  public V readBinary(final PacketBufferReader reader, Key key) {
-    return box(decodeBinary(reader, key));
+  public V readBinary(final PacketBufferReader reader, Key key, Charset charset) {
+    return box(decodeBinary(reader, key, charset));
   }
 
   public abstract Key key();
@@ -92,9 +86,9 @@ public abstract class Encoding<T, V extends Value<T>> {
 
   protected abstract V box(T value);
 
-  protected abstract T decodeText(String value);
+  protected abstract T decodeText(String value, Charset charset);
 
-  protected abstract void encodeBinary(T value, PacketBufferWriter b);
+  protected abstract void encodeBinary(T value, PacketBufferWriter b, Charset charset);
 
-  protected abstract T decodeBinary(PacketBufferReader b, Key key);
+  protected abstract T decodeBinary(PacketBufferReader b, Key key, Charset charset);
 }

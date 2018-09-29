@@ -1,5 +1,6 @@
 package io.trane.ndbc.mysql.proto;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -556,20 +557,20 @@ public interface Message {
   }
 
   public static class Field implements ServerMessage {
-    public String catalog;
-    public String db;
-    public String table;
-    public String origTable;
-    public String name;
-    public String origName;
-    public int    charset;
-    public long   displayLength;
-    public int    fieldType;
-    public int    flags;
-    public int    decimals;
+    public String  catalog;
+    public String  db;
+    public String  table;
+    public String  origTable;
+    public String  name;
+    public String  origName;
+    public Charset charset;
+    public long    displayLength;
+    public int     fieldType;
+    public int     flags;
+    public int     decimals;
 
     public Field(final String catalog, final String db, final String table, final String origTable,
-        final String name, final String origName, final int charset, final long displayLength,
+        final String name, final String origName, final Charset charset, final long displayLength,
         final int fieldType, final int flags, final int decimals) {
       this.catalog = catalog;
       this.db = db;
@@ -624,7 +625,7 @@ public interface Message {
       result = (31 * result) + origTable.hashCode();
       result = (31 * result) + name.hashCode();
       result = (31 * result) + origName.hashCode();
-      result = (31 * result) + charset;
+      result = (31 * result) + charset.hashCode();
       result = (31 * result) + (int) (displayLength ^ (displayLength >>> 32));
       result = (31 * result) + fieldType;
       result = (31 * result) + flags;

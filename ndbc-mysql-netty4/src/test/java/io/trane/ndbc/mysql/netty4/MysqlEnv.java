@@ -17,8 +17,7 @@ public class MysqlEnv {
         .embedded(Config.Embedded.apply("io.trane.ndbc.mysql.embedded.EmbeddedSupplier", Optional.of(version)))
         .database("test_schema")
         .password("test")
-        .poolValidationInterval(Duration.ofSeconds(1))
-        .connectionTimeout(Duration.ofSeconds(1));
+        .poolValidationInterval(Duration.ofSeconds(1));
   }
 
   private static final List<String> versions;

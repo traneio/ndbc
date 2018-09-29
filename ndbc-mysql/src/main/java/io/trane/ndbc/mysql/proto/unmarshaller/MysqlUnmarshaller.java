@@ -14,11 +14,11 @@ public abstract class MysqlUnmarshaller<T extends ServerMessage> implements Unma
     final PacketBufferReader p = new PacketBufferReader(bufferReader);
     p.markReaderIndex();
     final int header = p.readByte() & 0xFF;
-    if (!acceptsHeader(header))
+    if (!acceptsHeader(header, p.readableBytes()))
       throw new IllegalStateException(
           "Invalid packet for " + getClass() + ". Remaining bytes: " + bufferReader.readableBytes());
     p.resetReaderIndex();
-    return Optional.of(decode(header, p));
+    return Optional.of(decode(p));
   }
 
   public <U extends ServerMessage> MysqlUnmarshaller<ServerMessage> orElse(final MysqlUnmarshaller<U> other) {
@@ -26,16 +26,21 @@ public abstract class MysqlUnmarshaller<T extends ServerMessage> implements Unma
     return new MysqlUnmarshaller<ServerMessage>() {
 
       @Override
-      protected boolean acceptsHeader(final int header) {
-        return MysqlUnmarshaller.this.acceptsHeader(header) || other.acceptsHeader(header);
+      protected boolean acceptsHeader(final int header, final int readableBytes) {
+        return MysqlUnmarshaller.this.acceptsHeader(header, readableBytes)
+            || other.acceptsHeader(header, readableBytes);
       }
 
       @Override
-      protected ServerMessage decode(final int header, final PacketBufferReader packet) {
-        if (MysqlUnmarshaller.this.acceptsHeader(header))
-          return MysqlUnmarshaller.this.decode(header, packet);
+      protected ServerMessage decode(final PacketBufferReader p) {
+        p.markReaderIndex();
+        final int header = p.readByte() & 0xFF;
+        final int readableBytes = p.readableBytes();
+        p.resetReaderIndex();
+        if (MysqlUnmarshaller.this.acceptsHeader(header, readableBytes))
+          return MysqlUnmarshaller.this.decode(p);
         else
-          return other.decode(header, packet);
+          return other.decode(p);
       }
 
       @Override
@@ -45,11 +50,11 @@ public abstract class MysqlUnmarshaller<T extends ServerMessage> implements Unma
     };
   }
 
-  protected boolean acceptsHeader(final int header) {
+  protected boolean acceptsHeader(final int header, final int readableBytes) {
     return true;
   }
 
-  protected abstract T decode(int header, PacketBufferReader packet);
+  protected abstract T decode(PacketBufferReader packet);
 
   @Override
   public String toString() {

@@ -1,5 +1,6 @@
 package io.trane.ndbc.mysql.proto.marshaller;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 import io.trane.ndbc.mysql.encoding.EncodingRegistry;
@@ -12,9 +13,11 @@ import io.trane.ndbc.value.Value;
 public class ExecuteStatementCommandMarshaller implements Marshaller<ExecuteStatementCommand> {
 
   private final EncodingRegistry encoding;
+  private final Charset          charset;
 
-  public ExecuteStatementCommandMarshaller(final EncodingRegistry encoding) {
+  public ExecuteStatementCommandMarshaller(final EncodingRegistry encoding, Charset charset) {
     this.encoding = encoding;
+    this.charset = charset;
   }
 
   @Override
@@ -48,6 +51,6 @@ public class ExecuteStatementCommandMarshaller implements Marshaller<ExecuteStat
 
   private void writeValues(final PacketBufferWriter packet, final List<Value<?>> values) {
     for (final Value<?> value : values)
-      encoding.encodeBinary(value, packet);
+      encoding.encodeBinary(value, packet, charset);
   }
 }

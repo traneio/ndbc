@@ -18,7 +18,7 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
   }
 
   protected List<String> bigDecimalColumnTypes() {
-    return Arrays.asList("NUMERIC");
+    return Arrays.asList("DECIMAL(20, 10)", "NUMERIC(20, 10)");
   }
 
   protected List<String> booleanColumnTypes() {
@@ -70,6 +70,6 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
   }
 
   protected List<String> stringColumnTypes() {
-    return Arrays.asList("VARCHAR(9999)", "TEXT");
+    return Arrays.asList("VARCHAR(9999)");
   }
 }

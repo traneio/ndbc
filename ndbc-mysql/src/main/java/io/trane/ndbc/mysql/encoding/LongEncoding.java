@@ -14,10 +14,6 @@ final class LongEncoding extends Encoding<Long, LongValue> {
   private static final Key unsignedLong     = unsignedKey(FieldTypes.LONG);
   private static final Key unsignedLongLong = unsignedKey(FieldTypes.LONGLONG);
 
-  public LongEncoding(final Charset charset) {
-    super(charset);
-  }
-
   @Override
   public Key key() {
     return signedLongLong;
@@ -34,17 +30,17 @@ final class LongEncoding extends Encoding<Long, LongValue> {
   }
 
   @Override
-  public final Long decodeText(final String value) {
+  public final Long decodeText(final String value, Charset charset) {
     return Long.valueOf(value);
   }
 
   @Override
-  public final void encodeBinary(final Long value, final PacketBufferWriter b) {
+  public final void encodeBinary(final Long value, final PacketBufferWriter b, Charset charset) {
     b.writeLong(Long.reverseBytes(value));
   }
 
   @Override
-  public final Long decodeBinary(final PacketBufferReader b, Key key) {
+  public final Long decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
     if (key.equals(signedLongLong))
       return Long.reverseBytes(b.readLong());
     else if (key.equals(unsignedLong))

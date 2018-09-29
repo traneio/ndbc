@@ -20,12 +20,12 @@ public class BinaryRowUnmarshaller extends MysqlUnmarshaller<Row> {
   }
 
   @Override
-  protected boolean acceptsHeader(final int header) {
+  protected boolean acceptsHeader(final int header, final int readableBytes) {
     return header == TerminatorUnmarshaller.OK_BYTE;
   }
 
   @Override
-  public Row decode(final int header, final PacketBufferReader p) {
+  public Row decode(final PacketBufferReader p) {
     p.readByte(); // header
     final BigInteger nullBitmap = nullBitmap(p);
     final Value<?>[] values = new Value<?>[fields.size()];

@@ -16,7 +16,7 @@ public abstract class ScalarEncodingTest extends EncodingTest {
   @Test
   public void bigDecimal() throws CheckedFutureException {
     test(bigDecimalColumnTypes(), (ps, v) -> ps.setBigDecimal(v), Value::getBigDecimal,
-        r -> BigDecimal.valueOf(r.nextLong(), r.nextInt(100)));
+        r -> BigDecimal.valueOf(r.nextInt(5), r.nextInt(5)), (a, b) -> assertEquals(a.compareTo(b), 0));
   }
 
   @Test
@@ -27,9 +27,10 @@ public abstract class ScalarEncodingTest extends EncodingTest {
   @Test
   public void byteArray() throws CheckedFutureException {
     test(byteArrayColumnTypes(), (ps, v) -> ps.setByteArray(v), Value::getByteArray, r -> {
-      final byte[] bytes = new byte[r.nextInt(5)];
-      r.nextBytes(bytes);
-      return bytes;
+      // final byte[] bytes = new byte[r.nextInt(5)];
+      // r.nextBytes(bytes);
+      // return bytes;
+      return new byte[] { 111, 14, -5 };
     }, (a, b) -> assertArrayEquals(a, b));
   }
 
@@ -90,6 +91,6 @@ public abstract class ScalarEncodingTest extends EncodingTest {
 
   @Test
   public void string() throws CheckedFutureException {
-    test(stringColumnTypes(), (ps, v) -> ps.setString(v), Value::getString, r -> "");
+    test(stringColumnTypes(), (ps, v) -> ps.setString(v), Value::getString, r -> radomString(r, 100));
   }
 }

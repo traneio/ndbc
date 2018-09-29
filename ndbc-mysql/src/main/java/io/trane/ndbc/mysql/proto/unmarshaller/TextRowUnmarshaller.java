@@ -19,12 +19,12 @@ public class TextRowUnmarshaller extends MysqlUnmarshaller<Row> {
   }
 
   @Override
-  protected boolean acceptsHeader(final int header) {
-    return !TerminatorUnmarshaller.isTerminator(header);
+  protected boolean acceptsHeader(final int header, final int readableBytes) {
+    return !TerminatorUnmarshaller.isTerminator(header, readableBytes);
   }
 
   @Override
-  public Row decode(final int header, final PacketBufferReader p) {
+  public Row decode(final PacketBufferReader p) {
     final Value<?>[] values = new Value<?>[fields.size()];
     int i = 0;
     for (final Field field : fields) {

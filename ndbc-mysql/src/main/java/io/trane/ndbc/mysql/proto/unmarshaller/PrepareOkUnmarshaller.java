@@ -8,12 +8,12 @@ public class PrepareOkUnmarshaller extends MysqlUnmarshaller<PrepareOk> {
   private final static int OK_BYTE = 0x00;
 
   @Override
-  protected boolean acceptsHeader(final int header) {
+  protected boolean acceptsHeader(final int header, final int readableBytes) {
     return header == OK_BYTE;
   }
 
   @Override
-  public PrepareOk decode(final int header, final PacketBufferReader p) {
+  public PrepareOk decode(final PacketBufferReader p) {
     assert ((p.readByte() & 0xFF) == OK_BYTE);
 
     final long statementId = p.readUnsignedInt();

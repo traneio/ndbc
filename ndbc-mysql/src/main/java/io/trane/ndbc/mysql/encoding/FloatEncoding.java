@@ -8,10 +8,6 @@ import io.trane.ndbc.value.FloatValue;
 
 final class FloatEncoding extends Encoding<Float, FloatValue> {
 
-  public FloatEncoding(final Charset charset) {
-    super(charset);
-  }
-
   @Override
   public Key key() {
     return key(FieldTypes.FLOAT);
@@ -23,17 +19,17 @@ final class FloatEncoding extends Encoding<Float, FloatValue> {
   }
 
   @Override
-  public final Float decodeText(final String value) {
+  public final Float decodeText(final String value, Charset charset) {
     return Float.valueOf(value);
   }
 
   @Override
-  public final void encodeBinary(final Float value, final PacketBufferWriter b) {
+  public final void encodeBinary(final Float value, final PacketBufferWriter b, Charset charset) {
     b.writeFloat(value);
   }
 
   @Override
-  public final Float decodeBinary(final PacketBufferReader b, Key key) {
+  public final Float decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
     return b.readFloat();
   }
 

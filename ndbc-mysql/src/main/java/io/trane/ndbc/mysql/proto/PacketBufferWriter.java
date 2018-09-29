@@ -122,9 +122,12 @@ public class PacketBufferWriter implements BufferWriter {
   }
 
   public void writeLengthCodedString(final Charset charset, final String value) {
-    final byte[] bytes = value.getBytes(bw.getCharset());
-    writeVariableLong(bytes.length);
-    writeBytes(bytes);
+    writeLengthCodedBytes(value.getBytes(bw.getCharset()));
+  }
+
+  public void writeLengthCodedBytes(final byte[] value) {
+    writeVariableLong(value.length);
+    writeBytes(value);
   }
 
   @Override

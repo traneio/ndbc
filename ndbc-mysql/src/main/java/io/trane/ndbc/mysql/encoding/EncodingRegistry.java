@@ -18,26 +18,32 @@ public final class EncodingRegistry {
 
   private final Map<Class<?>, Encoding<?, ?>> byValueClass;
   private final Map<Key, Encoding<?, ?>>      byKey;
+  private final Charset                       charset;
 
   public EncodingRegistry(final Optional<List<Encoding<?, ?>>> customEncodings, final Charset charset) {
+    this.charset = charset;
     byValueClass = new HashMap<>();
     byKey = new HashMap<>();
 
+    ByteEncoding byteEncoding = new ByteEncoding();
     final List<Encoding<?, ?>> defaultEncodings = Arrays.asList(
-        new BooleanEncoding(charset),
-        new DoubleEncoding(charset),
-        new FloatEncoding(charset),
-        new ShortEncoding(charset),
-        new IntegerEncoding(charset),
-        new StringEncoding(charset),
-        new LongEncoding(charset));
+        new BooleanEncoding(byteEncoding),
+        new ByteArrayEncoding(),
+        byteEncoding,
+        new DoubleEncoding(),
+        new FloatEncoding(),
+        new ShortEncoding(),
+        new IntegerEncoding(),
+        new BigDecimalEncoding(),
+        new StringEncoding(),
+        new LongEncoding());
 
     registerEncodings(defaultEncodings);
     customEncodings.ifPresent(this::registerEncodings);
   }
 
-  public final <T> void encodeBinary(final Value<T> value, final PacketBufferWriter writer) {
-    this.<T>resolve(value).writeBinary(value, writer);
+  public final <T> void encodeBinary(final Value<T> value, final PacketBufferWriter writer, Charset charset) {
+    this.<T>resolve(value).writeBinary(value, writer, charset);
   }
 
   @SuppressWarnings("unchecked")
@@ -50,12 +56,13 @@ public final class EncodingRegistry {
   }
 
   public final <T> Value<T> decodeText(final Field field, final PacketBufferReader reader) {
-    return this.<T>resolve(keyFor(field)).readText(reader);
+    Key key = keyFor(field);
+    return this.<T>resolve(key).readText(reader, key, charset);
   }
 
   public final <T> Value<T> decodeBinary(final Field field, final PacketBufferReader reader) {
     Key key = keyFor(field);
-    return this.<T>resolve(key).readBinary(reader, key);
+    return this.<T>resolve(key).readBinary(reader, key, charset);
   }
 
   private final Key keyFor(final Field field) {

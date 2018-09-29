@@ -34,7 +34,7 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
     final Unmarshallers unmarshallers = new Unmarshallers(config.charset(), encoding);
     final TerminatorExchange terminatorExchange = new TerminatorExchange(unmarshallers);
     final ResultSetExchange resultSetExchange = new ResultSetExchange(unmarshallers);
-    final Marshallers marshallers = new Marshallers(encoding);
+    final Marshallers marshallers = new Marshallers(encoding, config.charset());
     final SimpleQueryExchange simpleQueryExchange = new SimpleQueryExchange(marshallers,
         resultSetExchange.apply(false));
     final StartupExchange startup = new StartupExchange(simpleQueryExchange, marshallers, unmarshallers,

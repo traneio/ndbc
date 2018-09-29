@@ -8,8 +8,10 @@ import io.trane.ndbc.value.BooleanValue;
 
 final class BooleanEncoding extends Encoding<Boolean, BooleanValue> {
 
-  public BooleanEncoding(final Charset charset) {
-    super(charset);
+  private ByteEncoding byteEncoding;
+
+  public BooleanEncoding(ByteEncoding byteEncoding) {
+    this.byteEncoding = byteEncoding;
   }
 
   @Override
@@ -23,18 +25,18 @@ final class BooleanEncoding extends Encoding<Boolean, BooleanValue> {
   }
 
   @Override
-  public final Boolean decodeText(final String value) {
-    return value.equals("1") || Boolean.valueOf(value);
+  public final Boolean decodeText(final String value, Charset charset) {
+    return !value.equals("0") || Boolean.valueOf(value);
   }
 
   @Override
-  public final void encodeBinary(final Boolean value, final PacketBufferWriter b) {
-    b.writeByte(value ? (byte) 1 : (byte) 0);
+  public final void encodeBinary(final Boolean value, final PacketBufferWriter b, Charset charset) {
+    byteEncoding.encodeBinary(value ? (byte) 1 : (byte) 0, b, charset);
   }
 
   @Override
-  public final Boolean decodeBinary(final PacketBufferReader b, Key key) {
-    return b.readByte() == 1;
+  public final Boolean decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
+    return byteEncoding.decodeBinary(b, key, charset) != 0;
   }
 
   @Override

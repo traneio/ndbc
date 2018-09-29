@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -14,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import io.trane.future.CheckedFutureException;
 import io.trane.ndbc.PreparedStatement;
@@ -100,25 +102,29 @@ public abstract class EncodingTest extends NdbcTest {
       ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
       ds.execute("CREATE TABLE " + table + " (c " + columnType + ")").get(timeout);
 
+      final List<String> previousValues = new ArrayList<String>();
       final Random r = new Random(1);
       for (int i = 0; i < iterations; i++) {
         final T expected = gen.apply(r);
         ds.execute("DELETE FROM " + table).get(timeout);
 
+        String failureMessage = " Failure: columnType '" + columnType + "', value '"
+            + PrettyPrint.apply(expected) + "'. Previous successful values: "
+            + previousValues.stream().map(Object::toString).collect(Collectors.joining(", "));
+
         try {
           ds.execute(set.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected)).get(timeout);
         } catch (final Throwable e) {
-          throw new RuntimeException(
-              "Failure (extended insert). columnType '" + columnType + "', value '" + expected + "'", e);
+          throw new RuntimeException("(extended insert)" + failureMessage, e);
         }
 
         try {
-          final T simpleQueryActual = get.apply(query("SELECT c FROM " + table));
+          final T simpleQueryActual = get.apply(query("SELECT c FROM " +
+              table));
           verify.accept(expected, simpleQueryActual);
 
         } catch (final Throwable e) {
-          throw new RuntimeException(
-              "Failure (simple query). columnType '" + columnType + "', value '" + expected + "'", e);
+          throw new RuntimeException("(simple query)" + failureMessage, e);
         }
 
         try {
@@ -126,9 +132,10 @@ public abstract class EncodingTest extends NdbcTest {
           verify.accept(expected, extendedQueryactual);
 
         } catch (final Throwable e) {
-          throw new RuntimeException(
-              "Failure (extended query). columnType '" + columnType + "', value '" + expected + "'", e);
+          throw new RuntimeException("(extended query)" + failureMessage, e);
         }
+
+        previousValues.add(PrettyPrint.apply(expected));
       }
     }
   }

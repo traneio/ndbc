@@ -15,8 +15,8 @@ public class TerminatorUnmarshaller extends MysqlUnmarshaller<Terminator> {
   public final static int ERROR_BYTE = 0xFF;
   public final static int EOF_BYTE   = 0xFE;
 
-  public static final boolean isTerminator(final int header) {
-    return (header == OK_BYTE) || (header == ERROR_BYTE) || (header == EOF_BYTE);
+  public static final boolean isTerminator(final int header, final int readableBytes) {
+    return readableBytes > 0 && (header == OK_BYTE) || (header == ERROR_BYTE) || (header == EOF_BYTE);
   }
 
   private final Charset charset;
@@ -26,12 +26,12 @@ public class TerminatorUnmarshaller extends MysqlUnmarshaller<Terminator> {
   }
 
   @Override
-  protected boolean acceptsHeader(final int header) {
-    return isTerminator(header);
+  protected boolean acceptsHeader(final int header, final int readableBytes) {
+    return isTerminator(header, readableBytes);
   }
 
   @Override
-  public Terminator decode(final int header, final PacketBufferReader p) {
+  public Terminator decode(final PacketBufferReader p) {
     switch (p.readByte() & 0xFF) {
       case OK_BYTE:
         final long affectedRows = p.readVariableLong();
