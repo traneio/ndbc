@@ -9,9 +9,10 @@ import java.util.Random;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
+import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.value.Value;
 
-public abstract class ScalarEncodingTest extends EncodingTest {
+public abstract class ScalarEncodingTest extends EncodingTest<PreparedStatement> {
 
   @Test
   public void bigDecimal() throws CheckedFutureException {

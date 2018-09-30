@@ -2,7 +2,7 @@ package io.trane.ndbc.postgres.encoding;
 
 import org.junit.Assert;
 
-import io.trane.ndbc.value.ByteArrayArrayValue;
+import io.trane.ndbc.postgres.value.ByteArrayArrayValue;
 
 public class ByteArrayArrayEncodingTest extends EncodingTest<ByteArrayArrayValue, ByteArrayArrayEncoding> {
 

@@ -3,8 +3,8 @@ package io.trane.ndbc.postgres.encoding;
 import java.nio.charset.Charset;
 import java.util.Set;
 
+import io.trane.ndbc.postgres.value.StringArrayValue;
 import io.trane.ndbc.util.Collections;
-import io.trane.ndbc.value.StringArrayValue;
 
 final class StringArrayEncoding extends ArrayEncoding<String, StringArrayValue> {
 

@@ -2,7 +2,7 @@ package io.trane.ndbc.postgres.encoding;
 
 import java.nio.charset.Charset;
 
-import io.trane.ndbc.value.DoubleArrayValue;
+import io.trane.ndbc.postgres.value.DoubleArrayValue;
 
 final class DoubleArrayEncoding extends ArrayEncoding<Double, DoubleArrayValue> {
 

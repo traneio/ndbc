@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 
-import io.trane.ndbc.value.ShortArrayValue;
+import io.trane.ndbc.postgres.value.ShortArrayValue;
 
 public class ShortArrayEncodingTest extends EncodingTest<ShortArrayValue, ShortArrayEncoding> {
 

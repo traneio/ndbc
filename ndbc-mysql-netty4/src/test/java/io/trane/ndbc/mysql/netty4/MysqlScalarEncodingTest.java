@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.runners.Parameterized.Parameters;
 
+import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.test.ScalarEncodingTest;
 
 public class MysqlScalarEncodingTest extends ScalarEncodingTest {
@@ -13,6 +14,11 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
   @Parameters(name = "{1}")
   public static Collection<Object[]> data() {
     return MysqlEnv.dataSources;
+  }
+
+  @Override
+  protected PreparedStatement prepare(String query) {
+    return PreparedStatement.apply(query);
   }
 
   protected List<String> bigDecimalColumnTypes() {

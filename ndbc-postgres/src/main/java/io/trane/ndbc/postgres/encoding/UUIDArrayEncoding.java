@@ -3,7 +3,7 @@ package io.trane.ndbc.postgres.encoding;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
-import io.trane.ndbc.value.UUIDArrayValue;
+import io.trane.ndbc.postgres.value.UUIDArrayValue;
 
 final class UUIDArrayEncoding extends ArrayEncoding<UUID, UUIDArrayValue> {
 

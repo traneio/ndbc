@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 
-import io.trane.ndbc.value.BigDecimalArrayValue;
+import io.trane.ndbc.postgres.value.BigDecimalArrayValue;
 
 public class BigDecimalArrayEncodingTest extends EncodingTest<BigDecimalArrayValue, BigDecimalArrayEncoding> {
 

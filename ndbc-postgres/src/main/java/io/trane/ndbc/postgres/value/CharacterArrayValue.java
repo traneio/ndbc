@@ -1,4 +1,6 @@
-package io.trane.ndbc.value;
+package io.trane.ndbc.postgres.value;
+
+import io.trane.ndbc.value.Value;
 
 public final class CharacterArrayValue extends Value<Character[]> {
 

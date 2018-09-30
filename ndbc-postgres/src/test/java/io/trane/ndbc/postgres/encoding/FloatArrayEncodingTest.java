@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 
-import io.trane.ndbc.value.FloatArrayValue;
+import io.trane.ndbc.postgres.value.FloatArrayValue;
 
 public class FloatArrayEncodingTest extends EncodingTest<FloatArrayValue, FloatArrayEncoding> {
 

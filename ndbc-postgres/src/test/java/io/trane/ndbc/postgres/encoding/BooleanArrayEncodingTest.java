@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 
-import io.trane.ndbc.value.BooleanArrayValue;
+import io.trane.ndbc.postgres.value.BooleanArrayValue;
 
 public class BooleanArrayEncodingTest extends EncodingTest<BooleanArrayValue, BooleanArrayEncoding> {
 

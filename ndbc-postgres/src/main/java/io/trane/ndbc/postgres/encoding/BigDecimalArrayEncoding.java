@@ -3,7 +3,7 @@ package io.trane.ndbc.postgres.encoding;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 
-import io.trane.ndbc.value.BigDecimalArrayValue;
+import io.trane.ndbc.postgres.value.BigDecimalArrayValue;
 
 final class BigDecimalArrayEncoding extends ArrayEncoding<BigDecimal, BigDecimalArrayValue> {
 

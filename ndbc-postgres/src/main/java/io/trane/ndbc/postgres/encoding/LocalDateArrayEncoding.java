@@ -3,7 +3,7 @@ package io.trane.ndbc.postgres.encoding;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 
-import io.trane.ndbc.value.LocalDateArrayValue;
+import io.trane.ndbc.postgres.value.LocalDateArrayValue;
 
 final class LocalDateArrayEncoding extends ArrayEncoding<LocalDate, LocalDateArrayValue> {
 

@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 
-import io.trane.ndbc.value.LocalDateArrayValue;
+import io.trane.ndbc.postgres.value.LocalDateArrayValue;
 
 public class LocalDateArrayEncodingTest extends EncodingTest<LocalDateArrayValue, LocalDateArrayEncoding> {
 

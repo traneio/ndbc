@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 
-import io.trane.ndbc.value.IntegerArrayValue;
+import io.trane.ndbc.postgres.value.IntegerArrayValue;
 
 public class IntegerArrayEncodingTest extends EncodingTest<IntegerArrayValue, IntegerArrayEncoding> {
 

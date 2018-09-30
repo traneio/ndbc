@@ -1,6 +1,8 @@
-package io.trane.ndbc.value;
+package io.trane.ndbc.postgres.value;
 
 import java.time.OffsetTime;
+
+import io.trane.ndbc.value.Value;
 
 public final class OffsetTimeArrayValue extends Value<OffsetTime[]> {
 

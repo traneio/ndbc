@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 
-import io.trane.ndbc.value.LongArrayValue;
+import io.trane.ndbc.postgres.value.LongArrayValue;
 
 public class LongArrayEncodingTest extends EncodingTest<LongArrayValue, LongArrayEncoding> {
 

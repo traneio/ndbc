@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.junit.Assert;
 
-import io.trane.ndbc.value.UUIDArrayValue;
+import io.trane.ndbc.postgres.value.UUIDArrayValue;
 
 public class UUIDArrayEncodingTest extends EncodingTest<UUIDArrayValue, UUIDArrayEncoding> {
 

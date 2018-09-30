@@ -2,7 +2,7 @@ package io.trane.ndbc.postgres.encoding;
 
 import java.nio.charset.Charset;
 
-import io.trane.ndbc.value.ByteArrayArrayValue;
+import io.trane.ndbc.postgres.value.ByteArrayArrayValue;
 
 final class ByteArrayArrayEncoding extends ArrayEncoding<byte[], ByteArrayArrayValue> {
 

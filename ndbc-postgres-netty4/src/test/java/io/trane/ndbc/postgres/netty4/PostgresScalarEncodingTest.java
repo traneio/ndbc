@@ -14,6 +14,11 @@ import io.trane.ndbc.test.ScalarEncodingTest;
 
 public class PostgresScalarEncodingTest extends ScalarEncodingTest {
 
+  @Override
+  protected PreparedStatement prepare(String query) {
+    return PreparedStatement.apply(query);
+  }
+
   @Parameters(name = "{1}")
   public static Collection<Object[]> data() {
     return PostgresEnv.dataSources;

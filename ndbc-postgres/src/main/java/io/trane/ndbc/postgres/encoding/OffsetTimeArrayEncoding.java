@@ -3,7 +3,7 @@ package io.trane.ndbc.postgres.encoding;
 import java.nio.charset.Charset;
 import java.time.OffsetTime;
 
-import io.trane.ndbc.value.OffsetTimeArrayValue;
+import io.trane.ndbc.postgres.value.OffsetTimeArrayValue;
 
 final class OffsetTimeArrayEncoding extends ArrayEncoding<OffsetTime, OffsetTimeArrayValue> {
 

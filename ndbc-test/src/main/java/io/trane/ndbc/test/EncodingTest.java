@@ -22,7 +22,9 @@ import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 import io.trane.ndbc.value.Value;
 
-public abstract class EncodingTest extends NdbcTest {
+public abstract class EncodingTest<PS extends PreparedStatement> extends NdbcTest {
+
+  protected abstract PS prepare(String query);
 
   protected Duration timeout = Duration.ofSeconds(999);
 
@@ -74,18 +76,18 @@ public abstract class EncodingTest extends NdbcTest {
     return ZoneOffset.ofTotalSeconds(r.nextInt(18 * 2) + 18);
   }
 
-  protected <T> void test(final List<String> columnTypes, final BiFunction<PreparedStatement, T, PreparedStatement> set,
+  protected <T> void test(final List<String> columnTypes, final BiFunction<PS, T, PS> set,
       final Function<Value<?>, T> get, final Function<Random, T> gen) throws CheckedFutureException {
     test(columnTypes, set, get, gen, (a, b) -> assertEquals(a, b));
   }
 
   protected <T> void testArray(final List<String> columnTypes,
-      final BiFunction<PreparedStatement, T[], PreparedStatement> set, final Function<Value<?>, T[]> get,
+      final BiFunction<PS, T[], PS> set, final Function<Value<?>, T[]> get,
       final Function<Random, T[]> gen) throws CheckedFutureException {
     test(columnTypes, set, get, gen, (a, b) -> assertArrayEquals(a, b));
   }
 
-  protected <T> void test(final List<String> columnTypes, final BiFunction<PreparedStatement, T, PreparedStatement> set,
+  protected <T> void test(final List<String> columnTypes, final BiFunction<PS, T, PS> set,
       final Function<Value<?>, T> get, final Function<Random, T> gen, final BiConsumer<T, T> verify)
       throws CheckedFutureException {
     test(columnTypes, set, get, gen, verify, 20);
@@ -93,7 +95,7 @@ public abstract class EncodingTest extends NdbcTest {
 
   private static AtomicInteger tableSuffix = new AtomicInteger(0);
 
-  protected <T> void test(final List<String> columnTypes, final BiFunction<PreparedStatement, T, PreparedStatement> set,
+  protected <T> void test(final List<String> columnTypes, final BiFunction<PS, T, PS> set,
       final Function<Value<?>, T> get, final Function<Random, T> gen, final BiConsumer<T, T> verify,
       final int iterations) throws CheckedFutureException {
 
@@ -113,7 +115,7 @@ public abstract class EncodingTest extends NdbcTest {
             + previousValues.stream().map(Object::toString).collect(Collectors.joining(", "));
 
         try {
-          ds.execute(set.apply(PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)"), expected)).get(timeout);
+          ds.execute(set.apply(prepare("INSERT INTO " + table + " VALUES (?)"), expected)).get(timeout);
         } catch (final Throwable e) {
           throw new RuntimeException("(extended insert)" + failureMessage, e);
         }
@@ -128,7 +130,7 @@ public abstract class EncodingTest extends NdbcTest {
         }
 
         try {
-          final T extendedQueryactual = get.apply(query(PreparedStatement.apply("SELECT c FROM " + table)));
+          final T extendedQueryactual = get.apply(query(prepare("SELECT c FROM " + table)));
           verify.accept(expected, extendedQueryactual);
 
         } catch (final Throwable e) {
@@ -144,7 +146,7 @@ public abstract class EncodingTest extends NdbcTest {
     return lastRow(ds.query(query).get(timeout).iterator());
   }
 
-  protected final Value<?> query(final PreparedStatement ps) throws CheckedFutureException {
+  protected final Value<?> query(final PS ps) throws CheckedFutureException {
     return lastRow(ds.query(ps).get(timeout).iterator());
   }
 

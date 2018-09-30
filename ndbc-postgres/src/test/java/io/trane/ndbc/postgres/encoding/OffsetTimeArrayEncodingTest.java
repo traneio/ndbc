@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 
-import io.trane.ndbc.value.OffsetTimeArrayValue;
+import io.trane.ndbc.postgres.value.OffsetTimeArrayValue;
 
 public class OffsetTimeArrayEncodingTest extends EncodingTest<OffsetTimeArrayValue, OffsetTimeArrayEncoding> {
 
