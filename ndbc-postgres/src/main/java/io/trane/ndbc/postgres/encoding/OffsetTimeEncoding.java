@@ -7,9 +7,9 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 
+import io.trane.ndbc.postgres.value.OffsetTimeValue;
 import io.trane.ndbc.proto.BufferReader;
 import io.trane.ndbc.proto.BufferWriter;
-import io.trane.ndbc.value.OffsetTimeValue;
 
 final class OffsetTimeEncoding extends Encoding<OffsetTime, OffsetTimeValue> {
 

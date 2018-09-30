@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.OffsetTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -31,8 +30,6 @@ import io.trane.ndbc.value.LocalTimeArrayValue;
 import io.trane.ndbc.value.LocalTimeValue;
 import io.trane.ndbc.value.LongArrayValue;
 import io.trane.ndbc.value.LongValue;
-import io.trane.ndbc.value.OffsetTimeArrayValue;
-import io.trane.ndbc.value.OffsetTimeValue;
 import io.trane.ndbc.value.ShortArrayValue;
 import io.trane.ndbc.value.ShortValue;
 import io.trane.ndbc.value.StringArrayValue;
@@ -215,22 +212,6 @@ public final class PreparedStatement {
 
   public final PreparedStatement setLongArray(final int index, final Long[] value) {
     return set(index, value == null ? Value.NULL : new LongArrayValue(value));
-  }
-
-  public final PreparedStatement setOffsetTime(final OffsetTime value) {
-    return setOffsetTime(params.length, value);
-  }
-
-  public final PreparedStatement setOffsetTime(final int index, final OffsetTime value) {
-    return set(value == null ? Value.NULL : new OffsetTimeValue(value));
-  }
-
-  public final PreparedStatement setOffsetTimeArray(final OffsetTime[] value) {
-    return setOffsetTimeArray(params.length, value);
-  }
-
-  public final PreparedStatement setOffsetTimeArray(final int index, final OffsetTime[] value) {
-    return set(index, value == null ? Value.NULL : new OffsetTimeArrayValue(value));
   }
 
   public final PreparedStatement setByte(final Byte value) {

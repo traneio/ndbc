@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import io.trane.ndbc.NdbcException;
 import io.trane.ndbc.mysql.encoding.Encoding.Key;
+import io.trane.ndbc.mysql.proto.FieldType;
 import io.trane.ndbc.mysql.proto.Message.Field;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.mysql.proto.PacketBufferWriter;
@@ -36,7 +37,10 @@ public final class EncodingRegistry {
         new IntegerEncoding(),
         new BigDecimalEncoding(),
         new StringEncoding(),
-        new LongEncoding());
+        new LongEncoding(),
+        new LocalDateEncoding(),
+        new LocalDateTimeEncoding(),
+        new LocalTimeEncoding());
 
     registerEncodings(defaultEncodings);
     customEncodings.ifPresent(this::registerEncodings);
@@ -82,7 +86,7 @@ public final class EncodingRegistry {
     return (field.flags & FieldAttributes.UnsignedBitMask) > 0;
   }
 
-  public final Integer fieldType(final Value<?> value) {
+  public final FieldType fieldType(final Value<?> value) {
     Encoding<?, ?> encoding = byValueClass.get(value.getClass());
     if (encoding == null)
       throw new NdbcException("Can't encode " + value);

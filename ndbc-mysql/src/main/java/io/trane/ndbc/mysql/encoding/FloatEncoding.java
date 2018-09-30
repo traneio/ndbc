@@ -2,6 +2,7 @@ package io.trane.ndbc.mysql.encoding;
 
 import java.nio.charset.Charset;
 
+import io.trane.ndbc.mysql.proto.FieldType;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.mysql.proto.PacketBufferWriter;
 import io.trane.ndbc.value.FloatValue;
@@ -10,7 +11,7 @@ final class FloatEncoding extends Encoding<Float, FloatValue> {
 
   @Override
   public Key key() {
-    return key(FieldTypes.FLOAT);
+    return key(FieldType.FLOAT);
   }
 
   @Override

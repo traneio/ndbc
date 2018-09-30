@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.Set;
 
+import io.trane.ndbc.mysql.proto.FieldType;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.mysql.proto.PacketBufferWriter;
 import io.trane.ndbc.util.Collections;
@@ -13,12 +14,12 @@ final class BigDecimalEncoding extends Encoding<BigDecimal, BigDecimalValue> {
 
   @Override
   public Key key() {
-    return key(FieldTypes.NEW_DECIMAL);
+    return key(FieldType.NEW_DECIMAL);
   }
 
   @Override
   public Set<Key> additionalKeys() {
-    return Collections.toImmutableSet(key(FieldTypes.DECIMAL), key(FieldTypes.NUMERIC));
+    return Collections.toImmutableSet(key(FieldType.DECIMAL), key(FieldType.NUMERIC));
   }
 
   @Override

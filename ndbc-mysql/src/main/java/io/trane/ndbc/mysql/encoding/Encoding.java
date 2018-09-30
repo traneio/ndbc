@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.trane.ndbc.mysql.proto.FieldType;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.mysql.proto.PacketBufferWriter;
 import io.trane.ndbc.value.Value;
@@ -12,10 +13,10 @@ import io.trane.ndbc.value.Value;
 public abstract class Encoding<T, V extends Value<T>> {
 
   protected static class Key {
-    public final Integer fieldType;
-    public final boolean unsigned;
+    public final FieldType fieldType;
+    public final boolean   unsigned;
 
-    public Key(Integer fieldType, boolean unsigned) {
+    public Key(FieldType fieldType, boolean unsigned) {
       this.fieldType = fieldType;
       this.unsigned = unsigned;
     }
@@ -74,11 +75,11 @@ public abstract class Encoding<T, V extends Value<T>> {
     return emptyKeys;
   }
 
-  protected static Key unsignedKey(Integer fieldType) {
+  protected static Key unsignedKey(FieldType fieldType) {
     return new Key(fieldType, true);
   }
 
-  protected static Key key(Integer fieldType) {
+  protected static Key key(FieldType fieldType) {
     return new Key(fieldType, false);
   }
 

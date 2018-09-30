@@ -2,6 +2,7 @@ package io.trane.ndbc.mysql.encoding;
 
 import java.nio.charset.Charset;
 
+import io.trane.ndbc.mysql.proto.FieldType;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.mysql.proto.PacketBufferWriter;
 import io.trane.ndbc.value.BooleanValue;
@@ -16,7 +17,7 @@ final class BooleanEncoding extends Encoding<Boolean, BooleanValue> {
 
   @Override
   public Key key() {
-    return key(FieldTypes.TINY);
+    return key(FieldType.TINY);
   }
 
   @Override

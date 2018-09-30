@@ -3,6 +3,7 @@ package io.trane.ndbc.mysql.encoding;
 import java.nio.charset.Charset;
 import java.util.Set;
 
+import io.trane.ndbc.mysql.proto.FieldType;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.mysql.proto.PacketBufferWriter;
 import io.trane.ndbc.util.Collections;
@@ -10,8 +11,8 @@ import io.trane.ndbc.value.ShortValue;
 
 final class ShortEncoding extends Encoding<Short, ShortValue> {
 
-  private static final Key signedShort  = key(FieldTypes.SHORT);
-  private static final Key unsignedTiny = unsignedKey(FieldTypes.TINY);
+  private static final Key signedShort  = key(FieldType.SHORT);
+  private static final Key unsignedTiny = unsignedKey(FieldType.TINY);
 
   @Override
   public Key key() {

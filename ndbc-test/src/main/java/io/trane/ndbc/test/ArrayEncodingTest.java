@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.OffsetTime;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -114,16 +113,6 @@ public abstract class ArrayEncodingTest extends EncodingTest {
       final Long[] array = new Long[r.nextInt(10)];
       for (int i = 0; i < array.length; i++)
         array[i] = r.nextLong();
-      return array;
-    });
-  }
-
-  @Test
-  public void offsetTimeArray() throws CheckedFutureException {
-    testArray(offsetTimeColumnTypes(), (ps, v) -> ps.setOffsetTimeArray(v), Value::getOffsetTimeArray, r -> {
-      final OffsetTime[] array = new OffsetTime[r.nextInt(10)];
-      for (int i = 0; i < array.length; i++)
-        array[i] = randomLocalDateTime(r).toLocalTime().atOffset(randomZoneOffset(r));
       return array;
     });
   }

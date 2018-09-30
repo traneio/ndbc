@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
+import io.trane.ndbc.mysql.proto.FieldType;
 import io.trane.ndbc.mysql.proto.Message.Field;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 
@@ -70,11 +71,10 @@ public class FieldUnmarshaller extends MysqlUnmarshaller<Field> {
     final String name = new String(bytesName, charset);
     final String origName = new String(bytesOrigName, charset);
     final long length = p.readUnsignedInt();
-    final int fieldType = p.readByte() & 0xFF;
+    final FieldType fieldType = FieldType.apply(p.readByte() & 0xFF);
     final int flags = p.readUnsignedShort();
     final int decimals = p.readByte() & 0xFF;
     return new Field(catalog, db, table, origTable, name, origName, charset((short) columnCharset), length, fieldType,
-        flags,
-        decimals);
+        flags, decimals);
   }
 }

@@ -55,7 +55,7 @@ public abstract class EncodingTest extends NdbcTest {
   protected abstract List<String> stringColumnTypes();
 
   protected LocalDateTime randomLocalDateTime(final Random r) {
-    return LocalDateTime.of(r.nextInt(5000 - 1971) + 1971, r.nextInt(12) + 1, r.nextInt(28) + 1, r.nextInt(24),
+    return LocalDateTime.of(r.nextInt(60) + 1971, r.nextInt(12) + 1, r.nextInt(28) + 1, r.nextInt(24),
         r.nextInt(60), r.nextInt(60), r.nextInt(99999) * 1000);
   }
 

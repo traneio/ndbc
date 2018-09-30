@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 
+import io.trane.ndbc.mysql.proto.FieldType;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.mysql.proto.PacketBufferWriter;
 import io.trane.ndbc.value.DoubleValue;
@@ -12,7 +13,7 @@ final class DoubleEncoding extends Encoding<Double, DoubleValue> {
 
   @Override
   public Key key() {
-    return key(FieldTypes.DOUBLE);
+    return key(FieldType.DOUBLE);
   }
 
   @Override

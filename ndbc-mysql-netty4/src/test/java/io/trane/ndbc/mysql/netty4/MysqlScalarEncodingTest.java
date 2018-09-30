@@ -4,12 +4,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.runners.Parameterized.Parameters;
 
 import io.trane.ndbc.test.ScalarEncodingTest;
 
-@Ignore
 public class MysqlScalarEncodingTest extends ScalarEncodingTest {
 
   @Parameters(name = "{1}")
@@ -26,7 +24,7 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
   }
 
   protected List<String> byteArrayColumnTypes() {
-    return Arrays.asList("BINARY");
+    return Arrays.asList("BLOB", "TINYBLOB", "MEDIUMBLOB", "LONGBLOB");
   }
 
   protected List<String> doubleColumnTypes() {
@@ -46,11 +44,11 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
   }
 
   protected List<String> localDateTimeColumnTypes() {
-    return Arrays.asList("TIMESTAMP");
+    return Arrays.asList("DATETIME(6)", "TIMESTAMP(6)");
   }
 
   protected List<String> localTimeColumnTypes() {
-    return Arrays.asList("TIME");
+    return Arrays.asList("TIME(6)");
   }
 
   protected List<String> longColumnTypes() {
@@ -58,7 +56,7 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
   }
 
   protected List<String> offsetTimeColumnTypes() {
-    return Arrays.asList("TIMETZ");
+    return Arrays.asList("TIME(6)");
   }
 
   protected List<String> shortColumnTypes() {

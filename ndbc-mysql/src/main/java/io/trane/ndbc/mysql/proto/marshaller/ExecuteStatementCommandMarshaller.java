@@ -46,7 +46,7 @@ public class ExecuteStatementCommandMarshaller implements Marshaller<ExecuteStat
 
   private void writeParameterTypes(final PacketBufferWriter packet, final List<Value<?>> values) {
     for (final Value<?> value : values)
-      packet.writeUnsignedShort(encoding.fieldType(value));
+      packet.writeUnsignedShort(encoding.fieldType(value).code);
   }
 
   private void writeValues(final PacketBufferWriter packet, final List<Value<?>> values) {

@@ -3,6 +3,7 @@ package io.trane.ndbc.mysql.encoding;
 import java.nio.charset.Charset;
 import java.util.Set;
 
+import io.trane.ndbc.mysql.proto.FieldType;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.mysql.proto.PacketBufferWriter;
 import io.trane.ndbc.util.Collections;
@@ -10,9 +11,9 @@ import io.trane.ndbc.value.LongValue;
 
 final class LongEncoding extends Encoding<Long, LongValue> {
 
-  private static final Key signedLongLong   = key(FieldTypes.LONGLONG);
-  private static final Key unsignedLong     = unsignedKey(FieldTypes.LONG);
-  private static final Key unsignedLongLong = unsignedKey(FieldTypes.LONGLONG);
+  private static final Key signedLongLong   = key(FieldType.LONGLONG);
+  private static final Key unsignedLong     = unsignedKey(FieldType.LONG);
+  private static final Key unsignedLongLong = unsignedKey(FieldType.LONGLONG);
 
   @Override
   public Key key() {

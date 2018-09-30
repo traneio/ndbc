@@ -1,10 +1,12 @@
-package io.trane.ndbc.value;
+package io.trane.ndbc.postgres.value;
 
 import static org.junit.Assert.assertEquals;
 
 import java.time.OffsetTime;
 
 import org.junit.Test;
+
+import io.trane.ndbc.postgres.value.OffsetTimeValue;
 
 public class OffsetTimeValueTest {
 

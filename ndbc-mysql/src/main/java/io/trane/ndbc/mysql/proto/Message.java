@@ -557,21 +557,21 @@ public interface Message {
   }
 
   public static class Field implements ServerMessage {
-    public String  catalog;
-    public String  db;
-    public String  table;
-    public String  origTable;
-    public String  name;
-    public String  origName;
-    public Charset charset;
-    public long    displayLength;
-    public int     fieldType;
-    public int     flags;
-    public int     decimals;
+    public String    catalog;
+    public String    db;
+    public String    table;
+    public String    origTable;
+    public String    name;
+    public String    origName;
+    public Charset   charset;
+    public long      displayLength;
+    public FieldType fieldType;
+    public int       flags;
+    public int       decimals;
 
     public Field(final String catalog, final String db, final String table, final String origTable,
         final String name, final String origName, final Charset charset, final long displayLength,
-        final int fieldType, final int flags, final int decimals) {
+        final FieldType fieldType, final int flags, final int decimals) {
       this.catalog = catalog;
       this.db = db;
       this.table = table;
@@ -627,7 +627,7 @@ public interface Message {
       result = (31 * result) + origName.hashCode();
       result = (31 * result) + charset.hashCode();
       result = (31 * result) + (int) (displayLength ^ (displayLength >>> 32));
-      result = (31 * result) + fieldType;
+      result = (31 * result) + fieldType.hashCode();
       result = (31 * result) + flags;
       result = (31 * result) + decimals;
       return result;

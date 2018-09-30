@@ -74,12 +74,6 @@ public abstract class ScalarEncodingTest extends EncodingTest {
   }
 
   @Test
-  public void offsetTime() throws CheckedFutureException {
-    test(offsetTimeColumnTypes(), (ps, v) -> ps.setOffsetTime(v), Value::getOffsetTime,
-        r -> randomLocalDateTime(r).toLocalTime().atOffset(randomZoneOffset(r)));
-  }
-
-  @Test
   public void short_() throws CheckedFutureException {
     test(shortColumnTypes(), (ps, v) -> ps.setShort(v), Value::getShort, r -> (short) r.nextInt());
   }

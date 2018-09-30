@@ -3,6 +3,7 @@ package io.trane.ndbc.mysql.encoding;
 import java.nio.charset.Charset;
 import java.util.Set;
 
+import io.trane.ndbc.mysql.proto.FieldType;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.mysql.proto.PacketBufferWriter;
 import io.trane.ndbc.util.Collections;
@@ -12,12 +13,12 @@ final class StringEncoding extends Encoding<String, StringValue> {
 
   @Override
   public Key key() {
-    return key(FieldTypes.VARCHAR);
+    return key(FieldType.VARCHAR);
   }
 
   @Override
   public Set<Key> additionalKeys() {
-    return Collections.toImmutableSet(key(FieldTypes.STRING), key(FieldTypes.VAR_STRING));
+    return Collections.toImmutableSet(key(FieldType.STRING), key(FieldType.VAR_STRING));
   }
 
   @Override

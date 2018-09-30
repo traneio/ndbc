@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.OffsetTime;
 import java.util.Iterator;
 
 import org.junit.Test;
@@ -22,7 +21,6 @@ import io.trane.ndbc.value.LocalDateTimeValue;
 import io.trane.ndbc.value.LocalDateValue;
 import io.trane.ndbc.value.LocalTimeValue;
 import io.trane.ndbc.value.LongValue;
-import io.trane.ndbc.value.OffsetTimeValue;
 import io.trane.ndbc.value.ShortValue;
 import io.trane.ndbc.value.StringValue;
 import io.trane.ndbc.value.Value;
@@ -263,29 +261,6 @@ public class PreparedStatementTest {
   @Test
   public void setLongNull() {
     final Iterator<Value<?>> it = ps.setLong(null).params().iterator();
-    assertEquals(Value.NULL, it.next());
-    assertFalse(it.hasNext());
-  }
-
-  @Test
-  public void setOffsetTime() {
-    final OffsetTime value = OffsetTime.now();
-    final Iterator<Value<?>> it = ps.setOffsetTime(value).params().iterator();
-    assertEquals(new OffsetTimeValue(value), it.next());
-    assertFalse(it.hasNext());
-  }
-
-  @Test
-  public void setOffsetTimePositional() {
-    final OffsetTime value = OffsetTime.now();
-    final Iterator<Value<?>> it = ps.setOffsetTime(0, value).params().iterator();
-    assertEquals(new OffsetTimeValue(value), it.next());
-    assertFalse(it.hasNext());
-  }
-
-  @Test
-  public void setOffsetTimeNull() {
-    final Iterator<Value<?>> it = ps.setOffsetTime(null).params().iterator();
     assertEquals(Value.NULL, it.next());
     assertFalse(it.hasNext());
   }

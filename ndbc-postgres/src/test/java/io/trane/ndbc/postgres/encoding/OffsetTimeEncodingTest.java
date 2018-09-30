@@ -2,7 +2,7 @@ package io.trane.ndbc.postgres.encoding;
 
 import java.time.ZoneOffset;
 
-import io.trane.ndbc.value.OffsetTimeValue;
+import io.trane.ndbc.postgres.value.OffsetTimeValue;
 
 public class OffsetTimeEncodingTest extends EncodingTest<OffsetTimeValue, OffsetTimeEncoding> {
 

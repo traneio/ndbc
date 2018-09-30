@@ -3,6 +3,7 @@ package io.trane.ndbc.mysql.encoding;
 import java.nio.charset.Charset;
 import java.util.Set;
 
+import io.trane.ndbc.mysql.proto.FieldType;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
 import io.trane.ndbc.mysql.proto.PacketBufferWriter;
 import io.trane.ndbc.util.Collections;
@@ -12,12 +13,12 @@ final class ByteArrayEncoding extends Encoding<byte[], ByteArrayValue> {
 
   @Override
   public Key key() {
-    return key(FieldTypes.BLOB);
+    return key(FieldType.BLOB);
   }
 
   @Override
   public Set<Key> additionalKeys() {
-    return Collections.toImmutableSet(key(FieldTypes.TINY_BLOB), key(FieldTypes.MEDIUM_BLOB));
+    return Collections.toImmutableSet(key(FieldType.TINY_BLOB), key(FieldType.MEDIUM_BLOB));
   }
 
   @Override
