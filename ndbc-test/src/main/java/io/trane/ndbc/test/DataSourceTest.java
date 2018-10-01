@@ -339,7 +339,6 @@ public class DataSourceTest extends NdbcTest {
   }
 
   @Test
-  @Ignore
   public void transactionLocalFailure() throws CheckedFutureException {
     final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
 

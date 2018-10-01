@@ -38,7 +38,7 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
   }
 
   protected List<String> floatColumnTypes() {
-    return Arrays.asList("REAL");
+    return Arrays.asList("FLOAT");
   }
 
   protected List<String> integerColumnTypes() {

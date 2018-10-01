@@ -199,7 +199,6 @@ public final class MysqlPreparedStatement extends PreparedStatement {
 
   @Override
   public final MysqlPreparedStatement set(final int index, final Value<?> param) {
-    PreparedStatement ps = super.set(index, param);
-    return new MysqlPreparedStatement(ps.query, ps.params);
+    return apply(super.set(index, param));
   }
 }

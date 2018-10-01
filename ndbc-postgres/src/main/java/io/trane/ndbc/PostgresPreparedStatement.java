@@ -339,7 +339,6 @@ public final class PostgresPreparedStatement extends PreparedStatement {
 
   @Override
   public final PostgresPreparedStatement set(final int index, final Value<?> param) {
-    PreparedStatement ps = super.set(index, param);
-    return new PostgresPreparedStatement(ps.query, ps.params);
+    return apply(super.set(index, param));
   }
 }

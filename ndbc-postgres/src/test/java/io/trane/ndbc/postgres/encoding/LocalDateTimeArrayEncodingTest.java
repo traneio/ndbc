@@ -4,11 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 
 import io.trane.ndbc.postgres.value.LocalDateTimeArrayValue;
 
-@Ignore
 public class LocalDateTimeArrayEncodingTest extends EncodingTest<LocalDateTimeArrayValue, LocalDateTimeArrayEncoding> {
 
   public LocalDateTimeArrayEncodingTest() {

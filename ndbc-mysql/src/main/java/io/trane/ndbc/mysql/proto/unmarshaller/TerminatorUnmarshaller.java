@@ -16,7 +16,7 @@ public class TerminatorUnmarshaller extends MysqlUnmarshaller<Terminator> {
   public final static int EOF_BYTE   = 0xFE;
 
   public static final boolean isTerminator(final int header, final int readableBytes) {
-    return readableBytes > 0 && (header == OK_BYTE) || (header == ERROR_BYTE) || (header == EOF_BYTE);
+    return readableBytes > 0 && ((header == OK_BYTE) || (header == ERROR_BYTE) || (header == EOF_BYTE));
   }
 
   private final Charset charset;

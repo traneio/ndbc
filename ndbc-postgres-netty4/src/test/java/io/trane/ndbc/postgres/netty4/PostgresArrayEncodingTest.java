@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
@@ -88,15 +87,21 @@ public class PostgresArrayEncodingTest extends EncodingTest<PostgresPreparedStat
     });
   }
 
-  @Ignore
   @Test
   public void floatArray() throws CheckedFutureException {
-    testArray(floatColumnTypes(), (ps, v) -> ps.setFloatArray(v), Value::getFloatArray, r -> {
+    test(floatColumnTypes(), (ps, v) -> ps.setFloatArray(v), Value::getFloatArray, r -> {
       final Float[] array = new Float[r.nextInt(10)];
       for (int i = 0; i < array.length; i++)
         array[i] = r.nextFloat();
       return array;
-    });
+    }, (a, b) -> assertArrayEquals(toPrimitiveArray(a), toPrimitiveArray(b), 0.001f));
+  }
+
+  private final float[] toPrimitiveArray(Float[] a) {
+    float[] r = new float[a.length];
+    for (int i = 0; i < a.length; i++)
+      r[i] = a[i].floatValue();
+    return r;
   }
 
   @Test
@@ -160,7 +165,6 @@ public class PostgresArrayEncodingTest extends EncodingTest<PostgresPreparedStat
   }
 
   @Test
-  @Ignore
   public void stringArray() throws CheckedFutureException {
     testArray(stringColumnTypes(), (ps, v) -> ps.setStringArray(v), Value::getStringArray, r -> {
       final String[] array = new String[r.nextInt(10)];

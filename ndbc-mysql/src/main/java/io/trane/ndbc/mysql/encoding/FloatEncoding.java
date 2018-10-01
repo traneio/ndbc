@@ -26,12 +26,16 @@ final class FloatEncoding extends Encoding<Float, FloatValue> {
 
   @Override
   public final void encodeBinary(final Float value, final PacketBufferWriter b, Charset charset) {
-    b.writeFloat(value);
+    b.writeFloat(reverse(value));
+  }
+
+  private final float reverse(final Float value) {
+    return Float.intBitsToFloat(Integer.reverseBytes(Float.floatToIntBits(value)));
   }
 
   @Override
   public final Float decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
-    return b.readFloat();
+    return reverse(b.readFloat());
   }
 
   @Override

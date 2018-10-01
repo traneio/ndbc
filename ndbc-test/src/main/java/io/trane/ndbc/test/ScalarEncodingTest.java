@@ -43,7 +43,7 @@ public abstract class ScalarEncodingTest extends EncodingTest<PreparedStatement>
   @Test
   public void float_() throws CheckedFutureException {
     test(floatColumnTypes(), (ps, v) -> ps.setFloat(v), Value::getFloat, Random::nextFloat,
-        (a, b) -> assertEquals(a.toString().substring(0, 0), b.toString().substring(0, 0)));
+        (a, b) -> assertEquals(a.floatValue(), b.floatValue(), 0.001f));
   }
 
   @Test
