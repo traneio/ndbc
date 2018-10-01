@@ -35,7 +35,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
 
   @Override
   public <T extends ClientMessage> Future<Void> send(final Marshaller<T> marshaller, final T msg) {
-    log.debug(hashCode() + " sent: " + msg);
+    log.debug(channelId() + " sent: " + msg);
     return ctx.flatMap(c -> {
       final ByteBuf ioBuffer = c.alloc().ioBuffer();
       marshaller.apply(msg, new BufferWriter(charset, ioBuffer));
@@ -45,10 +45,14 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
     });
   }
 
+  private String channelId() {
+    return Integer.toHexString(hashCode());
+  }
+
   @Override
   public <T extends ServerMessage> Future<T> receive(final Unmarshaller<T> unmarshaller) {
     return ctx.flatMap(c -> {
-      log.debug(hashCode() + " requested: " + unmarshaller);
+      log.debug(channelId() + " requested: " + unmarshaller);
       final Promise<T> p = Promise.apply();
       final Consumer<BufferReader> consumer = new Consumer<BufferReader>() {
         @Override
@@ -58,7 +62,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
             if (b.readableBytes() > 0)
               throw new IllegalStateException("Bug - Unmarshaller " + unmarshaller + " didn't consume all bytes.");
             option.ifPresent(msg -> {
-              log.debug(NettyChannel.this.hashCode() + " received: " + msg);
+              log.debug(channelId() + " received: " + msg);
               b.release();
               p.setValue(msg);
             });

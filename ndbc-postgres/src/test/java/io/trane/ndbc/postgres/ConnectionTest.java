@@ -202,7 +202,7 @@ public class ConnectionTest {
 
     @Override
     public Connection get() {
-      return new Connection(channel(), null, Optional.empty(), null, channelSupplier(), backendKeyData(),
+      return new Connection(channel(), null, null, Optional.empty(), null, channelSupplier(), backendKeyData(),
           simpleQueryExchange(), simpleExecuteExchange(), extendedQueryExchange(), extendedExecuteExchange());
     }
   }

@@ -1,6 +1,5 @@
 package io.trane.ndbc.mysql.netty4;
 
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import io.trane.future.Future;
@@ -24,12 +23,12 @@ import io.trane.ndbc.netty4.NettyChannel;
 public final class DataSourceSupplier extends Netty4DataSourceSupplier {
 
   public DataSourceSupplier(final Config config) {
-    super(config, createConnection(config), new TransformBufferReader()); // TODO
+    super(config, new TransformBufferReader()); // TODO
   }
 
-  private static Function<Supplier<Future<NettyChannel>>, Supplier<Future<Connection>>> createConnection(
-      final Config config) {
-
+  @Override
+  protected Supplier<Future<Connection>> createConnectionSupplier(Config config,
+      Supplier<Future<NettyChannel>> channelSupplier) {
     final EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings(), config.charset());
     final Unmarshallers unmarshallers = new Unmarshallers(config.charset(), encoding);
     final TerminatorExchange terminatorExchange = new TerminatorExchange(unmarshallers);
@@ -49,11 +48,11 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
     final ExtendedExecuteExchange extendedExecuteExchange = new ExtendedExecuteExchange(extendedExchange,
         terminatorExchange.affectedRows);
 
-    return (channelSupplier) -> () -> channelSupplier.get().flatMap(channel -> startup
+    return () -> channelSupplier.get().flatMap(channel -> startup
         .apply(config.user(), config.password(), config.database(), "utf8").run(channel).map(connectionId -> {
-          return new io.trane.ndbc.mysql.Connection(channel, connectionId, config.queryTimeout(), config.scheduler(),
-              channelSupplier, simpleQueryExchange, simpleExecuteExchange, extendedQueryExchange,
-              extendedExecuteExchange);
+          return new io.trane.ndbc.mysql.Connection(channel, connectionId, marshallers, config.queryTimeout(),
+              config.scheduler(), simpleQueryExchange, simpleExecuteExchange, extendedQueryExchange,
+              extendedExecuteExchange, this);
         }));
   }
 }

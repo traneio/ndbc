@@ -57,7 +57,7 @@ public abstract class PostgresUnmarshaller<T extends ServerMessage> implements U
   }
 
   public <U extends ServerMessage> PostgresUnmarshaller<ServerMessage> orElse(final PostgresUnmarshaller<U> other) {
-    return new PostgresUnmarshaller<ServerMessage>(null) {
+    return new PostgresUnmarshaller<ServerMessage>(charset) {
 
       @Override
       protected boolean acceptsType(final byte tpe) {

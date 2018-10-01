@@ -16,8 +16,10 @@ import io.trane.future.Future;
 import io.trane.future.InterruptHandler;
 import io.trane.future.Promise;
 import io.trane.future.Transformer;
+import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.mysql.proto.marshaller.Marshallers;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.util.NonFatalException;
@@ -30,31 +32,31 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private static final PreparedStatement isValidQuery = PreparedStatement.apply("SELECT 1");
 
   private final Channel                                                 channel;
+  private final Long                                                    connectionId;
   private final Optional<Duration>                                      queryTimeout;
   private final ScheduledExecutorService                                scheduler;
-  private final Supplier<? extends Future<? extends Channel>>           channelSupplier;
   private final Function<String, Exchange<List<Row>>>                   simpleQueryExchange;
   private final Function<String, Exchange<Long>>                        simpleExecuteExchange;
   private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
   private final BiFunction<String, List<Value<?>>, Exchange<Long>>      extendedExecuteExchange;
-  private final Exchange<Void>                                          cancelQueryExchange;
+  private final Supplier<DataSource>                                    dataSourceSupplier;
 
-  public Connection(final Channel channel, final Long connectionId,
+  public Connection(final Channel channel, final Long connectionId, final Marshallers marshallers,
       final Optional<Duration> queryTimeout, final ScheduledExecutorService scheduler,
-      final Supplier<? extends Future<? extends Channel>> channelSupplier,
       final Function<String, Exchange<List<Row>>> simpleQueryExchange,
       final Function<String, Exchange<Long>> simpleExecuteExchange,
       final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange,
-      final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange) {
+      final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange,
+      final Supplier<DataSource> dataSourceSupplier) {
     this.channel = channel;
+    this.connectionId = connectionId;
     this.queryTimeout = queryTimeout;
     this.scheduler = scheduler;
-    this.channelSupplier = channelSupplier;
     this.simpleQueryExchange = simpleQueryExchange;
     this.simpleExecuteExchange = simpleExecuteExchange;
     this.extendedQueryExchange = extendedQueryExchange;
     this.extendedExecuteExchange = extendedExecuteExchange;
-    this.cancelQueryExchange = simpleExecuteExchange.apply("KILL QUERY " + connectionId).then(Exchange.CLOSE);
+    this.dataSourceSupplier = dataSourceSupplier;
   }
 
   @Override
@@ -128,9 +130,11 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   private final <T> InterruptHandler handler(final Promise<T> p) {
     return ex -> {
-      channelSupplier.get().flatMap(channel -> cancelQueryExchange.run(channel))
+      DataSource ds = dataSourceSupplier.get();
+      ds.execute("KILL QUERY " + connectionId)
+          .onSuccess(e -> p.becomeIfEmpty(Future.exception(ex)))
           .onFailure(e -> log.warn("Can't cancel request. Reason: " + e))
-          .ensure(() -> p.setException(ex));
+          .ensure(() -> ds.close());
     };
   }
 }

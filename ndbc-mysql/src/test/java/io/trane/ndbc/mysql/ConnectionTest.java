@@ -198,9 +198,9 @@ public class ConnectionTest {
 
     @Override
     public Connection get() {
-      return new Connection(channel(), 0L, Optional.empty(), null, channelSupplier(),
+      return new Connection(channel(), 0L, null, Optional.empty(), null,
           simpleQueryExchange(), simpleExecuteExchange(),
-          extendedQueryExchange(), extendedExecuteExchange());
+          extendedQueryExchange(), extendedExecuteExchange(), null);
     }
   }
 

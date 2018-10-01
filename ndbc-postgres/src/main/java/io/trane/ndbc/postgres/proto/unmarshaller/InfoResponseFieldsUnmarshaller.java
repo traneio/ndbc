@@ -15,6 +15,8 @@ public final class InfoResponseFieldsUnmarshaller {
 
   public InfoResponseFieldsUnmarshaller(final Charset charset) {
     this.charset = charset;
+    if (charset == null)
+      System.out.println(1);
   }
 
   public final InfoResponse.Field[] apply(final BufferReader b) {

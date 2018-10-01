@@ -6,11 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
@@ -365,17 +365,12 @@ public class DataSourceTest extends NdbcTest {
   }
 
   @Test(expected = NdbcException.class)
-  @Ignore
   public void cancellation() throws Throwable {
     final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     try {
-      final Future<Long> f = ds.execute(sleepQuery);
+      final Future<List<Row>> f = ds.query(sleepQuery);
       f.raise(new NdbcException(""));
-      try {
-        f.get(timeout);
-      } catch (final CheckedFutureException e) {
-        throw e.getCause();
-      }
+      f.get(timeout);
     } finally {
       scheduler.shutdown();
     }
