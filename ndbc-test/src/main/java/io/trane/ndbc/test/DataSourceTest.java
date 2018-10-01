@@ -43,15 +43,6 @@ public class DataSourceTest extends NdbcTest {
     ds.execute("INSERT INTO " + table + " VALUES ('s')").get(timeout);
   }
 
-  // @Test
-  // public void array() throws CheckedFutureException {
-  // final Iterator<Row> rows = ds.query(PreparedStatement.apply("SELECT
-  // ARRAY[1,2, 3]")).get(timeout).iterator();
-  //
-  // assertEquals(rows.next().column(0).getString(), "s");
-  // assertFalse(rows.hasNext());
-  // }
-
   @Test
   public void simpleQuery() throws CheckedFutureException {
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
