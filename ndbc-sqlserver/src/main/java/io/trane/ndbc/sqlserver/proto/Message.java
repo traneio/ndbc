@@ -58,7 +58,11 @@ public interface Message {
   }
 
   public static final class PreLoginResponse implements ServerMessage {
-    public Long id = 1234567890L;
+    public final Long id;
+
+    public PreLoginResponse(final Long id) {
+      this.id = id;
+    }
 
     @Override
     public int hashCode() {

@@ -12,6 +12,8 @@ public class PreLoginResponseUnmarshaller implements Unmarshaller<PreLoginRespon
 
   @Override
   public Optional<PreLoginResponse> apply(final BufferReader b) {
+    System.out.println(b.readByte());
+
     final byte[] preloginResponse = new byte[TDS.INITIAL_PACKET_SIZE];
     final String preloginErrorLogString = " Prelogin error";
 

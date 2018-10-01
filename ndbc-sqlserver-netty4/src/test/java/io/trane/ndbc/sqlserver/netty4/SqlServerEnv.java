@@ -13,7 +13,7 @@ public class SqlServerEnv {
   private static final Config config(final String version) {
     return Config.apply("io.trane.ndbc.sqlserver.netty4.DataSourceSupplier", "localhost", 1433, "sa")
         .password("Juli@no12345").poolValidationInterval(Duration.ofSeconds(1))
-        .connectionTimeout(Duration.ofSeconds(100));
+        .connectionTimeout(Duration.ofSeconds(1));
   }
 
   private static final List<String> versions = Arrays.asList("Developer");
