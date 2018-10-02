@@ -6,7 +6,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import io.trane.future.Future;
@@ -25,7 +24,7 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
   private final Semaphore                sizeSemaphore;
   private final Semaphore                waitersSemaphore;
   private final Queue<T>                 items;
-  private final Queue<Waiter<T, ?>>      waiters;
+  private final Queue<Promise<T>>        waiters;
   private final Optional<Duration>       connectionTimeout;
   private final ScheduledExecutorService scheduler;
 
@@ -44,19 +43,18 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
   }
 
   @Override
-  public final <R> Future<R> apply(final Function<T, Future<R>> f) {
+  public Future<T> acquire() {
     if (closed)
       return Future.exception(new RuntimeException("Pool closed"));
     else {
       final T item = items.poll();
       if (item != null)
-        return Future.flatApply(() -> f.apply(item)).ensure(() -> release(item));
+        return Future.value(item);
       else if (sizeSemaphore.tryAcquire()) {
         final Future<T> conn = supplier.get();
-        return connectionTimeout.map(t -> conn.within(t, scheduler)).orElse(conn)
-            .flatMap(i -> f.apply(i).ensure(() -> release(i)));
+        return connectionTimeout.map(t -> conn.within(t, scheduler)).orElse(conn);
       } else if (waitersSemaphore.tryAcquire()) {
-        final Waiter<T, R> p = new Waiter<>(f);
+        final Promise<T> p = Promise.apply();
         waiters.offer(p);
         return p;
       } else
@@ -68,7 +66,7 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
   public final Future<Void> close() {
     closed = true;
 
-    Waiter<?, ?> w;
+    Promise<?> w;
     while ((w = waiters.poll()) != null) {
       waitersSemaphore.release();
       w.become(Future.exception(new RuntimeException("Pool closed")));
@@ -85,14 +83,14 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
       return item.close().flatMap(v -> drain());
   }
 
-  private final void release(final T item) {
+  public final void release(final T item) {
     if (closed)
       item.close();
     else {
-      final Waiter<T, ?> waiter = waiters.poll();
+      final Promise<T> waiter = waiters.poll();
       if (waiter != null) {
         waitersSemaphore.release();
-        waiter.apply(item).ensure(() -> release(item));
+        waiter.setValue(item);
       } else
         items.offer(item);
     }
@@ -130,20 +128,6 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
           return scheduleValidation(Duration.ofMillis(next), scheduler);
       });
     });
-  }
-
-  private static final class Waiter<T, R> extends Promise<R> {
-
-    private final Function<T, Future<R>> f;
-
-    public Waiter(final Function<T, Future<R>> f) {
-      this.f = f;
-    }
-
-    public Waiter<T, R> apply(final T value) {
-      become(f.apply(value));
-      return this;
-    }
   }
 
   private final Semaphore semaphore(final Optional<Integer> permits) {

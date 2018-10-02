@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Supplier;
 
 import org.junit.After;
 
@@ -65,9 +64,43 @@ public class PoolEnv {
     }
 
     @Override
-    public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
+    public Future<Void> beginTransaction() {
+      return notExpected();
+    }
+
+    @Override
+    public Future<Void> commit() {
+      return notExpected();
+    }
+
+    @Override
+    public Future<Void> rollback() {
       return notExpected();
     }
   };
 
+  class TransactionalTestConnection extends TestConnection {
+
+    public int begin    = 0;
+    public int commit   = 0;
+    public int rollback = 0;
+
+    @Override
+    public Future<Void> beginTransaction() {
+      begin++;
+      return Future.VOID;
+    }
+
+    @Override
+    public Future<Void> commit() {
+      commit++;
+      return Future.VOID;
+    }
+
+    @Override
+    public Future<Void> rollback() {
+      rollback++;
+      return Future.VOID;
+    }
+  };
 }

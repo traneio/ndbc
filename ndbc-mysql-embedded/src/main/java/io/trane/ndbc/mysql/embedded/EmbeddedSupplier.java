@@ -22,6 +22,7 @@ import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.TransactionalDataSource;
 
 public class EmbeddedSupplier implements Supplier<DataSource> {
 
@@ -102,6 +103,11 @@ public class EmbeddedSupplier implements Supplier<DataSource> {
       @Override
       public Future<Void> close() {
         return underlying.close().ensure(() -> mysql.stop());
+      }
+
+      @Override
+      public TransactionalDataSource transactional() {
+        return underlying.transactional();
       }
     };
   }

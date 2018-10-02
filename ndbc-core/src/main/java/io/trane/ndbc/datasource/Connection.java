@@ -1,7 +1,6 @@
 package io.trane.ndbc.datasource;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import io.trane.future.Future;
 import io.trane.ndbc.PreparedStatement;
@@ -21,5 +20,9 @@ public interface Connection {
 
   Future<Long> execute(PreparedStatement query);
 
-  <R> Future<R> withTransaction(final Supplier<Future<R>> sup);
+  Future<Void> beginTransaction();
+
+  Future<Void> commit();
+
+  Future<Void> rollback();
 }

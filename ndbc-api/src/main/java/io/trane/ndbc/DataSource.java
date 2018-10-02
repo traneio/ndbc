@@ -53,6 +53,8 @@ public interface DataSource {
 
   <T> Future<T> transactional(Supplier<Future<T>> supplier);
 
+  TransactionalDataSource transactional();
+
   Future<Void> close();
 
   Config config();

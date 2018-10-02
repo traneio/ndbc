@@ -107,5 +107,10 @@ public class DataSourceTest {
     public Config config() {
       return null;
     }
+
+    @Override
+    public TransactionalDataSource transactional() {
+      return null;
+    }
   };
 }

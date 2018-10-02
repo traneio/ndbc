@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import io.trane.future.Future;
 import io.trane.future.InterruptHandler;
 import io.trane.future.Promise;
-import io.trane.future.Transformer;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
@@ -96,21 +95,6 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
     return Exchange.CLOSE.run(channel);
   }
 
-  @Override
-  public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
-    return execute("BEGIN").flatMap(v -> sup.get()).transformWith(new Transformer<R, Future<R>>() {
-      @Override
-      public Future<R> onException(final Throwable ex) {
-        return execute("ROLLBACK").flatMap(v -> Future.exception(ex));
-      }
-
-      @Override
-      public Future<R> onValue(final R value) {
-        return execute("COMMIT").map(v -> value);
-      }
-    });
-  }
-
   private final AtomicReference<Future<?>> mutex = new AtomicReference<>();
 
   private final <T> Future<T> run(final Exchange<T> exchange) {
@@ -140,5 +124,20 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
             .then(Exchange.CLOSE).run(channel))
         .onSuccess(e -> p.becomeIfEmpty(Future.exception(ex)))
         .onFailure(e -> log.warn("Can't cancel request. Reason: " + e)));
+  }
+
+  @Override
+  public Future<Void> beginTransaction() {
+    return execute("BEGIN").voided();
+  }
+
+  @Override
+  public Future<Void> commit() {
+    return execute("COMMIT").voided();
+  }
+
+  @Override
+  public Future<Void> rollback() {
+    return execute("ROLLBACK").voided();
   }
 }

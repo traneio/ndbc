@@ -1,13 +1,11 @@
 package io.trane.ndbc.datasource;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import org.junit.Test;
@@ -85,69 +83,79 @@ public class PooledDataSourceTest extends PoolEnv {
   @Test
   public void transactional() throws CheckedFutureException {
     final Integer result = 1;
-    final Supplier<Future<Integer>> block = () -> Future.value(result);
-    final Connection c = new TestConnection() {
-      @Override
-      public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
-        assertEquals(block, sup);
-        return sup.get();
-      }
+    final TransactionalTestConnection c = new TransactionalTestConnection();
+    final Supplier<Future<Integer>> block = () -> {
+      assertEquals(c.begin, 1);
+      assertEquals(c.commit, 0);
+      assertEquals(c.rollback, 0);
+      return Future.value(result);
     };
     assertEquals(result, ds(c).transactional(block).get(timeout));
+    assertEquals(c.begin, 1);
+    assertEquals(c.commit, 1);
+    assertEquals(c.rollback, 0);
   }
 
   @Test
-  public void transactionalFailedSupplierDoesntThrow() throws CheckedFutureException {
+  public void transactionalFailed() throws CheckedFutureException {
+    final TransactionalTestConnection c = new TransactionalTestConnection();
     final Supplier<Future<Integer>> block = () -> {
+      assertEquals(c.begin, 1);
+      assertEquals(c.commit, 0);
+      assertEquals(c.rollback, 0);
       throw new RuntimeException();
     };
-    final Connection c = new TestConnection() {
-      @Override
-      public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
-        assertEquals(block, sup);
-        return sup.get();
-      }
-    };
-    ds(c).transactional(block);
+    ds(c).transactional(block).join(timeout);
+    assertEquals(c.begin, 1);
+    assertEquals(c.commit, 0);
+    assertEquals(c.rollback, 1);
   }
 
   @Test
   public void transactionalNested() throws CheckedFutureException {
     final Integer result = 1;
-    final AtomicBoolean called = new AtomicBoolean(false);
-    final Connection c = new TestConnection() {
-      @Override
-      public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
-        assertFalse(called.get());
-        called.set(true);
-        return sup.get();
-      }
-    };
+    final TransactionalTestConnection c = new TransactionalTestConnection();
     final DataSource ds = ds(c);
-    final Supplier<Future<Integer>> block = () -> ds.transactional(() -> Future.value(result));
+    final Supplier<Future<Integer>> block = () -> {
+      assertEquals(c.begin, 1);
+      assertEquals(c.commit, 0);
+      assertEquals(c.rollback, 0);
+      return ds.transactional(() -> {
+        assertEquals(c.begin, 1);
+        assertEquals(c.commit, 0);
+        assertEquals(c.rollback, 0);
+        return Future.value(result);
+      });
+    };
     assertEquals(result, ds.transactional(block).get(timeout));
+    assertEquals(c.begin, 1);
+    assertEquals(c.commit, 1);
+    assertEquals(c.rollback, 0);
   }
 
   @Test
   public void transactionalQuery() throws CheckedFutureException {
-    final AtomicBoolean called = new AtomicBoolean(false);
-    final Connection c = new TestConnection() {
+    final TransactionalTestConnection c = new TransactionalTestConnection() {
       @Override
       public Future<List<Row>> query(final String query) {
         assertEquals(PooledDataSourceTest.this.query, query);
+        assertEquals(begin, 1);
+        assertEquals(commit, 0);
+        assertEquals(rollback, 0);
         return Future.value(rows);
-      }
-
-      @Override
-      public <R> Future<R> withTransaction(final Supplier<Future<R>> sup) {
-        assertFalse(called.get());
-        called.set(true);
-        return sup.get();
       }
     };
     final DataSource ds = ds(c);
-    final Supplier<Future<List<Row>>> block = () -> ds.transactional(() -> ds.query(query));
+    final Supplier<Future<List<Row>>> block = () -> ds.transactional(() -> {
+      assertEquals(c.begin, 1);
+      assertEquals(c.commit, 0);
+      assertEquals(c.rollback, 0);
+      return ds.query(query);
+    });
     assertEquals(rows, ds.transactional(block).get(timeout));
+    assertEquals(c.begin, 1);
+    assertEquals(c.commit, 1);
+    assertEquals(c.rollback, 0);
   }
 
   @Test
@@ -156,7 +164,8 @@ public class PooledDataSourceTest extends PoolEnv {
   }
 
   private DataSource ds(final Connection c) {
-    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(c), Optional.empty(), Optional.empty(),
+    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(c),
+        Optional.empty(), Optional.empty(),
         Optional.empty(), Optional.empty(), scheduler);
     return new PooledDataSource(pool, null);
   }
