@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
@@ -356,6 +357,7 @@ public class DataSourceTest extends NdbcTest {
   }
 
   @Test(expected = NdbcException.class)
+  @Ignore
   public void cancellation() throws Throwable {
     final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     try {
