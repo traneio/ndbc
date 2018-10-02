@@ -47,6 +47,7 @@
 		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
 		<sonar.language>java</sonar.language>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  	<release.arguments></release.arguments>
 	</properties>
 
 	<modules>
@@ -143,6 +144,7 @@
 						<version>2.5.3</version>
 						<configuration>
 							<scmCommentPrefix>[skip ci] [release] </scmCommentPrefix>
+							<arguments>${release.arguments}</arguments>
 						</configuration>
 					</plugin>
 					<plugin>
