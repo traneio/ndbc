@@ -20,7 +20,7 @@
     <dependency>
       <groupId>io.trane</groupId>
       <artifactId>future-java</artifactId>
-      <version>0.2.2</version>
+      <version>0.3.2</version>
     </dependency>
   </dependencies>
 
