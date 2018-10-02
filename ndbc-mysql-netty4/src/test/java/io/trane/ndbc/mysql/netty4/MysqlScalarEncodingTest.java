@@ -1,8 +1,11 @@
 package io.trane.ndbc.mysql.netty4;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 import org.junit.runners.Parameterized.Parameters;
 
@@ -16,9 +19,23 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
     return MysqlEnv.dataSources;
   }
 
+  private boolean is5_5() {
+    return ds.config().embedded()
+        .filter(e -> e.version.equals(Optional.of("v5_5_latest")))
+        .isPresent();
+  }
+
   @Override
   protected PreparedStatement prepare(String query) {
     return PreparedStatement.apply(query);
+  }
+
+  @Override
+  protected LocalDateTime randomLocalDateTime(final Random r) {
+    if (is5_5())
+      return super.randomLocalDateTime(r).withNano(0);
+    else
+      return super.randomLocalDateTime(r);
   }
 
   protected List<String> bigDecimalColumnTypes() {
@@ -50,19 +67,21 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
   }
 
   protected List<String> localDateTimeColumnTypes() {
-    return Arrays.asList("DATETIME(6)", "TIMESTAMP(6)");
+    if (is5_5())
+      return Arrays.asList("DATETIME", "TIMESTAMP");
+    else
+      return Arrays.asList("DATETIME(6)", "TIMESTAMP(6)");
   }
 
   protected List<String> localTimeColumnTypes() {
-    return Arrays.asList("TIME(6)");
+    if (is5_5())
+      return Arrays.asList("TIME");
+    else
+      return Arrays.asList("TIME(6)");
   }
 
   protected List<String> longColumnTypes() {
     return Arrays.asList("BIGINT");
-  }
-
-  protected List<String> offsetTimeColumnTypes() {
-    return Arrays.asList("TIME(6)");
   }
 
   protected List<String> shortColumnTypes() {

@@ -48,8 +48,6 @@ public abstract class EncodingTest<PS extends PreparedStatement> extends NdbcTes
 
   protected abstract List<String> longColumnTypes();
 
-  protected abstract List<String> offsetTimeColumnTypes();
-
   protected abstract List<String> shortColumnTypes();
 
   protected abstract List<String> byteColumnTypes();

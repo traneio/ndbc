@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 
 import io.trane.ndbc.mysql.proto.FieldType;
 import io.trane.ndbc.mysql.proto.PacketBufferReader;
@@ -12,8 +13,12 @@ import io.trane.ndbc.value.LocalTimeValue;
 
 final class LocalTimeEncoding extends Encoding<LocalTime, LocalTimeValue> {
 
-  private static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+  private static final DateTimeFormatter withNanos = new DateTimeFormatterBuilder()
       .appendPattern("HH:mm:ss.SSSSSS")
+      .toFormatter();
+
+  private static final DateTimeFormatter withoutNanos = new DateTimeFormatterBuilder()
+      .appendPattern("HH:mm:ss")
       .toFormatter();
 
   @Override
@@ -28,7 +33,11 @@ final class LocalTimeEncoding extends Encoding<LocalTime, LocalTimeValue> {
 
   @Override
   public final LocalTime decodeText(final String value, Charset charset) {
-    return LocalTime.parse(value, formatter);
+    try {
+      return LocalTime.parse(value, withNanos);
+    } catch (DateTimeParseException ex) {
+      return LocalTime.parse(value, withoutNanos);
+    }
   }
 
   @Override
@@ -44,14 +53,22 @@ final class LocalTimeEncoding extends Encoding<LocalTime, LocalTimeValue> {
 
   @Override
   public final LocalTime decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
-    assert (b.readByte() == (byte) 12);
+    byte length = b.readByte();
     assert (b.readByte() == (byte) 0);
     assert (b.readInt() == (byte) 0);
     byte hour = b.readByte();
     byte minute = b.readByte();
     byte second = b.readByte();
-    int nanos = Integer.reverseBytes(b.readInt()) * 1000;
-    return LocalTime.of(hour, minute, second, nanos);
+
+    switch (length) {
+      case 8:
+        return LocalTime.of(hour, minute, second);
+      case 12:
+        int nanos = Integer.reverseBytes(b.readInt()) * 1000;
+        return LocalTime.of(hour, minute, second, nanos);
+      default:
+        throw new IllegalStateException("Can't read buffer");
+    }
   }
 
   @Override
