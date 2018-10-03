@@ -52,6 +52,7 @@
 
 	<modules>
 		<module>ndbc-api</module>
+		<module>ndbc-api-scala</module>
 		<module>ndbc-core</module>
 		<module>ndbc-test</module>
 		<module>ndbc-netty4</module>
