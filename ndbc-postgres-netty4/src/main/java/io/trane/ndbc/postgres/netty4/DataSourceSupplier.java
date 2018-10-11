@@ -44,7 +44,7 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
           .flatMap(v -> startup.apply(config.charset(), config.user(), config.password(), config.database())
               .run(channel)
               .map(backendKeyData -> new io.trane.ndbc.postgres.Connection(
-                  channel, marshallers, unmarshallers,
+                  channel, marshallers,
                   config.queryTimeout(), config.scheduler(),
                   channelSupplier, backendKeyData,
                   new SimpleQueryExchange(queryResultExchange, marshallers, unmarshallers),

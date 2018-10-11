@@ -20,7 +20,6 @@ import io.trane.ndbc.Row;
 import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
 import io.trane.ndbc.postgres.proto.Message.CancelRequest;
 import io.trane.ndbc.postgres.proto.marshaller.Marshallers;
-import io.trane.ndbc.postgres.proto.unmarshaller.Unmarshallers;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.Exchange;
 import io.trane.ndbc.util.NonFatalException;
@@ -34,7 +33,6 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   private final Channel                                                 channel;
   private final Marshallers                                             marshallers;
-  private final Unmarshallers                                           unmarshallers;
   private final Optional<Duration>                                      queryTimeout;
   private final ScheduledExecutorService                                scheduler;
   private final Supplier<? extends Future<? extends Channel>>           channelSupplier;
@@ -44,7 +42,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
   private final BiFunction<String, List<Value<?>>, Exchange<Long>>      extendedExecuteExchange;
 
-  public Connection(final Channel channel, final Marshallers marshallers, final Unmarshallers unmarshallers,
+  public Connection(final Channel channel, final Marshallers marshallers,
       final Optional<Duration> queryTimeout, final ScheduledExecutorService scheduler,
       final Supplier<? extends Future<? extends Channel>> channelSupplier,
       final Optional<BackendKeyData> backendKeyData,
@@ -54,7 +52,6 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
       final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange) {
     this.channel = channel;
     this.marshallers = marshallers;
-    this.unmarshallers = unmarshallers;
     this.queryTimeout = queryTimeout;
     this.scheduler = scheduler;
     this.channelSupplier = channelSupplier;
