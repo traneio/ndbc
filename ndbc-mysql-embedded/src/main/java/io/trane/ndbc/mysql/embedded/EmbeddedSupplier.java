@@ -3,7 +3,6 @@ package io.trane.ndbc.mysql.embedded;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -17,14 +16,12 @@ import com.wix.mysql.config.MysqldConfig;
 import com.wix.mysql.config.SchemaConfig;
 import com.wix.mysql.distribution.Version;
 
-import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
-import io.trane.ndbc.TransactionalDataSource;
 
-public class EmbeddedSupplier implements Supplier<DataSource> {
+public class EmbeddedSupplier implements Supplier<DataSource<PreparedStatement, Row>> {
 
   private static final Logger log = LoggerFactory.getLogger(EmbeddedSupplier.class);
 
@@ -40,7 +37,7 @@ public class EmbeddedSupplier implements Supplier<DataSource> {
   }
 
   @Override
-  public DataSource get() {
+  public DataSource<PreparedStatement, Row> get() {
     log.info("Starting embedded mysql " + version + " on port " + config.port());
 
     String password = config.password().orElseGet(() -> {
@@ -66,50 +63,7 @@ public class EmbeddedSupplier implements Supplier<DataSource> {
 
     log.info("mysql " + version + " started");
 
-    DataSource underlying = DataSource.fromConfig(config.embedded(Optional.empty()));
-
-    return new DataSource() {
-
-      @Override
-      public <T> Future<T> transactional(Supplier<Future<T>> supplier) {
-        return underlying.transactional(supplier);
-      }
-
-      @Override
-      public Future<List<Row>> query(PreparedStatement query) {
-        return underlying.query(query);
-      }
-
-      @Override
-      public Future<List<Row>> query(String query) {
-        return underlying.query(query);
-      }
-
-      @Override
-      public Future<Long> execute(PreparedStatement statement) {
-        return underlying.execute(statement);
-      }
-
-      @Override
-      public Future<Long> execute(String statement) {
-        return underlying.execute(statement);
-      }
-
-      @Override
-      public Config config() {
-        return config;
-      }
-
-      @Override
-      public Future<Void> close() {
-        return underlying.close().ensure(() -> mysql.stop());
-      }
-
-      @Override
-      public TransactionalDataSource transactional() {
-        return underlying.transactional();
-      }
-    };
+    return DataSource.fromConfig(config.embedded(Optional.empty()));
   }
 
   private static int findFreePort() {

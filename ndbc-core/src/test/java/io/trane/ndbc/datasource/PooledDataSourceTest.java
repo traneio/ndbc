@@ -115,7 +115,7 @@ public class PooledDataSourceTest extends PoolEnv {
   public void transactionalNested() throws CheckedFutureException {
     final Integer result = 1;
     final TransactionalTestConnection c = new TransactionalTestConnection();
-    final DataSource ds = ds(c);
+    final DataSource<PreparedStatement, Row> ds = ds(c);
     final Supplier<Future<Integer>> block = () -> {
       assertEquals(c.begin, 1);
       assertEquals(c.commit, 0);
@@ -145,7 +145,7 @@ public class PooledDataSourceTest extends PoolEnv {
         return Future.value(rows);
       }
     };
-    final DataSource ds = ds(c);
+    final DataSource<PreparedStatement, Row> ds = ds(c);
     final Supplier<Future<List<Row>>> block = () -> ds.transactional(() -> {
       assertEquals(c.begin, 1);
       assertEquals(c.commit, 0);
@@ -163,7 +163,7 @@ public class PooledDataSourceTest extends PoolEnv {
     ds(new TestConnection()).close().get(timeout);
   }
 
-  private DataSource ds(final Connection c) {
+  private DataSource<PreparedStatement, Row> ds(final Connection c) {
     final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(c),
         Optional.empty(), Optional.empty(),
         Optional.empty(), Optional.empty(), scheduler);

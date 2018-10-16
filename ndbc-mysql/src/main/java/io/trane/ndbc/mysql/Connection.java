@@ -38,7 +38,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private final Function<String, Exchange<Long>>                        simpleExecuteExchange;
   private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
   private final BiFunction<String, List<Value<?>>, Exchange<Long>>      extendedExecuteExchange;
-  private final Supplier<DataSource>                                    dataSourceSupplier;
+  private final Supplier<DataSource<PreparedStatement, Row>>            dataSourceSupplier;
 
   public Connection(final Channel channel, final Long connectionId, final Marshallers marshallers,
       final Optional<Duration> queryTimeout, final ScheduledExecutorService scheduler,
@@ -46,7 +46,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
       final Function<String, Exchange<Long>> simpleExecuteExchange,
       final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange,
       final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange,
-      final Supplier<DataSource> dataSourceSupplier) {
+      final Supplier<DataSource<PreparedStatement, Row>> dataSourceSupplier) {
     this.channel = channel;
     this.connectionId = connectionId;
     this.queryTimeout = queryTimeout;
@@ -112,7 +112,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   private final <T> InterruptHandler handler(final Promise<T> p) {
     return ex -> {
-      DataSource ds = dataSourceSupplier.get();
+      DataSource<PreparedStatement, Row> ds = dataSourceSupplier.get();
       ds.execute("KILL QUERY " + connectionId)
           .onSuccess(e -> p.becomeIfEmpty(Future.exception(ex)))
           .onFailure(e -> log.warn("Can't cancel request. Reason: " + e))

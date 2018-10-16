@@ -2,11 +2,14 @@ package io.trane.ndbc.twitter;
 
 import com.twitter.util.Future;
 
-public class TransactionalDataSource extends DataSource {
+import io.trane.ndbc.PreparedStatement;
+import io.trane.ndbc.Row;
 
-  private final io.trane.ndbc.TransactionalDataSource underlying;
+public class TransactionalDataSource<P extends PreparedStatement, R extends Row> extends DataSource<P, R> {
 
-  protected TransactionalDataSource(final io.trane.ndbc.TransactionalDataSource underlying) {
+  private final io.trane.ndbc.TransactionalDataSource<P, R> underlying;
+
+  protected TransactionalDataSource(final io.trane.ndbc.TransactionalDataSource<P, R> underlying) {
     super(underlying);
     this.underlying = underlying;
   }

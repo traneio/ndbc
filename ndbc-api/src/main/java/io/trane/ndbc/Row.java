@@ -9,16 +9,16 @@ import java.util.stream.Collectors;
 
 import io.trane.ndbc.value.Value;
 
-public final class Row {
+public class Row {
 
-  private final Map<String, Integer> positions;
-  private final Value<?>[]           columns;
+  protected final Map<String, Integer> positions;
+  protected final Value<?>[]           columns;
 
-  public static final Row apply(final Map<String, Integer> positions, final Value<?>[] columns) {
+  public static Row apply(final Map<String, Integer> positions, final Value<?>[] columns) {
     return new Row(positions, columns);
   }
 
-  private Row(final Map<String, Integer> positions, final Value<?>[] columns) {
+  protected Row(final Map<String, Integer> positions, final Value<?>[] columns) {
     this.positions = positions;
     this.columns = columns;
   }

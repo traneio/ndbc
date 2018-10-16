@@ -9,12 +9,15 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
+import io.trane.ndbc.PreparedStatement;
+import io.trane.ndbc.Row;
 import io.trane.ndbc.datasource.Connection;
 import io.trane.ndbc.datasource.LockFreePool;
 import io.trane.ndbc.datasource.Pool;
 import io.trane.ndbc.datasource.PooledDataSource;
 
-public abstract class Netty4DataSourceSupplier implements Supplier<DataSource> {
+public abstract class Netty4DataSourceSupplier
+    implements Supplier<DataSource<PreparedStatement, Row>> {
 
   protected final Config                     config;
   private final Supplier<Future<Connection>> createConnection;
@@ -32,8 +35,9 @@ public abstract class Netty4DataSourceSupplier implements Supplier<DataSource> {
       Config config, Supplier<Future<NettyChannel>> channelSupplier);
 
   @Override
-  public final DataSource get() {
-    final Pool<Connection> pool = LockFreePool.apply(createConnection, config.poolMaxSize(), config.poolMaxWaiters(),
+  public final DataSource<PreparedStatement, Row> get() {
+    final Pool<Connection> pool = LockFreePool.apply(createConnection, config.poolMaxSize(),
+        config.poolMaxWaiters(),
         config.connectionTimeout(), config.poolValidationInterval(), config.scheduler());
     return new PooledDataSource(pool, config);
   }

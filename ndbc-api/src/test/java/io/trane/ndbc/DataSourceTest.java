@@ -61,17 +61,17 @@ public class DataSourceTest {
     p.setProperty("db.user", user);
   }
 
-  static class DSSupplier implements Supplier<DataSource> {
+  static class DSSupplier implements Supplier<DataSource<PreparedStatement, Row>> {
     public DSSupplier(final Config c) {
     }
 
     @Override
-    public DataSource get() {
+    public DataSource<PreparedStatement, Row> get() {
       return ds;
     }
   }
 
-  private static DataSource ds = new DataSource() {
+  private static DataSource<PreparedStatement, Row> ds = new DataSource<PreparedStatement, Row>() {
 
     @Override
     public <T> Future<T> transactional(final Supplier<Future<T>> supplier) {
@@ -109,7 +109,7 @@ public class DataSourceTest {
     }
 
     @Override
-    public TransactionalDataSource transactional() {
+    public TransactionalDataSource<PreparedStatement, Row> transactional() {
       return null;
     }
   };

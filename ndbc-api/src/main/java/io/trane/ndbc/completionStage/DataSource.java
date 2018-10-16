@@ -11,31 +11,32 @@ import io.trane.ndbc.Config;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 
-public class DataSource {
+public class DataSource<P extends PreparedStatement, R extends Row> {
 
-  public static DataSource fromSystemProperties(final String prefix) {
+  public static DataSource<PreparedStatement, Row> fromSystemProperties(final String prefix) {
     return apply(io.trane.ndbc.DataSource.fromSystemProperties(prefix));
   }
 
-  public static DataSource fromPropertiesFile(final String prefix, final String fileName) throws IOException {
+  public static DataSource<PreparedStatement, Row> fromPropertiesFile(final String prefix, final String fileName)
+      throws IOException {
     return apply(io.trane.ndbc.DataSource.fromPropertiesFile(prefix, fileName));
   }
 
-  public static DataSource fromProperties(final String prefix, final Properties properties) {
+  public static DataSource<PreparedStatement, Row> fromProperties(final String prefix, final Properties properties) {
     return apply(io.trane.ndbc.DataSource.fromProperties(prefix, properties));
   }
 
-  public static DataSource fromConfig(final Config config) {
+  public static DataSource<PreparedStatement, Row> fromConfig(final Config config) {
     return apply(io.trane.ndbc.DataSource.fromConfig(config));
   }
 
-  public static DataSource apply(io.trane.ndbc.DataSource ds) {
-    return new DataSource(ds);
+  public static <P extends PreparedStatement, R extends Row> DataSource<P, R> apply(io.trane.ndbc.DataSource<P, R> ds) {
+    return new DataSource<P, R>(ds);
   }
 
-  private final io.trane.ndbc.DataSource underlying;
+  private final io.trane.ndbc.DataSource<P, R> underlying;
 
-  protected DataSource(io.trane.ndbc.DataSource underlying) {
+  protected DataSource(io.trane.ndbc.DataSource<P, R> underlying) {
     this.underlying = underlying;
   }
 
@@ -45,7 +46,7 @@ public class DataSource {
     return cf;
   }
 
-  public final CompletionStage<List<Row>> query(String query) {
+  public final CompletionStage<List<R>> query(String query) {
     return conv(underlying.query(query));
   }
 
@@ -53,16 +54,16 @@ public class DataSource {
     return conv(underlying.execute(statement));
   }
 
-  public final CompletionStage<List<Row>> query(PreparedStatement query) {
+  public final CompletionStage<List<R>> query(P query) {
     return conv(underlying.query(query));
   }
 
-  public final CompletionStage<Long> execute(PreparedStatement statement) {
+  public final CompletionStage<Long> execute(P statement) {
     return conv(underlying.execute(statement));
   }
 
-  public final TransactionalDataSource transactional() {
-    return new TransactionalDataSource(underlying.transactional());
+  public final TransactionalDataSource<P, R> transactional() {
+    return new TransactionalDataSource<P, R>(underlying.transactional());
   }
 
   public final CompletionStage<Void> close() {

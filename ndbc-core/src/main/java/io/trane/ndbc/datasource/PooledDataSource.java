@@ -14,7 +14,7 @@ import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 import io.trane.ndbc.TransactionalDataSource;
 
-public final class PooledDataSource implements DataSource {
+public final class PooledDataSource implements DataSource<PreparedStatement, Row> {
 
   private final Pool<Connection>  pool;
   private final Local<Connection> currentTransaction;
@@ -47,7 +47,7 @@ public final class PooledDataSource implements DataSource {
   }
 
   @Override
-  public final <R> Future<R> transactional(final Supplier<Future<R>> supplier) {
+  public final <T> Future<T> transactional(final Supplier<Future<T>> supplier) {
     if (currentTransaction.get().isPresent())
       return Future.flatApply(supplier);
     else
@@ -55,15 +55,15 @@ public final class PooledDataSource implements DataSource {
         currentTransaction.set(Optional.of(c));
         return c.beginTransaction()
             .flatMap(v -> supplier.get())
-            .transformWith(new Transformer<R, Future<R>>() {
+            .transformWith(new Transformer<T, Future<T>>() {
               @Override
-              public Future<R> onException(final Throwable ex) {
+              public Future<T> onException(final Throwable ex) {
                 currentTransaction.set(Optional.empty());
                 return c.rollback().flatMap(v -> Future.exception(ex));
               }
 
               @Override
-              public Future<R> onValue(final R value) {
+              public Future<T> onValue(final T value) {
                 currentTransaction.set(Optional.empty());
                 return c.commit().map(v -> value);
               }
@@ -72,11 +72,11 @@ public final class PooledDataSource implements DataSource {
   }
 
   @Override
-  public TransactionalDataSource transactional() {
+  public TransactionalDataSource<PreparedStatement, Row> transactional() {
     final Future<Connection> conn = currentTransaction.get()
         .map(Future::value).orElseGet(() -> pool.acquire());
 
-    return new TransactionalDataSource() {
+    return new TransactionalDataSource<PreparedStatement, Row>() {
 
       @Override
       public Future<List<Row>> query(String query) {
@@ -113,7 +113,7 @@ public final class PooledDataSource implements DataSource {
       }
 
       @Override
-      public TransactionalDataSource transactional() {
+      public TransactionalDataSource<PreparedStatement, Row> transactional() {
         return this;
       }
 
@@ -146,7 +146,7 @@ public final class PooledDataSource implements DataSource {
     return pool.close();
   }
 
-  private final <R> Future<R> withConnection(final Function<Connection, Future<R>> f) {
+  private final <T> Future<T> withConnection(final Function<Connection, Future<T>> f) {
     final Optional<Connection> transaction = currentTransaction.get();
     if (transaction.isPresent())
       return f.apply(transaction.get());

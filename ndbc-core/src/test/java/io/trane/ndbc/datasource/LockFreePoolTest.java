@@ -119,7 +119,7 @@ public class LockFreePoolTest extends PoolEnv {
 
   @Test(expected = TimeoutException.class)
   public void connectionTimeout() throws CheckedFutureException {
-    final Pool<Connection> pool = LockFreePool.apply(
+    Pool<Connection> pool = LockFreePool.apply(
         () -> Future.value(conn()).delayed(Duration.ofMillis(100), scheduler),
         Optional.empty(), Optional.empty(), Optional.of(Duration.ofMillis(10)),
         Optional.empty(), scheduler);

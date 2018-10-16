@@ -8,25 +8,27 @@ import java.util.function.Supplier;
 
 import io.trane.future.Future;
 
-public interface DataSource {
+public interface DataSource<P extends PreparedStatement, R extends Row> {
 
-  public static DataSource fromSystemProperties(final String prefix) {
+  public static DataSource<PreparedStatement, Row> fromSystemProperties(final String prefix) {
     return fromConfig(Config.fromSystemProperties(prefix));
   }
 
-  public static DataSource fromPropertiesFile(final String prefix, final String fileName) throws IOException {
+  public static DataSource<PreparedStatement, Row> fromPropertiesFile(final String prefix, final String fileName)
+      throws IOException {
     return fromConfig(Config.fromPropertiesFile(prefix, fileName));
   }
 
-  public static DataSource fromProperties(final String prefix, final Properties properties) {
+  public static DataSource<PreparedStatement, Row> fromProperties(final String prefix, final Properties properties) {
     return fromConfig(Config.fromProperties(prefix, properties));
   }
 
   @SuppressWarnings("unchecked")
-  public static DataSource fromConfig(final Config config) {
+  public static DataSource<PreparedStatement, Row> fromConfig(final Config config) {
     return config.embedded().map(embedded -> {
       try {
-        final Supplier<DataSource> supplier = (Supplier<DataSource>) Class.forName(embedded.supplierClass)
+        final Supplier<DataSource<PreparedStatement, Row>> supplier = (Supplier<DataSource<PreparedStatement, Row>>) Class
+            .forName(embedded.supplierClass)
             .getConstructor(Config.class, Optional.class).newInstance(config, embedded.version);
         return supplier.get();
       } catch (final Exception e) {
@@ -34,7 +36,8 @@ public interface DataSource {
       }
     }).orElseGet(() -> {
       try {
-        final Supplier<DataSource> supplier = (Supplier<DataSource>) Class.forName(config.dataSourceSupplierClass())
+        final Supplier<DataSource<PreparedStatement, Row>> supplier = (Supplier<DataSource<PreparedStatement, Row>>) Class
+            .forName(config.dataSourceSupplierClass())
             .getConstructor(Config.class).newInstance(config);
         return supplier.get();
       } catch (final Exception e) {
@@ -43,17 +46,17 @@ public interface DataSource {
     });
   }
 
-  Future<List<Row>> query(String query);
+  Future<List<R>> query(String query);
 
   Future<Long> execute(String statement);
 
-  Future<List<Row>> query(PreparedStatement query);
+  Future<List<R>> query(P query);
 
-  Future<Long> execute(PreparedStatement statement);
+  Future<Long> execute(P statement);
 
   <T> Future<T> transactional(Supplier<Future<T>> supplier);
 
-  TransactionalDataSource transactional();
+  TransactionalDataSource<P, R> transactional();
 
   Future<Void> close();
 

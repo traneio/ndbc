@@ -3,39 +3,48 @@ package io.trane.ndbc.twitter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import com.twitter.util.Future;
+import com.twitter.util.Local;
 import com.twitter.util.Promise;
 
 import io.trane.ndbc.Config;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 
-public class DataSource {
+public class DataSource<P extends PreparedStatement, R extends Row> {
 
-  public static DataSource fromSystemProperties(final String prefix) {
+  public static DataSource<PreparedStatement, Row> fromSystemProperties(final String prefix) {
     return apply(io.trane.ndbc.DataSource.fromSystemProperties(prefix));
   }
 
-  public static DataSource fromPropertiesFile(final String prefix, final String fileName) throws IOException {
+  public static DataSource<PreparedStatement, Row> fromPropertiesFile(final String prefix, final String fileName)
+      throws IOException {
     return apply(io.trane.ndbc.DataSource.fromPropertiesFile(prefix, fileName));
   }
 
-  public static DataSource fromProperties(final String prefix, final Properties properties) {
+  public static DataSource<PreparedStatement, Row> fromProperties(final String prefix, final Properties properties) {
     return apply(io.trane.ndbc.DataSource.fromProperties(prefix, properties));
   }
 
-  public static DataSource fromConfig(final Config config) {
+  public static DataSource<PreparedStatement, Row> fromConfig(final Config config) {
     return apply(io.trane.ndbc.DataSource.fromConfig(config));
   }
 
-  public static DataSource apply(final io.trane.ndbc.DataSource ds) {
-    return new DataSource(ds);
+  public static <P extends PreparedStatement, R extends Row> DataSource<P, R> apply(
+      final io.trane.ndbc.DataSource<P, R> ds) {
+    return new DataSource<P, R>(ds);
   }
 
-  private final io.trane.ndbc.DataSource underlying;
+  private final io.trane.ndbc.DataSource<P, R>       underlying;
+  private final Local<TransactionalDataSource<P, R>> currentTransaction = new Local<>();
 
-  protected DataSource(final io.trane.ndbc.DataSource underlying) {
+  private final io.trane.ndbc.DataSource<P, R> current() {
+    return currentTransaction.apply().getOrElse(() -> underlying);
+  }
+
+  protected DataSource(final io.trane.ndbc.DataSource<P, R> underlying) {
     this.underlying = underlying;
   }
 
@@ -45,31 +54,38 @@ public class DataSource {
     return promise;
   }
 
-  public final Future<List<Row>> query(final String query) {
-    return this.convert(underlying.query(query));
+  public final Future<List<R>> query(final String query) {
+    return convert(current().query(query));
   }
 
   public final Future<Long> execute(final String statement) {
-    return convert(underlying.execute(statement));
+    return convert(current().execute(statement));
   }
 
-  public final Future<List<Row>> query(final PreparedStatement query) {
-    return convert(underlying.query(query));
+  public final Future<List<R>> query(final P query) {
+    return convert(current().query(query));
   }
 
-  public final Future<Long> execute(final PreparedStatement statement) {
-    return convert(underlying.execute(statement));
+  public final Future<Long> execute(final P statement) {
+    return convert(current().execute(statement));
   }
 
-  public final TransactionalDataSource transactional() {
-    return new TransactionalDataSource(underlying.transactional());
+  public final TransactionalDataSource<P, R> transactional() {
+    return new TransactionalDataSource<P, R>(current().transactional());
+  }
+
+  public final <T> Future<T> transactional(Supplier<Future<T>> supplier) {
+    if (currentTransaction.apply().nonEmpty())
+      return supplier.get();
+    else
+      return currentTransaction.let(transactional(), () -> supplier.get());
   }
 
   public final Future<Void> close() {
-    return convert(underlying.close());
+    return convert(current().close());
   }
 
   public final Config config() {
-    return underlying.config();
+    return current().config();
   }
 }

@@ -10,31 +10,33 @@ import io.trane.ndbc.Row;
 import scala.concurrent.Future;
 import scala.concurrent.Promise;
 
-public class DataSource {
+public class DataSource<P extends PreparedStatement, R extends Row> {
 
-  public static DataSource fromSystemProperties(final String prefix) {
+  public static DataSource<PreparedStatement, Row> fromSystemProperties(final String prefix) {
     return apply(io.trane.ndbc.DataSource.fromSystemProperties(prefix));
   }
 
-  public static DataSource fromPropertiesFile(final String prefix, final String fileName) throws IOException {
+  public static DataSource<PreparedStatement, Row> fromPropertiesFile(final String prefix, final String fileName)
+      throws IOException {
     return apply(io.trane.ndbc.DataSource.fromPropertiesFile(prefix, fileName));
   }
 
-  public static DataSource fromProperties(final String prefix, final Properties properties) {
+  public static DataSource<PreparedStatement, Row> fromProperties(final String prefix, final Properties properties) {
     return apply(io.trane.ndbc.DataSource.fromProperties(prefix, properties));
   }
 
-  public static DataSource fromConfig(final Config config) {
+  public static DataSource<PreparedStatement, Row> fromConfig(final Config config) {
     return apply(io.trane.ndbc.DataSource.fromConfig(config));
   }
 
-  public static DataSource apply(final io.trane.ndbc.DataSource ds) {
-    return new DataSource(ds);
+  public static <P extends PreparedStatement, R extends Row> DataSource<P, R> apply(
+      final io.trane.ndbc.DataSource<P, R> ds) {
+    return new DataSource<P, R>(ds);
   }
 
-  private final io.trane.ndbc.DataSource underlying;
+  private final io.trane.ndbc.DataSource<P, R> underlying;
 
-  protected DataSource(final io.trane.ndbc.DataSource underlying) {
+  protected DataSource(final io.trane.ndbc.DataSource<P, R> underlying) {
     this.underlying = underlying;
   }
 
@@ -44,7 +46,7 @@ public class DataSource {
     return promise.future();
   }
 
-  public final Future<List<Row>> query(final String query) {
+  public final Future<List<R>> query(final String query) {
     return this.convert(underlying.query(query));
   }
 
@@ -52,16 +54,16 @@ public class DataSource {
     return convert(underlying.execute(statement));
   }
 
-  public final Future<List<Row>> query(final PreparedStatement query) {
+  public final Future<List<R>> query(final P query) {
     return convert(underlying.query(query));
   }
 
-  public final Future<Long> execute(final PreparedStatement statement) {
+  public final Future<Long> execute(final P statement) {
     return convert(underlying.execute(statement));
   }
 
-  public final TransactionalDataSource transactional() {
-    return new TransactionalDataSource(underlying.transactional());
+  public final TransactionalDataSource<P, R> transactional() {
+    return new TransactionalDataSource<P, R>(underlying.transactional());
   }
 
   public final Future<Void> close() {

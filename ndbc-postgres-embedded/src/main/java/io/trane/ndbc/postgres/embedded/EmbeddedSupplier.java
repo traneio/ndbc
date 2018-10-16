@@ -13,17 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.flapdoodle.embed.process.config.IRuntimeConfig;
-import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
-import io.trane.ndbc.TransactionalDataSource;
 import ru.yandex.qatools.embed.postgresql.EmbeddedPostgres;
 import ru.yandex.qatools.embed.postgresql.distribution.Version;
 import ru.yandex.qatools.embed.postgresql.util.SocketUtil;
 
-public class EmbeddedSupplier implements Supplier<DataSource> {
+public class EmbeddedSupplier implements Supplier<DataSource<PreparedStatement, Row>> {
 
   private static final Logger log = LoggerFactory.getLogger(EmbeddedSupplier.class);
 
@@ -45,7 +43,7 @@ public class EmbeddedSupplier implements Supplier<DataSource> {
   }
 
   @Override
-  public final DataSource get() {
+  public final DataSource<PreparedStatement, Row> get() {
     log.info("Starting embedded postgres " + version + " on port " + config.port());
 
     final EmbeddedPostgres postgres = new EmbeddedPostgres(version);
@@ -68,49 +66,6 @@ public class EmbeddedSupplier implements Supplier<DataSource> {
 
     log.info("postgres " + version + " started");
 
-    DataSource underlying = DataSource.fromConfig(config.embedded(Optional.empty()));
-
-    return new DataSource() {
-
-      @Override
-      public <T> Future<T> transactional(Supplier<Future<T>> supplier) {
-        return underlying.transactional(supplier);
-      }
-
-      @Override
-      public Future<List<Row>> query(PreparedStatement query) {
-        return underlying.query(query);
-      }
-
-      @Override
-      public Future<List<Row>> query(String query) {
-        return underlying.query(query);
-      }
-
-      @Override
-      public Future<Long> execute(PreparedStatement statement) {
-        return underlying.execute(statement);
-      }
-
-      @Override
-      public Future<Long> execute(String statement) {
-        return underlying.execute(statement);
-      }
-
-      @Override
-      public Config config() {
-        return config;
-      }
-
-      @Override
-      public Future<Void> close() {
-        return underlying.close().ensure(() -> postgres.stop());
-      }
-
-      @Override
-      public TransactionalDataSource transactional() {
-        return underlying.transactional();
-      }
-    };
+    return DataSource.fromConfig(config.embedded(Optional.empty()));
   }
 }
