@@ -15,6 +15,7 @@ import io.trane.ndbc.datasource.Connection;
 import io.trane.ndbc.datasource.LockFreePool;
 import io.trane.ndbc.datasource.Pool;
 import io.trane.ndbc.datasource.PooledDataSource;
+import io.trane.ndbc.proto.BufferReader;
 
 public abstract class Netty4DataSourceSupplier
     implements Supplier<DataSource<PreparedStatement, Row>> {
@@ -23,7 +24,7 @@ public abstract class Netty4DataSourceSupplier
   private final Supplier<Future<Connection>> createConnection;
 
   public Netty4DataSourceSupplier(final Config config,
-      final Function<io.trane.ndbc.proto.BufferReader, Optional<io.trane.ndbc.proto.BufferReader>> transformBufferReader) {
+      final Function<BufferReader, Optional<BufferReader>> transformBufferReader) {
     this.config = config;
     final ChannelSupplier channelSupplier = new ChannelSupplier(
         new NioEventLoopGroup(config.nioThreads().orElse(0), new DefaultThreadFactory("ndbc-netty4", true)),
