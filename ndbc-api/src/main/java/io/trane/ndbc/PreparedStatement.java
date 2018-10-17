@@ -198,20 +198,20 @@ public class PreparedStatement {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + Arrays.hashCode(params);
-    result = prime * result + ((query == null) ? 0 : query.hashCode());
+    result = (prime * result) + Arrays.hashCode(params);
+    result = (prime * result) + ((query == null) ? 0 : query.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if (this == obj)
       return true;
     if (obj == null)
       return false;
     if (getClass() != obj.getClass())
       return false;
-    PreparedStatement other = (PreparedStatement) obj;
+    final PreparedStatement other = (PreparedStatement) obj;
     if (!Arrays.equals(params, other.params))
       return false;
     if (query == null) {

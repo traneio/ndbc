@@ -39,7 +39,7 @@ final public class NettyChannel extends SimpleChannelInboundHandler<BufferReader
     return ctx.flatMap(c -> {
       final ByteBuf ioBuffer = c.alloc().ioBuffer();
       marshaller.apply(msg, new BufferWriter(charset, ioBuffer));
-      ChannelFuture write = c.write(ioBuffer);
+      final ChannelFuture write = c.write(ioBuffer);
       c.flush();
       return ChannelFutureHandler.toFuture(write);
     });

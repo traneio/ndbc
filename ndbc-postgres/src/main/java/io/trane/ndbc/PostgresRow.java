@@ -35,12 +35,12 @@ public class PostgresRow extends Row {
     return new PostgresRow(positions, columns);
   }
 
-  protected PostgresRow(Map<String, Integer> positions, Value<?>[] columns) {
+  protected PostgresRow(final Map<String, Integer> positions, final Value<?>[] columns) {
     super(positions, columns);
   }
 
   public Character[] getCharacterArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof CharacterArrayValue)
       return ((CharacterArrayValue) v).getCharacterArray();
     else
@@ -48,7 +48,7 @@ public class PostgresRow extends Row {
   }
 
   public String[] getStringArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof StringArrayValue)
       return ((StringArrayValue) v).getStringArray();
     else
@@ -56,7 +56,7 @@ public class PostgresRow extends Row {
   }
 
   public Integer[] getIntegerArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof IntegerArrayValue)
       return ((IntegerArrayValue) v).getIntegerArray();
     else
@@ -64,7 +64,7 @@ public class PostgresRow extends Row {
   }
 
   public Boolean[] getBooleanArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof BooleanArrayValue)
       return ((BooleanArrayValue) v).getBooleanArray();
     else
@@ -72,7 +72,7 @@ public class PostgresRow extends Row {
   }
 
   public Long[] getLongArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof LongArrayValue)
       return ((LongArrayValue) v).getLongArray();
     else
@@ -80,7 +80,7 @@ public class PostgresRow extends Row {
   }
 
   public Short[] getShortArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof ShortArrayValue)
       return ((ShortArrayValue) v).getShortArray();
     else
@@ -88,7 +88,7 @@ public class PostgresRow extends Row {
   }
 
   public BigDecimal[] getBigDecimalArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof BigDecimalArrayValue)
       return ((BigDecimalArrayValue) v).getBigDecimalArray();
     else
@@ -96,7 +96,7 @@ public class PostgresRow extends Row {
   }
 
   public Float[] getFloatArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof FloatArrayValue)
       return ((FloatArrayValue) v).getFloatArray();
     else
@@ -104,7 +104,7 @@ public class PostgresRow extends Row {
   }
 
   public Double[] getDoubleArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof DoubleArrayValue)
       return ((DoubleArrayValue) v).getDoubleArray();
     else
@@ -112,7 +112,7 @@ public class PostgresRow extends Row {
   }
 
   public LocalDateTime[] getLocalDateTimeArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof LocalDateTimeArrayValue)
       return ((LocalDateTimeArrayValue) v).getLocalDateTimeArray();
     else
@@ -120,7 +120,7 @@ public class PostgresRow extends Row {
   }
 
   public byte[][] getByteArrayArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof ByteArrayArrayValue)
       return ((ByteArrayArrayValue) v).getByteArrayArray();
     else
@@ -128,7 +128,7 @@ public class PostgresRow extends Row {
   }
 
   public LocalDate[] getLocalDateArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof LocalDateArrayValue)
       return ((LocalDateArrayValue) v).getLocalDateArray();
     else
@@ -136,7 +136,7 @@ public class PostgresRow extends Row {
   }
 
   public LocalTime[] getLocalTimeArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof LocalTimeValue)
       return ((LocalTimeValue) v).getLocalTimeArray();
     else
@@ -144,7 +144,7 @@ public class PostgresRow extends Row {
   }
 
   public OffsetTime[] getOffsetTimeArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof OffsetTimeValue)
       return ((OffsetTimeValue) v).getOffsetTimeArray();
     else
@@ -152,7 +152,7 @@ public class PostgresRow extends Row {
   }
 
   public UUID[] getUUIDArray(final int index) {
-    Value<?> v = column(index);
+    final Value<?> v = column(index);
     if (v instanceof UUIDValue)
       return ((UUIDValue) v).getUUIDArray();
     else

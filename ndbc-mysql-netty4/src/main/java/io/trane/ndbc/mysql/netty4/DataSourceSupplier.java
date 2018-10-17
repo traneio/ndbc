@@ -27,8 +27,8 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
   }
 
   @Override
-  protected Supplier<Future<Connection>> createConnectionSupplier(Config config,
-      Supplier<Future<NettyChannel>> channelSupplier) {
+  protected Supplier<Future<Connection>> createConnectionSupplier(final Config config,
+      final Supplier<Future<NettyChannel>> channelSupplier) {
     final EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings(), config.charset());
     final Unmarshallers unmarshallers = new Unmarshallers(config.charset(), encoding);
     final TerminatorExchange terminatorExchange = new TerminatorExchange(unmarshallers);

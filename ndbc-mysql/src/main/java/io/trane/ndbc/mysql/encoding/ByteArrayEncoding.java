@@ -27,22 +27,22 @@ final class ByteArrayEncoding extends Encoding<byte[], ByteArrayValue> {
   }
 
   @Override
-  public ByteArrayValue readText(PacketBufferReader reader, Key key, Charset charset) {
+  public ByteArrayValue readText(final PacketBufferReader reader, final Key key, final Charset charset) {
     return box(decodeBinary(reader, key, charset));
   }
 
   @Override
-  public final byte[] decodeText(final String value, Charset charset) {
+  public final byte[] decodeText(final String value, final Charset charset) {
     return value.getBytes(charset);
   }
 
   @Override
-  public final void encodeBinary(final byte[] value, final PacketBufferWriter b, Charset charset) {
+  public final void encodeBinary(final byte[] value, final PacketBufferWriter b, final Charset charset) {
     b.writeLengthCodedBytes(value);
   }
 
   @Override
-  public final byte[] decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
+  public final byte[] decodeBinary(final PacketBufferReader b, final Key key, final Charset charset) {
     return b.readLengthCodedBytes();
   }
 

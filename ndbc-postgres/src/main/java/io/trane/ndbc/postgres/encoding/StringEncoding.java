@@ -31,11 +31,10 @@ final class StringEncoding extends Encoding<String, StringValue> {
 
   @Override
   public final String decodeText(final String value) {
-    if (value.equals("\"\"")) {
+    if (value.equals("\"\""))
       return "";
-    } else {
+    else
       return value;
-    }
   }
 
   @Override

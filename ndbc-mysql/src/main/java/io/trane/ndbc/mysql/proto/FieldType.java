@@ -14,12 +14,12 @@ public enum FieldType {
 
   static {
     byCode = new HashMap<>();
-    for (FieldType tpe : FieldType.values())
+    for (final FieldType tpe : FieldType.values())
       byCode.put(tpe.code, tpe);
   }
 
-  public static final FieldType apply(int code) {
-    FieldType tpe = byCode.get(code);
+  public static final FieldType apply(final int code) {
+    final FieldType tpe = byCode.get(code);
     if (tpe == null)
       throw new UnsupportedOperationException("Unknown field type " + tpe);
     return tpe;
@@ -27,7 +27,7 @@ public enum FieldType {
 
   public final int code;
 
-  private FieldType(int code) {
+  private FieldType(final int code) {
     this.code = code;
   }
 }

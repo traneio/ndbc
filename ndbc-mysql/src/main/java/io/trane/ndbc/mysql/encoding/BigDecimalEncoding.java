@@ -28,17 +28,17 @@ final class BigDecimalEncoding extends Encoding<BigDecimal, BigDecimalValue> {
   }
 
   @Override
-  public final BigDecimal decodeText(final String value, Charset charset) {
+  public final BigDecimal decodeText(final String value, final Charset charset) {
     return new BigDecimal(value);
   }
 
   @Override
-  public final void encodeBinary(final BigDecimal value, final PacketBufferWriter b, Charset charset) {
+  public final void encodeBinary(final BigDecimal value, final PacketBufferWriter b, final Charset charset) {
     b.writeLengthCodedString(charset, value.toString());
   }
 
   @Override
-  public final BigDecimal decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
+  public final BigDecimal decodeBinary(final PacketBufferReader b, final Key key, final Charset charset) {
     return new BigDecimal(b.readLengthCodedString(charset));
   }
 

@@ -26,7 +26,7 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
   }
 
   @Override
-  protected PreparedStatement prepare(String query) {
+  protected PreparedStatement prepare(final String query) {
     return PreparedStatement.apply(query);
   }
 
@@ -38,34 +38,42 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
       return super.randomLocalDateTime(r);
   }
 
+  @Override
   protected List<String> bigDecimalColumnTypes() {
     return Arrays.asList("DECIMAL(20, 10)", "NUMERIC(20, 10)");
   }
 
+  @Override
   protected List<String> booleanColumnTypes() {
     return Arrays.asList("TINYINT");
   }
 
+  @Override
   protected List<String> byteArrayColumnTypes() {
     return Arrays.asList("BLOB", "TINYBLOB", "MEDIUMBLOB", "LONGBLOB");
   }
 
+  @Override
   protected List<String> doubleColumnTypes() {
     return Arrays.asList("DOUBLE");
   }
 
+  @Override
   protected List<String> floatColumnTypes() {
     return Arrays.asList("FLOAT");
   }
 
+  @Override
   protected List<String> integerColumnTypes() {
     return Arrays.asList("INT");
   }
 
+  @Override
   protected List<String> localDateColumnTypes() {
     return Arrays.asList("DATE");
   }
 
+  @Override
   protected List<String> localDateTimeColumnTypes() {
     if (is5_5())
       return Arrays.asList("DATETIME", "TIMESTAMP");
@@ -73,6 +81,7 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
       return Arrays.asList("DATETIME(6)", "TIMESTAMP(6)");
   }
 
+  @Override
   protected List<String> localTimeColumnTypes() {
     if (is5_5())
       return Arrays.asList("TIME");
@@ -80,18 +89,22 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
       return Arrays.asList("TIME(6)");
   }
 
+  @Override
   protected List<String> longColumnTypes() {
     return Arrays.asList("BIGINT");
   }
 
+  @Override
   protected List<String> shortColumnTypes() {
     return Arrays.asList("SMALLINT");
   }
 
+  @Override
   protected List<String> byteColumnTypes() {
     return Arrays.asList("TINYINT");
   }
 
+  @Override
   protected List<String> stringColumnTypes() {
     return Arrays.asList("VARCHAR(9999)");
   }

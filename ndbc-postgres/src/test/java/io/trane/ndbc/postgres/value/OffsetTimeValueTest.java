@@ -6,8 +6,6 @@ import java.time.OffsetTime;
 
 import org.junit.Test;
 
-import io.trane.ndbc.postgres.value.OffsetTimeValue;
-
 public class OffsetTimeValueTest {
 
   @Test

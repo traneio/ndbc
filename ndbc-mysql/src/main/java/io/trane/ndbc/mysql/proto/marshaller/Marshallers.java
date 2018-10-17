@@ -11,7 +11,7 @@ public class Marshallers {
   public final HandshakeResponsePacketMarshaller handshakeResponsePacket;
   public final TextCommandMarshaller             textCommand;
 
-  public Marshallers(final EncodingRegistry encoding, Charset charset) {
+  public Marshallers(final EncodingRegistry encoding, final Charset charset) {
     this.closeStatementCommand = new CloseStatementCommandMarshaller();
     this.executeStatementCommand = new ExecuteStatementCommandMarshaller(encoding, charset);
     this.handshakeResponsePacket = new HandshakeResponsePacketMarshaller();

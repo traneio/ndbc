@@ -51,7 +51,7 @@ public class ExchangeTest {
     final Channel channel = new TestChannel() {
       @SuppressWarnings("unchecked")
       @Override
-      public <T extends ServerMessage> Future<T> receive(Unmarshaller<T> u) {
+      public <T extends ServerMessage> Future<T> receive(final Unmarshaller<T> u) {
         assertEquals(unmarshaler, u);
         return Future.value((T) msg);
       }
@@ -65,7 +65,7 @@ public class ExchangeTest {
     };
     final Channel channel = new TestChannel() {
       @Override
-      public <T extends ClientMessage> Future<Void> send(Marshaller<T> ms, T m) {
+      public <T extends ClientMessage> Future<Void> send(final Marshaller<T> ms, final T m) {
         assertEquals(marshaler, ms);
         assertEquals(msg, m);
         return Future.VOID;
@@ -132,7 +132,7 @@ public class ExchangeTest {
       return Exchange.send(marshaler, msg);
     }).run(new TestChannel() {
       @Override
-      public <T extends ClientMessage> Future<Void> send(Marshaller<T> marshaller, T m) {
+      public <T extends ClientMessage> Future<Void> send(final Marshaller<T> marshaller, final T m) {
         assertEquals(msg, m);
         sent.set(true);
         return Future.VOID;
@@ -166,8 +166,8 @@ public class ExchangeTest {
       return Exchange.send(marshaler, msg);
     }).run(new TestChannel() {
       @Override
-      public <T extends ClientMessage> Future<Void> send(Marshaller<T> marshaller,
-          T m) {
+      public <T extends ClientMessage> Future<Void> send(final Marshaller<T> marshaller,
+          final T m) {
         assertEquals(msg, m);
         sent.set(true);
         return Future.VOID;
@@ -188,7 +188,7 @@ public class ExchangeTest {
     final Channel channel = new TestChannel() {
       @SuppressWarnings("unchecked")
       @Override
-      public <T extends ServerMessage> Future<T> receive(Unmarshaller<T> unmarshaller) {
+      public <T extends ServerMessage> Future<T> receive(final Unmarshaller<T> unmarshaller) {
         return Future.value((T) msg);
       }
     };
@@ -207,8 +207,8 @@ public class ExchangeTest {
     };
     final Channel channel = new TestChannel() {
       @Override
-      public <T extends ClientMessage> Future<Void> send(Marshaller<T> marshaller,
-          T m) {
+      public <T extends ClientMessage> Future<Void> send(final Marshaller<T> marshaller,
+          final T m) {
         assertEquals(msg, m);
         return Future.VOID;
       }
@@ -218,14 +218,14 @@ public class ExchangeTest {
 
   class TestUnmarshaller implements Unmarshaller<ServerMessage> {
     @Override
-    public Optional<ServerMessage> apply(BufferReader bufferReader) {
+    public Optional<ServerMessage> apply(final BufferReader bufferReader) {
       return null;
     }
   }
 
   class TestMarshaller implements Marshaller<ClientMessage> {
     @Override
-    public void apply(ClientMessage msg, BufferWriter b) {
+    public void apply(final ClientMessage msg, final BufferWriter b) {
     }
   }
 
@@ -240,13 +240,13 @@ public class ExchangeTest {
     }
 
     @Override
-    public <T extends ClientMessage> Future<Void> send(Marshaller<T> marshaller,
-        T msg) {
+    public <T extends ClientMessage> Future<Void> send(final Marshaller<T> marshaller,
+        final T msg) {
       return notExpected();
     }
 
     @Override
-    public <T extends ServerMessage> Future<T> receive(Unmarshaller<T> unmarshaller) {
+    public <T extends ServerMessage> Future<T> receive(final Unmarshaller<T> unmarshaller) {
       return notExpected();
     }
 

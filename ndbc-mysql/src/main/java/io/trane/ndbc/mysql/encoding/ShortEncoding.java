@@ -30,17 +30,17 @@ final class ShortEncoding extends Encoding<Short, ShortValue> {
   }
 
   @Override
-  public final Short decodeText(final String value, Charset charset) {
+  public final Short decodeText(final String value, final Charset charset) {
     return Short.valueOf(value);
   }
 
   @Override
-  public final void encodeBinary(final Short value, final PacketBufferWriter b, Charset charset) {
+  public final void encodeBinary(final Short value, final PacketBufferWriter b, final Charset charset) {
     b.writeShort(Short.reverseBytes(value));
   }
 
   @Override
-  public final Short decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
+  public final Short decodeBinary(final PacketBufferReader b, final Key key, final Charset charset) {
     if (key.equals(signedShort))
       return Short.reverseBytes(b.readShort());
     else if (key.equals(unsignedTiny))

@@ -34,7 +34,7 @@ public class DataSource<P extends PreparedStatement, R extends Row> {
 
   public static <P extends PreparedStatement, R extends Row> DataSource<P, R> apply(
       final io.trane.ndbc.DataSource<P, R> ds) {
-    return new DataSource<P, R>(ds);
+    return new DataSource<>(ds);
   }
 
   private final io.trane.ndbc.DataSource<P, R>       underlying;
@@ -71,10 +71,10 @@ public class DataSource<P extends PreparedStatement, R extends Row> {
   }
 
   public final TransactionalDataSource<P, R> transactional() {
-    return new TransactionalDataSource<P, R>(current().transactional());
+    return new TransactionalDataSource<>(current().transactional());
   }
 
-  public final <T> Future<T> transactional(Supplier<Future<T>> supplier) {
+  public final <T> Future<T> transactional(final Supplier<Future<T>> supplier) {
     if (currentTransaction.apply().nonEmpty())
       return supplier.get();
     else

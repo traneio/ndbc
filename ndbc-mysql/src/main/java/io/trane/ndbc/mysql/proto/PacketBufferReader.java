@@ -86,7 +86,7 @@ public class PacketBufferReader implements BufferReader {
   }
 
   public BigInteger readUnsignedLongLE() {
-    byte[] bytes = new byte[9];
+    final byte[] bytes = new byte[9];
     bytes[8] = b.readByte();
     bytes[7] = b.readByte();
     bytes[6] = b.readByte();

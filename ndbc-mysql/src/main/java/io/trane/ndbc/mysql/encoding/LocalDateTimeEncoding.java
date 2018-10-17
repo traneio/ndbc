@@ -39,16 +39,16 @@ final class LocalDateTimeEncoding extends Encoding<LocalDateTime, LocalDateTimeV
   }
 
   @Override
-  public final LocalDateTime decodeText(final String value, Charset charset) {
+  public final LocalDateTime decodeText(final String value, final Charset charset) {
     try {
       return LocalDateTime.parse(value, withNanos);
-    } catch (DateTimeParseException ex) {
+    } catch (final DateTimeParseException ex) {
       return LocalDateTime.parse(value, withoutNanos);
     }
   }
 
   @Override
-  public final void encodeBinary(final LocalDateTime value, final PacketBufferWriter b, Charset charset) {
+  public final void encodeBinary(final LocalDateTime value, final PacketBufferWriter b, final Charset charset) {
     if (value.getNano() != 0)
       b.writeByte((byte) 11);
     else
@@ -66,14 +66,14 @@ final class LocalDateTimeEncoding extends Encoding<LocalDateTime, LocalDateTimeV
   }
 
   @Override
-  public final LocalDateTime decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
-    byte length = b.readByte();
-    short year = Short.reverseBytes(b.readShort());
-    byte month = b.readByte();
-    byte day = b.readByte();
-    byte hour = b.readByte();
-    byte minute = b.readByte();
-    byte second = b.readByte();
+  public final LocalDateTime decodeBinary(final PacketBufferReader b, final Key key, final Charset charset) {
+    final byte length = b.readByte();
+    final short year = Short.reverseBytes(b.readShort());
+    final byte month = b.readByte();
+    final byte day = b.readByte();
+    final byte hour = b.readByte();
+    final byte minute = b.readByte();
+    final byte second = b.readByte();
     int nanos = 0;
     if (length == 11)
       nanos = Integer.reverseBytes(b.readInt()) * 1000;

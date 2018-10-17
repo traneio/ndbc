@@ -29,36 +29,42 @@ public class PostgresDataSource implements DataSource<PostgresPreparedStatement,
     return apply(DataSource.fromConfig(config));
   }
 
-  public static PostgresDataSource apply(DataSource<PreparedStatement, Row> ds) {
+  public static PostgresDataSource apply(final DataSource<PreparedStatement, Row> ds) {
     return new PostgresDataSource(ds);
   }
 
   private final DataSource<PreparedStatement, Row> underlying;
 
-  protected PostgresDataSource(DataSource<PreparedStatement, Row> underlying) {
+  protected PostgresDataSource(final DataSource<PreparedStatement, Row> underlying) {
     this.underlying = underlying;
   }
 
-  public Future<List<PostgresRow>> query(String query) {
+  @Override
+  public Future<List<PostgresRow>> query(final String query) {
     return conv(underlying.query(query));
   }
 
-  public Future<Long> execute(String statement) {
+  @Override
+  public Future<Long> execute(final String statement) {
     return underlying.execute(statement);
   }
 
-  public Future<List<PostgresRow>> query(PostgresPreparedStatement query) {
+  @Override
+  public Future<List<PostgresRow>> query(final PostgresPreparedStatement query) {
     return conv(underlying.query(query));
   }
 
-  public Future<Long> execute(PostgresPreparedStatement statement) {
+  @Override
+  public Future<Long> execute(final PostgresPreparedStatement statement) {
     return underlying.execute(statement);
   }
 
-  public <T> Future<T> transactional(Supplier<Future<T>> supplier) {
+  @Override
+  public <T> Future<T> transactional(final Supplier<Future<T>> supplier) {
     return underlying.transactional(supplier);
   }
 
+  @Override
   public TransactionalDataSource<PostgresPreparedStatement, PostgresRow> transactional() {
     return new TransactionalDataSource<PostgresPreparedStatement, PostgresRow>() {
 
@@ -71,27 +77,27 @@ public class PostgresDataSource implements DataSource<PostgresPreparedStatement,
       }
 
       @Override
-      public <T> Future<T> transactional(Supplier<Future<T>> supplier) {
+      public <T> Future<T> transactional(final Supplier<Future<T>> supplier) {
         return underlying.transactional(supplier);
       }
 
       @Override
-      public Future<List<PostgresRow>> query(PostgresPreparedStatement query) {
+      public Future<List<PostgresRow>> query(final PostgresPreparedStatement query) {
         return conv(underlying.query(query));
       }
 
       @Override
-      public Future<List<PostgresRow>> query(String query) {
+      public Future<List<PostgresRow>> query(final String query) {
         return conv(underlying.query(query));
       }
 
       @Override
-      public Future<Long> execute(PostgresPreparedStatement statement) {
+      public Future<Long> execute(final PostgresPreparedStatement statement) {
         return underlying.execute(statement);
       }
 
       @Override
-      public Future<Long> execute(String statement) {
+      public Future<Long> execute(final String statement) {
         return underlying.execute(statement);
       }
 
@@ -117,15 +123,17 @@ public class PostgresDataSource implements DataSource<PostgresPreparedStatement,
     };
   }
 
+  @Override
   public Future<Void> close() {
     return underlying.close();
   }
 
+  @Override
   public Config config() {
     return underlying.config();
   }
 
-  private final Future<List<PostgresRow>> conv(Future<List<Row>> f) {
+  private final Future<List<PostgresRow>> conv(final Future<List<Row>> f) {
     return f.map(l -> l.stream().map(PostgresRow::apply).collect(Collectors.toList()));
   }
 }

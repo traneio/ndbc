@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public interface PrettyPrint {
 
-  public static String apply(Object value) {
+  public static String apply(final Object value) {
     if (value instanceof boolean[])
       return Arrays.toString((boolean[]) value);
 

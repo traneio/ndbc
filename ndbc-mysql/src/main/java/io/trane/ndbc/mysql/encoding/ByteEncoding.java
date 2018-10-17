@@ -20,17 +20,17 @@ final class ByteEncoding extends Encoding<Byte, ByteValue> {
   }
 
   @Override
-  public final Byte decodeText(final String value, Charset charset) {
+  public final Byte decodeText(final String value, final Charset charset) {
     return Byte.valueOf(value);
   }
 
   @Override
-  public final void encodeBinary(final Byte value, final PacketBufferWriter b, Charset charset) {
+  public final void encodeBinary(final Byte value, final PacketBufferWriter b, final Charset charset) {
     b.writeByte(value);
   }
 
   @Override
-  public final Byte decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
+  public final Byte decodeBinary(final PacketBufferReader b, final Key key, final Charset charset) {
     return b.readByte();
   }
 

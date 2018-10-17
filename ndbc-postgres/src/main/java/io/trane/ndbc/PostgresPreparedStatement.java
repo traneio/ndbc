@@ -48,11 +48,11 @@ public final class PostgresPreparedStatement extends PreparedStatement {
     return new PostgresPreparedStatement(query);
   }
 
-  private PostgresPreparedStatement(String query) {
+  private PostgresPreparedStatement(final String query) {
     super(query);
   }
 
-  private PostgresPreparedStatement(String query, Value<?>[] params) {
+  private PostgresPreparedStatement(final String query, final Value<?>[] params) {
     super(query, params);
   }
 

@@ -16,7 +16,7 @@ public abstract class Encoding<T, V extends Value<T>> {
     public final FieldType fieldType;
     public final boolean   unsigned;
 
-    public Key(FieldType fieldType, boolean unsigned) {
+    public Key(final FieldType fieldType, final boolean unsigned) {
       this.fieldType = fieldType;
       this.unsigned = unsigned;
     }
@@ -25,20 +25,20 @@ public abstract class Encoding<T, V extends Value<T>> {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((fieldType == null) ? 0 : fieldType.hashCode());
-      result = prime * result + (unsigned ? 1231 : 1237);
+      result = (prime * result) + ((fieldType == null) ? 0 : fieldType.hashCode());
+      result = (prime * result) + (unsigned ? 1231 : 1237);
       return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (getClass() != obj.getClass())
         return false;
-      Key other = (Key) obj;
+      final Key other = (Key) obj;
       if (fieldType == null) {
         if (other.fieldType != null)
           return false;
@@ -55,15 +55,15 @@ public abstract class Encoding<T, V extends Value<T>> {
     }
   }
 
-  public void writeBinary(final V value, final PacketBufferWriter writer, Charset charset) {
+  public void writeBinary(final V value, final PacketBufferWriter writer, final Charset charset) {
     encodeBinary(value.get(), writer, charset);
   }
 
-  public V readText(final PacketBufferReader reader, Key key, Charset charset) {
+  public V readText(final PacketBufferReader reader, final Key key, final Charset charset) {
     return box(decodeText(reader.readLengthCodedString(charset), charset));
   }
 
-  public V readBinary(final PacketBufferReader reader, Key key, Charset charset) {
+  public V readBinary(final PacketBufferReader reader, final Key key, final Charset charset) {
     return box(decodeBinary(reader, key, charset));
   }
 
@@ -75,11 +75,11 @@ public abstract class Encoding<T, V extends Value<T>> {
     return emptyKeys;
   }
 
-  protected static Key unsignedKey(FieldType fieldType) {
+  protected static Key unsignedKey(final FieldType fieldType) {
     return new Key(fieldType, true);
   }
 
-  protected static Key key(FieldType fieldType) {
+  protected static Key key(final FieldType fieldType) {
     return new Key(fieldType, false);
   }
 

@@ -102,13 +102,13 @@ public abstract class EncodingTest<PS extends PreparedStatement> extends NdbcTes
       ds.execute("DROP TABLE IF EXISTS " + table).get(timeout);
       ds.execute("CREATE TABLE " + table + " (c " + columnType + ")").get(timeout);
 
-      final List<String> previousValues = new ArrayList<String>();
+      final List<String> previousValues = new ArrayList<>();
       final Random r = new Random(1);
       for (int i = 0; i < iterations; i++) {
         final T expected = gen.apply(r);
         ds.execute("DELETE FROM " + table).get(timeout);
 
-        String failureMessage = " Failure: columnType '" + columnType + "', value '"
+        final String failureMessage = " Failure: columnType '" + columnType + "', value '"
             + PrettyPrint.apply(expected) + "'. Previous successful values: "
             + previousValues.stream().map(Object::toString).collect(Collectors.joining(", "));
 

@@ -27,12 +27,12 @@ final class LocalDateEncoding extends Encoding<LocalDate, LocalDateValue> {
   }
 
   @Override
-  public final LocalDate decodeText(final String value, Charset charset) {
+  public final LocalDate decodeText(final String value, final Charset charset) {
     return LocalDate.parse(value, formatter);
   }
 
   @Override
-  public final void encodeBinary(final LocalDate value, final PacketBufferWriter b, Charset charset) {
+  public final void encodeBinary(final LocalDate value, final PacketBufferWriter b, final Charset charset) {
     b.writeByte((byte) 4);
     b.writeShort(Short.reverseBytes((short) value.getYear()));
     b.writeByte((byte) value.getMonth().getValue());
@@ -40,11 +40,11 @@ final class LocalDateEncoding extends Encoding<LocalDate, LocalDateValue> {
   }
 
   @Override
-  public final LocalDate decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
+  public final LocalDate decodeBinary(final PacketBufferReader b, final Key key, final Charset charset) {
     assert (b.readByte() == (byte) 4);
-    short year = Short.reverseBytes(b.readShort());
-    byte month = b.readByte();
-    byte day = b.readByte();
+    final short year = Short.reverseBytes(b.readShort());
+    final byte month = b.readByte();
+    final byte day = b.readByte();
     return LocalDate.of(year, month, day);
   }
 

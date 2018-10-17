@@ -15,7 +15,7 @@ public class ExecuteStatementCommandMarshaller implements Marshaller<ExecuteStat
   private final EncodingRegistry encoding;
   private final Charset          charset;
 
-  public ExecuteStatementCommandMarshaller(final EncodingRegistry encoding, Charset charset) {
+  public ExecuteStatementCommandMarshaller(final EncodingRegistry encoding, final Charset charset) {
     this.encoding = encoding;
     this.charset = charset;
   }

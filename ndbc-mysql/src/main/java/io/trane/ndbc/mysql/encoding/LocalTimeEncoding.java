@@ -32,16 +32,16 @@ final class LocalTimeEncoding extends Encoding<LocalTime, LocalTimeValue> {
   }
 
   @Override
-  public final LocalTime decodeText(final String value, Charset charset) {
+  public final LocalTime decodeText(final String value, final Charset charset) {
     try {
       return LocalTime.parse(value, withNanos);
-    } catch (DateTimeParseException ex) {
+    } catch (final DateTimeParseException ex) {
       return LocalTime.parse(value, withoutNanos);
     }
   }
 
   @Override
-  public final void encodeBinary(final LocalTime value, final PacketBufferWriter b, Charset charset) {
+  public final void encodeBinary(final LocalTime value, final PacketBufferWriter b, final Charset charset) {
     b.writeByte((byte) 12);
     b.writeByte((byte) 0); // never negative
     b.writeInt(0); // days
@@ -52,19 +52,19 @@ final class LocalTimeEncoding extends Encoding<LocalTime, LocalTimeValue> {
   }
 
   @Override
-  public final LocalTime decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
-    byte length = b.readByte();
+  public final LocalTime decodeBinary(final PacketBufferReader b, final Key key, final Charset charset) {
+    final byte length = b.readByte();
     assert (b.readByte() == (byte) 0);
     assert (b.readInt() == (byte) 0);
-    byte hour = b.readByte();
-    byte minute = b.readByte();
-    byte second = b.readByte();
+    final byte hour = b.readByte();
+    final byte minute = b.readByte();
+    final byte second = b.readByte();
 
     switch (length) {
       case 8:
         return LocalTime.of(hour, minute, second);
       case 12:
-        int nanos = Integer.reverseBytes(b.readInt()) * 1000;
+        final int nanos = Integer.reverseBytes(b.readInt()) * 1000;
         return LocalTime.of(hour, minute, second, nanos);
       default:
         throw new IllegalStateException("Can't read buffer");

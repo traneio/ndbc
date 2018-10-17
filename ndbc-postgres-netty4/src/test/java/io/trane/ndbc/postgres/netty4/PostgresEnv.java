@@ -11,7 +11,7 @@ import io.trane.ndbc.DataSource;
 
 public class PostgresEnv {
 
-  private static final Config config(String version) {
+  private static final Config config(final String version) {
     return Config
         .apply("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 0, "test")
         .embedded(Config.Embedded.apply("io.trane.ndbc.postgres.embedded.EmbeddedSupplier", Optional.of(version)))

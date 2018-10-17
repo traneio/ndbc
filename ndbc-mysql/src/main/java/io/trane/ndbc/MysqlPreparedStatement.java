@@ -32,11 +32,11 @@ public final class MysqlPreparedStatement extends PreparedStatement {
     return new MysqlPreparedStatement(query);
   }
 
-  private MysqlPreparedStatement(String query) {
+  private MysqlPreparedStatement(final String query) {
     super(query);
   }
 
-  private MysqlPreparedStatement(String query, Value<?>[] params) {
+  private MysqlPreparedStatement(final String query, final Value<?>[] params) {
     super(query, params);
   }
 

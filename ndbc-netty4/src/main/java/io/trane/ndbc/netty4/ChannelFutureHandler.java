@@ -8,11 +8,11 @@ import io.trane.future.Promise;
 
 public interface ChannelFutureHandler {
 
-  public static Future<Void> toFuture(ChannelFuture cf) {
+  public static Future<Void> toFuture(final ChannelFuture cf) {
     if (cf.isDone())
       return Future.VOID;
     else {
-      Promise<Void> p = Promise.apply();
+      final Promise<Void> p = Promise.apply();
       cf.addListener(fut -> {
         assert fut.isDone();
         if (fut.isCancelled())

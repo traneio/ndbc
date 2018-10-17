@@ -31,17 +31,17 @@ final class IntegerEncoding extends Encoding<Integer, IntegerValue> {
   }
 
   @Override
-  public final Integer decodeText(final String value, Charset charset) {
+  public final Integer decodeText(final String value, final Charset charset) {
     return Integer.valueOf(value);
   }
 
   @Override
-  public final void encodeBinary(final Integer value, final PacketBufferWriter b, Charset charset) {
+  public final void encodeBinary(final Integer value, final PacketBufferWriter b, final Charset charset) {
     b.writeInt(Integer.reverseBytes(value));
   }
 
   @Override
-  public final Integer decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
+  public final Integer decodeBinary(final PacketBufferReader b, final Key key, final Charset charset) {
     if (key.equals(unsignedShortType))
       return Integer.reverseBytes(b.readUnsignedShort());
     else

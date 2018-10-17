@@ -34,7 +34,7 @@ public class EmbeddedSupplier implements Supplier<DataSource<PreparedStatement, 
   private final Config       config;
   private final Version.Main version;
 
-  public EmbeddedSupplier(Config config, Optional<String> version) {
+  public EmbeddedSupplier(final Config config, final Optional<String> version) {
     if (config.port() == 0)
       this.config = config.port(SocketUtil.findFreePort());
     else
@@ -48,17 +48,17 @@ public class EmbeddedSupplier implements Supplier<DataSource<PreparedStatement, 
 
     final EmbeddedPostgres postgres = new EmbeddedPostgres(version);
 
-    IRuntimeConfig cached = cachedRuntimeConfig(
+    final IRuntimeConfig cached = cachedRuntimeConfig(
         Paths.get(System.getProperty("user.home"), ".ndbc", "embedded_postgres"));
 
-    String password = config.password().orElseGet(() -> {
+    final String password = config.password().orElseGet(() -> {
       throw new UnsupportedOperationException("Embedded postgres requires a password");
     });
 
     try {
       postgres.start(cached, config.host(), config.port(), config.database().orElse(EmbeddedPostgres.DEFAULT_DB_NAME),
           config.user(), password, DEFAULT_ADD_PARAMS);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new RuntimeException(e);
     }
 

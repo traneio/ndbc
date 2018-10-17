@@ -110,11 +110,11 @@ public final class Config {
     public final String           supplierClass;
     public final Optional<String> version;
 
-    public static Embedded apply(String supplierClass, Optional<String> version) {
+    public static Embedded apply(final String supplierClass, final Optional<String> version) {
       return new Embedded(supplierClass, version);
     }
 
-    private Embedded(String supplierClass, Optional<String> version) {
+    private Embedded(final String supplierClass, final Optional<String> version) {
       this.supplierClass = supplierClass;
       this.version = version;
     }
@@ -123,20 +123,20 @@ public final class Config {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((supplierClass == null) ? 0 : supplierClass.hashCode());
-      result = prime * result + ((version == null) ? 0 : version.hashCode());
+      result = (prime * result) + ((supplierClass == null) ? 0 : supplierClass.hashCode());
+      result = (prime * result) + ((version == null) ? 0 : version.hashCode());
       return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (getClass() != obj.getClass())
         return false;
-      Embedded other = (Embedded) obj;
+      final Embedded other = (Embedded) obj;
       if (supplierClass == null) {
         if (other.supplierClass != null)
           return false;
@@ -286,7 +286,7 @@ public final class Config {
       final Optional<String> database, final Optional<Integer> poolMaxSize, final Optional<Integer> poolMaxWaiters,
       final Optional<Duration> connectionTimeout, final Optional<Duration> queryTimeout,
       final Optional<Duration> poolValidationInterval, final Optional<Set<String>> encodingClasses,
-      final Optional<Integer> nioThreads, final Optional<SSL> ssl, Optional<Embedded> embeddedDatabase) {
+      final Optional<Integer> nioThreads, final Optional<SSL> ssl, final Optional<Embedded> embeddedDatabase) {
     this.dataSourceSupplierClass = dataSourceSupplierClass;
     this.charset = charset;
     this.scheduler = scheduler;

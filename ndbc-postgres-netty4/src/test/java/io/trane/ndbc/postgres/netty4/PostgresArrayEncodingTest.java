@@ -23,7 +23,7 @@ import io.trane.ndbc.value.Value;
 public class PostgresArrayEncodingTest extends EncodingTest<PostgresPreparedStatement> {
 
   @Override
-  protected PostgresPreparedStatement prepare(String query) {
+  protected PostgresPreparedStatement prepare(final String query) {
     return PostgresPreparedStatement.apply(query);
   }
 
@@ -97,8 +97,8 @@ public class PostgresArrayEncodingTest extends EncodingTest<PostgresPreparedStat
     }, (a, b) -> assertArrayEquals(toPrimitiveArray(a), toPrimitiveArray(b), 0.001f));
   }
 
-  private final float[] toPrimitiveArray(Float[] a) {
-    float[] r = new float[a.length];
+  private final float[] toPrimitiveArray(final Float[] a) {
+    final float[] r = new float[a.length];
     for (int i = 0; i < a.length; i++)
       r[i] = a[i].floatValue();
     return r;
@@ -174,6 +174,7 @@ public class PostgresArrayEncodingTest extends EncodingTest<PostgresPreparedStat
     });
   }
 
+  @Override
   protected List<String> bigDecimalColumnTypes() {
     return Arrays.asList("numeric[]");
   }
@@ -182,38 +183,47 @@ public class PostgresArrayEncodingTest extends EncodingTest<PostgresPreparedStat
     return Arrays.asList("bigint[]");
   }
 
+  @Override
   protected List<String> booleanColumnTypes() {
     return Arrays.asList("bool[]");
   }
 
+  @Override
   protected List<String> byteArrayColumnTypes() {
     return Arrays.asList("bytea[]");
   }
 
+  @Override
   protected List<String> doubleColumnTypes() {
     return Arrays.asList("float8[]");
   }
 
+  @Override
   protected List<String> floatColumnTypes() {
     return Arrays.asList("float4[]");
   }
 
+  @Override
   protected List<String> integerColumnTypes() {
     return Arrays.asList("int4[]");
   }
 
+  @Override
   protected List<String> localDateColumnTypes() {
     return Arrays.asList("date[]");
   }
 
+  @Override
   protected List<String> localDateTimeColumnTypes() {
     return Arrays.asList("timestamp[]");
   }
 
+  @Override
   protected List<String> localTimeColumnTypes() {
     return Arrays.asList("time[]");
   }
 
+  @Override
   protected List<String> longColumnTypes() {
     return Arrays.asList("int8[]");
   }
@@ -222,14 +232,17 @@ public class PostgresArrayEncodingTest extends EncodingTest<PostgresPreparedStat
     return Arrays.asList("timetz[]");
   }
 
+  @Override
   protected List<String> shortColumnTypes() {
     return Arrays.asList("int2[]");
   }
 
+  @Override
   protected List<String> byteColumnTypes() {
     return Arrays.asList("smallint[]");
   }
 
+  @Override
   protected List<String> stringColumnTypes() {
     return Arrays.asList("text[]", "varchar[]");
   }

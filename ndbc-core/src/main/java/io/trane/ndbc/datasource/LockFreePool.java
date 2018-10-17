@@ -83,6 +83,7 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
       return item.close().flatMap(v -> drain());
   }
 
+  @Override
   public final void release(final T item) {
     if (closed)
       item.close();

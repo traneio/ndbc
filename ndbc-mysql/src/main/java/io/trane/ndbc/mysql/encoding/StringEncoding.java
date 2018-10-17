@@ -27,17 +27,17 @@ final class StringEncoding extends Encoding<String, StringValue> {
   }
 
   @Override
-  public final String decodeText(final String value, Charset charset) {
+  public final String decodeText(final String value, final Charset charset) {
     return value;
   }
 
   @Override
-  public final void encodeBinary(final String value, final PacketBufferWriter b, Charset charset) {
+  public final void encodeBinary(final String value, final PacketBufferWriter b, final Charset charset) {
     b.writeLengthCodedString(charset, value);
   }
 
   @Override
-  public final String decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
+  public final String decodeBinary(final PacketBufferReader b, final Key key, final Charset charset) {
     return b.readLengthCodedString(charset);
   }
 

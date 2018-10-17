@@ -9,7 +9,7 @@ public class TransactionalDataSource<P extends PreparedStatement, R extends Row>
 
   private final io.trane.ndbc.TransactionalDataSource<P, R> underlying;
 
-  protected TransactionalDataSource(io.trane.ndbc.TransactionalDataSource<P, R> underlying) {
+  protected TransactionalDataSource(final io.trane.ndbc.TransactionalDataSource<P, R> underlying) {
     super(underlying);
     this.underlying = underlying;
   }

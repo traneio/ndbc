@@ -26,7 +26,7 @@ public final class EncodingRegistry {
     byValueClass = new HashMap<>();
     byKey = new HashMap<>();
 
-    ByteEncoding byteEncoding = new ByteEncoding();
+    final ByteEncoding byteEncoding = new ByteEncoding();
     final List<Encoding<?, ?>> defaultEncodings = Arrays.asList(
         new BooleanEncoding(byteEncoding),
         new ByteArrayEncoding(),
@@ -46,7 +46,7 @@ public final class EncodingRegistry {
     customEncodings.ifPresent(this::registerEncodings);
   }
 
-  public final <T> void encodeBinary(final Value<T> value, final PacketBufferWriter writer, Charset charset) {
+  public final <T> void encodeBinary(final Value<T> value, final PacketBufferWriter writer, final Charset charset) {
     this.<T>resolve(value).writeBinary(value, writer, charset);
   }
 
@@ -60,12 +60,12 @@ public final class EncodingRegistry {
   }
 
   public final <T> Value<T> decodeText(final Field field, final PacketBufferReader reader) {
-    Key key = keyFor(field);
+    final Key key = keyFor(field);
     return this.<T>resolve(key).readText(reader, key, charset);
   }
 
   public final <T> Value<T> decodeBinary(final Field field, final PacketBufferReader reader) {
-    Key key = keyFor(field);
+    final Key key = keyFor(field);
     return this.<T>resolve(key).readBinary(reader, key, charset);
   }
 
@@ -87,7 +87,7 @@ public final class EncodingRegistry {
   }
 
   public final FieldType fieldType(final Value<?> value) {
-    Encoding<?, ?> encoding = byValueClass.get(value.getClass());
+    final Encoding<?, ?> encoding = byValueClass.get(value.getClass());
     if (encoding == null)
       throw new NdbcException("Can't encode " + value);
     return encoding.key().fieldType;
@@ -97,7 +97,7 @@ public final class EncodingRegistry {
     for (final Encoding<?, ?> enc : encodings) {
       byValueClass.put(enc.valueClass(), enc);
       byKey.put(enc.key(), enc);
-      for (Key key : enc.additionalKeys())
+      for (final Key key : enc.additionalKeys())
         byKey.put(key, enc);
     }
   }

@@ -20,12 +20,12 @@ final class FloatEncoding extends Encoding<Float, FloatValue> {
   }
 
   @Override
-  public final Float decodeText(final String value, Charset charset) {
+  public final Float decodeText(final String value, final Charset charset) {
     return Float.valueOf(value);
   }
 
   @Override
-  public final void encodeBinary(final Float value, final PacketBufferWriter b, Charset charset) {
+  public final void encodeBinary(final Float value, final PacketBufferWriter b, final Charset charset) {
     b.writeFloat(reverse(value));
   }
 
@@ -34,7 +34,7 @@ final class FloatEncoding extends Encoding<Float, FloatValue> {
   }
 
   @Override
-  public final Float decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
+  public final Float decodeBinary(final PacketBufferReader b, final Key key, final Charset charset) {
     return reverse(b.readFloat());
   }
 

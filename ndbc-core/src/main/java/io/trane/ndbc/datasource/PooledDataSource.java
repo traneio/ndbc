@@ -20,7 +20,7 @@ public final class PooledDataSource implements DataSource<PreparedStatement, Row
   private final Local<Connection> currentTransaction;
   private final Config            config;
 
-  public PooledDataSource(final Pool<Connection> pool, Config config) {
+  public PooledDataSource(final Pool<Connection> pool, final Config config) {
     this.pool = pool;
     this.config = config;
     currentTransaction = Local.apply();
@@ -79,27 +79,27 @@ public final class PooledDataSource implements DataSource<PreparedStatement, Row
     return new TransactionalDataSource<PreparedStatement, Row>() {
 
       @Override
-      public Future<List<Row>> query(String query) {
+      public Future<List<Row>> query(final String query) {
         return conn.flatMap(c -> c.query(query));
       }
 
       @Override
-      public Future<Long> execute(String statement) {
+      public Future<Long> execute(final String statement) {
         return conn.flatMap(c -> c.execute(statement));
       }
 
       @Override
-      public Future<List<Row>> query(PreparedStatement query) {
+      public Future<List<Row>> query(final PreparedStatement query) {
         return conn.flatMap(c -> c.query(query));
       }
 
       @Override
-      public Future<Long> execute(PreparedStatement statement) {
+      public Future<Long> execute(final PreparedStatement statement) {
         return conn.flatMap(c -> c.execute(statement));
       }
 
       @Override
-      public <T> Future<T> transactional(Supplier<Future<T>> supplier) {
+      public <T> Future<T> transactional(final Supplier<Future<T>> supplier) {
         return conn.flatMap(c -> {
           if (currentTransaction.get().isPresent())
             return Future.flatApply(supplier);

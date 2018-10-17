@@ -31,17 +31,17 @@ final class LongEncoding extends Encoding<Long, LongValue> {
   }
 
   @Override
-  public final Long decodeText(final String value, Charset charset) {
+  public final Long decodeText(final String value, final Charset charset) {
     return Long.valueOf(value);
   }
 
   @Override
-  public final void encodeBinary(final Long value, final PacketBufferWriter b, Charset charset) {
+  public final void encodeBinary(final Long value, final PacketBufferWriter b, final Charset charset) {
     b.writeLong(Long.reverseBytes(value));
   }
 
   @Override
-  public final Long decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
+  public final Long decodeBinary(final PacketBufferReader b, final Key key, final Charset charset) {
     if (key.equals(signedLongLong))
       return Long.reverseBytes(b.readLong());
     else if (key.equals(unsignedLong))

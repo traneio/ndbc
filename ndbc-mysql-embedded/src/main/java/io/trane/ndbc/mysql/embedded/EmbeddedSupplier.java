@@ -28,7 +28,7 @@ public class EmbeddedSupplier implements Supplier<DataSource<PreparedStatement, 
   private final Config  config;
   private final Version version;
 
-  public EmbeddedSupplier(Config config, Optional<String> version) {
+  public EmbeddedSupplier(final Config config, final Optional<String> version) {
     if (config.port() == 0)
       this.config = config.port(findFreePort());
     else
@@ -40,24 +40,24 @@ public class EmbeddedSupplier implements Supplier<DataSource<PreparedStatement, 
   public DataSource<PreparedStatement, Row> get() {
     log.info("Starting embedded mysql " + version + " on port " + config.port());
 
-    String password = config.password().orElseGet(() -> {
+    final String password = config.password().orElseGet(() -> {
       throw new UnsupportedOperationException("Embedded mysql requires a password");
     });
 
-    DownloadConfig downloadConfig = DownloadConfig.aDownloadConfig()
+    final DownloadConfig downloadConfig = DownloadConfig.aDownloadConfig()
         .withCacheDir(Paths.get(System.getProperty("user.home"), ".ndbc", "embedded_mysql").toString())
         .build();
 
-    MysqldConfig mysqldConfig = MysqldConfig.aMysqldConfig(version)
+    final MysqldConfig mysqldConfig = MysqldConfig.aMysqldConfig(version)
         .withPort(config.port())
         .withUser(config.user(), password)
         .build();
 
-    Builder builder = EmbeddedMysql.anEmbeddedMysql(mysqldConfig, downloadConfig);
+    final Builder builder = EmbeddedMysql.anEmbeddedMysql(mysqldConfig, downloadConfig);
 
     config.database().ifPresent(db -> builder.addSchema(SchemaConfig.aSchemaConfig(db).build()));
 
-    EmbeddedMysql mysql = builder.start();
+    final EmbeddedMysql mysql = builder.start();
 
     Runtime.getRuntime().addShutdownHook(new Thread(() -> mysql.stop()));
 
@@ -70,7 +70,7 @@ public class EmbeddedSupplier implements Supplier<DataSource<PreparedStatement, 
     try (ServerSocket socket = new ServerSocket(0)) {
       socket.setReuseAddress(true);
       return socket.getLocalPort();
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new RuntimeException(e);
     }
   }

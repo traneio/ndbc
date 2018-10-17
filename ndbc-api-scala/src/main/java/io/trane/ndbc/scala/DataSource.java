@@ -31,7 +31,7 @@ public class DataSource<P extends PreparedStatement, R extends Row> {
 
   public static <P extends PreparedStatement, R extends Row> DataSource<P, R> apply(
       final io.trane.ndbc.DataSource<P, R> ds) {
-    return new DataSource<P, R>(ds);
+    return new DataSource<>(ds);
   }
 
   private final io.trane.ndbc.DataSource<P, R> underlying;
@@ -63,7 +63,7 @@ public class DataSource<P extends PreparedStatement, R extends Row> {
   }
 
   public final TransactionalDataSource<P, R> transactional() {
-    return new TransactionalDataSource<P, R>(underlying.transactional());
+    return new TransactionalDataSource<>(underlying.transactional());
   }
 
   public final Future<Void> close() {

@@ -22,17 +22,17 @@ final class DoubleEncoding extends Encoding<Double, DoubleValue> {
   }
 
   @Override
-  public final Double decodeText(final String value, Charset charset) {
+  public final Double decodeText(final String value, final Charset charset) {
     return Double.valueOf(value);
   }
 
   @Override
-  public final void encodeBinary(final Double value, final PacketBufferWriter b, Charset charset) {
+  public final void encodeBinary(final Double value, final PacketBufferWriter b, final Charset charset) {
     b.writeDouble(reverse(value));
   }
 
   @Override
-  public final Double decodeBinary(final PacketBufferReader b, Key key, Charset charset) {
+  public final Double decodeBinary(final PacketBufferReader b, final Key key, final Charset charset) {
     return reverse(b.readDouble());
   }
 
@@ -41,8 +41,8 @@ final class DoubleEncoding extends Encoding<Double, DoubleValue> {
     return new DoubleValue(value);
   }
 
-  private static double reverse(double x) {
-    ByteBuffer bbuf = ByteBuffer.allocate(8);
+  private static double reverse(final double x) {
+    final ByteBuffer bbuf = ByteBuffer.allocate(8);
     bbuf.order(ByteOrder.BIG_ENDIAN);
     bbuf.putDouble(x);
     bbuf.order(ByteOrder.LITTLE_ENDIAN);

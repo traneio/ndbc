@@ -75,7 +75,7 @@ public class ConnectionTest {
       @Override
       Function<String, Exchange<Long>> simpleExecuteExchange() {
         return q -> {
-          assertTrue(q.startsWith("KILL ") || command == q);
+          assertTrue(q.startsWith("KILL ") || (command == q));
           return Exchange.value(result);
         };
       }

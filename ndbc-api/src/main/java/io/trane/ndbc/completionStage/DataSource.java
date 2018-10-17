@@ -30,40 +30,41 @@ public class DataSource<P extends PreparedStatement, R extends Row> {
     return apply(io.trane.ndbc.DataSource.fromConfig(config));
   }
 
-  public static <P extends PreparedStatement, R extends Row> DataSource<P, R> apply(io.trane.ndbc.DataSource<P, R> ds) {
-    return new DataSource<P, R>(ds);
+  public static <P extends PreparedStatement, R extends Row> DataSource<P, R> apply(
+      final io.trane.ndbc.DataSource<P, R> ds) {
+    return new DataSource<>(ds);
   }
 
   private final io.trane.ndbc.DataSource<P, R> underlying;
 
-  protected DataSource(io.trane.ndbc.DataSource<P, R> underlying) {
+  protected DataSource(final io.trane.ndbc.DataSource<P, R> underlying) {
     this.underlying = underlying;
   }
 
-  protected final <T> CompletionStage<T> conv(Future<T> fut) {
-    CompletableFuture<T> cf = new CompletableFuture<>();
+  protected final <T> CompletionStage<T> conv(final Future<T> fut) {
+    final CompletableFuture<T> cf = new CompletableFuture<>();
     fut.onSuccess(cf::complete).onFailure(cf::completeExceptionally);
     return cf;
   }
 
-  public final CompletionStage<List<R>> query(String query) {
+  public final CompletionStage<List<R>> query(final String query) {
     return conv(underlying.query(query));
   }
 
-  public final CompletionStage<Long> execute(String statement) {
+  public final CompletionStage<Long> execute(final String statement) {
     return conv(underlying.execute(statement));
   }
 
-  public final CompletionStage<List<R>> query(P query) {
+  public final CompletionStage<List<R>> query(final P query) {
     return conv(underlying.query(query));
   }
 
-  public final CompletionStage<Long> execute(P statement) {
+  public final CompletionStage<Long> execute(final P statement) {
     return conv(underlying.execute(statement));
   }
 
   public final TransactionalDataSource<P, R> transactional() {
-    return new TransactionalDataSource<P, R>(underlying.transactional());
+    return new TransactionalDataSource<>(underlying.transactional());
   }
 
   public final CompletionStage<Void> close() {
