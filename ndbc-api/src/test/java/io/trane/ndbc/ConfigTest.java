@@ -261,6 +261,20 @@ public class ConfigTest {
   }
 
   @Test
+  public void sslMode() {
+    Mode mode = Mode.REQUIRE;
+    final SSL ssl = Config.SSL.apply(mode);
+    assertEquals(ssl.mode(), mode);
+  }
+
+  @Test
+  public void sslRootCert() {
+    File file = new File("test");
+    final SSL ssl = Config.SSL.apply(Mode.REQUIRE).rootCert(file);
+    assertEquals(ssl.rootCert(), Optional.of(file));
+  }
+
+  @Test
   public void sslOptionalEmpty() {
     final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
     assertFalse(c.ssl(Optional.empty()).ssl().isPresent());

@@ -46,9 +46,7 @@ public class HandshakeResponsePacketMarshaller implements Marshaller<HandshakeRe
     packet.writeCString(message.username);
     if (message.password.isPresent()) {
       if (message.authenticationMethod != "mysql_native_password")
-        throw new NdbcException("authenticationMethod not supported"); // TODO
-      // create
-      // exception;
+        throw new NdbcException("authenticationMethod not supported");
       final byte[] bytes = scramble411(message.password.get(), message.seed, packet.getCharset());
       packet.writeByte((byte) 0x14);
       packet.writeBytes(bytes);
@@ -76,9 +74,7 @@ public class HandshakeResponsePacketMarshaller implements Marshaller<HandshakeRe
       }
       return result;
     } catch (final NoSuchAlgorithmException e) {
-      throw new RuntimeException("NoSuchAlgorithmException []", e); // TODO
-      // create
-      // exception
+      throw new NdbcException("NoSuchAlgorithmException []", e);
     }
   }
 }

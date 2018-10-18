@@ -37,7 +37,7 @@ public abstract class PostgresUnmarshaller<T extends ServerMessage> implements U
       case 'E':
         final InfoResponse.ErrorResponse error = new InfoResponse.ErrorResponse(
             infoResponseFieldsUnmarshaller.apply(b));
-        throw new NdbcException(error.toString()); // TODO custom exception
+        throw new NdbcException(error.toString());
       case 'N':
         final InfoResponse.NoticeResponse notice = new InfoResponse.NoticeResponse(
             infoResponseFieldsUnmarshaller.apply(b));

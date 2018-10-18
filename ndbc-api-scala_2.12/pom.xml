@@ -5,10 +5,10 @@
     <artifactId>ndbc</artifactId>
     <version>0.1.2-SNAPSHOT</version>
   </parent>
-  <artifactId>ndbc-api-scala</artifactId>
+  <artifactId>ndbc-api-scala_2.12</artifactId>
   <packaging>jar</packaging>
 
-  <name>ndbc-api-scala</name>
+  <name>ndbc-api-scala_2.12</name>
 
   <dependencies>
   	<dependency>

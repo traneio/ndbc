@@ -103,7 +103,6 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
       if (item == null)
         return Future.VOID;
       else
-        // TODO logging
         return item.isValid().rescue(e -> Future.FALSE).flatMap(valid -> {
           if (!valid)
             return item.close().rescue(e -> Future.VOID).ensure(() -> sizeSemaphore.release());
@@ -123,7 +122,6 @@ public final class LockFreePool<T extends Connection> implements Pool<T> {
       return validateN(items.size()).flatMap(v2 -> {
         final long next = validationInterval.toMillis() - System.currentTimeMillis() - start;
         if (next <= 0)
-          // TODO logging
           return scheduleValidation(validationInterval, scheduler);
         else
           return scheduleValidation(Duration.ofMillis(next), scheduler);

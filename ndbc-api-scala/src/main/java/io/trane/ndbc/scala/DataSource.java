@@ -9,6 +9,7 @@ import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 import scala.concurrent.Future;
 import scala.concurrent.Promise;
+import scala.concurrent.Promise$;
 
 public class DataSource<P extends PreparedStatement, R extends Row> {
 
@@ -41,13 +42,13 @@ public class DataSource<P extends PreparedStatement, R extends Row> {
   }
 
   protected final <T> Future<T> convert(final io.trane.future.Future<T> future) {
-    final Promise<T> promise = Promise.apply();
+    final Promise<T> promise = Promise$.MODULE$.apply();
     future.onSuccess(promise::success).onFailure(promise::failure);
     return promise.future();
   }
 
   public final Future<List<R>> query(final String query) {
-    return this.convert(underlying.query(query));
+    return convert(underlying.query(query));
   }
 
   public final Future<Long> execute(final String statement) {

@@ -11,7 +11,6 @@ public final class EmptyQueryResponseUnmarshaller extends PostgresUnmarshaller<E
 
   public EmptyQueryResponseUnmarshaller(final Charset charset) {
     super(charset);
-    // TODO Auto-generated constructor stub
   }
 
   @Override

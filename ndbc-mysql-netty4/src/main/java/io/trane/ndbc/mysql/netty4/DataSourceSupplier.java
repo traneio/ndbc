@@ -23,7 +23,7 @@ import io.trane.ndbc.netty4.NettyChannel;
 public final class DataSourceSupplier extends Netty4DataSourceSupplier {
 
   public DataSourceSupplier(final Config config) {
-    super(config, new TransformBufferReader()); // TODO
+    super(config, new TransformBufferReader());
   }
 
   @Override
