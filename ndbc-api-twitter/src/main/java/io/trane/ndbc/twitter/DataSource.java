@@ -12,6 +12,8 @@ import com.twitter.util.Promise;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
+import scala.PartialFunction;
+import scala.runtime.BoxedUnit;
 
 public class DataSource<P extends PreparedStatement, R extends Row> {
 
@@ -50,6 +52,19 @@ public class DataSource<P extends PreparedStatement, R extends Row> {
 
   protected final <T> Future<T> convert(final io.trane.future.Future<T> future) {
     final Promise<T> promise = Promise.apply();
+    promise.setInterruptHandler(new PartialFunction<Throwable, BoxedUnit>() {
+
+      @Override
+      public BoxedUnit apply(Throwable v1) {
+        future.raise(v1);
+        return BoxedUnit.UNIT;
+      }
+
+      @Override
+      public boolean isDefinedAt(Throwable x) {
+        return true;
+      }
+    });
     future.onSuccess(promise::setValue).onFailure(promise::setException);
     return promise;
   }
