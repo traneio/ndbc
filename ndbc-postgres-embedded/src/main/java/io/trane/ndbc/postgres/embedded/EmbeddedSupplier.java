@@ -17,6 +17,7 @@ import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.datasource.ProxyDataSource;
 import ru.yandex.qatools.embed.postgresql.EmbeddedPostgres;
 import ru.yandex.qatools.embed.postgresql.distribution.Version;
 import ru.yandex.qatools.embed.postgresql.util.SocketUtil;
@@ -66,6 +67,12 @@ public class EmbeddedSupplier implements Supplier<DataSource<PreparedStatement, 
 
     log.info("postgres " + version + " started");
 
-    return DataSource.fromConfig(config.embedded(Optional.empty()));
+    DataSource<PreparedStatement, Row> underlying = DataSource.fromConfig(config.embedded(Optional.empty()));
+    return new ProxyDataSource<PreparedStatement, Row>(underlying) {
+      @Override
+      public Config config() {
+        return EmbeddedSupplier.this.config;
+      }
+    };
   }
 }

@@ -13,7 +13,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>io.trane</groupId>
-			<artifactId>ndbc-api</artifactId>
+			<artifactId>ndbc-core</artifactId>
 			<version>0.1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>

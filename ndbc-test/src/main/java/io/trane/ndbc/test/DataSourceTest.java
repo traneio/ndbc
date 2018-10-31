@@ -20,7 +20,7 @@ import io.trane.ndbc.NdbcException;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 
-public class DataSourceTest extends NdbcTest {
+public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   protected Duration timeout = Duration.ofSeconds(999);
 

@@ -20,9 +20,8 @@ import java.util.stream.Collectors;
 import io.trane.future.CheckedFutureException;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
-import io.trane.ndbc.value.Value;
 
-public abstract class EncodingTest<PS extends PreparedStatement> extends NdbcTest {
+public abstract class EncodingTest<PS extends PreparedStatement, R extends Row> extends NdbcTest<PS, R> {
 
   protected abstract PS prepare(String query);
 
@@ -75,18 +74,18 @@ public abstract class EncodingTest<PS extends PreparedStatement> extends NdbcTes
   }
 
   protected <T> void test(final List<String> columnTypes, final BiFunction<PS, T, PS> set,
-      final Function<Value<?>, T> get, final Function<Random, T> gen) throws CheckedFutureException {
+      final BiFunction<R, Integer, T> get, final Function<Random, T> gen) throws CheckedFutureException {
     test(columnTypes, set, get, gen, (a, b) -> assertEquals(a, b));
   }
 
   protected <T> void testArray(final List<String> columnTypes,
-      final BiFunction<PS, T[], PS> set, final Function<Value<?>, T[]> get,
+      final BiFunction<PS, T[], PS> set, final BiFunction<R, Integer, T[]> get,
       final Function<Random, T[]> gen) throws CheckedFutureException {
     test(columnTypes, set, get, gen, (a, b) -> assertArrayEquals(a, b));
   }
 
   protected <T> void test(final List<String> columnTypes, final BiFunction<PS, T, PS> set,
-      final Function<Value<?>, T> get, final Function<Random, T> gen, final BiConsumer<T, T> verify)
+      final BiFunction<R, Integer, T> get, final Function<Random, T> gen, final BiConsumer<T, T> verify)
       throws CheckedFutureException {
     test(columnTypes, set, get, gen, verify, 20);
   }
@@ -94,7 +93,7 @@ public abstract class EncodingTest<PS extends PreparedStatement> extends NdbcTes
   private static AtomicInteger tableSuffix = new AtomicInteger(0);
 
   protected <T> void test(final List<String> columnTypes, final BiFunction<PS, T, PS> set,
-      final Function<Value<?>, T> get, final Function<Random, T> gen, final BiConsumer<T, T> verify,
+      final BiFunction<R, Integer, T> get, final Function<Random, T> gen, final BiConsumer<T, T> verify,
       final int iterations) throws CheckedFutureException {
 
     for (final String columnType : columnTypes) {
@@ -120,7 +119,7 @@ public abstract class EncodingTest<PS extends PreparedStatement> extends NdbcTes
 
         try {
           final T simpleQueryActual = get.apply(query("SELECT c FROM " +
-              table));
+              table), 0);
           verify.accept(expected, simpleQueryActual);
 
         } catch (final Throwable e) {
@@ -128,7 +127,7 @@ public abstract class EncodingTest<PS extends PreparedStatement> extends NdbcTes
         }
 
         try {
-          final T extendedQueryactual = get.apply(query(prepare("SELECT c FROM " + table)));
+          final T extendedQueryactual = get.apply(query(prepare("SELECT c FROM " + table)), 0);
           verify.accept(expected, extendedQueryactual);
 
         } catch (final Throwable e) {
@@ -140,19 +139,19 @@ public abstract class EncodingTest<PS extends PreparedStatement> extends NdbcTes
     }
   }
 
-  protected final Value<?> query(final String query) throws CheckedFutureException {
+  protected final R query(final String query) throws CheckedFutureException {
     return lastRow(ds.query(query).get(timeout).iterator());
   }
 
-  protected final Value<?> query(final PS ps) throws CheckedFutureException {
+  protected final R query(final PS ps) throws CheckedFutureException {
     return lastRow(ds.query(ps).get(timeout).iterator());
   }
 
-  private final Value<?> lastRow(final Iterator<Row> it) {
+  private final R lastRow(final Iterator<R> it) {
     assertTrue(it.hasNext());
-    Row lastRow = null;
+    R lastRow = null;
     while (it.hasNext())
       lastRow = it.next();
-    return lastRow.column(0);
+    return lastRow;
   }
 }
