@@ -6,15 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
 import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import io.trane.future.CheckedFutureException;
-import io.trane.future.Future;
 import io.trane.ndbc.NdbcException;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
@@ -29,11 +25,8 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   private final String stringColumnType;
 
-  private final String sleepQuery;
-
-  public DataSourceTest(final String stringColumnType, final String sleepQuery) {
+  public DataSourceTest(final String stringColumnType) {
     this.stringColumnType = stringColumnType;
-    this.sleepQuery = sleepQuery;
   }
 
   @Before
@@ -355,15 +348,4 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
     assertTrue(rows.hasNext());
   }
 
-  @Test(expected = NdbcException.class)
-  public void cancellation() throws Throwable {
-    final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    try {
-      final Future<List<Row>> f = ds.query(sleepQuery);
-      f.raise(new NdbcException(""));
-      f.get(timeout);
-    } finally {
-      scheduler.shutdown();
-    }
-  }
 }

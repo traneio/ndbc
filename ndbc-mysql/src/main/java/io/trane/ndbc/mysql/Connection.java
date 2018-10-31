@@ -114,7 +114,6 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
     return ex -> {
       final DataSource<PreparedStatement, Row> ds = dataSourceSupplier.get();
       ds.execute("KILL QUERY " + connectionId)
-          .onSuccess(e -> p.becomeIfEmpty(Future.exception(ex)))
           .onFailure(e -> log.warn("Can't cancel request. Reason: " + e))
           .ensure(() -> ds.close());
     };
