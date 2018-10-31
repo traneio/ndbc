@@ -13,6 +13,6 @@ public class BooleanArrayEncodingTest extends EncodingTest<BooleanArrayValue, Bo
       final Boolean[] booleans = new Boolean[r.nextInt(8)];
       Arrays.setAll(booleans, g -> r.nextBoolean());
       return new BooleanArrayValue(booleans);
-    }, (a, b) -> Assert.assertArrayEquals(a.getBooleanArray(), b.getBooleanArray()));
+    }, (a, b) -> Assert.assertArrayEquals(a.get(), b.get()));
   }
 }

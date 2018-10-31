@@ -17,12 +17,12 @@ import io.trane.ndbc.postgres.value.FloatArrayValue;
 import io.trane.ndbc.postgres.value.IntegerArrayValue;
 import io.trane.ndbc.postgres.value.LocalDateArrayValue;
 import io.trane.ndbc.postgres.value.LocalDateTimeArrayValue;
+import io.trane.ndbc.postgres.value.LocalTimeArrayValue;
 import io.trane.ndbc.postgres.value.LongArrayValue;
-import io.trane.ndbc.postgres.value.OffsetTimeValue;
+import io.trane.ndbc.postgres.value.OffsetTimeArrayValue;
 import io.trane.ndbc.postgres.value.ShortArrayValue;
 import io.trane.ndbc.postgres.value.StringArrayValue;
-import io.trane.ndbc.value.LocalTimeValue;
-import io.trane.ndbc.value.UUIDValue;
+import io.trane.ndbc.postgres.value.UUIDArrayValue;
 import io.trane.ndbc.value.Value;
 
 public class PostgresRow extends Row {
@@ -38,6 +38,8 @@ public class PostgresRow extends Row {
   protected PostgresRow(final Map<String, Integer> positions, final Value<?>[] columns) {
     super(positions, columns);
   }
+
+  // index-based
 
   public Character[] getCharacterArray(final int index) {
     final Value<?> v = column(index);
@@ -137,26 +139,88 @@ public class PostgresRow extends Row {
 
   public LocalTime[] getLocalTimeArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof LocalTimeValue)
-      return ((LocalTimeValue) v).getLocalTimeArray();
+    if (v instanceof LocalTimeArrayValue)
+      return ((LocalTimeArrayValue) v).getLocalTimeArray();
     else
       return cantRead(v, "LocalTime[]");
   }
 
   public OffsetTime[] getOffsetTimeArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof OffsetTimeValue)
-      return ((OffsetTimeValue) v).getOffsetTimeArray();
+    if (v instanceof OffsetTimeArrayValue)
+      return ((OffsetTimeArrayValue) v).getOffsetTimeArray();
     else
       return cantRead(v, "Offset[]");
   }
 
   public UUID[] getUUIDArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof UUIDValue)
-      return ((UUIDValue) v).getUUIDArray();
+    if (v instanceof UUIDArrayValue)
+      return ((UUIDArrayValue) v).getUUIDArray();
     else
       return cantRead(v, "UUID[]");
+  }
+
+  // name-based
+
+  public Character[] getCharacterArray(final String column) {
+    return getCharacterArray(positions.get(column));
+  }
+
+  public String[] getStringArray(final String column) {
+    return getStringArray(positions.get(column));
+  }
+
+  public Integer[] getIntegerArray(final String column) {
+    return getIntegerArray(positions.get(column));
+  }
+
+  public Boolean[] getBooleanArray(final String column) {
+    return getBooleanArray(positions.get(column));
+  }
+
+  public Long[] getLongArray(final String column) {
+    return getLongArray(positions.get(column));
+  }
+
+  public Short[] getShortArray(final String column) {
+    return getShortArray(positions.get(column));
+  }
+
+  public BigDecimal[] getBigDecimalArray(final String column) {
+    return getBigDecimalArray(positions.get(column));
+  }
+
+  public Float[] getFloatArray(final String column) {
+    return getFloatArray(positions.get(column));
+  }
+
+  public Double[] getDoubleArray(final String column) {
+    return getDoubleArray(positions.get(column));
+  }
+
+  public LocalDateTime[] getLocalDateTimeArray(final String column) {
+    return getLocalDateTimeArray(positions.get(column));
+  }
+
+  public byte[][] getByteArrayArray(final String column) {
+    return getByteArrayArray(positions.get(column));
+  }
+
+  public LocalDate[] getLocalDateArray(final String column) {
+    return getLocalDateArray(positions.get(column));
+  }
+
+  public LocalTime[] getLocalTimeArray(final String column) {
+    return getLocalTimeArray(positions.get(column));
+  }
+
+  public OffsetTime[] getOffsetTimeArray(final String column) {
+    return getOffsetTimeArray(positions.get(column));
+  }
+
+  public UUID[] getUUIDArray(final String column) {
+    return getUUIDArray(positions.get(column));
   }
 
   private final <U> U cantRead(final Value<?> v, final String type) {

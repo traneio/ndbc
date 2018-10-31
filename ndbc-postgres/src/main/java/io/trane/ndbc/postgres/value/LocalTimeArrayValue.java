@@ -2,9 +2,7 @@ package io.trane.ndbc.postgres.value;
 
 import java.time.LocalTime;
 
-import io.trane.ndbc.value.Value;
-
-public final class LocalTimeArrayValue extends Value<LocalTime[]> {
+public final class LocalTimeArrayValue extends PostgresValue<LocalTime[]> {
 
   public LocalTimeArrayValue(final LocalTime[] value) {
     super(value);

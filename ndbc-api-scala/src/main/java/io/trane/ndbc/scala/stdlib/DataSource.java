@@ -1,5 +1,4 @@
-package io.trane.ndbc.scala;
-
+package io.trane.ndbc.scala.stdlib;
 
 import java.io.IOException;
 import java.util.List;

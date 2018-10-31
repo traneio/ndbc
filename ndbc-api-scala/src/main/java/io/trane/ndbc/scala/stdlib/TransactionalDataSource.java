@@ -1,5 +1,4 @@
-package io.trane.ndbc.scala;
-
+package io.trane.ndbc.scala.stdlib;
 
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;

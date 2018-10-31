@@ -15,6 +15,6 @@ public class ByteArrayArrayEncodingTest extends EncodingTest<ByteArrayArrayValue
             r.nextBytes(bs);
 
           return new ByteArrayArrayValue(byteArrays);
-        }, (a, b) -> Assert.assertArrayEquals(a.getByteArrayArray(), b.getByteArrayArray()));
+        }, (a, b) -> Assert.assertArrayEquals(a.get(), b.get()));
   }
 }

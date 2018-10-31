@@ -1,8 +1,6 @@
 package io.trane.ndbc.postgres.value;
 
-import io.trane.ndbc.value.Value;
-
-public final class ShortArrayValue extends Value<Short[]> {
+public final class ShortArrayValue extends PostgresValue<Short[]> {
 
   public static final ShortArrayValue EMPTY = new ShortArrayValue(new Short[0]);
 

@@ -16,6 +16,6 @@ public class BigDecimalArrayEncodingTest extends EncodingTest<BigDecimalArrayVal
           Arrays.setAll(bigDecimals, p -> BigDecimal.valueOf(r.nextDouble()));
 
           return new BigDecimalArrayValue(bigDecimals);
-        }, (a, b) -> Assert.assertArrayEquals(a.getBigDecimalArray(), b.getBigDecimalArray()));
+        }, (a, b) -> Assert.assertArrayEquals(a.get(), b.get()));
   }
 }

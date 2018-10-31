@@ -1,8 +1,6 @@
 package io.trane.ndbc.postgres.value;
 
-import io.trane.ndbc.value.Value;
-
-public final class BooleanArrayValue extends Value<Boolean[]> {
+public final class BooleanArrayValue extends PostgresValue<Boolean[]> {
 
   public BooleanArrayValue(final Boolean[] value) {
     super(value);

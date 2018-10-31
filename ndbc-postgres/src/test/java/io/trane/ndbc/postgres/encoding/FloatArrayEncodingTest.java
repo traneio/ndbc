@@ -13,6 +13,6 @@ public class FloatArrayEncodingTest extends EncodingTest<FloatArrayValue, FloatA
       final Float[] floats = new Float[r.nextInt(8)];
       Arrays.setAll(floats, p -> Float.valueOf(r.nextFloat()));
       return new FloatArrayValue(floats);
-    }, (a, b) -> Assert.assertArrayEquals(a.getFloatArray(), b.getFloatArray()));
+    }, (a, b) -> Assert.assertArrayEquals(a.get(), b.get()));
   }
 }

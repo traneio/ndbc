@@ -15,6 +15,6 @@ public class LocalDateTimeArrayEncodingTest extends EncodingTest<LocalDateTimeAr
           final LocalDateTime[] localDateTimes = new LocalDateTime[r.nextInt(8)];
           Arrays.setAll(localDateTimes, p -> randomLocalDateTime(r));
           return new LocalDateTimeArrayValue(localDateTimes);
-        }, (a, b) -> Assert.assertArrayEquals(a.getLocalDateTimeArray(), b.getLocalDateTimeArray()));
+        }, (a, b) -> Assert.assertArrayEquals(a.get(), b.get()));
   }
 }

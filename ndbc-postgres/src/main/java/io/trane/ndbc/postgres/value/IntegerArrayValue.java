@@ -1,8 +1,6 @@
 package io.trane.ndbc.postgres.value;
 
-import io.trane.ndbc.value.Value;
-
-public final class IntegerArrayValue extends Value<Integer[]> {
+public final class IntegerArrayValue extends PostgresValue<Integer[]> {
 
   public IntegerArrayValue(final Integer[] value) {
     super(value);

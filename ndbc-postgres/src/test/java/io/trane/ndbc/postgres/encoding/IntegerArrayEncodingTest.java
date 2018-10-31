@@ -13,6 +13,6 @@ public class IntegerArrayEncodingTest extends EncodingTest<IntegerArrayValue, In
       final Integer[] integers = new Integer[r.nextInt(8)];
       Arrays.setAll(integers, p -> Integer.valueOf(r.nextInt()));
       return new IntegerArrayValue(integers);
-    }, (a, b) -> Assert.assertArrayEquals(a.getIntegerArray(), b.getIntegerArray()));
+    }, (a, b) -> Assert.assertArrayEquals(a.get(), b.get()));
   }
 }
