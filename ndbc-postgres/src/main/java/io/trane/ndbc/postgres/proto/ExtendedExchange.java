@@ -15,6 +15,7 @@ import io.trane.ndbc.postgres.proto.Message.Sync;
 import io.trane.ndbc.postgres.proto.marshaller.Marshallers;
 import io.trane.ndbc.postgres.proto.unmarshaller.Unmarshallers;
 import io.trane.ndbc.proto.Exchange;
+import io.trane.ndbc.util.PositionalQuery;
 import io.trane.ndbc.value.Value;
 
 public final class ExtendedExchange {
@@ -47,7 +48,7 @@ public final class ExtendedExchange {
     if (prepared.contains(id))
       return f.apply(idString);
     else
-      return Exchange.send(marshallers.parse, new Parse(Integer.toString(id), positional(query), params))
+      return Exchange.send(marshallers.parse, new Parse(Integer.toString(id), PositionalQuery.apply(query), params))
           .then(f.apply(idString)).thenReceive(unmarshallers.parseComplete)
           .onSuccess(ign -> Exchange.value(prepared.add(id)));
   }
@@ -57,21 +58,5 @@ public final class ExtendedExchange {
     for (final Value<?> v : params)
       id = (31 * id) + v.getClass().hashCode();
     return id;
-  }
-
-  // TODO handle quotes, comments, etc.
-  private final String positional(final String query) {
-    int idx = 0;
-    final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < query.length(); i++) {
-      final char c = query.charAt(i);
-      if (c == '?') {
-        idx += 1;
-        sb.append("$");
-        sb.append(idx);
-      } else
-        sb.append(c);
-    }
-    return sb.toString();
   }
 }
