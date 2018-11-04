@@ -13,8 +13,8 @@ public final class DoubleArrayValue extends PostgresValue<Double[]> {
 
   @Override
   public Float[] getFloatArray() {
-    Double[] v = get();
-    Float[] f = new Float[v.length];
+    final Double[] v = get();
+    final Float[] f = new Float[v.length];
     for (int i = 0; i < v.length; i++)
       f[i] = v[i].floatValue();
     return f;

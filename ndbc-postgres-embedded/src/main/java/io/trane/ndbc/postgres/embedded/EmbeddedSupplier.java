@@ -67,7 +67,7 @@ public class EmbeddedSupplier implements Supplier<DataSource<PreparedStatement, 
 
     log.info("postgres " + version + " started");
 
-    DataSource<PreparedStatement, Row> underlying = DataSource.fromConfig(config.embedded(Optional.empty()));
+    final DataSource<PreparedStatement, Row> underlying = DataSource.fromConfig(config.embedded(Optional.empty()));
     return new ProxyDataSource<PreparedStatement, Row>(underlying) {
       @Override
       public Config config() {

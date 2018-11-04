@@ -30,11 +30,11 @@ public class MysqlDataSourceTest extends DataSourceTest {
   public void cancellation() throws Throwable {
     final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     try {
-      long start = System.currentTimeMillis();
+      final long start = System.currentTimeMillis();
       final Future<List<Row>> f = ds.query("SELECT SLEEP(999)");
       f.raise(new NdbcException(""));
       f.get(timeout);
-      assertTrue(System.currentTimeMillis() - start < 999);
+      assertTrue((System.currentTimeMillis() - start) < 999);
     } finally {
       scheduler.shutdown();
     }

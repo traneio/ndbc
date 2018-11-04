@@ -59,13 +59,13 @@ public class DataSource<P extends PreparedStatement, R extends Row> {
     promise.setInterruptHandler(new PartialFunction<Throwable, BoxedUnit>() {
 
       @Override
-      public BoxedUnit apply(Throwable v1) {
+      public BoxedUnit apply(final Throwable v1) {
         future.raise(v1);
         return BoxedUnit.UNIT;
       }
 
       @Override
-      public boolean isDefinedAt(Throwable x) {
+      public boolean isDefinedAt(final Throwable x) {
         return true;
       }
     });

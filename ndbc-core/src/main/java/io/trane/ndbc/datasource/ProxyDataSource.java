@@ -14,32 +14,32 @@ public class ProxyDataSource<P extends PreparedStatement, R extends Row> impleme
 
   private final DataSource<P, R> underlying;
 
-  public ProxyDataSource(DataSource<P, R> underlying) {
+  public ProxyDataSource(final DataSource<P, R> underlying) {
     this.underlying = underlying;
   }
 
   @Override
-  public Future<List<R>> query(String query) {
+  public Future<List<R>> query(final String query) {
     return underlying.query(query);
   }
 
   @Override
-  public Future<Long> execute(String statement) {
+  public Future<Long> execute(final String statement) {
     return underlying.execute(statement);
   }
 
   @Override
-  public Future<List<R>> query(P query) {
+  public Future<List<R>> query(final P query) {
     return underlying.query(query);
   }
 
   @Override
-  public Future<Long> execute(P statement) {
+  public Future<Long> execute(final P statement) {
     return underlying.execute(statement);
   }
 
   @Override
-  public <T> Future<T> transactional(Supplier<Future<T>> supplier) {
+  public <T> Future<T> transactional(final Supplier<Future<T>> supplier) {
     return underlying.transactional(supplier);
   }
 

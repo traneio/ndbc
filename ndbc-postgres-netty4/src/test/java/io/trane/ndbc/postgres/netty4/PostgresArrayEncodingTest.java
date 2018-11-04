@@ -35,7 +35,7 @@ public class PostgresArrayEncodingTest extends EncodingTest<PostgresPreparedStat
   public static Collection<Object[]> data() {
     return PostgresEnv.dataSources.stream().map(array -> {
       @SuppressWarnings("unchecked")
-      PostgresDataSource ds = PostgresDataSource.create((DataSource<PreparedStatement, Row>) array[0]);
+      final PostgresDataSource ds = PostgresDataSource.create((DataSource<PreparedStatement, Row>) array[0]);
       return new Object[] { ds, array[1] };
     }).collect(Collectors.toList());
   }

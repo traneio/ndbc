@@ -262,14 +262,14 @@ public class ConfigTest {
 
   @Test
   public void sslMode() {
-    Mode mode = Mode.REQUIRE;
+    final Mode mode = Mode.REQUIRE;
     final SSL ssl = Config.SSL.create(mode);
     assertEquals(ssl.mode(), mode);
   }
 
   @Test
   public void sslRootCert() {
-    File file = new File("test");
+    final File file = new File("test");
     final SSL ssl = Config.SSL.create(Mode.REQUIRE).rootCert(file);
     assertEquals(ssl.rootCert(), Optional.of(file));
   }
@@ -535,7 +535,7 @@ public class ConfigTest {
 
   @Test
   public void fromUrlMysql() {
-    Config c = Config.fromJdbcUrl(
+    final Config c = Config.fromJdbcUrl(
         "jdbc:mysql://" + user + ":" + password + "@" + host + ":" + port + "/" + database + "?poolMaxSize="
             + poolMaxSize);
     assertEquals(c.dataSourceSupplierClass(), "io.trane.ndbc.mysql.netty4.DataSourceSupplier");
@@ -549,7 +549,7 @@ public class ConfigTest {
 
   @Test
   public void fromUrlPostgres() {
-    Config c = Config.fromJdbcUrl(
+    final Config c = Config.fromJdbcUrl(
         "jdbc:postgresql://" + user + ":" + password + "@" + host + ":" + port + "/" + database + "?poolMaxSize="
             + poolMaxSize);
     assertEquals(c.dataSourceSupplierClass(), "io.trane.ndbc.postgres.netty4.DataSourceSupplier");
@@ -563,7 +563,7 @@ public class ConfigTest {
 
   @Test
   public void fromUrlPropertyOverride() {
-    Config c = Config.fromJdbcUrl(
+    final Config c = Config.fromJdbcUrl(
         "jdbc:mysql://wronguser:wrongpass@" + host + ":" + port + "/" + database + "?user=" + user + "&password="
             + password);
     assertEquals(c.user(), user);

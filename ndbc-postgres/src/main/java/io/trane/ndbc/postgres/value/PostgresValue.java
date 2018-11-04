@@ -11,7 +11,7 @@ import io.trane.ndbc.value.Value;
 
 public abstract class PostgresValue<T> extends Value<T> {
 
-  public PostgresValue(T value) {
+  public PostgresValue(final T value) {
     super(value);
   }
 
@@ -67,6 +67,7 @@ public abstract class PostgresValue<T> extends Value<T> {
     return cantRead("LocalTime[]");
   }
 
+  @Override
   public OffsetTime getOffsetTime() {
     return cantRead("OffsetTime");
   }

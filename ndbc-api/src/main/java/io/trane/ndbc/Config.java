@@ -217,10 +217,10 @@ public final class Config {
     final Properties prop = new Properties();
     final String prefix = "url.";
 
-    URI uri = URI.create(url.replaceFirst("jdbc:", ""));
+    final URI uri = URI.create(url.replaceFirst("jdbc:", ""));
 
     String dsSupplier;
-    String scheme = uri.getScheme();
+    final String scheme = uri.getScheme();
     if (scheme.contains("mysql"))
       dsSupplier = "io.trane.ndbc.mysql.netty4.DataSourceSupplier";
     else if (scheme.contains("postgres"))
@@ -230,7 +230,7 @@ public final class Config {
     prop.put(prefix + "dataSourceSupplierClass", dsSupplier);
 
     if (uri.getUserInfo() != null) {
-      String[] split = uri.getUserInfo().split(":");
+      final String[] split = uri.getUserInfo().split(":");
       prop.put(prefix + "user", split[0]);
       if (split.length > 1)
         prop.put(prefix + "password", split[1]);
@@ -243,15 +243,15 @@ public final class Config {
       prop.put(prefix + "port", "" + uri.getPort());
 
     if (uri.getPath() != null) {
-      String norm = uri.getPath().replaceFirst("/", "");
+      final String norm = uri.getPath().replaceFirst("/", "");
       if (!norm.isEmpty())
         prop.put(prefix + "database", norm);
     }
 
     if (uri.getQuery() != null) {
-      String[] params = uri.getQuery().split("&");
-      for (String param : params) {
-        String[] split = param.split("=");
+      final String[] params = uri.getQuery().split("&");
+      for (final String param : params) {
+        final String[] split = param.split("=");
         String key;
         try {
           key = URLDecoder.decode(split[0], "UTF-8");
@@ -261,7 +261,7 @@ public final class Config {
           else
             value = "";
           prop.put(prefix + key, value);
-        } catch (UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
           throw new NdbcException("Can't decode the url parameters", e);
         }
       }
