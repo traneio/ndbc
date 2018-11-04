@@ -13,8 +13,8 @@ public class PostgresEnv {
 
   private static final Config config(final String version) {
     return Config
-        .apply("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 0, "test")
-        .embedded(Config.Embedded.apply("io.trane.ndbc.postgres.embedded.EmbeddedSupplier", Optional.of(version)))
+        .create("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 0, "test")
+        .embedded(Config.Embedded.create("io.trane.ndbc.postgres.embedded.EmbeddedSupplier", Optional.of(version)))
         .database("test_schema")
         .password("test")
         .poolValidationInterval(Duration.ofSeconds(1));

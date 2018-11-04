@@ -37,8 +37,8 @@ public class ConfigTest {
   private final int     poolValidationIntervalSeconds = 1;
 
   @Test
-  public void apply() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+  public void create() {
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     assertEquals(c.dataSourceSupplierClass(), dataSourceSupplierClass);
     assertEquals(c.host(), host);
     assertEquals(c.port(), port);
@@ -55,93 +55,93 @@ public class ConfigTest {
 
   @Test
   public void charset() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     assertEquals(charset, c.charset(charset).charset());
   }
 
   @Test
   public void password() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final String password = "password";
     assertEquals(Optional.of(password), c.password(password).password());
   }
 
   @Test
   public void passwordOptionalEmpty() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     assertFalse(c.password(Optional.empty()).password().isPresent());
   }
 
   @Test
   public void passwordOptionalPresent() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final String password = "password";
     assertEquals(Optional.of(password), c.password(Optional.of(password)).password());
   }
 
   @Test
   public void database() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final String database = "database";
     assertEquals(Optional.of(database), c.database(database).database());
   }
 
   @Test
   public void databaseOptionalEmpty() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     assertFalse(c.database(Optional.empty()).database().isPresent());
   }
 
   @Test
   public void databaseOptionalPresent() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final String database = "database";
     assertEquals(Optional.of(database), c.database(Optional.of(database)).database());
   }
 
   @Test
   public void poolMaxSize() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final int poolMaxSize = 100;
     assertEquals(Optional.of(poolMaxSize), c.poolMaxSize(poolMaxSize).poolMaxSize());
   }
 
   @Test
   public void poolMaxSizeOptionalEmpty() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     assertFalse(c.poolMaxSize(Optional.empty()).poolMaxSize().isPresent());
   }
 
   @Test
   public void poolMaxSizeOptionalPresent() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final int poolMaxSize = 100;
     assertEquals(Optional.of(poolMaxSize), c.poolMaxSize(Optional.of(poolMaxSize)).poolMaxSize());
   }
 
   @Test
   public void poolMaxWaiters() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final int poolMaxWaiters = 100;
     assertEquals(Optional.of(poolMaxWaiters), c.poolMaxWaiters(poolMaxWaiters).poolMaxWaiters());
   }
 
   @Test
   public void poolMaxWaitersOptionalEmpty() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     assertFalse(c.poolMaxWaiters(Optional.empty()).poolMaxWaiters().isPresent());
   }
 
   @Test
   public void poolMaxWaitersOptionalPresent() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final int poolMaxWaiters = 100;
     assertEquals(Optional.of(poolMaxWaiters), c.poolMaxWaiters(Optional.of(poolMaxWaiters)).poolMaxWaiters());
   }
 
   @Test
   public void connectionTimeout() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final Duration connectionTimeout = Duration.ofSeconds(100);
     assertEquals(Optional.of(connectionTimeout),
         c.connectionTimeout(connectionTimeout).connectionTimeout());
@@ -149,7 +149,7 @@ public class ConfigTest {
 
   @Test
   public void queryTimeout() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final Duration queryTimeout = Duration.ofSeconds(100);
     assertEquals(Optional.of(queryTimeout),
         c.queryTimeout(queryTimeout).queryTimeout());
@@ -157,7 +157,7 @@ public class ConfigTest {
 
   @Test
   public void poolValidationInterval() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final Duration poolValidationInterval = Duration.ofSeconds(100);
     assertEquals(Optional.of(poolValidationInterval),
         c.poolValidationInterval(poolValidationInterval).poolValidationInterval());
@@ -165,13 +165,13 @@ public class ConfigTest {
 
   @Test
   public void poolValidationIntervalOptionalEmpty() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     assertFalse(c.poolValidationInterval(Optional.empty()).poolValidationInterval().isPresent());
   }
 
   @Test
   public void poolValidationIntervalOptionalPresent() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final Duration poolValidationInterval = Duration.ofSeconds(100);
     assertEquals(Optional.of(poolValidationInterval),
         c.poolValidationInterval(Optional.of(poolValidationInterval)).poolValidationInterval());
@@ -179,7 +179,7 @@ public class ConfigTest {
 
   @Test
   public void encodingClasses() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final Set<String> encodingClasses = new HashSet<>();
     encodingClasses.add("some.Class");
     assertEquals(Optional.of(encodingClasses), c.encodingClasses(encodingClasses).encodingClasses());
@@ -187,13 +187,13 @@ public class ConfigTest {
 
   @Test
   public void encodingClassesOptionalEmpty() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     assertFalse(c.encodingClasses(Optional.empty()).encodingClasses().isPresent());
   }
 
   @Test
   public void encodingClassesOptionalPresent() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final Set<String> encodingClasses = new HashSet<>();
     encodingClasses.add("some.Class");
     assertEquals(Optional.of(encodingClasses), c.encodingClasses(Optional.of(encodingClasses)).encodingClasses());
@@ -201,7 +201,7 @@ public class ConfigTest {
 
   @Test
   public void addEncodingClassEmpty() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final String encodingClass = "some.Class";
     final Optional<Set<String>> encodingClasses = c.addEncodingClass(encodingClass).encodingClasses();
     assertTrue(encodingClasses.isPresent());
@@ -211,7 +211,7 @@ public class ConfigTest {
 
   @Test
   public void addEncodingClassEmptySet() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user).encodingClasses(new HashSet<>());
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user).encodingClasses(new HashSet<>());
     final String encodingClass = "some.Class";
     final Optional<Set<String>> encodingClasses = c.addEncodingClass(encodingClass).encodingClasses();
     assertTrue(encodingClasses.isPresent());
@@ -224,7 +224,7 @@ public class ConfigTest {
     final String previousEncodingClass = "previous.Class";
     final Set<String> previous = new HashSet<>();
     previous.add(previousEncodingClass);
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user).encodingClasses(previous);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user).encodingClasses(previous);
     final String encodingClass = "some.Class";
     final Optional<Set<String>> encodingClasses = c.addEncodingClass(encodingClass).encodingClasses();
     assertTrue(encodingClasses.isPresent());
@@ -235,55 +235,55 @@ public class ConfigTest {
 
   @Test
   public void nioThreads() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final int nioThreads = 100;
     assertEquals(Optional.of(nioThreads), c.nioThreads(nioThreads).nioThreads());
   }
 
   @Test
   public void nioThreadsOptionalEmpty() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     assertFalse(c.nioThreads(Optional.empty()).nioThreads().isPresent());
   }
 
   @Test
   public void nioThreadsOptionalPresent() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     final int nioThreads = 100;
     assertEquals(Optional.of(nioThreads), c.nioThreads(Optional.of(nioThreads)).nioThreads());
   }
 
   @Test
   public void ssl() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    final SSL ssl = Config.SSL.apply(Mode.REQUIRE);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
+    final SSL ssl = Config.SSL.create(Mode.REQUIRE);
     assertEquals(Optional.of(ssl), c.ssl(ssl).ssl());
   }
 
   @Test
   public void sslMode() {
     Mode mode = Mode.REQUIRE;
-    final SSL ssl = Config.SSL.apply(mode);
+    final SSL ssl = Config.SSL.create(mode);
     assertEquals(ssl.mode(), mode);
   }
 
   @Test
   public void sslRootCert() {
     File file = new File("test");
-    final SSL ssl = Config.SSL.apply(Mode.REQUIRE).rootCert(file);
+    final SSL ssl = Config.SSL.create(Mode.REQUIRE).rootCert(file);
     assertEquals(ssl.rootCert(), Optional.of(file));
   }
 
   @Test
   public void sslOptionalEmpty() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
     assertFalse(c.ssl(Optional.empty()).ssl().isPresent());
   }
 
   @Test
   public void sslOptionalPresent() {
-    final Config c = Config.apply(dataSourceSupplierClass, host, port, user);
-    final SSL ssl = Config.SSL.apply(Mode.VERIFY_CA);
+    final Config c = Config.create(dataSourceSupplierClass, host, port, user);
+    final SSL ssl = Config.SSL.create(Mode.VERIFY_CA);
     assertEquals(Optional.of(ssl), c.ssl(Optional.of(ssl)).ssl());
   }
 
@@ -467,7 +467,7 @@ public class ConfigTest {
     p.setProperty("db.user", user);
     p.setProperty("db.ssl.mode", mode.toString());
     final Config c = Config.fromProperties("db", p);
-    assertEquals(c.ssl(), Optional.of(SSL.apply(mode)));
+    assertEquals(c.ssl(), Optional.of(SSL.create(mode)));
   }
 
   @Test
@@ -482,7 +482,7 @@ public class ConfigTest {
     p.setProperty("db.ssl.mode", mode.toString());
     p.setProperty("db.ssl.rootCert", rootCert);
     final Config c = Config.fromProperties("db", p);
-    assertEquals(c.ssl(), Optional.of(SSL.apply(mode, new File(rootCert))));
+    assertEquals(c.ssl(), Optional.of(SSL.create(mode, new File(rootCert))));
   }
 
   @Test

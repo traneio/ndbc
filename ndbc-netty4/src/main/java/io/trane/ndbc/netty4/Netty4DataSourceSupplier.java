@@ -37,7 +37,7 @@ public abstract class Netty4DataSourceSupplier
 
   @Override
   public final DataSource<PreparedStatement, Row> get() {
-    final Pool<Connection> pool = LockFreePool.apply(createConnection, config.poolMaxSize(),
+    final Pool<Connection> pool = LockFreePool.create(createConnection, config.poolMaxSize(),
         config.poolMaxWaiters(),
         config.connectionTimeout(), config.poolValidationInterval(), config.scheduler());
     return new PooledDataSource(pool, config);

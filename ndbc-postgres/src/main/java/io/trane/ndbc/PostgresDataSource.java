@@ -11,25 +11,25 @@ import io.trane.future.Future;
 public class PostgresDataSource implements DataSource<PostgresPreparedStatement, PostgresRow> {
 
   public static PostgresDataSource fromSystemProperties(final String prefix) {
-    return apply(io.trane.ndbc.DataSource.fromSystemProperties(prefix));
+    return create(io.trane.ndbc.DataSource.fromSystemProperties(prefix));
   }
 
   public static PostgresDataSource fromPropertiesFile(final String prefix,
       final String fileName)
       throws IOException {
-    return apply(io.trane.ndbc.DataSource.fromPropertiesFile(prefix,
+    return create(io.trane.ndbc.DataSource.fromPropertiesFile(prefix,
         fileName));
   }
 
   public static PostgresDataSource fromProperties(final String prefix, final Properties properties) {
-    return apply(io.trane.ndbc.DataSource.fromProperties(prefix, properties));
+    return create(io.trane.ndbc.DataSource.fromProperties(prefix, properties));
   }
 
   public static PostgresDataSource fromConfig(final Config config) {
-    return apply(DataSource.fromConfig(config));
+    return create(DataSource.fromConfig(config));
   }
 
-  public static PostgresDataSource apply(final DataSource<PreparedStatement, Row> ds) {
+  public static PostgresDataSource create(final DataSource<PreparedStatement, Row> ds) {
     return new PostgresDataSource(ds);
   }
 
@@ -134,6 +134,6 @@ public class PostgresDataSource implements DataSource<PostgresPreparedStatement,
   }
 
   private final Future<List<PostgresRow>> conv(final Future<List<Row>> f) {
-    return f.map(l -> l.stream().map(PostgresRow::apply).collect(Collectors.toList()));
+    return f.map(l -> l.stream().map(PostgresRow::create).collect(Collectors.toList()));
   }
 }

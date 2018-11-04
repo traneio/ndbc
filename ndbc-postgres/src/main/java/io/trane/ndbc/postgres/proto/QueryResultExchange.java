@@ -53,7 +53,7 @@ public final class QueryResultExchange {
       }
     }
 
-    return Row.apply(positions, columns);
+    return Row.create(positions, columns);
   }
 
   private final Exchange<List<DataRow>> gatherDataRows(final List<DataRow> rows) {

@@ -13,7 +13,7 @@ import io.trane.future.Promise;
 
 public final class LockFreePool<T extends Connection> implements Pool<T> {
 
-  public static <T extends Connection> Pool<T> apply(final Supplier<Future<T>> supplier,
+  public static <T extends Connection> Pool<T> create(final Supplier<Future<T>> supplier,
       final Optional<Integer> maxSize, final Optional<Integer> maxWaiters, final Optional<Duration> connectionTimeout,
       final Optional<Duration> validationInterval, final ScheduledExecutorService scheduler) {
     return new LockFreePool<>(supplier, maxSize, maxWaiters, connectionTimeout, validationInterval, scheduler);

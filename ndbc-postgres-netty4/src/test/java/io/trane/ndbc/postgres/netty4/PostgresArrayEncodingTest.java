@@ -28,14 +28,14 @@ public class PostgresArrayEncodingTest extends EncodingTest<PostgresPreparedStat
 
   @Override
   protected PostgresPreparedStatement prepare(final String query) {
-    return PostgresPreparedStatement.apply(query);
+    return PostgresPreparedStatement.create(query);
   }
 
   @Parameters(name = "{1}")
   public static Collection<Object[]> data() {
     return PostgresEnv.dataSources.stream().map(array -> {
       @SuppressWarnings("unchecked")
-      PostgresDataSource ds = PostgresDataSource.apply((DataSource<PreparedStatement, Row>) array[0]);
+      PostgresDataSource ds = PostgresDataSource.create((DataSource<PreparedStatement, Row>) array[0]);
       return new Object[] { ds, array[1] };
     }).collect(Collectors.toList());
   }

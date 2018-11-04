@@ -49,11 +49,11 @@ public final class Config {
       VERIFY_FULL
     }
 
-    public static final SSL apply(final Mode mode) {
+    public static final SSL create(final Mode mode) {
       return new SSL(mode, Optional.empty());
     }
 
-    public static final SSL apply(final Mode mode, final File rootCert) {
+    public static final SSL create(final Mode mode, final File rootCert) {
       return new SSL(mode, Optional.of(rootCert));
     }
 
@@ -110,7 +110,7 @@ public final class Config {
     public final String           supplierClass;
     public final Optional<String> version;
 
-    public static Embedded apply(final String supplierClass, final Optional<String> version) {
+    public static Embedded create(final String supplierClass, final Optional<String> version) {
       return new Embedded(supplierClass, version);
     }
 
@@ -175,7 +175,7 @@ public final class Config {
     final int port = getRequiredProperty(prefix, properties, "port", Integer::parseInt);
     final String user = getRequiredProperty(prefix, properties, "user");
 
-    Config config = Config.apply(dataSourceSupplierClass, host, port, user);
+    Config config = Config.create(dataSourceSupplierClass, host, port, user);
 
     config = config.charset(getProperty(prefix, properties, "charset", Charset::forName)
         .orElse(Charset.defaultCharset()));
@@ -198,18 +198,18 @@ public final class Config {
         .map(k -> Stream.of(k.split(",")).filter(s -> !s.isEmpty()).collect(Collectors.toSet())));
 
     config = config.ssl(getProperty(prefix, properties, "ssl.mode", SSL.Mode::valueOf).map(sslMode -> {
-      final SSL ssl = SSL.apply(sslMode);
+      final SSL ssl = SSL.create(sslMode);
       return getProperty(prefix, properties, "ssl.rootCert").map(rootCert -> ssl.rootCert(new File(rootCert)))
           .orElse(ssl);
     }));
 
     config = config.embedded(getProperty(prefix, properties, "embedded.supplierClass")
-        .map(cls -> Embedded.apply(cls, getProperty(prefix, properties, "embedded.version"))));
+        .map(cls -> Embedded.create(cls, getProperty(prefix, properties, "embedded.version"))));
 
     return config;
   }
 
-  public static final Config apply(final String dataSourceSupplierClass, final String host,
+  public static final Config create(final String dataSourceSupplierClass, final String host,
       final int port, final String user) {
 
     final AtomicInteger threadNumber = new AtomicInteger(0);

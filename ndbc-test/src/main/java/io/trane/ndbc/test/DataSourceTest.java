@@ -65,7 +65,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedQueryNoParams() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM " + table);
+    final PreparedStatement ps = PreparedStatement.create("SELECT * FROM " + table);
 
     final Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
@@ -74,7 +74,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedQueryInvalid() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("SLCT * FROM " + table);
+    final PreparedStatement ps = PreparedStatement.create("SLCT * FROM " + table);
     try {
       ds.query(ps).get(timeout);
       assertTrue(false);
@@ -84,7 +84,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedQueryNoParamsFailure() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM invalid_table");
+    final PreparedStatement ps = PreparedStatement.create("SELECT * FROM invalid_table");
 
     try {
       ds.query(ps).get(timeout);
@@ -96,7 +96,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedQueryWithParams() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM " + table + " WHERE s = ?").setString("s");
+    final PreparedStatement ps = PreparedStatement.create("SELECT * FROM " + table + " WHERE s = ?").setString("s");
 
     final Iterator<Row> rows = ds.query(ps).get(timeout).iterator();
     assertEquals(rows.next().column(0).getString(), "s");
@@ -105,7 +105,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedQueryWithParamsFailure() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("SELECT * FROM invalid_table WHERE s = ?").setString("s");
+    final PreparedStatement ps = PreparedStatement.create("SELECT * FROM invalid_table WHERE s = ?").setString("s");
 
     try {
       ds.query(ps).get(timeout);
@@ -174,7 +174,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedExecuteInsertNoParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES ('u')");
+    final PreparedStatement ps = PreparedStatement.create("INSERT INTO " + table + " VALUES ('u')");
 
     assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
@@ -186,7 +186,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedExecuteInsertNoParamFailure() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO invalid_table VALUES ('u')");
+    final PreparedStatement ps = PreparedStatement.create("INSERT INTO invalid_table VALUES ('u')");
 
     try {
       ds.execute(ps).get(timeout);
@@ -198,7 +198,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedExecuteUpdateNoParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = 'u'");
+    final PreparedStatement ps = PreparedStatement.create("UPDATE " + table + " SET s = 'u'");
 
     assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
@@ -209,7 +209,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedExecuteUpdateNoParamFailure() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("UPDATE invalid_table SET s = 'u'");
+    final PreparedStatement ps = PreparedStatement.create("UPDATE invalid_table SET s = 'u'");
 
     try {
       ds.execute(ps).get(timeout);
@@ -221,7 +221,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedExecuteDeleteNoParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = 's'");
+    final PreparedStatement ps = PreparedStatement.create("DELETE FROM " + table + " WHERE s = 's'");
 
     assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
@@ -231,7 +231,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedExecuteDeleteNoParamFailure() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM invalid_table WHERE s = 's'");
+    final PreparedStatement ps = PreparedStatement.create("DELETE FROM invalid_table WHERE s = 's'");
 
     try {
       ds.execute(ps).get(timeout);
@@ -243,7 +243,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedExecuteInsertWithParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO " + table + " VALUES (?)").setString("u");
+    final PreparedStatement ps = PreparedStatement.create("INSERT INTO " + table + " VALUES (?)").setString("u");
 
     assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
@@ -255,7 +255,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedExecuteInsertWithParamFailure() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("INSERT INTO invalid_table VALUES (?)").setString("u");
+    final PreparedStatement ps = PreparedStatement.create("INSERT INTO invalid_table VALUES (?)").setString("u");
 
     try {
       ds.execute(ps).get(timeout);
@@ -267,7 +267,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedExecuteUpdateWithParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("UPDATE " + table + " SET s = ?").setString("u");
+    final PreparedStatement ps = PreparedStatement.create("UPDATE " + table + " SET s = ?").setString("u");
 
     assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
@@ -278,7 +278,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedExecuteUpdteWithParamFailure() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("UPDATE invalid_table SET s = ?").setString("u");
+    final PreparedStatement ps = PreparedStatement.create("UPDATE invalid_table SET s = ?").setString("u");
 
     try {
       ds.execute(ps).get(timeout);
@@ -290,7 +290,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedExecuteDeleteWithParam() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
+    final PreparedStatement ps = PreparedStatement.create("DELETE FROM " + table + " WHERE s = ?").setString("s");
 
     assertEquals(ds.execute(ps).get(timeout).longValue(), 1L);
 
@@ -300,7 +300,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void extendedExecuteDeleteWithParamFailure() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM invalid_table WHERE s = ?").setString("s");
+    final PreparedStatement ps = PreparedStatement.create("DELETE FROM invalid_table WHERE s = ?").setString("s");
 
     try {
       ds.execute(ps).get(timeout);
@@ -312,7 +312,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void transactionSuccess() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
+    final PreparedStatement ps = PreparedStatement.create("DELETE FROM " + table + " WHERE s = ?").setString("s");
 
     final long affectedRows = ds.transactional(() -> ds.execute(ps)).get(timeout);
 
@@ -324,7 +324,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void transactionLocalFailure() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM " + table + " WHERE s = ?").setString("s");
+    final PreparedStatement ps = PreparedStatement.create("DELETE FROM " + table + " WHERE s = ?").setString("s");
 
     try {
       ds.transactional(() -> ds.execute(ps).map(v -> {
@@ -340,7 +340,7 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
   @Test
   public void transactionDBFailure() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply("DELETE FROM INVALID_TABLE WHERE s = ?").setString("s");
+    final PreparedStatement ps = PreparedStatement.create("DELETE FROM INVALID_TABLE WHERE s = ?").setString("s");
 
     ds.transactional(() -> ds.execute(ps)).join(timeout);
 

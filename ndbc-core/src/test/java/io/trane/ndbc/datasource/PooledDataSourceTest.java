@@ -52,7 +52,7 @@ public class PooledDataSourceTest extends PoolEnv {
 
   @Test
   public void queryPreparedStatement() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply(query);
+    final PreparedStatement ps = PreparedStatement.create(query);
     final List<Row> rows = new ArrayList<>();
     final Connection c = new TestConnection() {
       @Override
@@ -67,7 +67,7 @@ public class PooledDataSourceTest extends PoolEnv {
 
   @Test
   public void executePreparedStatement() throws CheckedFutureException {
-    final PreparedStatement ps = PreparedStatement.apply(statement);
+    final PreparedStatement ps = PreparedStatement.create(statement);
     final Long result = 121L;
     final Connection c = new TestConnection() {
       @Override
@@ -164,7 +164,7 @@ public class PooledDataSourceTest extends PoolEnv {
   }
 
   private DataSource<PreparedStatement, Row> ds(final Connection c) {
-    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(c),
+    final Pool<Connection> pool = LockFreePool.create(() -> Future.value(c),
         Optional.empty(), Optional.empty(),
         Optional.empty(), Optional.empty(), scheduler);
     return new PooledDataSource(pool, null);

@@ -70,7 +70,7 @@ public class ConnectionTest {
     final List<Row> result = new ArrayList<>();
     final String query = "query";
     final Integer set = 223;
-    final PreparedStatement ps = PreparedStatement.apply(query).setInteger(set);
+    final PreparedStatement ps = PreparedStatement.create(query).setInteger(set);
     final Supplier<Connection> sup = new ConnectionSupplier() {
       @Override
       BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange() {
@@ -89,7 +89,7 @@ public class ConnectionTest {
     final Long result = 413L;
     final String command = "command";
     final Integer set = 223;
-    final PreparedStatement ps = PreparedStatement.apply(command).setInteger(set);
+    final PreparedStatement ps = PreparedStatement.create(command).setInteger(set);
     final Supplier<Connection> sup = new ConnectionSupplier() {
       @Override
       BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange() {

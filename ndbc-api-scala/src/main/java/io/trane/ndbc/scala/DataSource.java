@@ -15,23 +15,23 @@ import scala.concurrent.Promise$;
 public class DataSource<P extends PreparedStatement, R extends Row> {
 
   public static DataSource<PreparedStatement, Row> fromSystemProperties(final String prefix) {
-    return apply(io.trane.ndbc.DataSource.fromSystemProperties(prefix));
+    return create(io.trane.ndbc.DataSource.fromSystemProperties(prefix));
   }
 
   public static DataSource<PreparedStatement, Row> fromPropertiesFile(final String prefix, final String fileName)
       throws IOException {
-    return apply(io.trane.ndbc.DataSource.fromPropertiesFile(prefix, fileName));
+    return create(io.trane.ndbc.DataSource.fromPropertiesFile(prefix, fileName));
   }
 
   public static DataSource<PreparedStatement, Row> fromProperties(final String prefix, final Properties properties) {
-    return apply(io.trane.ndbc.DataSource.fromProperties(prefix, properties));
+    return create(io.trane.ndbc.DataSource.fromProperties(prefix, properties));
   }
 
   public static DataSource<PreparedStatement, Row> fromConfig(final Config config) {
-    return apply(io.trane.ndbc.DataSource.fromConfig(config));
+    return create(io.trane.ndbc.DataSource.fromConfig(config));
   }
 
-  public static <P extends PreparedStatement, R extends Row> DataSource<P, R> apply(
+  public static <P extends PreparedStatement, R extends Row> DataSource<P, R> create(
       final io.trane.ndbc.DataSource<P, R> ds) {
     return new DataSource<>(ds);
   }

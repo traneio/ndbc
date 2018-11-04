@@ -32,7 +32,7 @@ public class PreparedStatement {
   protected final String     query;
   protected final Value<?>[] params;
 
-  public static PreparedStatement apply(final String query) {
+  public static PreparedStatement create(final String query) {
     return new PreparedStatement(query);
   }
 

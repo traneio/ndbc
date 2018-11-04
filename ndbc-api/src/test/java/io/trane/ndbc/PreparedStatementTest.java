@@ -28,10 +28,10 @@ import io.trane.ndbc.value.Value;
 public class PreparedStatementTest {
 
   String            query = "SELECT 1";
-  PreparedStatement ps    = PreparedStatement.apply(query);
+  PreparedStatement ps    = PreparedStatement.create(query);
 
   @Test
-  public void apply() {
+  public void create() {
     assertEquals(query, ps.query());
   }
 

@@ -19,7 +19,7 @@ public class DataSourceTest {
   private static String host = "host";
   private static int    port = 1112;
   private static String user = "user";
-  private static Config cfg  = Config.apply(DSSupplier.class.getName(), host, port, user);
+  private static Config cfg  = Config.create(DSSupplier.class.getName(), host, port, user);
 
   @Test
   public void fromSystemProperties() {
@@ -50,7 +50,7 @@ public class DataSourceTest {
 
   @Test(expected = RuntimeException.class)
   public void fromFail() {
-    final Config cfg = Config.apply("not a class", host, port, user);
+    final Config cfg = Config.create("not a class", host, port, user);
     DataSource.fromConfig(cfg);
   }
 

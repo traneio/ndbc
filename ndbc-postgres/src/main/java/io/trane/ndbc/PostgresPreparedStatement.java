@@ -40,11 +40,11 @@ import io.trane.ndbc.value.Value;
 
 public final class PostgresPreparedStatement extends PreparedStatement {
 
-  public static PostgresPreparedStatement apply(final PreparedStatement ps) {
+  public static PostgresPreparedStatement create(final PreparedStatement ps) {
     return new PostgresPreparedStatement(ps.query, ps.params);
   }
 
-  public static PostgresPreparedStatement apply(final String query) {
+  public static PostgresPreparedStatement create(final String query) {
     return new PostgresPreparedStatement(query);
   }
 
@@ -339,6 +339,6 @@ public final class PostgresPreparedStatement extends PreparedStatement {
 
   @Override
   public final PostgresPreparedStatement set(final int index, final Value<?> param) {
-    return apply(super.set(index, param));
+    return create(super.set(index, param));
   }
 }

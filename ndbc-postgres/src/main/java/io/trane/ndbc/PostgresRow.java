@@ -13,11 +13,11 @@ import io.trane.ndbc.value.Value;
 
 public class PostgresRow extends Row {
 
-  public static PostgresRow apply(final Row row) {
-    return apply(row.positions, row.columns);
+  public static PostgresRow create(final Row row) {
+    return create(row.positions, row.columns);
   }
 
-  public static PostgresRow apply(final Map<String, Integer> positions, final Value<?>[] columns) {
+  public static PostgresRow create(final Map<String, Integer> positions, final Value<?>[] columns) {
     return new PostgresRow(positions, columns);
   }
 

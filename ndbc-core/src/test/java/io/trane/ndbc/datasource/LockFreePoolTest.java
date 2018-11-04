@@ -21,7 +21,7 @@ public class LockFreePoolTest extends PoolEnv {
   @Test
   public void maxSize() {
     final int maxSize = 100;
-    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(conn()),
+    final Pool<Connection> pool = LockFreePool.create(() -> Future.value(conn()),
         Optional.of(maxSize),
         Optional.empty(), Optional.empty(), Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
@@ -38,7 +38,7 @@ public class LockFreePoolTest extends PoolEnv {
   @Test
   public void maxSizeConcurrentCreation() {
     final int maxSize = 100;
-    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(conn()),
+    final Pool<Connection> pool = LockFreePool.create(() -> Future.value(conn()),
         Optional.of(maxSize),
         Optional.empty(), Optional.empty(), Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
@@ -56,7 +56,7 @@ public class LockFreePoolTest extends PoolEnv {
   @Test
   public void maxSizeConcurrentUsage() {
     final int maxSize = 100;
-    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(conn()),
+    final Pool<Connection> pool = LockFreePool.create(() -> Future.value(conn()),
         Optional.of(maxSize),
         Optional.empty(), Optional.empty(), Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
@@ -79,7 +79,7 @@ public class LockFreePoolTest extends PoolEnv {
   public void maxWaiters() {
     final int maxSize = 100;
     final int maxWaiters = 60;
-    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(conn()),
+    final Pool<Connection> pool = LockFreePool.create(() -> Future.value(conn()),
         Optional.of(maxSize),
         Optional.of(maxWaiters), Optional.empty(), Optional.empty(), scheduler);
     final AtomicInteger executing = new AtomicInteger();
@@ -99,7 +99,7 @@ public class LockFreePoolTest extends PoolEnv {
   public void maxWaitersConcurrentCreation() {
     final int maxSize = 100;
     final int maxWaiters = 60;
-    final Pool<Connection> pool = LockFreePool.apply(() -> Future.value(conn()),
+    final Pool<Connection> pool = LockFreePool.create(() -> Future.value(conn()),
         Optional.of(maxSize),
         Optional.of(maxWaiters), Optional.empty(), Optional.empty(), scheduler);
     final AtomicInteger started = new AtomicInteger();
@@ -119,7 +119,7 @@ public class LockFreePoolTest extends PoolEnv {
 
   @Test(expected = TimeoutException.class)
   public void connectionTimeout() throws CheckedFutureException {
-    final Pool<Connection> pool = LockFreePool.apply(
+    final Pool<Connection> pool = LockFreePool.create(
         () -> Future.value(conn()).delayed(Duration.ofMillis(100), scheduler),
         Optional.empty(), Optional.empty(), Optional.of(Duration.ofMillis(10)),
         Optional.empty(), scheduler);

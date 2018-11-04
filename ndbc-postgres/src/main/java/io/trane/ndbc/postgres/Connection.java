@@ -29,7 +29,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
 
   private static final Logger log = LoggerFactory.getLogger(Connection.class);
 
-  private static final PreparedStatement isValidQuery = PreparedStatement.apply("SELECT 1");
+  private static final PreparedStatement isValidQuery = PreparedStatement.create("SELECT 1");
 
   private final Channel                                                 channel;
   private final Marshallers                                             marshallers;

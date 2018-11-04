@@ -56,7 +56,7 @@ public class ResultSetExchange {
     final AtomicInteger index = new AtomicInteger();
     final Map<String, Integer> positions = fields.stream()
         .collect(Collectors.toMap(t -> t.name, any -> index.getAndIncrement()));
-    final List<io.trane.ndbc.Row> result = rows.stream().map(row -> io.trane.ndbc.Row.apply(positions, row.values))
+    final List<io.trane.ndbc.Row> result = rows.stream().map(row -> io.trane.ndbc.Row.create(positions, row.values))
         .collect(Collectors.toList());
     return result;
   }

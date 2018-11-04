@@ -27,7 +27,7 @@ public class MysqlScalarEncodingTest extends ScalarEncodingTest {
 
   @Override
   protected PreparedStatement prepare(final String query) {
-    return PreparedStatement.apply(query);
+    return PreparedStatement.create(query);
   }
 
   @Override

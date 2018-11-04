@@ -20,7 +20,7 @@ public class Row {
   protected final Map<String, Integer> positions;
   protected final Value<?>[]           columns;
 
-  public static Row apply(final Map<String, Integer> positions, final Value<?>[] columns) {
+  public static Row create(final Map<String, Integer> positions, final Value<?>[] columns) {
     return new Row(positions, columns);
   }
 
