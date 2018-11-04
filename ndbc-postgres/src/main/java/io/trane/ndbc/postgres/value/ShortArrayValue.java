@@ -12,4 +12,14 @@ public final class ShortArrayValue extends PostgresValue<Short[]> {
   public final Short[] getShortArray() {
     return get();
   }
+
+  @Override
+  public byte[] getByteArray() {
+    Short[] s = get();
+    byte[] bytes = new byte[s.length];
+    for (int i = 0; i < s.length; i++)
+      bytes[i] = s[i].byteValue();
+    return bytes;
+  }
+
 }

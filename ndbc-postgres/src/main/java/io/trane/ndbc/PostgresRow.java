@@ -8,21 +8,7 @@ import java.time.OffsetTime;
 import java.util.Map;
 import java.util.UUID;
 
-import io.trane.ndbc.postgres.value.BigDecimalArrayValue;
-import io.trane.ndbc.postgres.value.BooleanArrayValue;
-import io.trane.ndbc.postgres.value.ByteArrayArrayValue;
-import io.trane.ndbc.postgres.value.CharacterArrayValue;
-import io.trane.ndbc.postgres.value.DoubleArrayValue;
-import io.trane.ndbc.postgres.value.FloatArrayValue;
-import io.trane.ndbc.postgres.value.IntegerArrayValue;
-import io.trane.ndbc.postgres.value.LocalDateArrayValue;
-import io.trane.ndbc.postgres.value.LocalDateTimeArrayValue;
-import io.trane.ndbc.postgres.value.LocalTimeArrayValue;
-import io.trane.ndbc.postgres.value.LongArrayValue;
-import io.trane.ndbc.postgres.value.OffsetTimeArrayValue;
-import io.trane.ndbc.postgres.value.ShortArrayValue;
-import io.trane.ndbc.postgres.value.StringArrayValue;
-import io.trane.ndbc.postgres.value.UUIDArrayValue;
+import io.trane.ndbc.postgres.value.PostgresValue;
 import io.trane.ndbc.value.Value;
 
 public class PostgresRow extends Row {
@@ -43,120 +29,120 @@ public class PostgresRow extends Row {
 
   public Character[] getCharacterArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof CharacterArrayValue)
-      return ((CharacterArrayValue) v).getCharacterArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getCharacterArray();
     else
       return cantRead(v, "Character[]");
   }
 
   public String[] getStringArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof StringArrayValue)
-      return ((StringArrayValue) v).getStringArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getStringArray();
     else
       return cantRead(v, "String[]");
   }
 
   public Integer[] getIntegerArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof IntegerArrayValue)
-      return ((IntegerArrayValue) v).getIntegerArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getIntegerArray();
     else
       return cantRead(v, "Integer[]");
   }
 
   public Boolean[] getBooleanArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof BooleanArrayValue)
-      return ((BooleanArrayValue) v).getBooleanArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getBooleanArray();
     else
       return cantRead(v, "Boolean[]");
   }
 
   public Long[] getLongArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof LongArrayValue)
-      return ((LongArrayValue) v).getLongArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getLongArray();
     else
       return cantRead(v, "Long[]");
   }
 
   public Short[] getShortArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof ShortArrayValue)
-      return ((ShortArrayValue) v).getShortArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getShortArray();
     else
       return cantRead(v, "Short[]");
   }
 
   public BigDecimal[] getBigDecimalArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof BigDecimalArrayValue)
-      return ((BigDecimalArrayValue) v).getBigDecimalArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getBigDecimalArray();
     else
       return cantRead(v, "BigDecimal[]");
   }
 
   public Float[] getFloatArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof FloatArrayValue)
-      return ((FloatArrayValue) v).getFloatArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getFloatArray();
     else
       return cantRead(v, "Float[]");
   }
 
   public Double[] getDoubleArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof DoubleArrayValue)
-      return ((DoubleArrayValue) v).getDoubleArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getDoubleArray();
     else
       return cantRead(v, "Double[]");
   }
 
   public LocalDateTime[] getLocalDateTimeArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof LocalDateTimeArrayValue)
-      return ((LocalDateTimeArrayValue) v).getLocalDateTimeArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getLocalDateTimeArray();
     else
       return cantRead(v, "LocalDateTime[]");
   }
 
   public byte[][] getByteArrayArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof ByteArrayArrayValue)
-      return ((ByteArrayArrayValue) v).getByteArrayArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getByteArrayArray();
     else
       return cantRead(v, "byte[][]");
   }
 
   public LocalDate[] getLocalDateArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof LocalDateArrayValue)
-      return ((LocalDateArrayValue) v).getLocalDateArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getLocalDateArray();
     else
       return cantRead(v, "LocalDate[]");
   }
 
   public LocalTime[] getLocalTimeArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof LocalTimeArrayValue)
-      return ((LocalTimeArrayValue) v).getLocalTimeArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getLocalTimeArray();
     else
       return cantRead(v, "LocalTime[]");
   }
 
   public OffsetTime[] getOffsetTimeArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof OffsetTimeArrayValue)
-      return ((OffsetTimeArrayValue) v).getOffsetTimeArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getOffsetTimeArray();
     else
       return cantRead(v, "Offset[]");
   }
 
   public UUID[] getUUIDArray(final int index) {
     final Value<?> v = column(index);
-    if (v instanceof UUIDArrayValue)
-      return ((UUIDArrayValue) v).getUUIDArray();
+    if (v instanceof PostgresValue)
+      return ((PostgresValue<?>) v).getUUIDArray();
     else
       return cantRead(v, "UUID[]");
   }
