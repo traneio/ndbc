@@ -25,6 +25,10 @@ public class PostgresDataSource implements DataSource<PostgresPreparedStatement,
     return create(io.trane.ndbc.DataSource.fromProperties(prefix, properties));
   }
 
+  public static PostgresDataSource fromJdbcUrl(final String url) {
+    return create(io.trane.ndbc.DataSource.fromJdbcUrl(url));
+  }
+
   public static PostgresDataSource fromConfig(final Config config) {
     return create(DataSource.fromConfig(config));
   }

@@ -3,6 +3,9 @@ package io.trane.ndbc;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Collections;
@@ -207,6 +210,64 @@ public final class Config {
         .map(cls -> Embedded.create(cls, getProperty(prefix, properties, "embedded.version"))));
 
     return config;
+  }
+
+  public static final Config fromJdbcUrl(final String url) {
+
+    final Properties prop = new Properties();
+    final String prefix = "url.";
+
+    URI uri = URI.create(url.replaceFirst("jdbc:", ""));
+
+    String dsSupplier;
+    String scheme = uri.getScheme();
+    if (scheme.contains("mysql"))
+      dsSupplier = "io.trane.ndbc.mysql.netty4.DataSourceSupplier";
+    else if (scheme.contains("postgres"))
+      dsSupplier = "io.trane.ndbc.postgres.netty4.DataSourceSupplier";
+    else
+      throw new NdbcException("Can't determine the data source supplier from the jdbc url");
+    prop.put(prefix + "dataSourceSupplierClass", dsSupplier);
+
+    if (uri.getUserInfo() != null) {
+      String[] split = uri.getUserInfo().split(":");
+      prop.put(prefix + "user", split[0]);
+      if (split.length > 1)
+        prop.put(prefix + "password", split[1]);
+    }
+
+    if (uri.getHost() != null)
+      prop.put(prefix + "host", uri.getHost());
+
+    if (uri.getPort() >= 0)
+      prop.put(prefix + "port", "" + uri.getPort());
+
+    if (uri.getPath() != null) {
+      String norm = uri.getPath().replaceFirst("/", "");
+      if (!norm.isEmpty())
+        prop.put(prefix + "database", norm);
+    }
+
+    if (uri.getQuery() != null) {
+      String[] params = uri.getQuery().split("&");
+      for (String param : params) {
+        String[] split = param.split("=");
+        String key;
+        try {
+          key = URLDecoder.decode(split[0], "UTF-8");
+          String value;
+          if (split.length > 1)
+            value = URLDecoder.decode(split[1], "UTF-8");
+          else
+            value = "";
+          prop.put(prefix + key, value);
+        } catch (UnsupportedEncodingException e) {
+          throw new NdbcException("Can't decode the url parameters", e);
+        }
+      }
+    }
+
+    return fromProperties(prefix.substring(0, prefix.length() - 1), prop);
   }
 
   public static final Config create(final String dataSourceSupplierClass, final String host,

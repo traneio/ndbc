@@ -30,6 +30,10 @@ public class DataSource<P extends PreparedStatement, R extends Row> {
     return create(io.trane.ndbc.DataSource.fromProperties(prefix, properties));
   }
 
+  public static DataSource<PreparedStatement, Row> fromJdbcUrl(final String url) {
+    return create(io.trane.ndbc.DataSource.fromJdbcUrl(url));
+  }
+
   public static DataSource<PreparedStatement, Row> fromConfig(final Config config) {
     return create(io.trane.ndbc.DataSource.fromConfig(config));
   }

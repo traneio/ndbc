@@ -1,6 +1,5 @@
 package io.trane.ndbc.scala;
 
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -25,6 +24,10 @@ public class DataSource<P extends PreparedStatement, R extends Row> {
 
   public static DataSource<PreparedStatement, Row> fromProperties(final String prefix, final Properties properties) {
     return create(io.trane.ndbc.DataSource.fromProperties(prefix, properties));
+  }
+
+  public static DataSource<PreparedStatement, Row> fromJdbcUrl(final String url) {
+    return create(io.trane.ndbc.DataSource.fromJdbcUrl(url));
   }
 
   public static DataSource<PreparedStatement, Row> fromConfig(final Config config) {

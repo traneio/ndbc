@@ -532,4 +532,41 @@ public class ConfigTest {
     assertFalse(c.encodingClasses().isPresent());
     assertFalse(c.nioThreads().isPresent());
   }
+
+  @Test
+  public void fromUrlMysql() {
+    Config c = Config.fromJdbcUrl(
+        "jdbc:mysql://" + user + ":" + password + "@" + host + ":" + port + "/" + database + "?poolMaxSize="
+            + poolMaxSize);
+    assertEquals(c.dataSourceSupplierClass(), "io.trane.ndbc.mysql.netty4.DataSourceSupplier");
+    assertEquals(c.host(), host);
+    assertEquals(c.port(), port);
+    assertEquals(c.user(), user);
+    assertEquals(c.password(), Optional.of(password));
+    assertEquals(c.database(), Optional.of(database));
+    assertEquals(c.poolMaxSize(), Optional.of(poolMaxSize));
+  }
+
+  @Test
+  public void fromUrlPostgres() {
+    Config c = Config.fromJdbcUrl(
+        "jdbc:postgresql://" + user + ":" + password + "@" + host + ":" + port + "/" + database + "?poolMaxSize="
+            + poolMaxSize);
+    assertEquals(c.dataSourceSupplierClass(), "io.trane.ndbc.postgres.netty4.DataSourceSupplier");
+    assertEquals(c.host(), host);
+    assertEquals(c.port(), port);
+    assertEquals(c.user(), user);
+    assertEquals(c.password(), Optional.of(password));
+    assertEquals(c.database(), Optional.of(database));
+    assertEquals(c.poolMaxSize(), Optional.of(poolMaxSize));
+  }
+
+  @Test
+  public void fromUrlPropertyOverride() {
+    Config c = Config.fromJdbcUrl(
+        "jdbc:mysql://wronguser:wrongpass@" + host + ":" + port + "/" + database + "?user=" + user + "&password="
+            + password);
+    assertEquals(c.user(), user);
+    assertEquals(c.password(), Optional.of(password));
+  }
 }

@@ -23,6 +23,10 @@ public interface DataSource<P extends PreparedStatement, R extends Row> {
     return fromConfig(Config.fromProperties(prefix, properties));
   }
 
+  public static DataSource<PreparedStatement, Row> fromJdbcUrl(final String url) {
+    return fromConfig(Config.fromJdbcUrl(url));
+  }
+
   @SuppressWarnings("unchecked")
   public static DataSource<PreparedStatement, Row> fromConfig(final Config config) {
     return config.embedded().map(embedded -> {
