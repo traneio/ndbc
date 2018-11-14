@@ -22,6 +22,31 @@ Please refer to the Javadoc for detailed information about the library and its f
 
 [![Javadoc](https://img.shields.io/badge/api-javadoc-green.svg)](http://trane.io/apidocs/ndbc/current/)
 
+## 1 minute example
+
+```
+// Create a Config
+Config config = Config.create("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 5432, "user")
+                      .database("test_schema")
+                      .password("test");
+
+// Create a DataSource
+PostgresDataSource ds = PostgresDataSource.fromConfig(config);
+
+// Define a timeout
+Duration timeout = Duration.ofSeconds(10);
+
+// Send a query to the db defining a timeout and receiving back an iterator
+Iterator<PostgresRow> rows = ds.query("SELECT id, description FROM table").get(timeout).iterator();
+
+// iterate over awesome strongly typed rows
+rows.forEachRemaining(row -> {
+  System.out.println(row.getLong("id"));
+  System.out.println(row.getString("description"));
+});
+
+```
+
 ## Code of Conduct
 
 Please note that this project is released with a Contributor Code of Conduct. By participating in this project you agree to abide by its terms. See [CODE_OF_CONDUCT.md](https://github.com/traneio/ndbc/blob/master/CODE_OF_CONDUCT.md) for details.
