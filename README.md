@@ -24,7 +24,7 @@ Please refer to the Javadoc for detailed information about the library and its f
 
 ## 1 minute example
 
-```
+```java
 // Create a Config
 Config config = Config.create("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 5432, "user")
                       .database("test_schema")
