@@ -45,9 +45,51 @@ Duration timeout = Duration.ofSeconds(10);
 Iterator<PostgresRow> rows = ds.query("SELECT 1 AS value").get(timeout).iterator();
 
 // iterate over awesome strongly typed rows
-rows.forEachRemaining(row -> {
-  System.out.println(row.getLong("value"));
-});
+rows.forEachRemaining(row -> System.out.println(row.getLong("value")));
+```
+
+## Creating a DataSource
+
+### From Properties
+```java
+Properties p = new Properties();
+p.setProperty("db.dataSourceSupplierClass", "io.trane.ndbc.postgres.netty4.DataSourceSupplier");
+p.setProperty("db.host", "localhost");
+p.setProperty("db.port", Integer.toString(0));
+p.setProperty("db.user", "user");
+p.setProperty("db.password", "test");
+p.setProperty("db.database", "test_schema");
+p.setProperty("db.embedded.supplierClass", "io.trane.ndbc.postgres.embedded.EmbeddedSupplier");
+
+PostgresDataSource ds = PostgresDataSource.fromProperties("db", p);
+```
+
+### From a Properties file
+
+Using the `Properties` from the previous example:
+
+```java
+File file = File.createTempFile("config", "fromPropertiesFile");
+p.store(new FileOutputStream(file), "");
+
+PostgresDataSource ds = PostgresDataSource.fromPropertiesFile("db", file.getAbsolutePath());
+```
+
+### From System Properties
+
+Similar to the first example, but getting the system properties with `getProperties`:
+
+```java
+Properties p = System.getProperties();
+// p.setProperty(...);
+
+PostgresDataSource ds = PostgresDataSource.fromSystemProperties("db");
+```
+
+### From Jdbc Url
+
+```java
+PostgresDataSource ds = PostgresDataSource.fromJdbcUrl("jdbc:postgresql://user:test@localhost:0/test_schema");
 ```
 
 ## Code of Conduct
