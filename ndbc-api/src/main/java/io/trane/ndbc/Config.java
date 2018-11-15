@@ -113,6 +113,10 @@ public final class Config {
     public final String           supplierClass;
     public final Optional<String> version;
 
+    public static Embedded create(final String supplierClass) {
+      return create(supplierClass, Optional.empty());
+    }
+
     public static Embedded create(final String supplierClass, final Optional<String> version) {
       return new Embedded(supplierClass, version);
     }
@@ -560,6 +564,14 @@ public final class Config {
 
   public final Optional<Embedded> embedded() {
     return embedded;
+  }
+
+  public final Config embedded(final String supplierClass) {
+    return embedded(supplierClass, Optional.empty());
+  }
+
+  public final Config embedded(final String supplierClass, final Optional<String> version) {
+    return embedded(Embedded.create(supplierClass, version));
   }
 
   public final Config embedded(final Embedded embedded) {

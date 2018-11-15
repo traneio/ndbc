@@ -25,10 +25,15 @@ Please refer to the Javadoc for detailed information about the library and its f
 ## 1 minute example
 
 ```java
+import io.trane.ndbc.*;
+import io.trane.ndbc.postgres.*;
+import java.time.Duration;
+
 // Create a Config
-Config config = Config.create("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 5432, "user")
+Config config = Config.create("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 0, "user")
                       .database("test_schema")
-                      .password("test");
+                      .password("test")
+                      .embedded("io.trane.ndbc.postgres.embedded.EmbeddedSupplier");
 
 // Create a DataSource
 PostgresDataSource ds = PostgresDataSource.fromConfig(config);
@@ -37,14 +42,12 @@ PostgresDataSource ds = PostgresDataSource.fromConfig(config);
 Duration timeout = Duration.ofSeconds(10);
 
 // Send a query to the db defining a timeout and receiving back an iterator
-Iterator<PostgresRow> rows = ds.query("SELECT id, description FROM table").get(timeout).iterator();
+Iterator<PostgresRow> rows = ds.query("SELECT 1 AS value").get(timeout).iterator();
 
 // iterate over awesome strongly typed rows
 rows.forEachRemaining(row -> {
-  System.out.println(row.getLong("id"));
-  System.out.println(row.getString("description"));
+  System.out.println(row.getLong("value"));
 });
-
 ```
 
 ## Code of Conduct

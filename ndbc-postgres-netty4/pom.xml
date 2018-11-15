@@ -25,6 +25,7 @@
 			<groupId>io.trane</groupId>
 			<artifactId>ndbc-test</artifactId>
 			<version>0.1.2-SNAPSHOT</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.trane</groupId>
