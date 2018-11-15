@@ -1,9 +1,9 @@
 package io.trane.ndbc.test;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
@@ -22,12 +22,16 @@ public class ReadmeTest {
 
   private final Pattern       snippetPattern = Pattern.compile("```java(.*)```", Pattern.DOTALL);
   private final String        commentPattern = "(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)";
-  private final Path          readmePath     = FileSystems.getDefault().getPath("..", "README.md");
+  private final Path          readmePath;
   private final SimpleConsole c;
 
   public ReadmeTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-    ConsoleConfig cfg = ConsoleConfig.consoleConfig();
-    c = new SimpleConsole(cfg);
+    String fileName = "README.md";
+    File file = new File(fileName);
+    if (!file.exists())
+      file = new File("../" + fileName);
+    readmePath = file.toPath();
+    c = new SimpleConsole(ConsoleConfig.consoleConfig());
   }
 
   @Before
