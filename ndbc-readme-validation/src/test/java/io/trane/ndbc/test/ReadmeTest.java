@@ -20,7 +20,7 @@ import javarepl.console.SimpleConsole;
 
 public class ReadmeTest {
 
-  private final Pattern       snippetPattern = Pattern.compile("```java(.*)```", Pattern.DOTALL);
+  private final Pattern       snippetPattern = Pattern.compile("```java([^```]*)```", Pattern.DOTALL);
   private final String        commentPattern = "(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)";
   private final Path          readmePath;
   private final SimpleConsole c;

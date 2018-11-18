@@ -11,6 +11,7 @@ public class PositionalQuery {
     for (int i = 0; i < query.length(); i++) {
       final char c = query.charAt(i);
       if (c == '?') {
+        // escape ??
         if ((query.length() > (i + 1)) && (query.charAt(i + 1) == '?')) {
           sb.append("?");
           i++;
