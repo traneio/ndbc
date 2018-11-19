@@ -28,6 +28,7 @@ Please refer to the Javadoc for detailed information about the library and its f
 import io.trane.ndbc.*;
 import io.trane.ndbc.postgres.*;
 import java.time.Duration;
+import java.util.List;
 
 // Create a Config with an Embedded Postgres
 Config config = Config.create("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 0, "user")
@@ -41,11 +42,11 @@ PostgresDataSource ds = PostgresDataSource.fromConfig(config);
 // Define a timeout
 Duration timeout = Duration.ofSeconds(10);
 
-// Send a query to the db defining a timeout and receiving back an iterator
-Iterator<PostgresRow> rows = ds.query("SELECT 1 AS value").get(timeout).iterator();
+// Send a query to the db defining a timeout and receiving back a List
+List<PostgresRow> rows = ds.query("SELECT 1 AS value").get(timeout);
 
 // iterate over awesome strongly typed rows
-rows.forEachRemaining(row -> System.out.println(row.getLong("value")));
+rows.forEach(row -> System.out.println(row.getLong("value")));
 ```
 
 ## Creating a DataSource
