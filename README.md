@@ -29,7 +29,7 @@ import io.trane.ndbc.*;
 import io.trane.ndbc.postgres.*;
 import java.time.Duration;
 
-// Create a Config
+// Create a Config with an Embedded Postgres
 Config config = Config.create("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 0, "user")
                       .database("test_schema")
                       .password("test")
@@ -64,11 +64,14 @@ p.setProperty("db.embedded.supplierClass", "io.trane.ndbc.postgres.embedded.Embe
 PostgresDataSource ds = PostgresDataSource.fromProperties("db", p);
 ```
 
-### From a Properties file
+### From Properties file
 
 Using the `Properties` from the previous example:
 
 ```java
+import java.io.File;
+import java.io.FileOutputStream;
+
 File file = File.createTempFile("config", "fromPropertiesFile");
 p.store(new FileOutputStream(file), "");
 
@@ -81,7 +84,13 @@ Similar to the first example, but getting the system properties with `getPropert
 
 ```java
 Properties p = System.getProperties();
-// p.setProperty(...);
+p.setProperty("db.dataSourceSupplierClass", "io.trane.ndbc.postgres.netty4.DataSourceSupplier");
+p.setProperty("db.host", "localhost");
+p.setProperty("db.port", Integer.toString(0));
+p.setProperty("db.user", "user");
+p.setProperty("db.password", "test");
+p.setProperty("db.database", "test_schema");
+p.setProperty("db.embedded.supplierClass", "io.trane.ndbc.postgres.embedded.EmbeddedSupplier");
 
 PostgresDataSource ds = PostgresDataSource.fromSystemProperties("db");
 ```
