@@ -100,6 +100,16 @@ PostgresDataSource ds = PostgresDataSource.fromSystemProperties("db");
 PostgresDataSource ds = PostgresDataSource.fromJdbcUrl("jdbc:postgresql://user:5tr0ngP@ssW0rd@localhost:5432/schema");
 ```
 
+## Available configurations
+
+| Property | Required | Expected value | Default value |
+| --- | --- | --- | --- |
+| `dataSourceSupplierClass` | yes | `io.trane.ndbc.postgres.netty4.DataSourceSupplier` or `io.trane.ndbc.mysql.netty4.DataSourceSupplier` | - |
+| `host` | yes | String containing the host of the database | - |
+| `port` | yes | String containing the port of the database | - |
+| `user` | yes | String containing the user accessing the database | - |
+
+
 ## Code of Conduct
 
 Please note that this project is released with a Contributor Code of Conduct. By participating in this project you agree to abide by its terms. See [CODE_OF_CONDUCT.md](https://github.com/traneio/ndbc/blob/master/CODE_OF_CONDUCT.md) for details.
