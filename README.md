@@ -102,24 +102,24 @@ PostgresDataSource ds = PostgresDataSource.fromJdbcUrl("jdbc:postgresql://user:5
 
 ## Available configurations
 
-| Property | Required | Expected value | Default value |
-| --- | --- | --- | --- |
-| `dataSourceSupplierClass` | yes | `io.trane.ndbc.postgres.netty4.DataSourceSupplier` or `io.trane.ndbc.mysql.netty4.DataSourceSupplier` | - |
-| `host` | yes | database host | - |
-| `port` | yes | database port | - |
-| `user` | yes | user accessing the database | - |
-| `password` | no | password of the user accessing the database | - |
-| `database` | no | schema name | - |
-| `charset` | no | character encoding. If not informed, the default charset of the JVM will be used | - |
-| `poolMaxSize` | no | maximum number of connections in the pool | - |
-| `poolMaxWaiters` | no | maximum number of waiters for a connection | - |
-| `poolValidationIntervalSeconds` | no | frequency to test connections in the pool | - |
-| `connectionTimeoutSeconds` | no | maximum time that a connection can remain idle. After that, the pool can close the connection | - |
-| `queryTimeoutSeconds` | no | maximum time to execute a query | - |
-| `encodingClasses` | no | | - |
-| `nioThreads` | no | | - |
-| `embedded` | no | | - |
-| `ssl` | no | | - |
+| Property | Required | Expected value |
+| --- | --- | --- |
+| `dataSourceSupplierClass` | yes | `io.trane.ndbc.postgres.netty4.DataSourceSupplier` or `io.trane.ndbc.mysql.netty4.DataSourceSupplier` |
+| `host` | yes | database host |
+| `port` | yes | database port |
+| `user` | yes | user accessing the database |
+| `password` | no | password of the user accessing the database |
+| `database` | no | schema name |
+| `charset` | no | character encoding. If not informed, the default charset of the JVM will be used |
+| `poolMaxSize` | no | maximum number of connections in the pool |
+| `poolMaxWaiters` | no | maximum number of waiters for a connection |
+| `poolValidationIntervalSeconds` | no | frequency to test connections in the pool |
+| `connectionTimeoutSeconds` | no | maximum time that a connection can remain idle. After that, the pool can close the connection |
+| `queryTimeoutSeconds` | no | maximum time to execute a query |
+| `encodingClasses` | no | |
+| `nioThreads` | no | |
+| `embedded` | no | |
+| `ssl` | no | |
 
 ## Code of Conduct
 
