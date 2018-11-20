@@ -56,18 +56,17 @@ rows.forEach(row -> System.out.println(row.getLong("value")));
 Properties p = new Properties();
 p.setProperty("db.dataSourceSupplierClass", "io.trane.ndbc.postgres.netty4.DataSourceSupplier");
 p.setProperty("db.host", "localhost");
-p.setProperty("db.port", Integer.toString(0));
+p.setProperty("db.port", Integer.toString(5432));
 p.setProperty("db.user", "user");
-p.setProperty("db.password", "test");
-p.setProperty("db.database", "test_schema");
-p.setProperty("db.embedded.supplierClass", "io.trane.ndbc.postgres.embedded.EmbeddedSupplier");
+p.setProperty("db.password", "5tr0ngP@ssW0rd");
+p.setProperty("db.database", "schema");
 
 PostgresDataSource ds = PostgresDataSource.fromProperties("db", p);
 ```
 
 ### From Properties file
 
-Using the `Properties` from the previous example:
+Using the `Properties` from previous example:
 
 ```java
 import java.io.File;
@@ -89,9 +88,8 @@ p.setProperty("db.dataSourceSupplierClass", "io.trane.ndbc.postgres.netty4.DataS
 p.setProperty("db.host", "localhost");
 p.setProperty("db.port", Integer.toString(0));
 p.setProperty("db.user", "user");
-p.setProperty("db.password", "test");
-p.setProperty("db.database", "test_schema");
-p.setProperty("db.embedded.supplierClass", "io.trane.ndbc.postgres.embedded.EmbeddedSupplier");
+p.setProperty("db.password", "5tr0ngP@ssW0rd");
+p.setProperty("db.database", "schema");
 
 PostgresDataSource ds = PostgresDataSource.fromSystemProperties("db");
 ```
@@ -99,7 +97,7 @@ PostgresDataSource ds = PostgresDataSource.fromSystemProperties("db");
 ### From Jdbc Url
 
 ```java
-PostgresDataSource ds = PostgresDataSource.fromJdbcUrl("jdbc:postgresql://user:test@localhost:0/test_schema");
+PostgresDataSource ds = PostgresDataSource.fromJdbcUrl("jdbc:postgresql://user:5tr0ngP@ssW0rd@localhost:5432/schema");
 ```
 
 ## Code of Conduct
