@@ -126,11 +126,6 @@ DataSource<PreparedStatement, Row> ds = DataSource.fromJdbcUrl("jdbc:postgresql:
 As an example, let's create a table with some data:
 
 ```java
-Config config = Config.create("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 0, "user")
-                      .database("test_schema")
-                      .password("test")
-                      .embedded("io.trane.ndbc.postgres.embedded.EmbeddedSupplier");
-
 DataSource<PreparedStatement, Row> ds = DataSource.fromConfig(config);
 
 ds.execute("CREATE TABLE table_1 (id integer, description varchar)").get(timeout);
