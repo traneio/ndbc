@@ -121,6 +121,46 @@ PostgresDataSource ds = PostgresDataSource.fromJdbcUrl("jdbc:postgresql://user:5
 | `embedded` | |
 | `ssl` | |
 
+## Querying
+
+As an example, let's create a table with some data:
+
+```java
+Config config = Config.create("io.trane.ndbc.postgres.netty4.DataSourceSupplier", "localhost", 0, "user")
+                      .database("test_schema")
+                      .password("test")
+                      .embedded("io.trane.ndbc.postgres.embedded.EmbeddedSupplier");
+
+PostgresDataSource ds = PostgresDataSource.fromConfig(config);
+
+ds.execute("CREATE TABLE table_1 (id integer, description varchar)").get(timeout);
+ds.execute("INSERT INTO table_1 VALUES (1, 'Batman')").get(timeout);
+```
+
+### Simple Query
+
+```java
+List<PostgresRow> rows = ds.query("SELECT * from table_1").get(timeout)
+```
+
+### PreparedStatement
+
+#### Without parameters
+
+```java
+PostgresPreparedStatement ps = PostgresPreparedStatement.create("SELECT * FROM table_1");
+
+List<PostgresRow> rows = ds.query(ps).get(timeout);
+```
+
+#### With parameters
+
+```java
+PostgresPreparedStatement ps = PostgresPreparedStatement.create("SELECT * FROM table_1 WHERE id = ?").setInteger(1);
+
+List<PostgresRow> rows = ds.query(ps).get(timeout);
+```
+
 ## Code of Conduct
 
 Please note that this project is released with a Contributor Code of Conduct. By participating in this project you agree to abide by its terms. See [CODE_OF_CONDUCT.md](https://github.com/traneio/ndbc/blob/master/CODE_OF_CONDUCT.md) for details.
