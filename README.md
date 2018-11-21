@@ -37,13 +37,13 @@ Config config = Config.create("io.trane.ndbc.postgres.netty4.DataSourceSupplier"
                       .embedded("io.trane.ndbc.postgres.embedded.EmbeddedSupplier");
 
 // Create a DataSource
-PostgresDataSource ds = PostgresDataSource.fromConfig(config);
+DataSource<PreparedStatement, Row> ds = DataSource.fromConfig(config);
 
 // Define a timeout
 Duration timeout = Duration.ofSeconds(10);
 
 // Send a query to the db defining a timeout and receiving back a List
-List<PostgresRow> rows = ds.query("SELECT 1 AS value").get(timeout);
+List<Row> rows = ds.query("SELECT 1 AS value").get(timeout);
 
 // iterate over awesome strongly typed rows
 rows.forEach(row -> System.out.println(row.getLong("value")));
@@ -61,7 +61,7 @@ p.setProperty("db.user", "user");
 p.setProperty("db.password", "5tr0ngP@ssW0rd");
 p.setProperty("db.database", "schema");
 
-PostgresDataSource ds = PostgresDataSource.fromProperties("db", p);
+DataSource<PreparedStatement, Row> ds = DataSource.fromProperties("db", p);
 ```
 
 ### From Properties file
@@ -75,7 +75,7 @@ import java.io.FileOutputStream;
 File file = File.createTempFile("config", "fromPropertiesFile");
 p.store(new FileOutputStream(file), "");
 
-PostgresDataSource ds = PostgresDataSource.fromPropertiesFile("db", file.getAbsolutePath());
+DataSource<PreparedStatement, Row> ds = DataSource.fromPropertiesFile("db", file.getAbsolutePath());
 ```
 
 ### From System Properties
@@ -91,13 +91,13 @@ p.setProperty("db.user", "user");
 p.setProperty("db.password", "5tr0ngP@ssW0rd");
 p.setProperty("db.database", "schema");
 
-PostgresDataSource ds = PostgresDataSource.fromSystemProperties("db");
+DataSource<PreparedStatement, Row> ds = DataSource.fromSystemProperties("db");
 ```
 
 ### From Jdbc Url
 
 ```java
-PostgresDataSource ds = PostgresDataSource.fromJdbcUrl("jdbc:postgresql://user:5tr0ngP@ssW0rd@localhost:5432/schema");
+DataSource<PreparedStatement, Row> ds = DataSource.fromJdbcUrl("jdbc:postgresql://user:5tr0ngP@ssW0rd@localhost:5432/schema");
 ```
 
 ## Available configurations
@@ -131,7 +131,7 @@ Config config = Config.create("io.trane.ndbc.postgres.netty4.DataSourceSupplier"
                       .password("test")
                       .embedded("io.trane.ndbc.postgres.embedded.EmbeddedSupplier");
 
-PostgresDataSource ds = PostgresDataSource.fromConfig(config);
+DataSource<PreparedStatement, Row> ds = DataSource.fromConfig(config);
 
 ds.execute("CREATE TABLE table_1 (id integer, description varchar)").get(timeout);
 ds.execute("INSERT INTO table_1 VALUES (1, 'Batman')").get(timeout);
@@ -140,7 +140,7 @@ ds.execute("INSERT INTO table_1 VALUES (1, 'Batman')").get(timeout);
 ### Simple Query
 
 ```java
-List<PostgresRow> rows = ds.query("SELECT * from table_1").get(timeout)
+List<Row> rows = ds.query("SELECT * from table_1").get(timeout)
 ```
 
 ### PreparedStatement
@@ -148,17 +148,17 @@ List<PostgresRow> rows = ds.query("SELECT * from table_1").get(timeout)
 #### Without parameters
 
 ```java
-PostgresPreparedStatement ps = PostgresPreparedStatement.create("SELECT * FROM table_1");
+PreparedStatement ps = PreparedStatement.create("SELECT * FROM table_1");
 
-List<PostgresRow> rows = ds.query(ps).get(timeout);
+List<Row> rows = ds.query(ps).get(timeout);
 ```
 
 #### With parameters
 
 ```java
-PostgresPreparedStatement ps = PostgresPreparedStatement.create("SELECT * FROM table_1 WHERE id = ?").setInteger(1);
+PreparedStatement ps = PreparedStatement.create("SELECT * FROM table_1 WHERE id = ?").setInteger(1);
 
-List<PostgresRow> rows = ds.query(ps).get(timeout);
+List<Row> rows = ds.query(ps).get(timeout);
 ```
 
 ## Code of Conduct
