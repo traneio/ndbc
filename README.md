@@ -123,13 +123,19 @@ DataSource<PreparedStatement, Row> ds = DataSource.fromJdbcUrl("jdbc:postgresql:
 
 ## Querying
 
-As an example, let's create a table with some data:
+Let's use the pre-populated table `table_1` as an example:
+
+| id | description |
+| --- | --- |
+| 1 | The Amazing Spiderman |
+| 2 | Batman the Dark Knight |
 
 ```java
 DataSource<PreparedStatement, Row> ds = DataSource.fromConfig(config);
 
 ds.execute("CREATE TABLE table_1 (id integer, description varchar)").get(timeout);
-ds.execute("INSERT INTO table_1 VALUES (1, 'Batman')").get(timeout);
+ds.execute("INSERT INTO table_1 VALUES (1, 'The Amazing Spiderman')").get(timeout);
+ds.execute("INSERT INTO table_1 VALUES (2, 'Batman the Dark Knight')").get(timeout);
 ```
 
 ### Simple Query
@@ -154,6 +160,46 @@ List<Row> rows = ds.query(ps).get(timeout);
 PreparedStatement ps = PreparedStatement.create("SELECT * FROM table_1 WHERE id = ?").setInteger(1);
 
 List<Row> rows = ds.query(ps).get(timeout);
+```
+
+## Actions - Insert, Update and Delete
+
+The code to execute actions is similar to the one for queries, the only difference is that instead of using `query`, we will use `execute`, which always returns a `Future<Long>`, with the number of affected rows.
+
+### Simple Execute
+
+```java
+Future<Long> futureInsertedRows = ds.execute("INSERT INTO table_1 VALUES (10, 'Avengers Assemble!')")
+
+Future<Long> futureUpdatedRows = ds.execute("UPDATE table_1 SET description = 'Go Go Power Rangers'")
+
+Future<Long> futureDeletedRows = ds.execute("DELETE FROM table_1 WHERE id = 10")
+```
+
+### PreparedStatement
+
+#### Without parameters
+
+```java
+PreparedStatement ps = PreparedStatement.create("DELETE FROM table_1");
+
+Long affectedRows = ds.execute(ps).get(timeout);
+```
+
+#### With parameters
+
+```java
+PreparedStatement ps = PreparedStatement.create("DELETE FROM table_1 WHERE id = ?").setInteger(2);
+
+Long affectedRows = ds.execute(ps).get(timeout);
+```
+
+### Transactions
+
+```java
+PreparedStatement ps = PreparedStatement.create("DELETE FROM table_1 WHERE id = ?").setInteger(2);
+
+Long affectedRows = ds.transactional(() -> ds.execute(ps)).get(timeout);
 ```
 
 ## Code of Conduct
