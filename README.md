@@ -25,6 +25,7 @@ Please refer to the Javadoc for detailed information about the library and its f
 ## 1 minute example
 
 ```java
+import io.trane.future.Future;
 import io.trane.ndbc.*;
 import io.trane.ndbc.postgres.*;
 import java.time.Duration;
@@ -141,7 +142,7 @@ ds.execute("INSERT INTO table_1 VALUES (2, 'Batman the Dark Knight')").get(timeo
 ### Simple Query
 
 ```java
-List<Row> rows = ds.query("SELECT * from table_1").get(timeout)
+Future<List<Row>> rows = ds.query("SELECT * from table_1");
 ```
 
 ### PreparedStatement
@@ -151,7 +152,7 @@ List<Row> rows = ds.query("SELECT * from table_1").get(timeout)
 ```java
 PreparedStatement ps = PreparedStatement.create("SELECT * FROM table_1");
 
-List<Row> rows = ds.query(ps).get(timeout);
+Future<List<Row>> rows = ds.query(ps);
 ```
 
 #### With parameters
@@ -159,7 +160,7 @@ List<Row> rows = ds.query(ps).get(timeout);
 ```java
 PreparedStatement ps = PreparedStatement.create("SELECT * FROM table_1 WHERE id = ?").setInteger(1);
 
-List<Row> rows = ds.query(ps).get(timeout);
+Future<List<Row>> rows = ds.query(ps);
 ```
 
 ## Actions - Insert, Update and Delete
@@ -183,7 +184,7 @@ Future<Long> futureDeletedRows = ds.execute("DELETE FROM table_1 WHERE id = 10")
 ```java
 PreparedStatement ps = PreparedStatement.create("DELETE FROM table_1");
 
-Long affectedRows = ds.execute(ps).get(timeout);
+Future<Long> affectedRows = ds.execute(ps);
 ```
 
 #### With parameters
@@ -191,7 +192,7 @@ Long affectedRows = ds.execute(ps).get(timeout);
 ```java
 PreparedStatement ps = PreparedStatement.create("DELETE FROM table_1 WHERE id = ?").setInteger(2);
 
-Long affectedRows = ds.execute(ps).get(timeout);
+Future<Long> affectedRows = ds.execute(ps);
 ```
 
 ### Transactions
@@ -199,7 +200,7 @@ Long affectedRows = ds.execute(ps).get(timeout);
 ```java
 PreparedStatement ps = PreparedStatement.create("DELETE FROM table_1 WHERE id = ?").setInteger(2);
 
-Long affectedRows = ds.transactional(() -> ds.execute(ps)).get(timeout);
+Future<Long> affectedRows = ds.transactional(() -> ds.execute(ps));
 ```
 
 ## Code of Conduct
