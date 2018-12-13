@@ -32,7 +32,7 @@ How can be this knowledge about `Future`s useful when it comes to deal with the 
 
 ## An asynchronous alternative to JDBC
 
-As mentioned before, like most of IO APIs, JDBC is synchronous. Working with JDBC, when [a query is executed, the return is a `ResultSet`](https://docs.oracle.com/javase/8/docs/api/java/sql/PreparedStatement.html#executeQuery). Even wrapping this code with `Future`sis not enough to make it properly asynchronous, JDBC specification is blocking by definition.
+As mentioned before, like most of IO APIs, JDBC is synchronous. Working with JDBC, when [a query is executed, the return is a `ResultSet`](https://docs.oracle.com/javase/8/docs/api/java/sql/PreparedStatement.html#executeQuery). Even wrapping this code with `Future`s is not enough to make it properly asynchronous, JDBC specification is blocking by definition.
 
 NDBC otherwise, was designed to solve this problem.
 
