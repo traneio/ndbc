@@ -28,19 +28,13 @@ Future<List<String>> lines = Files.readAllLines(Paths.get("file.txt"));
 
 In simple words, a `Future` is the abstraction that allows the code to carry on instead of keep waiting for results, a promise that the expected result will be in place **eventually**. NDBC is written using [Trane.io Future](http://trane.io), a High-performance Future implementation for the JVM.
 
-## What is the problem with JDBC?
+How can be this knowledge about `Future`s useful when it comes to deal with the database?
 
-JDBC is a synchronous API, meaning that it blocks the Thread in use by any class using it.
+## An asynchronous alternative to JDBC
 
-## Getting started
+As mentioned before, like most of IO APIs, JDBC is synchronous. Working with JDBC, when [a query is executed, the return is a `ResultSet`](https://docs.oracle.com/javase/8/docs/api/java/sql/PreparedStatement.html#executeQuery). Even wrapping this code with `Future`sis not enough to make it properly asynchronous, JDBC specification is blocking by definition.
 
-The library binaries are distributed through maven central. Click on the maven central badge for information on how to add the library dependency to your project:
-
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.trane/ndbc/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.trane/ndbc)
-
-Please refer to the Javadoc for detailed information about the library and its features:
-
-[![Javadoc](https://img.shields.io/badge/api-javadoc-green.svg)](http://trane.io/apidocs/ndbc/current/)
+NDBC otherwise, was designed to solve this problem.
 
 ## 1 minute example
 
@@ -69,6 +63,16 @@ List<Row> rows = ds.query("SELECT 1 AS value").get(timeout);
 // iterate over awesome strongly typed rows
 rows.forEach(row -> System.out.println(row.getLong("value")));
 ```
+
+## Getting started
+
+The library binaries are distributed through maven central. Click on the maven central badge for information on how to add the library dependency to your project:
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.trane/ndbc/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.trane/ndbc)
+
+Please refer to the Javadoc for detailed information about the library and its features:
+
+[![Javadoc](https://img.shields.io/badge/api-javadoc-green.svg)](http://trane.io/apidocs/ndbc/current/)
 
 ## Creating a DataSource
 
