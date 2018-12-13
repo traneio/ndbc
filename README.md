@@ -6,7 +6,7 @@
 [![Javadoc](https://img.shields.io/badge/api-javadoc-green.svg)](http://trane.io/apidocs/ndbc/current/)
 [![Join the chat at https://gitter.im/traneio/ndbc](https://img.shields.io/badge/gitter-join%20chat-green.svg)](https://gitter.im/traneio/ndbc?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-This project goal is to provide a full asyncronous approach to handle databases.
+This project's goal is to provide a full asyncronous approach to handle databases.
 
 At the lowest level, the communication with a database is an IO operation. Under the hood, the way to do it would be using a `Socket` to connect to the database server and exchanging messages, following the proprietary protocol of the database. The nature of this communication is asynchronous, given the principle of sending/receiving messages.
 
