@@ -13,7 +13,11 @@ At the lowest level, the communication with a database is an IO operation. Under
 However, that's not how most of IO APIs behave. They return synchronously, blocking the current Thread. What does it mean? Consider the following code:
 
 ```java
-List<String> lines = Files.readAllLines(Paths.get("file.txt"));
+import java.io.*;
+import java.nio.file.*;
+
+File file = File.createTempFile("file", "txt");
+List<String> lines = Files.readAllLines(Paths.get(file.toURI()));
 ```
 
 For small files, this code wouldn't be a problem. Now let's assume that `file.txt` has more than 20 gbs. Dealing with such a large file, the code will stop at this line, waiting for all the lines to be read. A better approach to solve this problem is necessary.
@@ -22,8 +26,8 @@ For small files, this code wouldn't be a problem. Now let's assume that `file.tx
 
 `Future` is an abstraction to deal with asynchronicity without blocking threads. The primary usage for `Future`s on the JVM is to perform IO operations. Bringing this idea to the previous example, the code would be something like:
 
-```java
-Future<List<String>> lines = Files.readAllLines(Paths.get("file.txt"));
+```
+Future<List<String>> lines = Files.readAllLines(Paths.get(file.toURI()));
 ```
 
 In simple words, a `Future` is the abstraction that allows the code to carry on instead of keep waiting for results, a promise that the expected result will be in place **eventually**. NDBC is written using [Trane.io Future](http://trane.io), a High-performance Future implementation for the JVM.
