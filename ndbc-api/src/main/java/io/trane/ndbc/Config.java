@@ -23,8 +23,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * This class holds the information needed to create an NDBC DataSource.
+ * `Config` objects are immutable and return new instances when a new parameter
+ * is set.
+ */
 public final class Config {
 
+  /**
+   * SSL configuration
+   */
   public static class SSL {
     public static enum Mode {
       /**
@@ -52,10 +60,26 @@ public final class Config {
       VERIFY_FULL
     }
 
+    /**
+     * Creates a new SSL configuration without a root certificate file
+     * 
+     * @param mode
+     *          the SSL mode
+     * @return the SSL configuration
+     */
     public static final SSL create(final Mode mode) {
       return new SSL(mode, Optional.empty());
     }
 
+    /**
+     * Creates a new SSL configuration with a root certificate file
+     * 
+     * @param mode
+     *          the SSL mode
+     * @param rootCert
+     *          file with the root certificate
+     * @return the SSL configuration
+     */
     public static final SSL create(final Mode mode, final File rootCert) {
       return new SSL(mode, Optional.of(rootCert));
     }
@@ -68,14 +92,25 @@ public final class Config {
       this.rootCert = rootCert;
     }
 
+    /**
+     * @return the SSL mode
+     */
     public final Mode mode() {
       return mode;
     }
 
+    /**
+     * @return the optional root certificate file
+     */
     public final Optional<File> rootCert() {
       return rootCert;
     }
 
+    /**
+     * @param file
+     *          the root certificate file
+     * @return a new SSL configuration with the specified root certificate file
+     */
     public final SSL rootCert(final File file) {
       return new SSL(mode, Optional.ofNullable(file));
     }
@@ -109,14 +144,46 @@ public final class Config {
     }
   }
 
+  /**
+   * Configuration class for embedded databases
+   */
   public static class Embedded {
     public final String           supplierClass;
     public final Optional<String> version;
 
+    /**
+     * Creates an embedded database configuration using the provided supplier
+     * class. The class must:
+     *
+     * 1. Have a constructor with parameters `(Config config, Optional<String>
+     * version)`
+     * 
+     * 2. Implement the interface `Supplier<DataSource<PreparedStatement, Row>>`
+     * and produce a `DataSource` backed by an embedded database.
+     * 
+     * See the modules with the `-embedded` suffix for the default
+     * implementations.
+     * 
+     * @param supplierClass
+     *          the embedded database supplier class
+     * @return the embedded database configuration
+     */
     public static Embedded create(final String supplierClass) {
       return create(supplierClass, Optional.empty());
     }
 
+    /**
+     * Creates an embedded database configuration for a specific version. See
+     * `create(final String supplierClass)` for more information about the
+     * supplier class. The version parameter can be used by the supplier class
+     * to choose a specific version of the database.
+     * 
+     * @param supplierClass
+     *          the embedded database supplier class
+     * @param version
+     *          the embedded database version
+     * @return the embedded database configuration
+     */
     public static Embedded create(final String supplierClass, final Optional<String> version) {
       return new Embedded(supplierClass, version);
     }
@@ -163,10 +230,39 @@ public final class Config {
     }
   }
 
+  /**
+   * Creates a configuration based on system properties with the specified
+   * prefix. For instance, if the prefix is `myDB`, there should be a system
+   * property `myDB.user` defined.
+   * 
+   * See `fromProperties(final String prefix, final Properties properties)` for
+   * details on the available configurations.
+   * 
+   * @param prefix
+   *          the configuration prefix
+   * @return the configuration
+   */
   public static final Config fromSystemProperties(final String prefix) {
     return fromProperties(prefix, System.getProperties());
   }
 
+  /**
+   * Creates a configuration based on properties file with the specified prefix.
+   * For instance, if the prefix is `myDB`, there should be a property
+   * `myDB.user` defined.
+   * 
+   * See https://en.wikipedia.org/wiki/.properties for the file format.
+   * 
+   * See `fromProperties(final String prefix, final Properties properties)` for
+   * details on the available configurations.
+   * 
+   * @param prefix
+   *          the configuration prefix
+   * @param file
+   *          the full path to the properties file
+   * @return the configuration
+   * @throws IOException
+   */
   public static Config fromPropertiesFile(final String prefix, final String file) throws IOException {
     final Properties properties = new Properties();
     final FileInputStream fis = new FileInputStream(file);
@@ -175,6 +271,72 @@ public final class Config {
     return fromProperties(prefix, properties);
   }
 
+  /**
+   * Creates a configuration based on `Properties` object with the specified
+   * prefix. For instance, if the prefix is `myDB`, there should be a property
+   * `myDB.user` defined.
+   * 
+   * Required configurations:
+   * 
+   * `dataSourceSupplierClass` -> A class that implements
+   * `Supplier<DataSource<PreparedStatement, Row>>` and has a constructor with
+   * one parameter `Config config`.
+   * 
+   * `host` -> The database host
+   * 
+   * `port` -> The database port
+   * 
+   * `user` -> The database user
+   * 
+   * Optional configurations:
+   * 
+   * `charset` -> the database charset to be parsed using
+   * java.nio.charset.Charset.forname. Default: Charset.defaultCharset()
+   * 
+   * `password` -> The database password. Default: empty
+   * 
+   * `database` -> The database name (sometimes referred as schema). Default:
+   * empty
+   * 
+   * `poolMaxSize` -> The maximum number of connections. Default: unlimited
+   * 
+   * `poolMaxWaiters` -> Sets the size of the wait queue for database
+   * connections. After this limit, the pool will return failures if no new
+   * connections can be established.
+   * 
+   * `poolValidationIntervalSeconds` -> If set, the connection pool will
+   * validate connections using the specified interval. Default: no validation
+   * 
+   * `connectionTimeoutSeconds` -> If set, the pool will fail to acquire a
+   * connection if it takes longer than the specified timeout. Default: no
+   * timeout
+   * 
+   * `queryTimeoutSeconds` -> If set, the pool will fail to execute a query if
+   * it takes longer than the specified timeout. Default: no timeout
+   * 
+   * `encodingClasses` -> Allows users to register a comma-separated list of
+   * custom encoding classes. The classes must have an empty constructor and
+   * extend the driver-specific `Encoding` class.
+   * 
+   * `ssl.mode` -> Sets the SSL mode. See Config.Ssl.Mode for details. Default:
+   * empty
+   * 
+   * `ssl.rootCert` -> The path to the root certificate file. This configuration
+   * is valid only if `ssl.mode` is set. Default: empty
+   * 
+   * `embedded.supplierClass` -> If set, the data source will be backed by an
+   * embedded database. See `Config.Embedded` for details. Default: empty
+   * 
+   * `embedded.version` -> Sets the embedded database version. Only valid if
+   * `embedded.supplierClass` is defined. See `Config.Embedded` for more
+   * details.
+   * 
+   * @param prefix
+   *          the configuration prefix
+   * @param properties
+   *          the properties object
+   * @return the configuration
+   */
   public static final Config fromProperties(final String prefix, final Properties properties) {
 
     final String dataSourceSupplierClass = getRequiredProperty(prefix, properties, "dataSourceSupplierClass");
@@ -216,6 +378,13 @@ public final class Config {
     return config;
   }
 
+  /**
+   * Creates the configuration based on a standard JDBC url.
+   * 
+   * @param url
+   *          the JDBC url
+   * @return the configuration
+   */
   public static final Config fromJdbcUrl(final String url) {
 
     final Properties prop = new Properties();
@@ -274,6 +443,19 @@ public final class Config {
     return fromProperties(prefix.substring(0, prefix.length() - 1), prop);
   }
 
+  /**
+   * Creates a configuration with the specified parameters
+   * 
+   * @param dataSourceSupplierClass
+   *          the supplier class
+   * @param host
+   *          the database host
+   * @param port
+   *          the database port
+   * @param user
+   *          the database user
+   * @return the configuration
+   */
   public static final Config create(final String dataSourceSupplierClass, final String host,
       final int port, final String user) {
 

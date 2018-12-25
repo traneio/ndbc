@@ -1,8 +1,8 @@
 package io.trane.ndbc.scala;
 
+import io.trane.future.scala.Future;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
-import scala.concurrent.Future;
 
 public class TransactionalDataSource<P extends PreparedStatement, R extends Row> extends DataSource<P, R> {
 

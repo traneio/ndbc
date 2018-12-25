@@ -25,6 +25,10 @@ import io.trane.ndbc.value.StringValue;
 import io.trane.ndbc.value.UUIDValue;
 import io.trane.ndbc.value.Value;
 
+/**
+ * A prepared statement in NDBC is an immutable value and doesn't require a
+ * connection or a data source to be created.
+ */
 public class PreparedStatement {
 
   private static Value<?>[] emptyValues = new Value<?>[0];
@@ -32,6 +36,13 @@ public class PreparedStatement {
   protected final String     query;
   protected final Value<?>[] params;
 
+  /**
+   * Creates a prepared statement for a query string
+   * 
+   * @param query
+   *          the query string
+   * @return the prepared statement
+   */
   public static PreparedStatement create(final String query) {
     return new PreparedStatement(query);
   }
@@ -45,7 +56,7 @@ public class PreparedStatement {
     this.params = params;
   }
 
-  public int nextIndex() {
+  protected int nextIndex() {
     return params.length;
   }
 

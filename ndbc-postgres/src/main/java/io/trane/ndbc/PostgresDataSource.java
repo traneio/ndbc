@@ -8,12 +8,36 @@ import java.util.stream.Collectors;
 
 import io.trane.future.Future;
 
+/**
+ * A postgres-specific data source. It provides custom prepared statements and
+ * rows that allow users to access postgres-specific types like arrays.
+ */
 public class PostgresDataSource implements DataSource<PostgresPreparedStatement, PostgresRow> {
 
+  /**
+   * Creates the data source based on system properties. See
+   * `Config.fromSystemProperties` for more details.
+   * 
+   * @param prefix
+   *          the configuration prefix
+   * @return the data source instance
+   */
   public static PostgresDataSource fromSystemProperties(final String prefix) {
     return create(io.trane.ndbc.DataSource.fromSystemProperties(prefix));
   }
 
+  /**
+   * Creates the data source based on a properties file. See
+   * `Config.fromPropertiesFile` for more details.
+   * 
+   * @param prefix
+   *          the configuration prefix
+   * @param fileName
+   *          the properties file path
+   * @return the data source instance
+   * @throws IOException
+   *           if the file can't read
+   */
   public static PostgresDataSource fromPropertiesFile(final String prefix,
       final String fileName)
       throws IOException {
@@ -21,18 +45,50 @@ public class PostgresDataSource implements DataSource<PostgresPreparedStatement,
         fileName));
   }
 
+  /**
+   * Creates the data source based on a `Properties` object. See
+   * `Config.fromProperties` for more details.
+   * 
+   * @param prefix
+   *          the configuration prefix
+   * @param properties
+   *          the properties object
+   * @return the data source instance
+   */
   public static PostgresDataSource fromProperties(final String prefix, final Properties properties) {
     return create(io.trane.ndbc.DataSource.fromProperties(prefix, properties));
   }
 
+  /**
+   * Creates the data source based on a JDBC url. See `Config.fromJdbcUrl` for
+   * more details.
+   * 
+   * @param url
+   *          the JDBC url
+   * @return the data source instance
+   */
   public static PostgresDataSource fromJdbcUrl(final String url) {
     return create(io.trane.ndbc.DataSource.fromJdbcUrl(url));
   }
 
+  /**
+   * Creates the data source based on a `Config` instance.
+   * 
+   * @param config
+   *          the config
+   * @return the data source instance
+   */
   public static PostgresDataSource fromConfig(final Config config) {
     return create(DataSource.fromConfig(config));
   }
 
+  /**
+   * Creates a completion stage data source based on a regular data source
+   * 
+   * @param ds
+   *          the regular data source
+   * @return the new data source
+   */
   public static PostgresDataSource create(final DataSource<PreparedStatement, Row> ds) {
     return new PostgresDataSource(ds);
   }

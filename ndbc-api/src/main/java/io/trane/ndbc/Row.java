@@ -15,6 +15,10 @@ import java.util.stream.Collectors;
 
 import io.trane.ndbc.value.Value;
 
+/**
+ * Represents a database row in memory. Supports name- and index-based column
+ * referencing
+ */
 public class Row {
 
   protected final Map<String, Integer> positions;

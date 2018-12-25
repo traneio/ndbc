@@ -7,6 +7,13 @@ import java.time.LocalTime;
 import java.time.OffsetTime;
 import java.util.UUID;
 
+/**
+ * Represents a value of a specific type. Most users won't interact with `Value`
+ * instances directly, but it can be used to implement custom encodings.
+ * 
+ * @param <T>
+ *          the type of the value
+ */
 public abstract class Value<T> {
 
   public static final NullValue NULL = new NullValue();
