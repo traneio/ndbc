@@ -3,9 +3,9 @@ package io.trane.ndbc.datasource;
 import java.util.List;
 
 import io.trane.future.Future;
-import io.trane.ndbc.Flow;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.flow.Flow;
 
 public interface Connection {
 

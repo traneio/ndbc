@@ -11,6 +11,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import io.trane.future.Future;
+import io.trane.ndbc.flow.Flow;
 
 /**
  * A postgres-specific data source. It provides custom prepared statements and

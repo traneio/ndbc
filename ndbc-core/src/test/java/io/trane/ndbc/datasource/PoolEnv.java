@@ -8,9 +8,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.junit.After;
 
 import io.trane.future.Future;
-import io.trane.ndbc.Flow;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.flow.Flow;
 
 public class PoolEnv {
 

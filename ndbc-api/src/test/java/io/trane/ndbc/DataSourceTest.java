@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 import org.junit.Test;
 
 import io.trane.future.Future;
+import io.trane.ndbc.flow.Flow;
 
 public class DataSourceTest {
 

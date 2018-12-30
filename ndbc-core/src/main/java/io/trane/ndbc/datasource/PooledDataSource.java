@@ -10,10 +10,10 @@ import io.trane.future.Local;
 import io.trane.future.Transformer;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
-import io.trane.ndbc.Flow;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 import io.trane.ndbc.TransactionalDataSource;
+import io.trane.ndbc.flow.Flow;
 
 public final class PooledDataSource implements DataSource<PreparedStatement, Row> {
 

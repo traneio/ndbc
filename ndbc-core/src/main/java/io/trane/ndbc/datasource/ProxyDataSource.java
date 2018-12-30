@@ -6,10 +6,10 @@ import java.util.function.Supplier;
 import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
-import io.trane.ndbc.Flow;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 import io.trane.ndbc.TransactionalDataSource;
+import io.trane.ndbc.flow.Flow;
 
 public class ProxyDataSource<P extends PreparedStatement, R extends Row> implements DataSource<P, R> {
 

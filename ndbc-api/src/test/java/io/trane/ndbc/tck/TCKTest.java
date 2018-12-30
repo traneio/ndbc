@@ -1,56 +1,26 @@
-package io.trane.ndbc;
+package io.trane.ndbc.tck;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.function.Function;
 
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
-import io.trane.future.Future;
+public abstract class TCKTest extends PublisherVerification<Integer> {
 
-public class FlowTCKTest extends PublisherVerification<Integer> {
-
-  private final Function<Integer, Flow<Integer>> create;
-
-  @Factory(dataProvider = "streams")
-  public FlowTCKTest(Function<Integer, Flow<Integer>> create) {
+  public TCKTest() {
     super(new TestEnvironment(false));
-    System.setProperty("io.trane.ndbc.streamMaxDepth", "20");
-    this.create = create;
+    System.setProperty("io.trane.ndbc.maxStackDepth", "20");
   }
 
-  @DataProvider(name = "streams")
-  public static Object[][] streams() {
+  // { stream(i -> Flow.from(Future.value(Flow.from(new TestList(i))))) }
 
-    return new Object[][] {
-        { stream(i -> Flow.from(new TestList(i))) },
-        { stream(i -> Flow.from(new TestList(i)).map(v -> v + 1)) },
-        { stream(i -> Flow.from(new TestList(i * 2)).filter(v -> v % 2 == 0))
-        },
-        { stream(i -> Flow.from(new TestList(i)).flatMap(v -> Flow.from(v * 10))) },
-        { stream(i -> Flow.from(Future.value(Flow.from(new TestList(i))))) }
-        // { stream(i -> {
-        // Flow<Integer>[] batches = { };
-        // // Flow.batched(b -> Flow.from(new TestList(b.intValue())));
-        // return null;
-        // }) }
-    };
-  }
-
-  private static final Function<Integer, Flow<Integer>> stream(Function<Integer, Flow<Integer>> create) {
-    return create;
-  }
-
-  @Override
-  public Publisher<Integer> createPublisher(long elements) {
-    return create.apply((int) elements);
+  protected List<Integer> list(int size) {
+    return new TestList(size);
   }
 
   @Override
@@ -70,13 +40,11 @@ public class FlowTCKTest extends PublisherVerification<Integer> {
 
   }
 
-  private static class TestList implements List<Integer> {
+  private class TestList implements List<Integer> {
 
     private final int size;
 
     public TestList(int size) {
-      if (size == 0)
-        System.out.println(2);
       this.size = size;
     }
 
