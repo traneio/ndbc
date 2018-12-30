@@ -32,6 +32,10 @@ public final class QueryResultExchange {
         .flatMap(desc -> gatherDataRows(new ArrayList<>()).map(rows -> toResultSet(desc, rows)));
   }
 
+  public final Exchange<List<Row>> apply(RowDescription desc) {
+    return gatherDataRows(new ArrayList<>()).map(rows -> toResultSet(desc, rows));
+  }
+
   private final Row toRow(final EncodingRegistry encoding, final RowDescription desc, final DataRow data) {
 
     final RowDescription.Field[] fields = desc.fields;

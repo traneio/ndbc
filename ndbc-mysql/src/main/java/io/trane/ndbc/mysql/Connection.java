@@ -9,6 +9,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +82,11 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   @Override
   public final Future<List<Row>> query(final PreparedStatement query) {
     return run(extendedQueryExchange.apply(query.query(), query.params()));
+  }
+
+  @Override
+  public Publisher<Row> stream(PreparedStatement query) {
+    throw new UnsupportedOperationException();
   }
 
   @Override

@@ -14,3 +14,4 @@ local.*
 .pem
 .gpg
 /.metadata/
+ndbc-api/test-output

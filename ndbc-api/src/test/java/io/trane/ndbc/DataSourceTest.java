@@ -112,5 +112,11 @@ public class DataSourceTest {
     public TransactionalDataSource<PreparedStatement, Row> transactional() {
       return null;
     }
+
+    @Override
+    public Flow<Row> stream(PreparedStatement query) {
+      // TODO Auto-generated method stub
+      return null;
+    }
   };
 }

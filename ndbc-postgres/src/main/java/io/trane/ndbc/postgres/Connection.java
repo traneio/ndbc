@@ -15,8 +15,10 @@ import org.slf4j.LoggerFactory;
 import io.trane.future.Future;
 import io.trane.future.InterruptHandler;
 import io.trane.future.Promise;
+import io.trane.ndbc.Flow;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.postgres.proto.ExtendedQueryStreamExchange.Fetch;
 import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
 import io.trane.ndbc.postgres.proto.Message.CancelRequest;
 import io.trane.ndbc.postgres.proto.marshaller.Marshallers;
@@ -41,6 +43,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private final Function<String, Exchange<Long>>                        simpleExecuteExchange;
   private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
   private final BiFunction<String, List<Value<?>>, Exchange<Long>>      extendedExecuteExchange;
+  private final BiFunction<String, List<Value<?>>, Exchange<Fetch>>     extendedQueryStreamExchange;
 
   public Connection(final Channel channel, final Marshallers marshallers,
       final Optional<Duration> queryTimeout, final ScheduledExecutorService scheduler,
@@ -49,6 +52,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
       final Function<String, Exchange<List<Row>>> simpleQueryExchange,
       final Function<String, Exchange<Long>> simpleExecuteExchange,
       final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange,
+      final BiFunction<String, List<Value<?>>, Exchange<Fetch>> extendedQueryStreamExchange,
       final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange) {
     this.channel = channel;
     this.marshallers = marshallers;
@@ -59,6 +63,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
     this.simpleQueryExchange = simpleQueryExchange;
     this.simpleExecuteExchange = simpleExecuteExchange;
     this.extendedQueryExchange = extendedQueryExchange;
+    this.extendedQueryStreamExchange = extendedQueryStreamExchange;
     this.extendedExecuteExchange = extendedExecuteExchange;
   }
 
@@ -75,6 +80,12 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   @Override
   public final Future<List<Row>> query(final PreparedStatement query) {
     return run(extendedQueryExchange.apply(query.query(), query.params()));
+  }
+
+  public final Flow<Row> stream(final PreparedStatement query) {
+
+    Future<Fetch> fetch = run(extendedQueryStreamExchange.apply(query.query(), query.params()));
+    return null;
   }
 
   @Override

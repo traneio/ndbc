@@ -3,6 +3,7 @@ package io.trane.ndbc.datasource;
 import java.util.List;
 
 import io.trane.future.Future;
+import io.trane.ndbc.Flow;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 
@@ -17,6 +18,8 @@ public interface Connection {
   Future<Long> execute(String query);
 
   Future<List<Row>> query(PreparedStatement query);
+
+  Flow<Row> stream(PreparedStatement query);
 
   Future<Long> execute(PreparedStatement query);
 

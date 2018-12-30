@@ -10,6 +10,7 @@ import io.trane.future.Local;
 import io.trane.future.Transformer;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
+import io.trane.ndbc.Flow;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 import io.trane.ndbc.TransactionalDataSource;
@@ -39,6 +40,11 @@ public final class PooledDataSource implements DataSource<PreparedStatement, Row
   @Override
   public final Future<List<Row>> query(final PreparedStatement query) {
     return withConnection(c -> c.query(query));
+  }
+
+  @Override
+  public Flow<Row> stream(PreparedStatement query) {
+    return Flow.from(withConnection(c -> Future.value(c.stream(query))));
   }
 
   @Override
@@ -91,6 +97,11 @@ public final class PooledDataSource implements DataSource<PreparedStatement, Row
       @Override
       public Future<List<Row>> query(final PreparedStatement query) {
         return conn.flatMap(c -> c.query(query));
+      }
+
+      @Override
+      public Flow<Row> stream(PreparedStatement query) {
+        return Flow.from(conn.map(c -> c.stream(query)));
       }
 
       @Override

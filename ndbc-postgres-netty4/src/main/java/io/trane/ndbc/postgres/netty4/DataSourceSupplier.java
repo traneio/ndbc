@@ -12,7 +12,9 @@ import io.trane.ndbc.postgres.encoding.EncodingRegistry;
 import io.trane.ndbc.postgres.proto.ExtendedExchange;
 import io.trane.ndbc.postgres.proto.ExtendedExecuteExchange;
 import io.trane.ndbc.postgres.proto.ExtendedQueryExchange;
+import io.trane.ndbc.postgres.proto.ExtendedQueryStreamExchange;
 import io.trane.ndbc.postgres.proto.InitSSLExchange;
+import io.trane.ndbc.postgres.proto.PreparedStatementCache;
 import io.trane.ndbc.postgres.proto.QueryResultExchange;
 import io.trane.ndbc.postgres.proto.SimpleExecuteExchange;
 import io.trane.ndbc.postgres.proto.SimpleQueryExchange;
@@ -39,7 +41,9 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
     final InitSSLExchange initSSLExchange = new InitSSLExchange(marshallers, unmarshallers);
     final StartupExchange startup = new StartupExchange(marshallers, unmarshallers);
     return () -> {
-      final ExtendedExchange extendedExchange = new ExtendedExchange(marshallers, unmarshallers);
+      final PreparedStatementCache preparedStatementCache = new PreparedStatementCache(marshallers, unmarshallers);
+      final ExtendedExchange extendedExchange = new ExtendedExchange(marshallers, unmarshallers,
+          preparedStatementCache);
       return channelSupplier.get().flatMap(channel -> initSSLExchange.apply(config.ssl()).run(channel)
           .flatMap(ssl -> initSSLHandler.apply(config.host(), config.port(), ssl, channel))
           .flatMap(v -> startup.apply(config.charset(), config.user(), config.password(), config.database())
@@ -51,6 +55,8 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
                   new SimpleQueryExchange(queryResultExchange, marshallers, unmarshallers),
                   new SimpleExecuteExchange(marshallers, unmarshallers),
                   new ExtendedQueryExchange(queryResultExchange, extendedExchange),
+                  new ExtendedQueryStreamExchange(marshallers, unmarshallers, preparedStatementCache,
+                      queryResultExchange),
                   new ExtendedExecuteExchange(extendedExchange, unmarshallers)))));
     };
   }

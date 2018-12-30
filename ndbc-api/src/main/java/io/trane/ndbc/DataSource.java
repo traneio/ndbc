@@ -132,6 +132,8 @@ public interface DataSource<P extends PreparedStatement, R extends Row> {
    */
   Future<List<R>> query(P query);
 
+  Flow<R> stream(P query);
+
   /**
    * Executes a prepared statement (DDLs, updates, inserts, etc).
    * 

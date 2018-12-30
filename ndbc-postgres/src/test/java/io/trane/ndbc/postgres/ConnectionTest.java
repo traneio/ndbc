@@ -19,6 +19,7 @@ import io.trane.future.CheckedFutureException;
 import io.trane.future.Future;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.postgres.proto.ExtendedQueryStreamExchange.Fetch;
 import io.trane.ndbc.postgres.proto.Message.BackendKeyData;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.ClientMessage;
@@ -196,6 +197,10 @@ public class ConnectionTest {
       return (a, b) -> notExpected();
     }
 
+    BiFunction<String, List<Value<?>>, Exchange<Fetch>> extendedQueryStreamExchange() {
+      return (a, b) -> notExpected();
+    }
+
     BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange() {
       return (a, b) -> notExpected();
     }
@@ -203,7 +208,8 @@ public class ConnectionTest {
     @Override
     public Connection get() {
       return new Connection(channel(), null, Optional.empty(), null, channelSupplier(), backendKeyData(),
-          simpleQueryExchange(), simpleExecuteExchange(), extendedQueryExchange(), extendedExecuteExchange());
+          simpleQueryExchange(), simpleExecuteExchange(), extendedQueryExchange(), extendedQueryStreamExchange(),
+          extendedExecuteExchange());
     }
   }
 

@@ -8,6 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.junit.After;
 
 import io.trane.future.Future;
+import io.trane.ndbc.Flow;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 
@@ -75,6 +76,11 @@ public class PoolEnv {
 
     @Override
     public Future<Void> rollback() {
+      return notExpected();
+    }
+
+    @Override
+    public Flow<Row> stream(PreparedStatement query) {
       return notExpected();
     }
   };

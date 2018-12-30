@@ -13,7 +13,4 @@ public class NdbcTest<PS extends PreparedStatement, R extends Row> {
 
   @Parameter(0)
   public DataSource<PS, R> ds;
-
-  @Parameter(1)
-  public String label;
 }

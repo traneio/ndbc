@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import io.trane.future.Future;
 import io.trane.ndbc.Config;
 import io.trane.ndbc.DataSource;
+import io.trane.ndbc.Flow;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
 import io.trane.ndbc.TransactionalDataSource;
@@ -34,6 +35,11 @@ public class ProxyDataSource<P extends PreparedStatement, R extends Row> impleme
   }
 
   @Override
+  public Flow<R> stream(P query) {
+    return underlying.stream(query);
+  }
+
+  @Override
   public Future<Long> execute(final P statement) {
     return underlying.execute(statement);
   }
@@ -57,5 +63,4 @@ public class ProxyDataSource<P extends PreparedStatement, R extends Row> impleme
   public Config config() {
     return underlying.config();
   }
-
 }
