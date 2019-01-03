@@ -6,10 +6,6 @@ import java.util.Properties;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
 import io.trane.future.Future;
 import io.trane.ndbc.flow.Flow;
 
@@ -121,42 +117,7 @@ public class PostgresDataSource implements DataSource<PostgresPreparedStatement,
 
   @Override
   public Flow<PostgresRow> stream(PostgresPreparedStatement query) {
-    Publisher<Row> p = underlying.stream(query);
-    Publisher<PostgresRow> r = new Publisher<PostgresRow>() {
-
-      @Override
-      public void subscribe(Subscriber<? super PostgresRow> s) {
-        // TODO Auto-generated method stub
-
-      }
-
-    };
-    p.subscribe(new Subscriber<Row>() {
-      @Override
-      public void onSubscribe(Subscription s) {
-        // TODO Auto-generated method stub
-
-      }
-
-      @Override
-      public void onNext(Row t) {
-        // TODO Auto-generated method stub
-
-      }
-
-      @Override
-      public void onError(Throwable t) {
-        // TODO Auto-generated method stub
-
-      }
-
-      @Override
-      public void onComplete() {
-        // TODO Auto-generated method stub
-
-      }
-    });
-    return null;
+    return underlying.stream(query).map(PostgresRow::create);
   }
 
   @Override

@@ -7,16 +7,13 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-import org.reactivestreams.tck.PublisherVerification;
-import org.reactivestreams.tck.TestEnvironment;
 
+import io.trane.future.CheckedFutureException;
 import io.trane.future.Future;
 import io.trane.ndbc.NdbcException;
 import io.trane.ndbc.PostgresPreparedStatement;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.flow.Flow;
 import io.trane.ndbc.test.DataSourceTest;
 
 public class PostgresDataSourceTest extends DataSourceTest {
@@ -42,43 +39,10 @@ public class PostgresDataSourceTest extends DataSourceTest {
     }
   }
 
-  private static class TestSubscriber implements Subscriber<Row> {
-
-    Subscription s = null;
-
-    @Override
-    public void onSubscribe(Subscription s) {
-      this.s = s;
-    }
-
-    @Override
-    public void onNext(Row t) {
-    }
-
-    @Override
-    public void onError(Throwable t) {
-    }
-
-    @Override
-    public void onComplete() {
-    }
-
-  }
-
   @Test
-  public void stream() {
-    Publisher<Row> p = ds.stream(PostgresPreparedStatement.create("SELECT generate_series(0, 1000)"));
-    new PublisherVerification<Row>(new TestEnvironment(true)) {
+  public void stream() throws CheckedFutureException {
+    Flow<Row> f = ds.stream(PostgresPreparedStatement.create("SELECT generate_series(1, 1000)"));
 
-      @Override
-      public Publisher<Row> createPublisher(long elements) {
-        return p;
-      }
-
-      @Override
-      public Publisher<Row> createFailedPublisher() {
-        return null;
-      }
-    };
+    f.collect(10).foreach(v -> System.out.println(v)).get(timeout);
   }
 }

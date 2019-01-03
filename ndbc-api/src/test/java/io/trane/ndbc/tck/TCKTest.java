@@ -59,7 +59,7 @@ public abstract class TCKTest extends PublisherVerification<Integer> {
 
     @Override
     public boolean isEmpty() {
-      return notExpected();
+      return size == 0;
     }
 
     @Override

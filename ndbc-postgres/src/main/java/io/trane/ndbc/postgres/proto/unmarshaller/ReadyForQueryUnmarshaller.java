@@ -18,6 +18,6 @@ public final class ReadyForQueryUnmarshaller extends PostgresUnmarshaller<ReadyF
 
   @Override
   public final ReadyForQuery decode(final byte tpe, final BufferReader b) {
-    return new ReadyForQuery(b.readByte());
+    return new ReadyForQuery((char) b.readByte());
   }
 }

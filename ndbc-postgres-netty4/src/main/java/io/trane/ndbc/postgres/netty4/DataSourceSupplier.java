@@ -14,7 +14,7 @@ import io.trane.ndbc.postgres.proto.ExtendedExecuteExchange;
 import io.trane.ndbc.postgres.proto.ExtendedQueryExchange;
 import io.trane.ndbc.postgres.proto.ExtendedQueryStreamExchange;
 import io.trane.ndbc.postgres.proto.InitSSLExchange;
-import io.trane.ndbc.postgres.proto.PreparedStatementCache;
+import io.trane.ndbc.postgres.proto.PrepareStatementExchange;
 import io.trane.ndbc.postgres.proto.QueryResultExchange;
 import io.trane.ndbc.postgres.proto.SimpleExecuteExchange;
 import io.trane.ndbc.postgres.proto.SimpleQueryExchange;
@@ -41,7 +41,7 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
     final InitSSLExchange initSSLExchange = new InitSSLExchange(marshallers, unmarshallers);
     final StartupExchange startup = new StartupExchange(marshallers, unmarshallers);
     return () -> {
-      final PreparedStatementCache preparedStatementCache = new PreparedStatementCache(marshallers, unmarshallers);
+      final PrepareStatementExchange preparedStatementCache = new PrepareStatementExchange(marshallers, unmarshallers);
       final ExtendedExchange extendedExchange = new ExtendedExchange(marshallers, unmarshallers,
           preparedStatementCache);
       return channelSupplier.get().flatMap(channel -> initSSLExchange.apply(config.ssl()).run(channel)

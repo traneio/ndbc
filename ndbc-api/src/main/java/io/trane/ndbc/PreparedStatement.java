@@ -206,6 +206,11 @@ public class PreparedStatement {
   }
 
   @Override
+  public String toString() {
+    return "PreparedStatement [query=" + query + ", params=" + Arrays.toString(params) + "]";
+  }
+
+  @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;

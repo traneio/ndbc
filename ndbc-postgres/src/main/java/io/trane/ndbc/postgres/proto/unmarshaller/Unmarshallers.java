@@ -20,6 +20,7 @@ public final class Unmarshallers {
   public final ReadyForQueryUnmarshaller         readyForQuery;
   public final RowDescriptionUnmarshaller        rowDescription;
   public final SSLResponseUnmarshaller           sslResponse;
+  public final PortalSuspendedUnmarshaller       portalSuspended;
 
   public Unmarshallers(final Charset charset) {
     this.authenticationRequest = new AuthenticationRequestUnmarshaller(charset);
@@ -38,6 +39,7 @@ public final class Unmarshallers {
     this.readyForQuery = new ReadyForQueryUnmarshaller(charset);
     this.rowDescription = new RowDescriptionUnmarshaller(charset);
     this.sslResponse = new SSLResponseUnmarshaller();
+    this.portalSuspended = new PortalSuspendedUnmarshaller(charset);
   }
 
 }

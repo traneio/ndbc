@@ -1923,9 +1923,9 @@ public interface Message {
      * if in a failed transaction block (queries will be rejected until block is
      * ended).
      */
-    public final byte status;
+    public final char status;
 
-    public ReadyForQuery(final byte status) {
+    public ReadyForQuery(final char status) {
       this.status = status;
     }
 

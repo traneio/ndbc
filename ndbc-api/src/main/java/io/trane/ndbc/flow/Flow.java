@@ -2,7 +2,6 @@ package io.trane.ndbc.flow;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -24,7 +23,10 @@ public interface Flow<T> extends Publisher<T> {
   }
 
   public static <U> Flow<U> from(List<U> list) {
-    return new FromList<>(list);
+    if (list.isEmpty())
+      return empty();
+    else
+      return new FromList<>(list);
   }
 
   @SafeVarargs
@@ -32,7 +34,7 @@ public interface Flow<T> extends Publisher<T> {
     return from(Arrays.asList(list));
   }
 
-  public static <U> Flow<U> batched(Function<Long, Optional<Flow<U>>> fetch) {
+  public static <U> Flow<U> batched(Function<Long, Flow<U>> fetch) {
     return new Batched<>(fetch);
   }
 
@@ -56,7 +58,7 @@ public interface Flow<T> extends Publisher<T> {
     return new Map<>(this, f);
   }
 
-  default <U> Flow<U> flatMap(Function<T, Flow<U>> f) {
-    return new FlatMap<>(this, f);
-  }
+  // default <U> Flow<U> flatMap(Function<T, Flow<U>> f) {
+  // return new FlatMap<>(this, f);
+  // }
 }

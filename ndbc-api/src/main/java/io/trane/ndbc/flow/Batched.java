@@ -1,6 +1,6 @@
 package io.trane.ndbc.flow;
 
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 
@@ -9,9 +9,9 @@ import org.reactivestreams.Subscription;
 
 final class Batched<T> implements Flow<T> {
 
-  private final Function<Long, Optional<Flow<T>>> fetch;
+  private final Function<Long, Flow<T>> fetch;
 
-  public Batched(Function<Long, Optional<Flow<T>>> fetch) {
+  public Batched(Function<Long, Flow<T>> fetch) {
     this.fetch = fetch;
   }
 
@@ -19,11 +19,18 @@ final class Batched<T> implements Flow<T> {
   public void subscribe(Subscriber<? super T> sb) {
     sb.onSubscribe(new Subscription() {
 
+      private final AtomicBoolean done = new AtomicBoolean(false);
+
       @Override
       public void request(long n) {
-        Optional<Flow<T>> f = fetch.apply(n);
-        if (f.isPresent())
-          f.get().subscribe(new Subscriber<T>() {
+
+        if (n <= 0L)
+          sb.onError(new IllegalArgumentException("Invalid request: " + n));
+
+        else if (!done.get()) {
+
+          Flow<T> f = fetch.apply(n);
+          f.subscribe(new Subscriber<T>() {
 
             private final AtomicLong pending = new AtomicLong(n);
 
@@ -45,17 +52,18 @@ final class Batched<T> implements Flow<T> {
 
             @Override
             public void onComplete() {
-              if (pending.get() != 0)
-                sb.onError(
-                    new IllegalStateException("Fetch function returned a stream with less elements than requested."));
+              if (pending.get() > 0) {
+                sb.onComplete();
+                done.set(true);
+              }
             }
           });
-        else
-          sb.onComplete();
+        }
       }
 
       @Override
       public void cancel() {
+        done.set(true);
       }
     });
   }

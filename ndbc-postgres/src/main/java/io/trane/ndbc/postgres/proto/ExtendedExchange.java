@@ -15,27 +15,30 @@ import io.trane.ndbc.value.Value;
 
 public final class ExtendedExchange {
 
-  private final short[]                binary = { Format.BINARY.getCode() };
-  private final Sync                   sync   = new Sync();
-  private final Marshallers            marshallers;
-  private final Unmarshallers          unmarshallers;
-  private final PreparedStatementCache preparedStatementCache;
+  private final short[]                  binary = { Format.BINARY.getCode() };
+  private final Sync                     sync   = new Sync();
+  private final Marshallers              marshallers;
+  private final Unmarshallers            unmarshallers;
+  private final PrepareStatementExchange preparedStatementCache;
 
   public ExtendedExchange(final Marshallers marshallers, final Unmarshallers unmarshallers,
-      final PreparedStatementCache preparedStatementCache) {
+      final PrepareStatementExchange preparedStatementCache) {
     this.marshallers = marshallers;
     this.unmarshallers = unmarshallers;
     this.preparedStatementCache = preparedStatementCache;
   }
 
   public final <T> Exchange<T> apply(final String query, final List<Value<?>> params, final Exchange<T> readResult) {
-    return preparedStatementCache.apply(query, params,
-        id -> Exchange.send(marshallers.bind, new Bind(id, id, binary, params, binary))
+    return preparedStatementCache.apply(query, params)
+        .flatMap(id -> Exchange.send(marshallers.bind, new Bind(id, id, binary, params, binary))
             .thenSend(marshallers.describe, new Describe.DescribePortal(id))
             .thenSend(marshallers.execute, new Execute(id, 0))
-            .thenSend(marshallers.close, new Close.ClosePortal(id)).thenSend(marshallers.sync, sync))
-        .thenReceive(unmarshallers.bindComplete).then(readResult)
-        .thenReceive(unmarshallers.closeComplete).thenWaitFor(unmarshallers.readyForQuery);
+            .thenSend(marshallers.close, new Close.ClosePortal(id))
+            .thenSend(marshallers.sync, sync)
+            .thenReceive(unmarshallers.bindComplete)
+            .then(readResult)
+            .thenReceive(unmarshallers.closeComplete)
+            .thenWaitFor(unmarshallers.readyForQuery));
   }
 
 }

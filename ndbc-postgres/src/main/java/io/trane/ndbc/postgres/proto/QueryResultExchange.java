@@ -11,6 +11,7 @@ import io.trane.ndbc.postgres.encoding.Format;
 import io.trane.ndbc.postgres.proto.Message.CommandComplete;
 import io.trane.ndbc.postgres.proto.Message.DataRow;
 import io.trane.ndbc.postgres.proto.Message.EmptyQueryResponse;
+import io.trane.ndbc.postgres.proto.Message.PortalSuspended;
 import io.trane.ndbc.postgres.proto.Message.RowDescription;
 import io.trane.ndbc.postgres.proto.unmarshaller.Unmarshallers;
 import io.trane.ndbc.proto.BufferReader;
@@ -28,8 +29,7 @@ public final class QueryResultExchange {
   }
 
   public final Exchange<List<Row>> apply() {
-    return Exchange.receive(unmarshallers.rowDescription)
-        .flatMap(desc -> gatherDataRows(new ArrayList<>()).map(rows -> toResultSet(desc, rows)));
+    return Exchange.receive(unmarshallers.rowDescription).flatMap(this::apply);
   }
 
   public final Exchange<List<Row>> apply(RowDescription desc) {
@@ -62,9 +62,11 @@ public final class QueryResultExchange {
 
   private final Exchange<List<DataRow>> gatherDataRows(final List<DataRow> rows) {
     return Exchange.receive(
-        unmarshallers.emptyQueryResponse.orElse(unmarshallers.commandComplete).orElse(unmarshallers.dataRow))
+        unmarshallers.emptyQueryResponse.orElse(unmarshallers.commandComplete).orElse(unmarshallers.dataRow)
+            .orElse(unmarshallers.portalSuspended))
         .flatMap(msg -> {
-          if ((msg instanceof EmptyQueryResponse) || (msg instanceof CommandComplete))
+          if ((msg instanceof EmptyQueryResponse) || (msg instanceof CommandComplete)
+              || (msg instanceof PortalSuspended))
             return Exchange.value(rows);
           else {
             rows.add((DataRow) msg);

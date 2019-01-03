@@ -12,7 +12,7 @@ import org.reactivestreams.Subscription;
 import io.trane.future.Future;
 import io.trane.future.Promise;
 
-final class Collect<T> {
+public final class Collect<T> {
 
   private final Flow<T> flow;
   private final long    requestSize;

@@ -49,9 +49,10 @@ public abstract class PostgresUnmarshaller<T extends ServerMessage> implements U
         log.info(notification.toString());
         return Optional.empty();
       default:
-        if (!acceptsType(tpe))
-          throw new IllegalStateException(
-              "Unmarshaller " + getClass() + " doesn't accept message type " + (char) tpe);
+        if (!acceptsType(tpe)) {
+          String msg = "Unmarshaller " + getClass() + " doesn't accept message type " + (char) tpe;
+          throw new IllegalStateException(msg);
+        }
         return Optional.of(decode(tpe, b));
     }
   }

@@ -83,9 +83,12 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   }
 
   public final Flow<Row> stream(final PreparedStatement query) {
-
     Future<Fetch> fetch = run(extendedQueryStreamExchange.apply(query.query(), query.params()));
-    return null;
+
+    return Flow.batched(i -> {
+      Future<Flow<Row>> fut = fetch.flatMap(f -> run(f.fetch(i.intValue()))).map(Flow::from);
+      return Flow.from(fut);
+    });
   }
 
   @Override
