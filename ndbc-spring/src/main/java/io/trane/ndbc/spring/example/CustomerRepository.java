@@ -1,6 +1,6 @@
 package io.trane.ndbc.spring.example;
 
-import io.trane.ndbc.spring.repository.AsyncCrudRepository;
+import org.springframework.data.repository.CrudRepository;
 
-public interface CustomerRepository extends AsyncCrudRepository<Customer, Long> {
+public interface CustomerRepository extends CrudRepository<Customer, Long> {
 }
