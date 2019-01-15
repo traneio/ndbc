@@ -9,7 +9,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +18,8 @@ import io.trane.future.Promise;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.flow.Flow;
+import io.trane.ndbc.mysql.proto.ExtendedQueryStreamExchange.Fetch;
 import io.trane.ndbc.mysql.proto.marshaller.Marshallers;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.Exchange;
@@ -38,6 +39,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   private final Function<String, Exchange<List<Row>>>                   simpleQueryExchange;
   private final Function<String, Exchange<Long>>                        simpleExecuteExchange;
   private final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange;
+  private final BiFunction<String, List<Value<?>>, Exchange<Fetch>>     extendedQueryStreamExchange;
   private final BiFunction<String, List<Value<?>>, Exchange<Long>>      extendedExecuteExchange;
   private final Supplier<DataSource<PreparedStatement, Row>>            dataSourceSupplier;
 
@@ -46,6 +48,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
       final Function<String, Exchange<List<Row>>> simpleQueryExchange,
       final Function<String, Exchange<Long>> simpleExecuteExchange,
       final BiFunction<String, List<Value<?>>, Exchange<List<Row>>> extendedQueryExchange,
+      final BiFunction<String, List<Value<?>>, Exchange<Fetch>> extendedQueryStreamExchange,
       final BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange,
       final Supplier<DataSource<PreparedStatement, Row>> dataSourceSupplier) {
     this.channel = channel;
@@ -55,6 +58,7 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
     this.simpleQueryExchange = simpleQueryExchange;
     this.simpleExecuteExchange = simpleExecuteExchange;
     this.extendedQueryExchange = extendedQueryExchange;
+    this.extendedQueryStreamExchange = extendedQueryStreamExchange;
     this.extendedExecuteExchange = extendedExecuteExchange;
     this.dataSourceSupplier = dataSourceSupplier;
   }
@@ -85,8 +89,13 @@ public final class Connection implements io.trane.ndbc.datasource.Connection {
   }
 
   @Override
-  public Publisher<Row> stream(PreparedStatement query) {
-    throw new UnsupportedOperationException();
+  public Flow<Row> stream(PreparedStatement query) {
+    Future<Fetch> fetch = run(extendedQueryStreamExchange.apply(query.query(), query.params()));
+
+    return Flow.batched(i -> {
+      Future<Flow<Row>> fut = fetch.flatMap(f -> run(f.apply(i.intValue()))).map(Flow::from);
+      return Flow.from(fut);
+    });
   }
 
   @Override

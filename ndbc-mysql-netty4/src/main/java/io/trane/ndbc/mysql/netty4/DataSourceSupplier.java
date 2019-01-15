@@ -9,6 +9,8 @@ import io.trane.ndbc.mysql.encoding.EncodingRegistry;
 import io.trane.ndbc.mysql.proto.ExtendedExchange;
 import io.trane.ndbc.mysql.proto.ExtendedExecuteExchange;
 import io.trane.ndbc.mysql.proto.ExtendedQueryExchange;
+import io.trane.ndbc.mysql.proto.ExtendedQueryStreamExchange;
+import io.trane.ndbc.mysql.proto.PrepareStatementExchange;
 import io.trane.ndbc.mysql.proto.ResultSetExchange;
 import io.trane.ndbc.mysql.proto.SimpleExecuteExchange;
 import io.trane.ndbc.mysql.proto.SimpleQueryExchange;
@@ -41,10 +43,13 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
 
     final SimpleExecuteExchange simpleExecuteExchange = new SimpleExecuteExchange(marshallers,
         terminatorExchange.affectedRows);
-    final ExtendedExchange extendedExchange = new ExtendedExchange(marshallers, unmarshallers,
+    final PrepareStatementExchange prepareStatementExchange = new PrepareStatementExchange(marshallers, unmarshallers,
         terminatorExchange.prepareOk, terminatorExchange.okPacketVoid);
+    final ExtendedExchange extendedExchange = new ExtendedExchange(marshallers, prepareStatementExchange);
     final ExtendedQueryExchange extendedQueryExchange = new ExtendedQueryExchange(extendedExchange,
         resultSetExchange.apply(true));
+    final ExtendedQueryStreamExchange extendedQueryStreamExchange = new ExtendedQueryStreamExchange(
+        prepareStatementExchange, resultSetExchange.apply(true), marshallers);
     final ExtendedExecuteExchange extendedExecuteExchange = new ExtendedExecuteExchange(extendedExchange,
         terminatorExchange.affectedRows);
 
@@ -52,7 +57,7 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
         .apply(config.user(), config.password(), config.database(), "utf8").run(channel).map(connectionId -> {
           return new io.trane.ndbc.mysql.Connection(channel, connectionId, marshallers, config.queryTimeout(),
               config.scheduler(), simpleQueryExchange, simpleExecuteExchange, extendedQueryExchange,
-              extendedExecuteExchange, this);
+              extendedQueryStreamExchange, extendedExecuteExchange, this);
         }));
   }
 }

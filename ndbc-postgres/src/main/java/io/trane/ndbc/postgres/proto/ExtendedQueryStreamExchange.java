@@ -28,32 +28,24 @@ public final class ExtendedQueryStreamExchange implements BiFunction<String, Lis
   private final QueryResultExchange      queryResultExchange;
 
   public final class Fetch {
-    private boolean        done = false;
-    private RowDescription desc = null;
-    private final String   id;
+    private final RowDescription desc;
+    private final String         id;
 
-    public Fetch(String id) {
+    public Fetch(RowDescription desc, String id) {
+      this.desc = desc;
       this.id = id;
     }
 
     public final Exchange<List<Row>> fetch(int size) {
-      if (desc == null)
-        return Exchange.send(marshallers.execute, new Execute(id, size))
-            .thenSend(marshallers.flush, new Flush())
-            .thenReceive(unmarshallers.bindComplete)
-            .then(Exchange.receive(unmarshallers.rowDescription)).map(d -> desc = d)
-            .flatMap(queryResultExchange::apply);
-      else
-        return Exchange.send(marshallers.execute, new Execute(id, size))
-            .thenSend(marshallers.flush, new Flush())
-            .then(queryResultExchange.apply(desc))
-            .flatMap(rows -> {
-              if (rows.size() != size)
-                return close().map(v -> rows);
-              else
-                return Exchange.value(rows);
-            });
-      // .thenWaitFor(unmarshallers.readyForQuery);
+      return Exchange.send(marshallers.execute, new Execute(id, size))
+          .thenSend(marshallers.flush, new Flush())
+          .then(queryResultExchange.apply(desc))
+          .flatMap(rows -> {
+            if (rows.size() != size)
+              return close().map(v -> rows);
+            else
+              return Exchange.value(rows);
+          });
     }
 
     private final Exchange<Void> close() {
@@ -76,7 +68,9 @@ public final class ExtendedQueryStreamExchange implements BiFunction<String, Lis
     return prepareStatement.apply(query, params)
         .flatMap(id -> Exchange.send(marshallers.bind, new Bind(id, id, binary, params, binary))
             .thenSend(marshallers.describe, new Describe.DescribePortal(id))
-            .map(desc -> new Fetch(id)));
+            .thenSend(marshallers.flush, new Flush())
+            .thenReceive(unmarshallers.bindComplete)
+            .then(Exchange.receive(unmarshallers.rowDescription))
+            .map(desc -> new Fetch(desc, id)));
   }
-
 }

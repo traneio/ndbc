@@ -19,6 +19,7 @@ import io.trane.future.CheckedFutureException;
 import io.trane.future.Future;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.mysql.proto.ExtendedQueryStreamExchange.Fetch;
 import io.trane.ndbc.proto.Channel;
 import io.trane.ndbc.proto.ClientMessage;
 import io.trane.ndbc.proto.Exchange;
@@ -192,6 +193,10 @@ public class ConnectionTest {
       return (a, b) -> notExpected();
     }
 
+    BiFunction<String, List<Value<?>>, Exchange<Fetch>> extendedQueryStreamExchange() {
+      return (a, b) -> notExpected();
+    }
+
     BiFunction<String, List<Value<?>>, Exchange<Long>> extendedExecuteExchange() {
       return (a, b) -> notExpected();
     }
@@ -199,8 +204,8 @@ public class ConnectionTest {
     @Override
     public Connection get() {
       return new Connection(channel(), 0L, null, Optional.empty(), null,
-          simpleQueryExchange(), simpleExecuteExchange(),
-          extendedQueryExchange(), extendedExecuteExchange(), null);
+          simpleQueryExchange(), simpleExecuteExchange(), extendedQueryExchange(), extendedQueryStreamExchange(),
+          extendedExecuteExchange(), null);
     }
   }
 

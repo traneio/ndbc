@@ -387,30 +387,35 @@ public interface Message {
   public static class ExecuteStatementCommand implements Command {
     public final long           statementId;
     public final List<Value<?>> values;
+    public final boolean        openCursor;
 
-    public ExecuteStatementCommand(final long statementId, final List<Value<?>> values) {
+    public ExecuteStatementCommand(final long statementId, final List<Value<?>> values, final boolean openCursor) {
       this.statementId = statementId;
       this.values = values;
+      this.openCursor = openCursor;
     }
 
     @Override
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = (prime * result) + (int) (statementId ^ (statementId >>> 32));
-      result = (prime * result) + ((values == null) ? 0 : values.hashCode());
+      result = prime * result + (openCursor ? 1231 : 1237);
+      result = prime * result + (int) (statementId ^ (statementId >>> 32));
+      result = prime * result + ((values == null) ? 0 : values.hashCode());
       return result;
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
       if (this == obj)
         return true;
       if (obj == null)
         return false;
       if (getClass() != obj.getClass())
         return false;
-      final ExecuteStatementCommand other = (ExecuteStatementCommand) obj;
+      ExecuteStatementCommand other = (ExecuteStatementCommand) obj;
+      if (openCursor != other.openCursor)
+        return false;
       if (statementId != other.statementId)
         return false;
       if (values == null) {
@@ -424,6 +429,46 @@ public interface Message {
     @Override
     public String toString() {
       return "ExecuteStatementCommand [statementId=" + statementId + ", values=" + values + "]";
+    }
+  }
+
+  public static class FetchStatementCommand implements Command {
+    public final long statementId;
+    public final int  maxRows;
+
+    public FetchStatementCommand(long statementId, int maxRows) {
+      this.statementId = statementId;
+      this.maxRows = maxRows;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + maxRows;
+      result = prime * result + (int) (statementId ^ (statementId >>> 32));
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      FetchStatementCommand other = (FetchStatementCommand) obj;
+      if (maxRows != other.maxRows)
+        return false;
+      if (statementId != other.statementId)
+        return false;
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "FetchStatementCommand [statementId=" + statementId + ", maxRows=" + maxRows + "]";
     }
   }
 

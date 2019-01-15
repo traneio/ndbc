@@ -25,7 +25,7 @@ public class ExecuteStatementCommandMarshaller implements Marshaller<ExecuteStat
     final PacketBufferWriter packet = new PacketBufferWriter(bw, 0);
     packet.writeByte((byte) 0x17); // status [0x17] COM_STMT_EXECUTE
     packet.writeUnsignedInt(command.statementId);
-    packet.writeByte((byte) 0); // flags
+    packet.writeByte((byte) (command.openCursor ? 1 : 0)); // flags
     packet.writeUnsignedInt(1); // iterationCount
     if (!command.values.isEmpty()) {
       writeNullBitmap(packet, command.values);

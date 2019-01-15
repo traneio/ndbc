@@ -1,6 +1,5 @@
 package io.trane.ndbc.mysql.netty4;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +15,8 @@ public class MysqlEnv {
         .create("io.trane.ndbc.mysql.netty4.DataSourceSupplier", "localhost", 0, "test")
         .embedded(Config.Embedded.create("io.trane.ndbc.mysql.embedded.EmbeddedSupplier", Optional.of(version)))
         .database("test_schema")
-        .password("test")
-        .poolValidationInterval(Duration.ofSeconds(1));
+        .password("test");
+    // .poolValidationInterval(Duration.ofSeconds(1));
   }
 
   private static final List<String> versions;

@@ -10,9 +10,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
+import io.trane.future.CheckedFutureException;
 import io.trane.future.Future;
 import io.trane.ndbc.NdbcException;
+import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.flow.Flow;
 import io.trane.ndbc.test.DataSourceTest;
 
 public class MysqlDataSourceTest extends DataSourceTest {
@@ -38,5 +41,20 @@ public class MysqlDataSourceTest extends DataSourceTest {
     } finally {
       scheduler.shutdown();
     }
+  }
+
+  @Test
+  public void stream() throws CheckedFutureException {
+    Flow<Row> f = ds.stream(PreparedStatement.create(
+        "select (h*100+t*10+u+1) x from " +
+            "(select 0 h union select 1 union select 2 union select 3 union select 4 union " +
+            "select 5 union select 6 union select 7 union select 8 union select 9) A, " +
+            "(select 0 t union select 1 union select 2 union select 3 union select 4 union " +
+            "select 5 union select 6 union select 7 union select 8 union select 9) B, " +
+            "(select 0 u union select 1 union select 2 union select 3 union select 4 union " +
+            "select 5 union select 6 union select 7 union select 8 union select 9) C " +
+            "order by x; "));
+
+    f.collect(10).foreach(v -> System.out.println(v)).get(timeout);
   }
 }
