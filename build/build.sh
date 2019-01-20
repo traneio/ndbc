@@ -38,15 +38,15 @@ then
 	then
 		echo "Publishing a snapshot..."
 		set -x
-		$MVN clean package deploy
+		$MVN clean install sonar:sonar package deploy
 		set +x
 	else
 		echo "Publishing a branch snapshot..."
 		set -x
 		$MVN clean versions:set -DnewVersion=$TRAVIS_BRANCH-SNAPSHOT
-		$MVN package deploy
+		$MVN install sonar:sonar package deploy
 		set +x
 	fi
 else
-	echo "Nothing to publish"
+	$MVN install sonar:sonar
 fi
