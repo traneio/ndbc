@@ -34,7 +34,7 @@ public final class Config {
    * SSL configuration
    */
   public static class SSL {
-    public static enum Mode {
+    public enum Mode {
       /**
        * only try a non-SSL connection
        */
@@ -214,13 +214,15 @@ public final class Config {
       if (supplierClass == null) {
         if (other.supplierClass != null)
           return false;
-      } else if (!supplierClass.equals(other.supplierClass))
+      } else if (!supplierClass.equals(other.supplierClass)) {
         return false;
+      }
       if (version == null) {
         if (other.version != null)
           return false;
-      } else if (!version.equals(other.version))
+      } else if (!version.equals(other.version)) {
         return false;
+      }
       return true;
     }
 
@@ -709,10 +711,10 @@ public final class Config {
 
   public final Config addEncodingClass(final String encodingClass) {
     return encodingClasses(Optional.ofNullable(encodingClass).map(enc -> {
-      final Set<String> encodingClasses = new HashSet<>();
-      this.encodingClasses.ifPresent(encodingClasses::addAll);
-      encodingClasses.add(enc);
-      return encodingClasses;
+      final Set<String> classes = new HashSet<>();
+      this.encodingClasses.ifPresent(classes::addAll);
+      classes.add(enc);
+      return classes;
     }));
   }
 

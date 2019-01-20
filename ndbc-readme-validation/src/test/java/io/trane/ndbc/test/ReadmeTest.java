@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,15 +23,9 @@ public class ReadmeTest {
 
   private final Pattern       snippetPattern = Pattern.compile("```java([^```]*)```", Pattern.DOTALL);
   private final String        commentPattern = "(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)";
-  private final Path          readmePath;
   private final SimpleConsole c;
 
   public ReadmeTest() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-    String fileName = "README.md";
-    File file = new File(fileName);
-    if (!file.exists())
-      file = new File("../" + fileName);
-    readmePath = file.toPath();
     c = new SimpleConsole(ConsoleConfig.consoleConfig());
   }
 
@@ -47,10 +42,25 @@ public class ReadmeTest {
 
   @Test
   public void verifyReadmeSnippets() throws IOException {
-    String readme = new String(Files.readAllBytes(readmePath), "UTF-8").replaceAll(commentPattern, "");
-    Matcher matcher = snippetPattern.matcher(readme);
-    while (matcher.find())
-      executeStatements(matcher.group(1));
+    try {
+      
+      Path path = Paths.get("README.md");
+      
+      if(!Files.exists(path))
+        path = Paths.get("../README.md");
+      
+      if(!Files.exists(path))
+        throw new IllegalStateException(
+            "Can't find README.md file. Current path: " + (new File(".").getAbsolutePath()));
+      
+      byte[] readAllBytes = Files.readAllBytes(path);
+      String readme = new String(readAllBytes, "UTF-8").replaceAll(commentPattern, "");
+      Matcher matcher = snippetPattern.matcher(readme);
+      while (matcher.find())
+        executeStatements(matcher.group(1));
+    } catch (Throwable t) {
+      t.printStackTrace();
+    }
   }
 
   private void executeStatements(String snippet) {

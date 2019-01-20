@@ -191,8 +191,9 @@ public class PreparedStatement {
     if (index >= nextIndex()) {
       newParams = Arrays.copyOf(params, index + 1);
       Arrays.fill(newParams, nextIndex(), index, Value.NULL);
-    } else
+    } else {
       newParams = Arrays.copyOf(params, nextIndex());
+    }
     newParams[index] = param;
     return new PreparedStatement(query, newParams);
   }
