@@ -34,10 +34,8 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
     final EncodingRegistry encoding = new EncodingRegistry(config.loadCustomEncodings(), config.charset());
     final Unmarshallers unmarshallers = new Unmarshallers(config.charset(), encoding);
     final TerminatorExchange terminatorExchange = new TerminatorExchange(unmarshallers);
-    final ResultSetExchange resultSetExchange = new ResultSetExchange(unmarshallers);
     final Marshallers marshallers = new Marshallers(encoding, config.charset());
-    final SimpleQueryExchange simpleQueryExchange = new SimpleQueryExchange(marshallers,
-        resultSetExchange.apply(false));
+    final SimpleQueryExchange simpleQueryExchange = new SimpleQueryExchange(marshallers, new ResultSetExchange(unmarshallers, false));
     final StartupExchange startup = new StartupExchange(simpleQueryExchange, marshallers, unmarshallers,
         terminatorExchange.okPacketVoid);
 
@@ -46,10 +44,10 @@ public final class DataSourceSupplier extends Netty4DataSourceSupplier {
     final PrepareStatementExchange prepareStatementExchange = new PrepareStatementExchange(marshallers, unmarshallers,
         terminatorExchange.prepareOk, terminatorExchange.okPacketVoid);
     final ExtendedExchange extendedExchange = new ExtendedExchange(marshallers, prepareStatementExchange);
-    final ExtendedQueryExchange extendedQueryExchange = new ExtendedQueryExchange(extendedExchange,
-        resultSetExchange.apply(true));
+    ResultSetExchange binaryResultSetExchange = new ResultSetExchange(unmarshallers, true);
+    final ExtendedQueryExchange extendedQueryExchange = new ExtendedQueryExchange(extendedExchange, binaryResultSetExchange);
     final ExtendedQueryStreamExchange extendedQueryStreamExchange = new ExtendedQueryStreamExchange(
-        prepareStatementExchange, resultSetExchange.apply(true), marshallers);
+        prepareStatementExchange, binaryResultSetExchange, marshallers);
     final ExtendedExecuteExchange extendedExecuteExchange = new ExtendedExecuteExchange(extendedExchange,
         terminatorExchange.affectedRows);
 

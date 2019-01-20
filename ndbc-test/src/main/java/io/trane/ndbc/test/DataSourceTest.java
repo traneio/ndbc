@@ -9,21 +9,25 @@ import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import io.trane.future.CheckedFutureException;
+import io.trane.future.Promise;
 import io.trane.ndbc.NdbcException;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
+import io.trane.ndbc.flow.Flow;
 
-public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
+public abstract class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
-  protected Duration timeout = Duration.ofSeconds(999);
+  protected Duration     timeout     = Duration.ofSeconds(999);
 
-  private static int tableSuffix = 1;
+  private static int     tableSuffix = 1;
 
-  protected final String table = "table_" + tableSuffix++;
+  protected final String table       = "table_" + tableSuffix++;
 
-  private final String stringColumnType;
+  private final String   stringColumnType;
 
   public DataSourceTest(final String stringColumnType) {
     this.stringColumnType = stringColumnType;
@@ -346,6 +350,64 @@ public class DataSourceTest extends NdbcTest<PreparedStatement, Row> {
 
     final Iterator<Row> rows = ds.query("SELECT * FROM " + table).get(timeout).iterator();
     assertTrue(rows.hasNext());
+  }
+
+  protected abstract String streamQuery();
+
+  @Test
+  public void stream() throws CheckedFutureException {
+    Flow<Row> f = ds.stream(PreparedStatement.create(streamQuery()));
+
+    Promise<Void> result = Promise.apply();
+
+    f.subscribe(new Subscriber<Row>() {
+
+      private Subscription s        = null;
+      private int          pending  = 0;
+      private int          received = 0;
+
+      @Override
+      public void onSubscribe(Subscription s) {
+        this.s = s;
+        nextBatch();
+      }
+
+      private void nextBatch() {
+        pending = 10;
+        s.request(10);
+      }
+
+      @Override
+      public void onNext(Row t) {
+        received++;
+        pending--;
+        if (pending < 0)
+          result.setException(new AssertionError("unexpected value"));
+        else if (pending == 0) {
+          try {
+            Thread.sleep(10);
+          } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+          }
+          nextBatch();
+        }
+      }
+
+      @Override
+      public void onError(Throwable t) {
+        result.setException(t);
+      }
+
+      @Override
+      public void onComplete() {
+        if (received != 1000)
+          result.setException(new AssertionError("received != 100"));
+        else
+          result.setValue(null);
+      }
+    });
+
+    result.get(timeout);
   }
 
 }

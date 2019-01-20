@@ -5,11 +5,11 @@ import java.nio.charset.Charset;
 
 import io.trane.ndbc.proto.BufferReader;
 
-public class TestBufferReader implements BufferReader {
+public class MockBufferReader implements BufferReader {
 
   private final ByteBuffer buf;
 
-  public TestBufferReader(final ByteBuffer buf) {
+  public MockBufferReader(final ByteBuffer buf) {
     this.buf = buf;
   }
 
@@ -112,7 +112,7 @@ public class TestBufferReader implements BufferReader {
   public BufferReader readSlice(final int length) {
     final byte[] slice = new byte[length];
     buf.get(slice);
-    return new TestBufferReader(ByteBuffer.wrap(slice));
+    return new MockBufferReader(ByteBuffer.wrap(slice));
   }
 
   @Override

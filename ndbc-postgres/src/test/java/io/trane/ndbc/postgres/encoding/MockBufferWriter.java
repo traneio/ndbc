@@ -5,11 +5,11 @@ import java.nio.charset.Charset;
 
 import io.trane.ndbc.proto.BufferWriter;
 
-public class TestBufferWriter implements BufferWriter {
+public class MockBufferWriter implements BufferWriter {
 
   private final ByteBuffer buf;
 
-  public TestBufferWriter(final ByteBuffer buf) {
+  public MockBufferWriter(final ByteBuffer buf) {
     this.buf = buf;
   }
 

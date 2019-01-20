@@ -17,159 +17,158 @@ import io.trane.ndbc.flow.Flow;
 
 public final class PooledDataSource implements DataSource<PreparedStatement, Row> {
 
-  private final Pool<Connection>  pool;
-  private final Local<Connection> currentTransaction;
-  private final Config            config;
+	private final Pool<Connection> pool;
+	private final Local<Connection> currentTransaction;
+	private final Config config;
 
-  public PooledDataSource(final Pool<Connection> pool, final Config config) {
-    this.pool = pool;
-    this.config = config;
-    currentTransaction = Local.apply();
-  }
+	public PooledDataSource(final Pool<Connection> pool, final Config config) {
+		this.pool = pool;
+		this.config = config;
+		currentTransaction = Local.apply();
+	}
 
-  @Override
-  public final Future<List<Row>> query(final String query) {
-    return withConnection(c -> c.query(query));
-  }
+	@Override
+	public final Future<List<Row>> query(final String query) {
+		return withConnection(c -> c.query(query));
+	}
 
-  @Override
-  public final Future<Long> execute(final String statement) {
-    return withConnection(c -> c.execute(statement));
-  }
+	@Override
+	public final Future<Long> execute(final String statement) {
+		return withConnection(c -> c.execute(statement));
+	}
 
-  @Override
-  public final Future<List<Row>> query(final PreparedStatement query) {
-    return withConnection(c -> c.query(query));
-  }
+	@Override
+	public final Future<List<Row>> query(final PreparedStatement query) {
+		return withConnection(c -> c.query(query));
+	}
 
-  @Override
-  public Flow<Row> stream(PreparedStatement query) {
-    return Flow.from(withConnection(c -> Future.value(c.stream(query))));
-  }
+	@Override
+	public Flow<Row> stream(PreparedStatement query) {
+		final Optional<Connection> transaction = currentTransaction.get();
+		if (transaction.isPresent())
+			throw new UnsupportedOperationException("Streaming doesn't support transactions.");
+		else
+			return Flow.from(pool.acquire().map(c -> c.stream(query).onComplete(() -> pool.release(c))));
+	}
 
-  @Override
-  public final Future<Long> execute(final PreparedStatement statement) {
-    return withConnection(c -> c.execute(statement));
-  }
+	@Override
+	public final Future<Long> execute(final PreparedStatement statement) {
+		return withConnection(c -> c.execute(statement));
+	}
 
-  @Override
-  public final <T> Future<T> transactional(final Supplier<Future<T>> supplier) {
-    if (currentTransaction.get().isPresent())
-      return Future.flatApply(supplier);
-    else
-      return pool.acquire().flatMap(c -> {
-        currentTransaction.set(Optional.of(c));
-        return c.beginTransaction()
-            .flatMap(v -> supplier.get())
-            .transformWith(new Transformer<T, Future<T>>() {
-              @Override
-              public Future<T> onException(final Throwable ex) {
-                currentTransaction.set(Optional.empty());
-                return c.rollback().flatMap(v -> Future.exception(ex));
-              }
+	@Override
+	public final <T> Future<T> transactional(final Supplier<Future<T>> supplier) {
+		if (currentTransaction.get().isPresent())
+			return Future.flatApply(supplier);
+		else
+			return pool.acquire().flatMap(c -> {
+				currentTransaction.set(Optional.of(c));
+				return c.beginTransaction().flatMap(v -> supplier.get()).transformWith(new Transformer<T, Future<T>>() {
+					@Override
+					public Future<T> onException(final Throwable ex) {
+						currentTransaction.set(Optional.empty());
+						return c.rollback().flatMap(v -> Future.exception(ex));
+					}
 
-              @Override
-              public Future<T> onValue(final T value) {
-                currentTransaction.set(Optional.empty());
-                return c.commit().map(v -> value);
-              }
-            }).ensure(() -> pool.release(c));
-      });
-  }
+					@Override
+					public Future<T> onValue(final T value) {
+						currentTransaction.set(Optional.empty());
+						return c.commit().map(v -> value);
+					}
+				}).ensure(() -> pool.release(c));
+			});
+	}
 
-  @Override
-  public TransactionalDataSource<PreparedStatement, Row> transactional() {
-    final Future<Connection> conn = currentTransaction.get()
-        .map(Future::value).orElseGet(() -> pool.acquire());
+	@Override
+	public TransactionalDataSource<PreparedStatement, Row> transactional() {
+		final Future<Connection> conn = currentTransaction.get().map(Future::value).orElseGet(() -> pool.acquire());
 
-    return new TransactionalDataSource<PreparedStatement, Row>() {
+		return new TransactionalDataSource<PreparedStatement, Row>() {
 
-      @Override
-      public Future<List<Row>> query(final String query) {
-        return conn.flatMap(c -> c.query(query));
-      }
+			@Override
+			public Future<List<Row>> query(final String query) {
+				return conn.flatMap(c -> c.query(query));
+			}
 
-      @Override
-      public Future<Long> execute(final String statement) {
-        return conn.flatMap(c -> c.execute(statement));
-      }
+			@Override
+			public Future<Long> execute(final String statement) {
+				return conn.flatMap(c -> c.execute(statement));
+			}
 
-      @Override
-      public Future<List<Row>> query(final PreparedStatement query) {
-        return conn.flatMap(c -> c.query(query));
-      }
+			@Override
+			public Future<List<Row>> query(final PreparedStatement query) {
+				return conn.flatMap(c -> c.query(query));
+			}
 
-      @Override
-      public Flow<Row> stream(PreparedStatement query) {
-        return Flow.from(conn.map(c -> c.stream(query)));
-      }
+			@Override
+			public Flow<Row> stream(PreparedStatement query) {
+				return Flow.from(conn.map(c -> c.stream(query)));
+			}
 
-      @Override
-      public Future<Long> execute(final PreparedStatement statement) {
-        return conn.flatMap(c -> c.execute(statement));
-      }
+			@Override
+			public Future<Long> execute(final PreparedStatement statement) {
+				return conn.flatMap(c -> c.execute(statement));
+			}
 
-      @Override
-      public <T> Future<T> transactional(final Supplier<Future<T>> supplier) {
-        return conn.flatMap(c -> {
-          if (currentTransaction.get().isPresent())
-            return Future.flatApply(supplier);
-          else {
-            currentTransaction.set(Optional.of(c));
-            return Future.flatApply(supplier)
-                .ensure(() -> currentTransaction.set(Optional.empty()));
-          }
+			@Override
+			public <T> Future<T> transactional(final Supplier<Future<T>> supplier) {
+				return conn.flatMap(c -> {
+					if (currentTransaction.get().isPresent())
+						return Future.flatApply(supplier);
+					else {
+						currentTransaction.set(Optional.of(c));
+						return Future.flatApply(supplier).ensure(() -> currentTransaction.set(Optional.empty()));
+					}
 
-        });
-      }
+				});
+			}
 
-      @Override
-      public TransactionalDataSource<PreparedStatement, Row> transactional() {
-        return this;
-      }
+			@Override
+			public TransactionalDataSource<PreparedStatement, Row> transactional() {
+				return this;
+			}
 
-      @Override
-      public Future<Void> close() {
-        if (!currentTransaction.get().isPresent())
-          conn.onSuccess(pool::release);
-        return Future.VOID;
-      }
+			@Override
+			public Future<Void> close() {
+				if (!currentTransaction.get().isPresent())
+					conn.onSuccess(pool::release);
+				return Future.VOID;
+			}
 
-      @Override
-      public Config config() {
-        return config;
-      }
+			@Override
+			public Config config() {
+				return config;
+			}
 
-      @Override
-      public Future<Void> commit() {
-        return conn.flatMap(c -> c.commit());
-      }
+			@Override
+			public Future<Void> commit() {
+				return conn.flatMap(c -> c.commit());
+			}
 
-      @Override
-      public Future<Void> rollback() {
-        return conn.flatMap(c -> c.rollback());
-      }
-    };
-  }
+			@Override
+			public Future<Void> rollback() {
+				return conn.flatMap(c -> c.rollback());
+			}
+		};
+	}
 
-  @Override
-  public final Future<Void> close() {
-    return pool.close();
-  }
+	@Override
+	public final Future<Void> close() {
+		return pool.close();
+	}
 
-  private final <T> Future<T> withConnection(final Function<Connection, Future<T>> f) {
-    final Optional<Connection> transaction = currentTransaction.get();
-    if (transaction.isPresent())
-      return f.apply(transaction.get());
-    else
-      return pool.acquire().flatMap(c -> {
-        return Future.flatApply(() -> f.apply(c))
-            .ensure(() -> pool.release(c));
-      });
-  }
+	private final <T> Future<T> withConnection(final Function<Connection, Future<T>> f) {
+		final Optional<Connection> transaction = currentTransaction.get();
+		if (transaction.isPresent())
+			return f.apply(transaction.get());
+		else
+			return pool.acquire().flatMap(c -> {
+				return Future.flatApply(() -> f.apply(c)).ensure(() -> pool.release(c));
+			});
+	}
 
-  @Override
-  public Config config() {
-    return this.config;
-  }
+	@Override
+	public Config config() {
+		return this.config;
+	}
 }

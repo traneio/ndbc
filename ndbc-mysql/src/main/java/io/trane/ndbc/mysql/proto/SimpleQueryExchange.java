@@ -13,9 +13,9 @@ public class SimpleQueryExchange implements Function<String, Exchange<List<Row>>
   private final Marshallers         marshallers;
   private final Exchange<List<Row>> resultSet;
 
-  public SimpleQueryExchange(final Marshallers marshallers, final Exchange<List<Row>> resultSet) {
+  public SimpleQueryExchange(final Marshallers marshallers, final ResultSetExchange resultSetExchange) {
     this.marshallers = marshallers;
-    this.resultSet = resultSet;
+    this.resultSet = resultSetExchange.apply();
   }
 
   @Override

@@ -51,10 +51,10 @@ public abstract class EncodingTest<V extends Value<?>, E extends Encoding<?, V>>
 
   private void testValue(final V value) {
     final ByteBuffer buf = ByteBuffer.allocate(1000);
-    enc.encodeBinary(value, new TestBufferWriter(buf));
+    enc.encodeBinary(value, new MockBufferWriter(buf));
     buf.limit(buf.position());
     buf.rewind();
-    final V decoded = enc.decode(Format.BINARY, new TestBufferReader(buf));
+    final V decoded = enc.decode(Format.BINARY, new MockBufferReader(buf));
     verify.accept(value, decoded);
   }
 

@@ -8,12 +8,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
-import io.trane.future.CheckedFutureException;
 import io.trane.future.Future;
 import io.trane.ndbc.NdbcException;
-import io.trane.ndbc.PostgresPreparedStatement;
 import io.trane.ndbc.Row;
-import io.trane.ndbc.flow.Flow;
 import io.trane.ndbc.test.DataSourceTest;
 
 public class PostgresDataSourceTest extends DataSourceTest {
@@ -39,10 +36,8 @@ public class PostgresDataSourceTest extends DataSourceTest {
     }
   }
 
-  @Test
-  public void stream() throws CheckedFutureException {
-    Flow<Row> f = ds.stream(PostgresPreparedStatement.create("SELECT generate_series(1, 1000)"));
-
-    f.collect(10).foreach(v -> System.out.println(v)).get(timeout);
+  @Override
+  protected String streamQuery() {
+    return "SELECT generate_series(1, 1000)";
   }
 }

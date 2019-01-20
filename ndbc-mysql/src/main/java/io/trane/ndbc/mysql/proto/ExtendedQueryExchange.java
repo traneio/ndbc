@@ -12,9 +12,9 @@ public final class ExtendedQueryExchange implements BiFunction<String, List<Valu
   private final ExtendedExchange    extendedExchange;
   private final Exchange<List<Row>> resultSet;
 
-  public ExtendedQueryExchange(final ExtendedExchange extendedExchange, final Exchange<List<Row>> resultSet) {
+  public ExtendedQueryExchange(final ExtendedExchange extendedExchange, final ResultSetExchange resultSetExchange) {
     this.extendedExchange = extendedExchange;
-    this.resultSet = resultSet;
+    this.resultSet = resultSetExchange.apply();
   }
 
   @Override

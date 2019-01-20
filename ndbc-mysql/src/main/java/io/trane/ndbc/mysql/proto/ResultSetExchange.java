@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import io.trane.ndbc.NdbcException;
@@ -19,27 +20,37 @@ import io.trane.ndbc.proto.Exchange;
 
 public class ResultSetExchange {
 
-  private final Unmarshallers unmarshallers;
+  private final Unmarshallers                            unmarshallers;
+  private final boolean                                  binary;
 
   private static final Exchange<List<io.trane.ndbc.Row>> emptyRows = Exchange
       .value(Collections.unmodifiableList(new ArrayList<>()));
 
-  public ResultSetExchange(final Unmarshallers unmarshallers) {
+  public ResultSetExchange(final Unmarshallers unmarshallers, final boolean binary) {
     this.unmarshallers = unmarshallers;
+    this.binary = binary;
   }
 
-  public Exchange<List<io.trane.ndbc.Row>> apply(final boolean binary) {
+  public Exchange<List<io.trane.ndbc.Row>> apply() {
+    return rows().flatMap(Supplier::get);
+  }
+
+  public Exchange<Supplier<Exchange<List<io.trane.ndbc.Row>>>> rows() {
     return Exchange.receive(unmarshallers.terminator.orElse(unmarshallers.columnCount)).flatMap(msg -> {
       if (msg instanceof ColumnCount) {
         final int count = (int) ((ColumnCount) msg).count;
         return fields(count, new ArrayList<Field>(count))
-            .flatMap(fields -> rows(unmarshallers.row(fields, binary), new ArrayList<Row>())
-                .map(rows -> handleResultSet(fields, rows)));
+            .map(fields -> resultSet(fields));
       } else if (msg instanceof OkPacket)
-        return emptyRows;
+        return Exchange.value(() -> emptyRows);
       else
         throw new NdbcException(msg.toString());
     });
+  }
+
+  private Supplier<Exchange<List<io.trane.ndbc.Row>>> resultSet(List<Field> fields) {
+    return () -> rows(unmarshallers.row(fields, binary), new ArrayList<Row>())
+        .map(rows -> handleResultSet(fields, rows));
   }
 
   private Exchange<List<Field>> fields(final int columns, final List<Field> l) {
