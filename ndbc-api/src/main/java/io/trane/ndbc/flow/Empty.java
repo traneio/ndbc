@@ -15,10 +15,8 @@ final class Empty<T> implements Flow<T> {
 
       @Override
       public void request(final long l) {
-        if (!done.get()) {
+        if (done.compareAndSet(false, true))
           sb.onComplete();
-          done.set(true);
-        }
       }
 
       @Override

@@ -40,9 +40,9 @@ public class FieldUnmarshaller extends MysqlUnmarshaller<Field> {
    * Converts from mysql charset to java charset.
    */
   public static final Charset charset(final short charset) {
-    if (Utf8Set.contains(charset))
+    if (Utf8Set.contains((int) charset))
       return UTF_8;
-    else if (Latin1Set.contains(charset))
+    else if (Latin1Set.contains((int) charset))
       return ISO_8859_1;
     else if (charset == Binary)
       return US_ASCII;
