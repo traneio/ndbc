@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>io.trane</groupId>
 		<artifactId>ndbc</artifactId>
-		<version>0.1.3-SNAPSHOT</version>
+		<version>0.1.3</version>
 	</parent>
 	<artifactId>ndbc-netty4</artifactId>
 	<packaging>jar</packaging>
@@ -14,7 +14,7 @@
 		<dependency>
 			<groupId>io.trane</groupId>
 			<artifactId>ndbc-core</artifactId>
-			<version>0.1.3-SNAPSHOT</version>
+			<version>0.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>io.netty</groupId>
