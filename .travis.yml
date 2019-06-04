@@ -7,7 +7,7 @@ addons:
     token:
       secure: "Gs1VzaEVvBpAlA/2FLpFYz4vpdegWnLkIcNKB3sjnKCmYXtMz3pYLq1CyQweM5+a+TI98zqq2cB4y5+osYo4z1njibkvIoAGX5+LH5j94oVw8EcBOvLK0pn2LwsVY4WGdNKf3bWr0rukAj3YbHX7rU4Z7tqDJ+daTKhgx16daz/Sl0gT7XzpkJNfPvfStOYeL1/J8mZKJeEiq7LS5yTX1i80ZSfJYj7p4juaMJTiiYyr+v46shg39Ug7z22FIpK37n8ilhFYHRzyNcA7ziTcVGrDMdqyPxq6FqQNVzMtk6Xh4MAGF/oUTCTX4s6vwnXXVhtSB+uwSItpMBcMdLMZoVnKC58nA2pcEG0OA/H3Faqsrot5ePqEpYK7NkB+S8I6X0lay6RT0+ZTCBZUTC2XT2S89gPPKAlM+P5bli5klS+09l6A2GGvXWadDMkblB5llnARhag483HMOjb+CjU7n3b5+kY7lxvFDCI3H+HbnV5baE99oJfgY1mECUzRqGqPU/1pRYnhH8DhUyXc8lWkRnl6nEG6zcU0pyDrwVJ71OjXtGxsbICFbjDzp6A77oOx11V5NAR0vtfUWO5TqL7rIFeHCQPnmtgCQwsLzqWn8q3sjWWfqMM7YJZ403fh1rJmyXVsoHW1e/ncNdd8jBkcGSfljpJgXGuv5JQ0+Yewh2g="
 script:
-  - travis_retry ./build/build_test.sh
+  - travis_retry ./build/build.sh
 cache:
   directories:
   - $HOME/.m2/repository

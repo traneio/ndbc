@@ -24,16 +24,12 @@ then
 		git remote set-url origin git@github.com:traneio/ndbc.git
 		git fetch --unshallow
 		git checkout master || git checkout -b master
-		git reset --hard origin/master
-
-		git rm release.version
-		git commit -m "[skip ci] [release] remove release.version"
-		git push
+		#git reset --hard origin/master
 
 		set -x
-		$MVN -B clean release:prepare -DreleaseVersion=$RELEASE_VERSION
-		$MVN release:perform
+		$MVN -B clean release:prepare release:perform
 		set +x
+		git push
 	elif [[ $TRAVIS_BRANCH == "master" ]]
 	then
 		echo "Publishing a snapshot..."
