@@ -1,0 +1,1 @@
+CREATE TABLE customer (id SERIAL PRIMARY KEY, name VARCHAR(100), dob DATE)

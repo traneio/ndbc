@@ -12,10 +12,9 @@ import io.trane.future.CheckedFutureException;
 import io.trane.ndbc.DataSource;
 import io.trane.ndbc.PreparedStatement;
 import io.trane.ndbc.Row;
-import io.trane.ndbc.spring.repository.config.NdbcConfiguration;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = NdbcConfiguration.class)
+@ContextConfiguration(classes = AsyncCustomerConfig.class)
 public class DataSourceFactoryTest {
 
   @Autowired

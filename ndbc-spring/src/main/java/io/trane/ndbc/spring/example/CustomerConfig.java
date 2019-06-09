@@ -29,7 +29,7 @@ public class CustomerConfig extends JdbcConfiguration {
 
   @Bean
   DataSource dataSource() {
-    return new EmbeddedDatabaseBuilder().generateUniqueName(true).setType(EmbeddedDatabaseType.HSQL)
-        .addScript("create-customer-schema.sql").build();
+    return new EmbeddedDatabaseBuilder().generateUniqueName(true).setType(EmbeddedDatabaseType.POSTGRES)
+        .addScript("test.sql").build();
   }
 }

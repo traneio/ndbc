@@ -5,15 +5,15 @@ import java.lang.annotation.Annotation;
 import org.springframework.data.repository.config.RepositoryBeanDefinitionRegistrarSupport;
 import org.springframework.data.repository.config.RepositoryConfigurationExtension;
 
-public class AsyncRepositoriesRegistrar extends RepositoryBeanDefinitionRegistrarSupport {
+public class NdbcRepositoriesRegistrar extends RepositoryBeanDefinitionRegistrarSupport {
 
   @Override
   protected Class<? extends Annotation> getAnnotation() {
-    return EnableAsyncRepositories.class;
+    return EnableNdbcRepositories.class;
   }
 
   @Override
   protected RepositoryConfigurationExtension getExtension() {
-    return null;
+    return new NdbcRepositoryConfigExtension();
   }
 }
