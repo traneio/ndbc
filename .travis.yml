@@ -1,6 +1,6 @@
 language: java
 jdk:
-  - oraclejdk8
+  - openjdk8
 addons:
   sonarcloud:
     organization: "traneio" # the key of the org you chose at step #3
