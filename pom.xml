@@ -54,6 +54,7 @@
 		<module>ndbc-api</module>
 		<module>ndbc-api-scala_2.11</module>
 		<module>ndbc-api-scala_2.12</module>
+		<module>ndbc-api-scala_2.13</module>
 		<module>ndbc-api-twitter</module>
 		<module>ndbc-core</module>
 		<module>ndbc-test</module>
