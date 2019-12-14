@@ -1,7 +1,8 @@
 package io.trane.ndbc.postgres.netty4;
 
+import static java.util.Arrays.asList;
+
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,11 +25,13 @@ public class PostgresEnv {
 
   static {
     if (System.getenv("TRAVIS_BRANCH") != null)
-      versions = Arrays.asList(
+      versions = asList(
           "V9_5",
-          "V9_6");
+          "V9_6",
+          "V10",
+          "V11");
     else
-      versions = Arrays.asList("V9_6");
+      versions = asList("V11");
   }
 
   public static final List<Object[]> dataSources = versions.stream()
