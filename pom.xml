@@ -138,7 +138,7 @@
 				<scmCommentPrefix />
 			</properties>
 		        <activation>
-			        <property><name>!TRAVIS_PULL_REQUEST</name></property>
+			        <property><name>release</name></property>
 		        </activation>
 			<build>
 				<plugins>
