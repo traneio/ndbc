@@ -137,6 +137,9 @@
 				<gpg.defaultKeyring>false</gpg.defaultKeyring>
 				<scmCommentPrefix />
 			</properties>
+		        <activation>
+			        <property><name>!TRAVIS_PULL_REQUEST</name></property>
+		        </activation>
 			<build>
 				<plugins>
 					<plugin>
