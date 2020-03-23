@@ -48,5 +48,6 @@ then
 		set +x
 	fi
 else
+        echo "Pull request build..."
 	$MVN install sonar:sonar
 fi
