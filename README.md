@@ -1,4 +1,4 @@
-
+test
 # Non-blocking Database Connectivity (NDBC)
 
 [![Build Status](https://travis-ci.org/traneio/ndbc.svg?branch=master)](https://travis-ci.org/traneio/ndbc)
