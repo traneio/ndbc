@@ -6,7 +6,7 @@ MVN="mvn --settings build/settings.xml -Drelease.arguments="$LOGBACK_CONFIG" $LO
 
 if [[ $TRAVIS_PULL_REQUEST == "false" ]]
 then
-        MVN=$MVN -Drelease
+        MVN="$MVN -Drelease"
 	openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $BUILD_DIR/pubring.gpg.enc -out $BUILD_DIR/pubring.gpg -d
 	openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $BUILD_DIR/secring.gpg.enc -out $BUILD_DIR/secring.gpg -d
 	openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in $BUILD_DIR/deploy_key.pem.enc -out $BUILD_DIR/deploy_key.pem -d
