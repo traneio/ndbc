@@ -24,7 +24,7 @@ For small files, this code wouldn't be a problem. Now let's assume that `file.tx
 
 ## `Future` to the rescue
 
-`Future` is an abstraction to deal with asynchronicity without blocking threads. The primary usage for `Future`s on the JVM is to perform IO operations. Bringing this idea to the previous example, the code would be something like:
+A `Future` is an abstraction to deal with asynchronicity without blocking threads. The primary usage for `Future`s on the JVM is to perform IO operations. Bringing this idea to the previous example, the code would be something like:
 
 ```
 Future<List<String>> lines = Files.readAllLines(Paths.get(file.toURI()));
