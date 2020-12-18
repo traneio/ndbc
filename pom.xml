@@ -119,9 +119,9 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- plugin> <groupId>net.revelc.code.formatter</groupId> <artifactId>formatter-maven-plugin</artifactId> 
-				<version>2.7.4</version> <configuration> <lineEnding>LF</lineEnding> <configFile>${project.basedir}/eclipse-formatter-config.xml</configFile> 
-				</configuration> <executions> <execution> <goals> <goal>format</goal> </goals> 
+			<!-- plugin> <groupId>net.revelc.code.formatter</groupId> <artifactId>formatter-maven-plugin</artifactId>
+				<version>2.7.4</version> <configuration> <lineEnding>LF</lineEnding> <configFile>${project.basedir}/eclipse-formatter-config.xml</configFile>
+				</configuration> <executions> <execution> <goals> <goal>format</goal> </goals>
 				</execution> </executions> </plugin -->
 		</plugins>
 	</build>
@@ -149,6 +149,10 @@
 						<configuration>
 							<scmCommentPrefix>[skip ci] [release] </scmCommentPrefix>
 							<arguments>${release.arguments}</arguments>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<useReleaseProfile>false</useReleaseProfile>
+							<releaseProfiles>release</releaseProfiles>
+							<goals>deploy</goals>
 						</configuration>
 					</plugin>
 					<plugin>
@@ -173,7 +177,7 @@
 						<configuration>
 							<serverId>ossrh-releases</serverId>
 							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+							<autoReleaseAfterClose>false</autoReleaseAfterClose>
 						</configuration>
 					</plugin>
 				</plugins>

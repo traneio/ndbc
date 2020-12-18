@@ -34,6 +34,7 @@ then
 		set -x
 		$MVN -B clean release:prepare -DreleaseVersion=$RELEASE_VERSION
 		$MVN release:perform
+		git push
 		set +x
 	elif [[ $TRAVIS_BRANCH == "master" ]]
 	then
